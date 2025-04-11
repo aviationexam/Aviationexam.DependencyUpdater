@@ -1,0 +1,4 @@
+*.ps1 text=auto eol=lf
+*.cs text=auto eol=crlf
+*.csproj text=auto eol=crlf
+.editorconfig text=auto eol=lf
