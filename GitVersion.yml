@@ -1,0 +1,9 @@
+workflow: TrunkBased/preview1
+branches:
+  main:
+    regex: ^master$|^main$|^develop$
+  feature:
+    increment: Patch
+ignore:
+  sha: []
+merge-message-formats: {}
