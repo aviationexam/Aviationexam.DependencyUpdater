@@ -39,4 +39,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <PropertyGroup Label="Aot ready">
+    <IsAotCompatible>true</IsAotCompatible>
+    <StripSymbols>false</StripSymbols>
+  </PropertyGroup>
+
 </Project>
