@@ -1,0 +1,6 @@
+<Project>
+  <Import Project="..\Src-Shared\Directory.Packages.props" />
+  <ItemGroup>
+    <PackageVersion Include="NuGet.ProjectModel" Version="6.13.2" />
+  </ItemGroup>
+</Project>
