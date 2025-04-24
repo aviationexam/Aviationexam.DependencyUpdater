@@ -13,7 +13,7 @@ HostApplicationBuilderSettings settings = new()
     ContentRootPath = Directory.GetCurrentDirectory(),
 };
 
-var builder = Host.CreateApplicationBuilder(settings);
+var builder = Host.CreateEmptyApplicationBuilder(settings);
 
 builder.Services.AddLogging(x => x.AddConsole());
 builder.Services.AddScoped<CsprojParser>();
