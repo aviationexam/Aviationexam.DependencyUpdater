@@ -1,3 +1,6 @@
 namespace Aviationexam.DependencyUpdater.Nuget;
 
-public sealed record NugetDependency(string Name, string Version);
+public sealed record NugetDependency(
+    NugetFile NugetFile,
+    INugetPackage NugetPackage
+);

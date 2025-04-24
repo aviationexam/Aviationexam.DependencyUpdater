@@ -1,5 +1,33 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using Aviationexam.DependencyUpdater.Nuget;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System.IO;
+using System.Linq;
 
-using System;
+HostApplicationBuilderSettings settings = new()
+{
+    Args = args,
+    Configuration = new ConfigurationManager(),
+    ContentRootPath = Directory.GetCurrentDirectory(),
+};
 
-Console.WriteLine("Hello, World!");
+var builder = Host.CreateApplicationBuilder(settings);
+
+builder.Services.AddLogging(x => x.AddConsole());
+builder.Services.AddScoped<CsprojParser>();
+builder.Services.AddScoped<DirectoryPackagesPropsParser>();
+builder.Services.AddScoped<DependencyParser>();
+
+using var host = builder.Build();
+
+var nugetFinder = new NugetFinder("/opt/asp.net/Aviationexam.DependencyUpdater/assets/private/AviationexamWebV3");
+
+var dependencyParser = host.Services.GetRequiredService<DependencyParser>();
+
+var dependencies = dependencyParser.GetAllDependencies(nugetFinder.GetAllNugetFiles());
+
+var a = dependencies.ToList();
+
+var b = a;
