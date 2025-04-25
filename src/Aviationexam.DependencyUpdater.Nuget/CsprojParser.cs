@@ -1,11 +1,10 @@
-﻿using Aviationexam.DependencyUpdater.Interfaces;
-using Microsoft.Build.Definition;
-using Microsoft.Build.Evaluation;
+﻿using System.Xml.Linq;
+using System.IO;
+using Aviationexam.DependencyUpdater.Interfaces;
 using Microsoft.Extensions.Logging;
 using NuGet.Versioning;
 using System.Collections.Generic;
-using System.IO;
-using System.Xml.Linq;
+using System.Linq;
 
 namespace Aviationexam.DependencyUpdater.Nuget;
 
@@ -18,70 +17,58 @@ public class CsprojParser(
     {
         var csprojFilePath = nugetFile.FullPath;
 
-        // Check if file exists
         if (!fileSystem.Exists(csprojFilePath))
         {
-            logger.LogError("csproj file not found at {path}", csprojFilePath);
-
+            logger.LogError("File not found: {path}", csprojFilePath);
             yield break;
         }
 
+        var baseDir = Path.GetDirectoryName(csprojFilePath)!;
+
         using var stream = fileSystem.FileOpen(csprojFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var xml = XDocument.Load(stream);
+        var doc = XDocument.Load(stream);
 
-        var csprojDir = Path.GetDirectoryName(csprojFilePath)!;
-        var originalDir = Directory.GetCurrentDirectory();
-        Directory.SetCurrentDirectory(csprojDir);
-
-        using var projectCollection = new ProjectCollection();
-        var project = Project.FromXmlReader(
-            xml.CreateReader(),
-            new ProjectOptions
-            {
-                GlobalProperties = new Dictionary<string, string> { ["DesignTimeBuild"] = "true" },
-                ToolsVersion = null,
-                SubToolsetVersion = null,
-                ProjectCollection = projectCollection,
-                LoadSettings = ProjectLoadSettings.Default,
-                EvaluationContext = null,
-                DirectoryCacheFactory = null,
-                Interactive = false,
-            }
-        );
-
-        Directory.SetCurrentDirectory(originalDir);
-
-        foreach (var item in project.GetItems("PackageReference"))
+        foreach (var packageReference in doc.Descendants().Where(e => e.Name.LocalName == "PackageReference"))
         {
-            if (item.IsImported)
+            var packageId = packageReference.Attribute("Include")?.Value;
+            var versionValue = packageReference.Attribute("Version")?.Value;
+
+            if (!string.IsNullOrEmpty(packageId))
             {
-                continue;
+                VersionRange? version = null;
+                if (!string.IsNullOrEmpty(versionValue))
+                {
+                    version = new VersionRange(new NuGetVersion(versionValue));
+                }
+
+                yield return new NugetDependency(
+                    nugetFile,
+                    new NugetPackageReference(packageId, version)
+                );
             }
-
-            var packageId = item.EvaluatedInclude;
-
-            VersionRange? version = null;
-            if (item.GetMetadataValue("Version") is { } versionValue && !string.IsNullOrEmpty(versionValue))
-            {
-                version = new VersionRange(new NuGetVersion(versionValue));
-            }
-
-            yield return new NugetDependency(nugetFile, new NugetPackageReference(packageId, version));
         }
 
-        foreach (var import in project.Imports)
+        foreach (var import in doc.Descendants().Where(e => e.Name.LocalName == "Import"))
         {
-            var importedPath = import.ImportedProject.FullPath;
-            if (!fileSystem.Exists(importedPath))
+            var importProject = import.Attribute("Project")?.Value.Replace('\\', Path.DirectorySeparatorChar);
+            if (string.IsNullOrEmpty(importProject))
             {
-                logger.LogError("imported file not found at {path}", importedPath);
-
                 continue;
             }
 
-            foreach (var nugetDependency in Parse(new NugetFile(importedPath, ENugetFileType.Targets)))
+            var importedFullPath = Path.GetFullPath(Path.Combine(baseDir, importProject));
+
+            if (!fileSystem.Exists(importedFullPath))
             {
-                yield return nugetDependency;
+                logger.LogError("Imported file not found: {path}", importedFullPath);
+                continue;
+            }
+
+            var importedNugetFile = new NugetFile(importedFullPath, ENugetFileType.Targets);
+
+            foreach (var importedDependency in Parse(importedNugetFile))
+            {
+                yield return importedDependency;
             }
         }
     }
