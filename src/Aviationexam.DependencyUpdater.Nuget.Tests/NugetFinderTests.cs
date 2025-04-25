@@ -23,10 +23,12 @@ public class NugetFinderTests
 
         var nugetFinder = new NugetFinder(fileSystem);
 
+        var response = nugetFinder.GetAllNugetFiles(directoryPath);
+
         Assert.Equal([
             new NugetFile($"{directoryPath}/Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
             new NugetFile($"{directoryPath}/project/Project.csproj", ENugetFileType.Csproj),
             new NugetFile($"{directoryPath}/project2/Project2.csproj", ENugetFileType.Csproj),
-        ], nugetFinder.GetAllNugetFiles(directoryPath));
+        ], response);
     }
 }

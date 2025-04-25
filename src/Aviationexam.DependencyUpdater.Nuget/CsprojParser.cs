@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Aviationexam.DependencyUpdater.Interfaces;
+using Microsoft.Extensions.Logging;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.ProjectModel;
@@ -9,6 +10,7 @@ using System.IO;
 namespace Aviationexam.DependencyUpdater.Nuget;
 
 public class CsprojParser(
+    IFileSystem filesystem,
     ILogger<CsprojParser> logger
 )
 {
@@ -17,7 +19,7 @@ public class CsprojParser(
         var csprojFilePath = nugetFile.FullPath;
 
         // Check if file exists
-        if (!File.Exists(csprojFilePath))
+        if (!filesystem.Exists(csprojFilePath))
         {
             logger.LogError("csproj file not found at {path}", csprojFilePath);
 

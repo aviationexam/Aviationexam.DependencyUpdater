@@ -4,4 +4,5 @@ public enum ENugetFileType
 {
     Csproj,
     DirectoryPackagesProps,
+    Targets,
 }
