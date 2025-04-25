@@ -12,6 +12,7 @@
   <Import Project="..\WarningConfiguration.targets" />
   
   <ItemGroup>
+    <ProjectReference Include="..\Aviationexam.DependencyUpdater.DefaultImplementations\Aviationexam.DependencyUpdater.DefaultImplementations.csproj" />
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.Nuget\Aviationexam.DependencyUpdater.Nuget.csproj" />
   </ItemGroup>
   

@@ -6,6 +6,8 @@
     <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
 
+  <Import Project="..\WarningConfiguration.targets" />
+
   <PropertyGroup>
     <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
