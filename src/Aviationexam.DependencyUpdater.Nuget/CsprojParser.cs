@@ -10,7 +10,7 @@ using System.Xml.Linq;
 namespace Aviationexam.DependencyUpdater.Nuget;
 
 public class CsprojParser(
-    IFileSystem filesystem,
+    IFileSystem fileSystem,
     ILogger<CsprojParser> logger
 )
 {
@@ -19,14 +19,14 @@ public class CsprojParser(
         var csprojFilePath = nugetFile.FullPath;
 
         // Check if file exists
-        if (!filesystem.Exists(csprojFilePath))
+        if (!fileSystem.Exists(csprojFilePath))
         {
             logger.LogError("csproj file not found at {path}", csprojFilePath);
 
             yield break;
         }
 
-        using var stream = filesystem.FileOpen(csprojFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        using var stream = fileSystem.FileOpen(csprojFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         var xml = XDocument.Load(stream);
 
         var csprojDir = Path.GetDirectoryName(csprojFilePath)!;
@@ -72,7 +72,7 @@ public class CsprojParser(
         foreach (var import in project.Imports)
         {
             var importedPath = import.ImportedProject.FullPath;
-            if (!filesystem.Exists(importedPath))
+            if (!fileSystem.Exists(importedPath))
             {
                 logger.LogError("imported file not found at {path}", importedPath);
 
