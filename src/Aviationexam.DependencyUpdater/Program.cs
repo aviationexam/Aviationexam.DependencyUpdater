@@ -1,5 +1,5 @@
-﻿using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.DefaultImplementations;
+using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

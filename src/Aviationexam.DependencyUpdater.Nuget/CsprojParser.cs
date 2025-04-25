@@ -1,10 +1,10 @@
-﻿using System.Xml.Linq;
-using System.IO;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Microsoft.Extensions.Logging;
 using NuGet.Versioning;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace Aviationexam.DependencyUpdater.Nuget;
 

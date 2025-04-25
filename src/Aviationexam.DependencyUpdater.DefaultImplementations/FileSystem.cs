@@ -1,4 +1,4 @@
-﻿using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Interfaces;
 using System.Collections.Generic;
 using System.IO;
 
