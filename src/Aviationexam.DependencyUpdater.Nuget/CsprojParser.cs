@@ -1,11 +1,11 @@
 ﻿using Aviationexam.DependencyUpdater.Interfaces;
+using Microsoft.Build.Definition;
+using Microsoft.Build.Evaluation;
 using Microsoft.Extensions.Logging;
-using NuGet.Frameworks;
-using NuGet.LibraryModel;
-using NuGet.ProjectModel;
-using System;
+using NuGet.Versioning;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Linq;
 
 namespace Aviationexam.DependencyUpdater.Nuget;
 
@@ -26,53 +26,63 @@ public class CsprojParser(
             yield break;
         }
 
-        IList<LibraryDependency>? dependencies = null;
-        try
-        {
-            // Create a project spec reader
-            var projectSpec = new PackageSpec
+        using var stream = filesystem.FileOpen(csprojFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var xml = XDocument.Load(stream);
+
+        var csprojDir = Path.GetDirectoryName(csprojFilePath)!;
+        var originalDir = Directory.GetCurrentDirectory();
+        Directory.SetCurrentDirectory(csprojDir);
+
+        using var projectCollection = new ProjectCollection();
+        var project = Project.FromXmlReader(
+            xml.CreateReader(),
+            new ProjectOptions
             {
-                FilePath = csprojFilePath,
-                RestoreMetadata = new ProjectRestoreMetadata
-                {
-                    ProjectPath = csprojFilePath,
-                    ProjectName = Path.GetFileNameWithoutExtension(csprojFilePath),
-                    ProjectUniqueName = csprojFilePath,
-                    ProjectStyle = ProjectStyle.PackageReference,
-                    OutputPath = Path.Combine(Path.GetDirectoryName(csprojFilePath), "obj"),
-                    OriginalTargetFrameworks = new List<string> { "net8.0" },
-                    TargetFrameworks = new List<ProjectRestoreMetadataFrameworkInfo>
-                    {
-                        new() { FrameworkName = new NuGetFramework(".NETCoreApp,Version=v8.0") },
-                    },
-                },
-            };
+                GlobalProperties = new Dictionary<string, string> { ["DesignTimeBuild"] = "true" },
+                ToolsVersion = null,
+                SubToolsetVersion = null,
+                ProjectCollection = projectCollection,
+                LoadSettings = ProjectLoadSettings.Default,
+                EvaluationContext = null,
+                DirectoryCacheFactory = null,
+                Interactive = false,
+            }
+        );
 
-            var t=projectSpec.TargetFrameworks;
+        Directory.SetCurrentDirectory(originalDir);
 
-            dependencies = projectSpec.Dependencies;
-        }
-        catch (Exception ex)
+        foreach (var item in project.GetItems("PackageReference"))
         {
-            logger.LogError(ex, "Error parsing csproj file {path}", csprojFilePath);
+            if (item.IsImported)
+            {
+                continue;
+            }
+
+            var packageId = item.EvaluatedInclude;
+
+            VersionRange? version = null;
+            if (item.GetMetadataValue("Version") is { } versionValue && !string.IsNullOrEmpty(versionValue))
+            {
+                version = new VersionRange(new NuGetVersion(versionValue));
+            }
+
+            yield return new NugetDependency(nugetFile, new NugetPackageReference(packageId, version));
         }
 
-        if (dependencies is null)
+        foreach (var import in project.Imports)
         {
-            logger.LogWarning("Error parsing csproj dependencies {path}", csprojFilePath);
+            var importedPath = import.ImportedProject.FullPath;
+            if (!filesystem.Exists(importedPath))
+            {
+                logger.LogError("imported file not found at {path}", importedPath);
 
-            yield break;
-        }
+                continue;
+            }
 
-        // Extract PackageReferences
-        foreach (var packageDependency in dependencies)
-        {
-            yield return new NugetDependency(
-                nugetFile,
-                new NugetPackageReference(
-                    packageDependency.Name, packageDependency.LibraryRange.VersionRange
-                )
-            );
+            foreach (var nugetDependency in Parse(new NugetFile(importedPath, ENugetFileType.Targets)))
+            {
+                yield return nugetDependency;
+            }
         }
     }
 }

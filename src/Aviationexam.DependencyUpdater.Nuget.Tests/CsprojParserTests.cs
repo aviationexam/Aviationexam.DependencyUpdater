@@ -11,17 +11,18 @@ public class CsprojParserTests
     [Fact]
     public void ParseWorks()
     {
-        var directoryPath = "/opt/asp.net/repository";
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider();
 
         var fileSystem = Substitute.For<IFileSystem>();
         var logger = Substitute.For<ILogger<CsprojParser>>();
 
+        Directory.CreateDirectory(temporaryDirectoryProvider.GetPath("project"));
         fileSystem
-            .Exists($"{directoryPath}/project/Project.csproj")
+            .Exists(temporaryDirectoryProvider.GetPath("project/Project.csproj"))
             .Returns(true);
 
         fileSystem
-            .Exists($"{directoryPath}/WarningConfiguration.targets")
+            .Exists(temporaryDirectoryProvider.GetPath("WarningConfiguration.targets"))
             .Returns(true);
 
         using var projectFileStream =
@@ -44,7 +45,7 @@ public class CsprojParserTests
                 """.AsStream();
 
         fileSystem
-            .FileOpen($"{directoryPath}/project/Project.csproj", FileMode.Open, FileAccess.Read, FileShare.Read)
+            .FileOpen(temporaryDirectoryProvider.GetPath("project/Project.csproj"), FileMode.Open, FileAccess.Read, FileShare.Read)
             .Returns(projectFileStream);
 
         using var warningConfigurationStream =
@@ -60,10 +61,10 @@ public class CsprojParserTests
                   </ItemGroup>
 
                 </Project>
-                """.AsStream();
+                """.AsStream(temporaryDirectoryProvider.GetPath("WarningConfiguration.targets"));
 
         fileSystem
-            .FileOpen($"{directoryPath}/WarningConfiguration.targets", FileMode.Open, FileAccess.Read, FileShare.Read)
+            .FileOpen(temporaryDirectoryProvider.GetPath("WarningConfiguration.targets"), FileMode.Open, FileAccess.Read, FileShare.Read)
             .Returns(warningConfigurationStream);
 
         var csprojParser = new CsprojParser(
@@ -71,8 +72,8 @@ public class CsprojParserTests
             logger
         );
 
-        var nugetFile = new NugetFile($"{directoryPath}/project/Project.csproj", ENugetFileType.Csproj);
-        var warningConfigurationFile = new NugetFile($"{directoryPath}/WarningConfiguration.targets", ENugetFileType.Targets);
+        var nugetFile = new NugetFile(temporaryDirectoryProvider.GetPath("project/Project.csproj"), ENugetFileType.Csproj);
+        var warningConfigurationFile = new NugetFile(temporaryDirectoryProvider.GetPath("WarningConfiguration.targets"), ENugetFileType.Targets);
         var response = csprojParser.Parse(nugetFile);
 
         Assert.Equal([
@@ -82,6 +83,7 @@ public class CsprojParserTests
         ], response);
     }
 
+    [Fact]
     public void ParseFails()
     {
         var directoryPath = "/opt/asp.net/repository";

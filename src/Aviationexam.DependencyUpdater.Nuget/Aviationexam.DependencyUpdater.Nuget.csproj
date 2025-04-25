@@ -9,8 +9,9 @@
   <Import Project="..\WarningConfiguration.targets" />
 
   <ItemGroup>
-    <PackageReference Include="NuGet.ProjectModel" />
+    <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="NuGet.ProjectModel" />
   </ItemGroup>
 
   <ItemGroup>

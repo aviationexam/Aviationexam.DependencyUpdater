@@ -5,6 +5,14 @@ namespace Aviationexam.DependencyUpdater.Nuget.Tests;
 public static class StreamExtensions
 {
     public static Stream AsStream(
-        this string value
-        ) => new MemoryStream(System.Text.Encoding.UTF8.GetBytes(value));
+        this string content, string? fileName = null
+    )
+    {
+        if (fileName is not null)
+        {
+            File.WriteAllText(fileName, content);
+        }
+
+        return new MemoryStream(System.Text.Encoding.UTF8.GetBytes(content));
+    }
 }
