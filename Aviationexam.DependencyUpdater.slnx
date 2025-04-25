@@ -8,6 +8,10 @@
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
   </Folder>
+  <Project Path="src\Aviationexam.DependencyUpdater.Constants\Aviationexam.DependencyUpdater.Constants.csproj" Type="Classic C#" />
+  <Project Path="src\Aviationexam.DependencyUpdater.DefaultImplementations\Aviationexam.DependencyUpdater.DefaultImplementations.csproj" Type="Classic C#" />
+  <Project Path="src\Aviationexam.DependencyUpdater.Interfaces\Aviationexam.DependencyUpdater.Interfaces.csproj" Type="Classic C#" />
+  <Project Path="src\Aviationexam.DependencyUpdater.Nuget.Tests\Aviationexam.DependencyUpdater.Nuget.Tests.csproj" Type="Classic C#" />
   <Project Path="src\Aviationexam.DependencyUpdater.Nuget\Aviationexam.DependencyUpdater.Nuget.csproj" Type="Classic C#" />
   <Project Path="src\Aviationexam.DependencyUpdater\Aviationexam.DependencyUpdater.csproj" Type="Classic C#" />
 </Solution>

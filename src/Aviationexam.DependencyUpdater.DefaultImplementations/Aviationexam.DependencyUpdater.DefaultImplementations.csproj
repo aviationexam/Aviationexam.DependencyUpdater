@@ -6,13 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <Import Project="..\WarningConfiguration.targets" />
-
-  <ItemGroup>
-    <PackageReference Include="NuGet.ProjectModel" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.Interfaces\Aviationexam.DependencyUpdater.Interfaces.csproj" />
   </ItemGroup>
