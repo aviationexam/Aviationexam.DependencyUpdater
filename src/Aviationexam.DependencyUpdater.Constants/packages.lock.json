@@ -4,15 +4,15 @@
     "net9.0": {
       "Meziantou.Analyzer": {
         "type": "Direct",
-        "requested": "[2.0.195, )",
-        "resolved": "2.0.195",
-        "contentHash": "rQJ/FWl4vBd79QtNXkjg4lKcSu4a/jGNuikUNH5iTqfnsdA1qv3nDrCX51T3i7DP5L6f9UoN4NoQMuezmEQeWQ=="
+        "requested": "[2.0.199, )",
+        "resolved": "2.0.199",
+        "contentHash": "y8oRrTLDBw1b10pWci/PnFoahdIMflNSlVheL9kzUylAASnoJPFyvuyaNXcrbOTNOEk1aMLFRr1mSX/xvYR15g=="
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[9.0.4, )",
-        "resolved": "9.0.4",
-        "contentHash": "xUdlUxiFwXhTYhB4VxKg/IA0+jlZXJPo70LYuMryWbJHdonIpZjw+7DO2B0pWwpXIOs6MlH5WVXPEtfrGEcVZA=="
+        "requested": "[9.0.0, )",
+        "resolved": "9.0.0",
+        "contentHash": "zAwp213evC3UkimtVXRb+Dlgc/40QG145nmZDtp2LO9zJJMfrp+i/87BnXN7tRXEA4liyzdFkjqG1HE8/RPb4A=="
       }
     },
     "net9.0/linux-x64": {},

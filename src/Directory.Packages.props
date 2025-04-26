@@ -4,7 +4,7 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Meziantou.Analyzer" Version="2.0.195" />
+    <PackageVersion Include="Meziantou.Analyzer" Version="2.0.199" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.4" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.4" />
     <PackageVersion Include="NuGet.ProjectModel" Version="6.13.2" />
