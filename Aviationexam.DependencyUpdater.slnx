@@ -15,6 +15,7 @@
     <File Path=".github\workflows\pr-build.yml" />
     <File Path=".github\workflows\release.yml" />
   </Folder>
+  <Project Path="src\Aviationexam.DependencyUpdater.ConfigurationParser\Aviationexam.DependencyUpdater.ConfigurationParser.csproj" Type="Classic C#" />
   <Project Path="src\Aviationexam.DependencyUpdater.Constants\Aviationexam.DependencyUpdater.Constants.csproj" Type="Classic C#" />
   <Project Path="src\Aviationexam.DependencyUpdater.DefaultImplementations\Aviationexam.DependencyUpdater.DefaultImplementations.csproj" Type="Classic C#" />
   <Project Path="src\Aviationexam.DependencyUpdater.Interfaces\Aviationexam.DependencyUpdater.Interfaces.csproj" Type="Classic C#" />
