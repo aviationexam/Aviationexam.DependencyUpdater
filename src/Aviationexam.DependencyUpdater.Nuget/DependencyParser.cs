@@ -17,6 +17,7 @@ public sealed class DependencyParser(
         {
             ENugetFileType.Csproj => csprojParser.Parse(nugetFile),
             ENugetFileType.DirectoryPackagesProps => directoryPackagesPropsParser.Parse(nugetFile),
+            ENugetFileType.NugetConfig => [],
             _ => throw new ArgumentOutOfRangeException(nameof(nugetFile.Type), nugetFile.Type, null),
         })
     );
