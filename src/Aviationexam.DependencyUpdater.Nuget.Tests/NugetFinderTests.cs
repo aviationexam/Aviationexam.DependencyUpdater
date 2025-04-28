@@ -21,6 +21,10 @@ public class NugetFinderTests
             .EnumerateFiles(directoryPath, "*.csproj", SearchOption.AllDirectories)
             .Returns([$"{directoryPath}/project/Project.csproj", $"{directoryPath}/project2/Project2.csproj"]);
 
+        fileSystem
+            .EnumerateFiles(directoryPath, "*.config", SearchOption.AllDirectories)
+            .Returns([$"{directoryPath}/nuget.config"]);
+
         var nugetFinder = new NugetFinder(fileSystem);
 
         var response = nugetFinder.GetAllNugetFiles(directoryPath);
@@ -29,6 +33,7 @@ public class NugetFinderTests
             new NugetFile($"{directoryPath}/Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
             new NugetFile($"{directoryPath}/project/Project.csproj", ENugetFileType.Csproj),
             new NugetFile($"{directoryPath}/project2/Project2.csproj", ENugetFileType.Csproj),
+            new NugetFile($"{directoryPath}/nuget.config", ENugetFileType.NugetConfig),
         ], response);
     }
 }

@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,8 @@ public sealed class NugetFinder(
     public IEnumerable<NugetFile> GetAllNugetFiles(
         string directoryPath
     ) => GetDirectoryPackagesPropsFiles(directoryPath)
-        .Concat(GetAllCsprojFiles(directoryPath));
+        .Concat(GetAllCsprojFiles(directoryPath))
+        .Concat(GetNugetConfig(directoryPath));
 
     public IEnumerable<NugetFile> GetDirectoryPackagesPropsFiles(
         string directoryPath
@@ -31,6 +33,21 @@ public sealed class NugetFinder(
         foreach (var file in filesystem.EnumerateFiles(directoryPath, "*.csproj", SearchOption.AllDirectories))
         {
             yield return new NugetFile(file, ENugetFileType.Csproj);
+        }
+    }
+
+    public IEnumerable<NugetFile> GetNugetConfig(
+        string directoryPath
+    )
+    {
+        foreach (var file in filesystem.EnumerateFiles(directoryPath, "*.config", SearchOption.AllDirectories))
+        {
+            var fileName = Path.GetFileName(file);
+
+            if (string.Equals(fileName, "nuget.config", StringComparison.OrdinalIgnoreCase))
+            {
+                yield return new NugetFile(file, ENugetFileType.NugetConfig);
+            }
         }
     }
 }
