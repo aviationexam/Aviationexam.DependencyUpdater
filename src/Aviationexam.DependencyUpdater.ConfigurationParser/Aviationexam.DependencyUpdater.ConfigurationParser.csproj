@@ -4,8 +4,33 @@
     <TargetFramework>net9.0</TargetFramework>
     <LangVersion>13</LangVersion>
     <Nullable>enable</Nullable>
+    <ImplicitUsings>true</ImplicitUsings>
   </PropertyGroup>
 
   <Import Project="..\WarningConfiguration.targets" />
+  
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);IL2026;IL3050</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Corvus.Json.ExtendedTypes" />
+    <PackageReference Include="Corvus.Json.SourceGenerator" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <DependabotSchemaUrl>https://json.schemastore.org/dependabot-2.0.json</DependabotSchemaUrl>
+    <DependabotSchemaFile>$(MSBuildProjectDirectory)/dependabot-2.0.json</DependabotSchemaFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(DependabotSchemaFile)" />
+  </ItemGroup>
+
+  <Target Name="DownloadDependabotSchema" BeforeTargets="Restore;_GenerateRestoreProjectSpec" Condition=" !Exists('$(DependabotSchemaFile)')">
+    <Message Importance="High" Text="Downloading $(DependabotSchemaUrl) to the $(DependabotSchemaFile)" />
+
+    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(DependabotSchemaUrl) --output $(DependabotSchemaFile)" />
+  </Target>
 
 </Project>
