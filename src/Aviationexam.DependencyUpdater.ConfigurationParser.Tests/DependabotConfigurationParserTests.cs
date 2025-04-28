@@ -82,14 +82,11 @@ public class DependabotConfigurationParserTests
         Assert.Equal(["Microsoft.*", "System.*"], microsoftGroup.Value.Patterns);
         Assert.Equal(["xunit", "xunit.*"], xunitGroup.Value.Patterns);
 
-        var nugetRegistry = Assert.Contains("nuget-feed", response.Value.Registries).AsObject;
+        var nugetRegistry = Assert.Contains("nuget-feed", response.Value.Registries).As<DependabotConfiguration.Registry.Entity>();
         Assert.Equal(3, nugetRegistry.Count);
-        Assert.True(nugetRegistry.TryGetProperty("type", out var registryType));
-        Assert.True(nugetRegistry.TryGetProperty("url", out var registryUrl));
-        Assert.True(nugetRegistry.TryGetProperty("token", out var registryToken));
-        Assert.Equal("nuget-feed", registryType);
-        Assert.Equal("https://pkgs.dev.azure.com/org/orgId/_packaging/nuget-feed/nuget/v3/index.json", registryUrl);
-        Assert.Equal("PAT:${{ DEVOPS_TOKEN }}", registryToken);
+        Assert.Equal(new DependabotConfiguration.Registry.Entity.TypeEntity("nuget-feed"), nugetRegistry.Type);
+        Assert.Equal("https://pkgs.dev.azure.com/org/orgId/_packaging/nuget-feed/nuget/v3/index.json", nugetRegistry.Url);
+        Assert.Equal("PAT:${{ DEVOPS_TOKEN }}", nugetRegistry.Token);
     }
 
     [Fact]
