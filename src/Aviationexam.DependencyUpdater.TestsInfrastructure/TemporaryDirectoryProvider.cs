@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace Aviationexam.DependencyUpdater.Nuget.Tests;
+namespace Aviationexam.DependencyUpdater.TestsInfrastructure;
 
 public sealed class TemporaryDirectoryProvider : IDisposable
 {

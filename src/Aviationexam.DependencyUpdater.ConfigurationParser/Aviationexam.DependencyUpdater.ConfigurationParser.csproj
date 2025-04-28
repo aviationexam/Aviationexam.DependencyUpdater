@@ -16,8 +16,14 @@
   <ItemGroup>
     <PackageReference Include="Corvus.Json.ExtendedTypes" />
     <PackageReference Include="Corvus.Json.SourceGenerator" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="YamlDotNet" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Aviationexam.DependencyUpdater.Interfaces\Aviationexam.DependencyUpdater.Interfaces.csproj" />
+  </ItemGroup>
+  
   <PropertyGroup>
     <DependabotSchemaUrl>https://json.schemastore.org/dependabot-2.0.json</DependabotSchemaUrl>
     <DependabotSchemaFile>$(MSBuildProjectDirectory)/dependabot-2.0.json</DependabotSchemaFile>

@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Aviationexam.DependencyUpdater.Nuget.Tests;
+namespace Aviationexam.DependencyUpdater.TestsInfrastructure;
 
 public static class StreamExtensions
 {
