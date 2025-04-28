@@ -45,6 +45,15 @@
         "resolved": "9.0.4",
         "contentHash": "xUdlUxiFwXhTYhB4VxKg/IA0+jlZXJPo70LYuMryWbJHdonIpZjw+7DO2B0pWwpXIOs6MlH5WVXPEtfrGEcVZA=="
       },
+      "Yaml2JsonNode": {
+        "type": "Direct",
+        "requested": "[2.2.0, )",
+        "resolved": "2.2.0",
+        "contentHash": "+UgsHozdFoFSUlQsff+HmIDl35bnDk28ntcb/XD6uaZ9AMwUxWhjA5Wg8JMmOyKbSoGDJfabini61yKheFpOBg==",
+        "dependencies": {
+          "YamlDotNet": "16.2.0"
+        }
+      },
       "YamlDotNet": {
         "type": "Direct",
         "requested": "[16.3.0, )",

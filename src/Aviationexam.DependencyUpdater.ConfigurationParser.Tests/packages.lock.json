@@ -277,6 +277,7 @@
           "Corvus.Json.ExtendedTypes": "[4.3.3, )",
           "Corvus.Json.SourceGenerator": "[4.3.3, )",
           "Microsoft.Extensions.Logging.Abstractions": "[9.0.4, )",
+          "Yaml2JsonNode": "[2.2.0, )",
           "YamlDotNet": "[16.3.0, )"
         }
       },
@@ -322,6 +323,15 @@
         "requested": "[9.0.4, )",
         "resolved": "9.0.4",
         "contentHash": "pYtmpcO6R3Ef1XilZEHgXP2xBPVORbYEzRP7dl0IAAbN8Dm+kfwio8aCKle97rAWXOExr292MuxWYurIuwN62g=="
+      },
+      "Yaml2JsonNode": {
+        "type": "CentralTransitive",
+        "requested": "[2.2.0, )",
+        "resolved": "2.2.0",
+        "contentHash": "+UgsHozdFoFSUlQsff+HmIDl35bnDk28ntcb/XD6uaZ9AMwUxWhjA5Wg8JMmOyKbSoGDJfabini61yKheFpOBg==",
+        "dependencies": {
+          "YamlDotNet": "16.2.0"
+        }
       },
       "YamlDotNet": {
         "type": "CentralTransitive",

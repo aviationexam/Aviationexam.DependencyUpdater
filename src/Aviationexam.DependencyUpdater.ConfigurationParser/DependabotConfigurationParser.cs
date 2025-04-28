@@ -1,7 +1,8 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using Microsoft.Extensions.Logging;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
+using System.Text.Json;
+using Yaml2JsonNode;
+using YamlDotNet.RepresentationModel;
 
 namespace Aviationexam.DependencyUpdater.ConfigurationParser;
 
@@ -21,11 +22,18 @@ public class DependabotConfigurationParser(
         using var dependabotConfigurationStream = fileSystem.FileOpen(path, FileMode.Open, FileAccess.Read, FileShare.Read);
         using var reader = new StreamReader(dependabotConfigurationStream);
 
-        var deserializer = new DeserializerBuilder()
-            .WithNamingConvention(PascalCaseNamingConvention.Instance)
-            .IgnoreUnmatchedProperties()
-            .Build();
+        var stream = new YamlStream();
+        stream.Load(reader);
 
-        return deserializer.Deserialize<DependabotConfiguration>(reader);
+        var dependabotAsJson = stream.ToJsonNode().SingleOrDefault();
+        if (dependabotAsJson is null)
+        {
+            logger.LogError("Failed to convert YAML to JSON of the {path}.", path);
+            return null;
+        }
+
+        var jsonDocument = JsonDocument.Parse(dependabotAsJson.ToJsonString());
+
+        return DependabotConfiguration.FromJson(jsonDocument.RootElement);
     }
 }

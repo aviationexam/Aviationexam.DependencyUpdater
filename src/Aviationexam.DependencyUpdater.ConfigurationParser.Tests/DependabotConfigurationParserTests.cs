@@ -3,6 +3,7 @@ using Aviationexam.DependencyUpdater.TestsInfrastructure;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace Aviationexam.DependencyUpdater.ConfigurationParser.Tests;
@@ -32,9 +33,7 @@ public class DependabotConfigurationParserTests
                 version: 2
                 updates:
                   - package-ecosystem: "nuget"
-                    directory: "/" # Location of package manifests
-                    schedule:
-                      interval: "daily"
+                    directory: "/"
                     groups:
                       microsoft:
                         patterns:
@@ -46,10 +45,7 @@ public class DependabotConfigurationParserTests
                           - xunit.*
 
                   - package-ecosystem: "github-actions"
-                    directory: "/" # Location of package manifests
-                    schedule:
-                      interval: "daily"
-
+                    directory: "/"
                 """.AsStream();
 
         fileSystem
@@ -64,8 +60,17 @@ public class DependabotConfigurationParserTests
         var response = dependabotConfigurationParser.Parse(temporaryDirectoryProvider.GetPath("dependabot.yml"));
 
         Assert.NotNull(response);
-    }
+        var nugetUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("nuget"));
+        var githubActionsUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("github-actions"));
+        Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), nugetUpdate.DirectoryValue);
+        Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), githubActionsUpdate.DirectoryValue);
+        var groups = nugetUpdate.Groups;
+        var microsoftGroup = Assert.Single(groups, x => x.Key == "microsoft");
+        var xunitGroup = Assert.Single(groups, x => x.Key == "xunit");
 
+        Assert.Equal(["Microsoft.*", "System.*"], microsoftGroup.Value.Patterns);
+        Assert.Equal(["xunit", "xunit.*"], xunitGroup.Value.Patterns);
+    }
 
     [Fact]
     public void ParseFails()

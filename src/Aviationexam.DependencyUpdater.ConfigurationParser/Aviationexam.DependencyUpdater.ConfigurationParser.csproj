@@ -17,6 +17,7 @@
     <PackageReference Include="Corvus.Json.ExtendedTypes" />
     <PackageReference Include="Corvus.Json.SourceGenerator" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Yaml2JsonNode" />
     <PackageReference Include="YamlDotNet" />
   </ItemGroup>
 
