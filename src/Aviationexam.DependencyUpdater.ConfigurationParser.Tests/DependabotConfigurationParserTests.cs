@@ -3,7 +3,6 @@ using Aviationexam.DependencyUpdater.TestsInfrastructure;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using System.IO;
-using System.Linq;
 using Xunit;
 
 namespace Aviationexam.DependencyUpdater.ConfigurationParser.Tests;
@@ -31,6 +30,15 @@ public class DependabotConfigurationParserTests
                 # https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
                 version: 2
+
+                enable-beta-ecosystems: true
+
+                registries:
+                  nuget-feed:
+                    type: nuget-feed
+                    url: https://pkgs.dev.azure.com/org/orgId/_packaging/nuget-feed/nuget/v3/index.json
+                    token: PAT:${{ DEVOPS_TOKEN }}
+
                 updates:
                   - package-ecosystem: "nuget"
                     directory: "/"
@@ -60,6 +68,9 @@ public class DependabotConfigurationParserTests
         var response = dependabotConfigurationParser.Parse(temporaryDirectoryProvider.GetPath("dependabot.yml"));
 
         Assert.NotNull(response);
+
+        Assert.Equal(true, response.Value.EnableBetaEcosystems.GetBoolean());
+
         var nugetUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("nuget"));
         var githubActionsUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("github-actions"));
         Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), nugetUpdate.DirectoryValue);
@@ -70,6 +81,15 @@ public class DependabotConfigurationParserTests
 
         Assert.Equal(["Microsoft.*", "System.*"], microsoftGroup.Value.Patterns);
         Assert.Equal(["xunit", "xunit.*"], xunitGroup.Value.Patterns);
+
+        var nugetRegistry = Assert.Contains("nuget-feed", response.Value.Registries).AsObject;
+        Assert.Equal(3, nugetRegistry.Count);
+        Assert.True(nugetRegistry.TryGetProperty("type", out var registryType));
+        Assert.True(nugetRegistry.TryGetProperty("url", out var registryUrl));
+        Assert.True(nugetRegistry.TryGetProperty("token", out var registryToken));
+        Assert.Equal("nuget-feed", registryType);
+        Assert.Equal("https://pkgs.dev.azure.com/org/orgId/_packaging/nuget-feed/nuget/v3/index.json", registryUrl);
+        Assert.Equal("PAT:${{ DEVOPS_TOKEN }}", registryToken);
     }
 
     [Fact]
