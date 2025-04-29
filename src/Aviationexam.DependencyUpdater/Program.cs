@@ -1,5 +1,5 @@
+using Aviationexam.DependencyUpdater.ConfigurationParser;
 using Aviationexam.DependencyUpdater.DefaultImplementations;
-using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,21 +18,28 @@ HostApplicationBuilderSettings settings = new()
 var builder = Host.CreateEmptyApplicationBuilder(settings);
 
 builder.Services.AddLogging(x => x.AddConsole());
-builder.Services.AddScoped<NugetFinder>();
-builder.Services.AddScoped<NugetConfigParser>();
-builder.Services.AddScoped<CsprojParser>();
-builder.Services.AddScoped<DirectoryPackagesPropsParser>();
-builder.Services.AddScoped<NugetUpdater>();
-builder.Services.AddScoped<IFileSystem, FileSystem>();
+
+builder.Services.AddConfigurationParser();
+builder.Services.AddNuget();
+builder.Services.AddDefaultImplementations();
 
 using var host = builder.Build();
 
 var nugetUpdater = host.Services.GetRequiredService<NugetUpdater>();
+var nugetVersionFetcherFactory = host.Services.GetRequiredService<NugetVersionFetcherFactory>();
 var logger = host.Services.GetRequiredService<ILogger<NugetUpdater>>();
 
+var directoryPath = "/opt/asp.net/AviationexamWebV3/Src-V3";
 var nugetUpdaterContext = nugetUpdater.CreateContext(
-    directoryPath: "/opt/asp.net/AviationexamWebV3/Src-V3"
+    directoryPath
 );
 
-var a = nugetUpdaterContext.MapSourceToDependency(logger).ToList();
-var b = a;
+var sourceRepositories = nugetUpdaterContext.NugetConfigurations.ToDictionary(
+    x => x,
+    nugetVersionFetcherFactory.CreateSourceRepository
+);
+
+var dependencies = nugetUpdaterContext.MapSourceToDependency(logger);
+foreach (var (dependency, sources) in dependencies)
+{
+}
