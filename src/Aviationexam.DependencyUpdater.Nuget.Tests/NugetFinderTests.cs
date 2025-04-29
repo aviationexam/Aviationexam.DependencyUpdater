@@ -36,4 +36,63 @@ public class NugetFinderTests
             new NugetFile($"{directoryPath}/nuget.config", ENugetFileType.NugetConfig),
         ], response);
     }
+
+    [Fact]
+    public void GetDirectoryPackagesPropsFilesWorks()
+    {
+        var directoryPath = "/opt/asp.net/repository";
+
+        var fileSystem = Substitute.For<IFileSystem>();
+        fileSystem
+            .EnumerateFiles(directoryPath, "Directory.Packages.props", SearchOption.AllDirectories)
+            .Returns([$"{directoryPath}/Directory.Packages.props"]);
+
+        var nugetFinder = new NugetFinder(fileSystem);
+
+        var response = nugetFinder.GetDirectoryPackagesPropsFiles(directoryPath);
+
+        Assert.Equal([
+            new NugetFile($"{directoryPath}/Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
+        ], response);
+    }
+
+    [Fact]
+    public void GetAllCsprojFilesWorks()
+    {
+        var directoryPath = "/opt/asp.net/repository";
+
+        var fileSystem = Substitute.For<IFileSystem>();
+
+        fileSystem
+            .EnumerateFiles(directoryPath, "*.csproj", SearchOption.AllDirectories)
+            .Returns([$"{directoryPath}/project/Project.csproj", $"{directoryPath}/project2/Project2.csproj"]);
+
+        var nugetFinder = new NugetFinder(fileSystem);
+
+        var response = nugetFinder.GetAllCsprojFiles(directoryPath);
+
+        Assert.Equal([
+            new NugetFile($"{directoryPath}/project/Project.csproj", ENugetFileType.Csproj),
+            new NugetFile($"{directoryPath}/project2/Project2.csproj", ENugetFileType.Csproj),
+        ], response);
+    }
+
+    [Fact]
+    public void GetNugetConfigWorks()
+    {
+        var directoryPath = "/opt/asp.net/repository";
+
+        var fileSystem = Substitute.For<IFileSystem>();
+        fileSystem
+            .EnumerateFiles(directoryPath, "*.config", SearchOption.AllDirectories)
+            .Returns([$"{directoryPath}/nuget.config"]);
+
+        var nugetFinder = new NugetFinder(fileSystem);
+
+        var response = nugetFinder.GetNugetConfig(directoryPath);
+
+        Assert.Equal([
+            new NugetFile($"{directoryPath}/nuget.config", ENugetFileType.NugetConfig),
+        ], response);
+    }
 }
