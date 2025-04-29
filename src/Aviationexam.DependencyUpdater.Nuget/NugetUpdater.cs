@@ -24,7 +24,6 @@ public sealed class NugetUpdater(
             )
             .ToList();
 
-
         return new NugetUpdaterContext(
             nugetConfigurations,
             dependencies
