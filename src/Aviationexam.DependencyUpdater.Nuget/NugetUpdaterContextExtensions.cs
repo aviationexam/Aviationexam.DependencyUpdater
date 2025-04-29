@@ -7,6 +7,9 @@ namespace Aviationexam.DependencyUpdater.Nuget;
 
 public static class NugetUpdaterContextExtensions
 {
+    private const string DefaultNugetSourceKey = "nuget.org";
+    private const string DefaultNugetSourceUrl = "https://api.nuget.org/v3/index.json";
+
     public static IEnumerable<KeyValuePair<NugetDependency, IReadOnlyCollection<NugetSource>>> MapSourceToDependency(
         this NugetUpdaterContext context,
         ILogger logger
@@ -37,7 +40,7 @@ public static class NugetUpdaterContextExtensions
             foreach (var dependency in context.Dependencies)
             {
                 yield return KeyValuePair.Create<NugetDependency, IReadOnlyCollection<NugetSource>>(dependency, [
-                    new NugetSource("nuget.org", "https://api.nuget.org/v3/index.json", NugetSourceVersion.V3, []),
+                    new NugetSource(DefaultNugetSourceKey, DefaultNugetSourceUrl, NugetSourceVersion.V3, []),
                 ]);
             }
 
