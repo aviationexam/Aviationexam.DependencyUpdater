@@ -267,12 +267,19 @@
           "xunit.v3.runner.common": "[2.0.1]"
         }
       },
+      "aviationexam.dependencyupdater.common": {
+        "type": "Project",
+        "dependencies": {
+          "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )"
+        }
+      },
       "aviationexam.dependencyupdater.interfaces": {
         "type": "Project"
       },
       "aviationexam.dependencyupdater.nuget": {
         "type": "Project",
         "dependencies": {
+          "Aviationexam.DependencyUpdater.Common": "[1.0.0, )",
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[9.0.4, )",
           "NuGet.ProjectModel": "[6.13.2, )"
