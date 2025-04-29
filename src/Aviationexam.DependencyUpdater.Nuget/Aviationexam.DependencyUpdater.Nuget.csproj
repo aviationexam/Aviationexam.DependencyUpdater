@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Aviationexam.DependencyUpdater.Common\Aviationexam.DependencyUpdater.Common.csproj" />
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.Interfaces\Aviationexam.DependencyUpdater.Interfaces.csproj" />
   </ItemGroup>
 
