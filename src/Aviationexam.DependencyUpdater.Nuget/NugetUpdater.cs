@@ -11,7 +11,7 @@ public sealed class NugetUpdater(
 {
     public NugetUpdaterContext CreateContext(string directoryPath)
     {
-        var nugetConfigurations = nugetFinder.GetAllNugetFiles(directoryPath)
+        var nugetConfigurations = nugetFinder.GetNugetConfig(directoryPath)
             .SelectMany(nugetConfigParser.Parse)
             .ToList();
 
