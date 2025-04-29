@@ -23,10 +23,9 @@
     <PackageReference Include="NSubstitute.Analyzers.CSharp" />
     <PackageReference Include="xunit.v3" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <ProjectReference Include="..\Aviationexam.DependencyUpdater.ConfigurationParser\Aviationexam.DependencyUpdater.ConfigurationParser.csproj" />
-    <ProjectReference Include="..\Aviationexam.DependencyUpdater.TestsInfrastructure\Aviationexam.DependencyUpdater.TestsInfrastructure.csproj" />
+    <ProjectReference Include="..\Aviationexam.DependencyUpdater.Common\Aviationexam.DependencyUpdater.Common.csproj" />
   </ItemGroup>
 
 </Project>
