@@ -8,5 +8,6 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services
     ) => services
         .AddScoped<ConfigurationFinder>()
-        .AddScoped<DependabotConfigurationParser>();
+        .AddScoped<DependabotConfigurationParser>()
+        .AddScoped<DependabotConfigurationLoader>();
 }
