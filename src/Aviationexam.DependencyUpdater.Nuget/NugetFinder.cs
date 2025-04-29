@@ -10,6 +10,16 @@ public sealed class NugetFinder(
     IFileSystem filesystem
 )
 {
+    internal static EnumerationOptions EnumerateFilesOptions { get; } = new()
+    {
+        RecurseSubdirectories = true,
+        MatchType = MatchType.Simple,
+        AttributesToSkip = FileAttributes.None,
+        IgnoreInaccessible = false,
+        MatchCasing = MatchCasing.CaseInsensitive,
+    };
+
+
     public IEnumerable<NugetFile> GetAllNugetFiles(
         string directoryPath
     ) => GetDirectoryPackagesPropsFiles(directoryPath)
@@ -20,7 +30,8 @@ public sealed class NugetFinder(
         string directoryPath
     )
     {
-        foreach (var file in filesystem.EnumerateFiles(directoryPath, "Directory.Packages.props", SearchOption.AllDirectories))
+        foreach (
+            var file in filesystem.EnumerateFiles(directoryPath, "Directory.Packages.props", EnumerateFilesOptions))
         {
             yield return new NugetFile(file, ENugetFileType.DirectoryPackagesProps);
         }
@@ -30,7 +41,7 @@ public sealed class NugetFinder(
         string directoryPath
     )
     {
-        foreach (var file in filesystem.EnumerateFiles(directoryPath, "*.csproj", SearchOption.AllDirectories))
+        foreach (var file in filesystem.EnumerateFiles(directoryPath, "*.csproj", EnumerateFilesOptions))
         {
             yield return new NugetFile(file, ENugetFileType.Csproj);
         }
@@ -40,7 +51,7 @@ public sealed class NugetFinder(
         string directoryPath
     )
     {
-        foreach (var file in filesystem.EnumerateFiles(directoryPath, "*.config", SearchOption.AllDirectories))
+        foreach (var file in filesystem.EnumerateFiles(directoryPath, "Nuget.Config", EnumerateFilesOptions))
         {
             var fileName = Path.GetFileName(file);
 

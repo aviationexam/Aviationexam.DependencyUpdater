@@ -7,8 +7,8 @@ namespace Aviationexam.DependencyUpdater.DefaultImplementations;
 public class FileSystem : IFileSystem
 {
     public IEnumerable<string> EnumerateFiles(
-        string path, string searchPattern, SearchOption searchOption
-    ) => Directory.EnumerateFiles(path, searchPattern, searchOption);
+        string path, string searchPattern, EnumerationOptions enumerationOptions
+    ) => Directory.EnumerateFiles(path, searchPattern, enumerationOptions);
 
     public bool Exists(string path) => File.Exists(path);
 

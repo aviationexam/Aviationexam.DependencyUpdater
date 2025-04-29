@@ -14,15 +14,15 @@ public class NugetFinderTests
 
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem
-            .EnumerateFiles(directoryPath, "Directory.Packages.props", SearchOption.AllDirectories)
+            .EnumerateFiles(directoryPath, "Directory.Packages.props", NugetFinder.EnumerateFilesOptions)
             .Returns([$"{directoryPath}/Directory.Packages.props"]);
 
         fileSystem
-            .EnumerateFiles(directoryPath, "*.csproj", SearchOption.AllDirectories)
+            .EnumerateFiles(directoryPath, "*.csproj", NugetFinder.EnumerateFilesOptions)
             .Returns([$"{directoryPath}/project/Project.csproj", $"{directoryPath}/project2/Project2.csproj"]);
 
         fileSystem
-            .EnumerateFiles(directoryPath, "*.config", SearchOption.AllDirectories)
+            .EnumerateFiles(directoryPath, "*.config", NugetFinder.EnumerateFilesOptions)
             .Returns([$"{directoryPath}/nuget.config"]);
 
         var nugetFinder = new NugetFinder(fileSystem);
@@ -44,7 +44,7 @@ public class NugetFinderTests
 
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem
-            .EnumerateFiles(directoryPath, "Directory.Packages.props", SearchOption.AllDirectories)
+            .EnumerateFiles(directoryPath, "Directory.Packages.props", NugetFinder.EnumerateFilesOptions)
             .Returns([$"{directoryPath}/Directory.Packages.props"]);
 
         var nugetFinder = new NugetFinder(fileSystem);
@@ -64,7 +64,7 @@ public class NugetFinderTests
         var fileSystem = Substitute.For<IFileSystem>();
 
         fileSystem
-            .EnumerateFiles(directoryPath, "*.csproj", SearchOption.AllDirectories)
+            .EnumerateFiles(directoryPath, "*.csproj", NugetFinder.EnumerateFilesOptions)
             .Returns([$"{directoryPath}/project/Project.csproj", $"{directoryPath}/project2/Project2.csproj"]);
 
         var nugetFinder = new NugetFinder(fileSystem);
@@ -84,7 +84,7 @@ public class NugetFinderTests
 
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem
-            .EnumerateFiles(directoryPath, "*.config", SearchOption.AllDirectories)
+            .EnumerateFiles(directoryPath, "*.config", NugetFinder.EnumerateFilesOptions)
             .Returns([$"{directoryPath}/nuget.config"]);
 
         var nugetFinder = new NugetFinder(fileSystem);
