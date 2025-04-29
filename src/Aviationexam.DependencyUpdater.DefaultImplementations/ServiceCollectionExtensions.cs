@@ -11,6 +11,7 @@ public static class ServiceCollectionExtensions
     )
     {
         services.TryAddScoped<IFileSystem, FileSystem>();
+        services.TryAddScoped<IEnvVariableProvider, EnvVariableProvider>();
 
         return services;
     }
