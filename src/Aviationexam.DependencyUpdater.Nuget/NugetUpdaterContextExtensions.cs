@@ -64,12 +64,7 @@ public static class NugetUpdaterContextExtensions
 
         foreach (var dependency in context.Dependencies)
         {
-            var packageName = dependency.NugetPackage switch
-            {
-                NugetPackageReference nugetPackageReference => nugetPackageReference.Name,
-                NugetPackageVersion nugetPackageVersion => nugetPackageVersion.Name,
-                _ => throw new ArgumentOutOfRangeException(nameof(dependency.NugetPackage), dependency.NugetPackage, null),
-            };
+            var packageName = dependency.NugetPackage.GetPackageName();
 
             if (explicitMappings.TryGetValue(packageName, out var explicitNugetSource))
             {
