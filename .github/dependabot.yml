@@ -18,6 +18,9 @@ updates:
         patterns:
           - xunit
           - xunit.*
+      corvus:
+        patterns:
+          - Corvus.Json.*
 
   - package-ecosystem: "github-actions"
     directory: "/" # Location of package manifests
