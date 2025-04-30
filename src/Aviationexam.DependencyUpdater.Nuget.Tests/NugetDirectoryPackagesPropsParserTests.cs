@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Tests;
 
-public class DirectoryPackagesPropsParserTests
+public class NugetDirectoryPackagesPropsParserTests
 {
     [Fact]
     public void ParseWorks()
@@ -15,7 +15,7 @@ public class DirectoryPackagesPropsParserTests
         using var temporaryDirectoryProvider = new TemporaryDirectoryProvider();
 
         var fileSystem = Substitute.For<IFileSystem>();
-        var logger = Substitute.For<ILogger<DirectoryPackagesPropsParser>>();
+        var logger = Substitute.For<ILogger<NugetDirectoryPackagesPropsParser>>();
 
         fileSystem
             .Exists(temporaryDirectoryProvider.GetPath("Directory.Packages.props"))
@@ -52,7 +52,7 @@ public class DirectoryPackagesPropsParserTests
             .FileOpen(temporaryDirectoryProvider.GetPath("Directory.Packages.props"), FileMode.Open, FileAccess.Read, FileShare.Read)
             .Returns(directoryPackagesPropsStream);
 
-        var directoryPackagesPropsParser = new DirectoryPackagesPropsParser(
+        var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
             fileSystem,
             logger
         );
@@ -82,13 +82,13 @@ public class DirectoryPackagesPropsParserTests
         var directoryPath = "/opt/asp.net/repository";
 
         var fileSystem = Substitute.For<IFileSystem>();
-        var logger = Substitute.For<ILogger<DirectoryPackagesPropsParser>>();
+        var logger = Substitute.For<ILogger<NugetDirectoryPackagesPropsParser>>();
 
         fileSystem
             .Exists($"{directoryPath}/Directory.Packages.props")
             .Returns(false);
 
-        var directoryPackagesPropsParser = new DirectoryPackagesPropsParser(
+        var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
             fileSystem,
             logger
         );

@@ -8,9 +8,9 @@ using System.Xml.Linq;
 
 namespace Aviationexam.DependencyUpdater.Nuget;
 
-public class CsprojParser(
+public class NugetCsprojParser(
     IFileSystem fileSystem,
-    ILogger<CsprojParser> logger
+    ILogger<NugetCsprojParser> logger
 )
 {
     public IEnumerable<NugetDependency> Parse(NugetFile nugetFile)

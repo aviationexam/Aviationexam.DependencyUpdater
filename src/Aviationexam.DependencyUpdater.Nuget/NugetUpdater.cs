@@ -10,8 +10,8 @@ namespace Aviationexam.DependencyUpdater.Nuget;
 public sealed class NugetUpdater(
     NugetFinder nugetFinder,
     NugetConfigParser nugetConfigParser,
-    DirectoryPackagesPropsParser directoryPackagesPropsParser,
-    CsprojParser csprojParser,
+    NugetDirectoryPackagesPropsParser nugetDirectoryPackagesPropsParser,
+    NugetCsprojParser nugetCsprojParser,
     NugetVersionFetcherFactory nugetVersionFetcherFactory,
     NugetVersionFetcher nugetVersionFetcher,
     ILogger<NugetUpdater> logger
@@ -54,10 +54,10 @@ public sealed class NugetUpdater(
             .ToList();
 
         var dependencies = nugetFinder.GetDirectoryPackagesPropsFiles(directoryPath)
-            .SelectMany(directoryPackagesPropsParser.Parse)
+            .SelectMany(nugetDirectoryPackagesPropsParser.Parse)
             .Concat(
                 nugetFinder.GetAllCsprojFiles(directoryPath)
-                    .SelectMany(csprojParser.Parse)
+                    .SelectMany(nugetCsprojParser.Parse)
                     .Where(x => x.NugetPackage is NugetPackageReference { VersionRange: not null })
             )
             .ToList();

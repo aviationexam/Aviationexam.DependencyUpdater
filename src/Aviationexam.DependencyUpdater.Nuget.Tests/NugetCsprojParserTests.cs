@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Tests;
 
-public class CsprojParserTests
+public class NugetCsprojParserTests
 {
     [Fact]
     public void ParseWorks()
@@ -15,7 +15,7 @@ public class CsprojParserTests
         using var temporaryDirectoryProvider = new TemporaryDirectoryProvider();
 
         var fileSystem = Substitute.For<IFileSystem>();
-        var logger = Substitute.For<ILogger<CsprojParser>>();
+        var logger = Substitute.For<ILogger<NugetCsprojParser>>();
 
         Directory.CreateDirectory(temporaryDirectoryProvider.GetPath("project"));
         fileSystem
@@ -68,7 +68,7 @@ public class CsprojParserTests
             .FileOpen(temporaryDirectoryProvider.GetPath("WarningConfiguration.targets"), FileMode.Open, FileAccess.Read, FileShare.Read)
             .Returns(warningConfigurationStream);
 
-        var csprojParser = new CsprojParser(
+        var csprojParser = new NugetCsprojParser(
             fileSystem,
             logger
         );
@@ -90,13 +90,13 @@ public class CsprojParserTests
         var directoryPath = "/opt/asp.net/repository";
 
         var fileSystem = Substitute.For<IFileSystem>();
-        var logger = Substitute.For<ILogger<CsprojParser>>();
+        var logger = Substitute.For<ILogger<NugetCsprojParser>>();
 
         fileSystem
             .Exists($"{directoryPath}/project/Project.csproj")
             .Returns(false);
 
-        var csprojParser = new CsprojParser(
+        var csprojParser = new NugetCsprojParser(
             fileSystem,
             logger
         );

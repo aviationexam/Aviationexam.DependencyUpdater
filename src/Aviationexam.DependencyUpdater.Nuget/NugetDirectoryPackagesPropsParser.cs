@@ -7,9 +7,9 @@ using System.Xml.Linq;
 
 namespace Aviationexam.DependencyUpdater.Nuget;
 
-public class DirectoryPackagesPropsParser(
+public class NugetDirectoryPackagesPropsParser(
     IFileSystem fileSystem,
-    ILogger<DirectoryPackagesPropsParser> logger
+    ILogger<NugetDirectoryPackagesPropsParser> logger
 )
 {
     public IEnumerable<NugetDependency> Parse(NugetFile nugetFile)

@@ -10,8 +10,8 @@ public static class ServiceCollectionExtensions
     ) => services
         .AddScoped<NugetFinder>()
         .AddScoped<NugetConfigParser>()
-        .AddScoped<CsprojParser>()
-        .AddScoped<DirectoryPackagesPropsParser>()
+        .AddScoped<NugetCsprojParser>()
+        .AddScoped<NugetDirectoryPackagesPropsParser>()
         .AddScoped<NugetUpdater>()
         .AddSingleton<Repository.RepositoryFactory>(_ => Repository.Factory)
         .AddScoped<NuGet.Common.ILogger, NuGetLoggerAdapter>()
