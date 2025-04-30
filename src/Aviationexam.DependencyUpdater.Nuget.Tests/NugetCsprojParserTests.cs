@@ -108,7 +108,7 @@ public class NugetCsprojParserTests
                 <Project Sdk="Microsoft.NET.Sdk">
 
                   <PropertyGroup>
-                    <TargetFrameworks>net8.0;net9.0</TargetFramework>
+                    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
                   </PropertyGroup>
 
                   <ItemGroup>
