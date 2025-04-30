@@ -22,7 +22,7 @@ public class NugetFinderTests
             .Returns([$"{directoryPath}/project/Project.csproj", $"{directoryPath}/project2/Project2.csproj"]);
 
         fileSystem
-            .EnumerateFiles(directoryPath, "*.config", NugetFinder.EnumerateFilesOptions)
+            .EnumerateFiles(directoryPath, "Nuget.Config", NugetFinder.EnumerateFilesOptions)
             .Returns([$"{directoryPath}/nuget.config"]);
 
         var nugetFinder = new NugetFinder(fileSystem);
@@ -84,7 +84,7 @@ public class NugetFinderTests
 
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem
-            .EnumerateFiles(directoryPath, "*.config", NugetFinder.EnumerateFilesOptions)
+            .EnumerateFiles(directoryPath, "Nuget.Config", NugetFinder.EnumerateFilesOptions)
             .Returns([$"{directoryPath}/nuget.config"]);
 
         var nugetFinder = new NugetFinder(fileSystem);
