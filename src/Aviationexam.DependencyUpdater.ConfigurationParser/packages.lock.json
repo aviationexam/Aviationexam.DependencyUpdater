@@ -17,9 +17,9 @@
       },
       "Corvus.Json.SourceGenerator": {
         "type": "Direct",
-        "requested": "[4.3.3, )",
-        "resolved": "4.3.3",
-        "contentHash": "x/lnBIA5V+chL+OKPE5OvRc2S9AMeGuDsJFics7FlUTx6o4Wl1LPD53i9JTwYaR4W5i6hsQ0vUL1yQrvgHvjMg==",
+        "requested": "[4.3.4, )",
+        "resolved": "4.3.4",
+        "contentHash": "fsbH1Puc37olSkkEO8PzH7g+f1JLNSpCa9VidVSSlcNz+g7Y1u4l4l4+fyG+FyIcChVQO9tKpM/n3jlxaI+2lg==",
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp": "4.11.0"
         }
