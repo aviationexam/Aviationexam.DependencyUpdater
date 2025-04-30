@@ -179,11 +179,18 @@
       "aviationexam.dependencyupdater.common": {
         "type": "Project",
         "dependencies": {
-          "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )"
+          "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.4, )"
         }
       },
       "aviationexam.dependencyupdater.interfaces": {
         "type": "Project"
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions": {
+        "type": "CentralTransitive",
+        "requested": "[9.0.4, )",
+        "resolved": "9.0.4",
+        "contentHash": "UI0TQPVkS78bFdjkTodmkH0Fe8lXv9LnhGFKgKrsgUJ5a5FVdFRcgjIkBVLbGgdRhxWirxH/8IXUtEyYJx6GQg=="
       }
     },
     "net9.0/linux-x64": {

@@ -132,7 +132,8 @@
       "aviationexam.dependencyupdater.common": {
         "type": "Project",
         "dependencies": {
-          "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )"
+          "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.4, )"
         }
       },
       "aviationexam.dependencyupdater.interfaces": {
