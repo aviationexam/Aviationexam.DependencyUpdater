@@ -7,7 +7,6 @@ using NuGet.Common;
 namespace Aviationexam.DependencyUpdater.Nuget;
 
 public sealed class NugetVersionFetcher(
-    Repository.RepositoryFactory repositoryFactory,
     ILogger logger
 )
 {
