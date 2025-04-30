@@ -1,3 +1,4 @@
+using Aviationexam.DependencyUpdater.Common;
 using Microsoft.Extensions.Logging;
 using NuGet.Protocol.Core.Types;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ public sealed class NugetUpdater(
         string directoryPath,
         IReadOnlyCollection<NugetFeedAuthentication> nugetFeedAuthentications,
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
+        IReadOnlyCollection<IgnoreEntry> ignoreEntries,
+        IReadOnlyCollection<GroupEntry> groupEntries,
         CancellationToken cancellationToken = default
     )
     {
