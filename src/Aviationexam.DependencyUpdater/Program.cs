@@ -51,7 +51,8 @@ foreach (var dependabotConfiguration in dependabotConfigurations)
     {
         await nugetUpdater.ProcessUpdatesAsync(
             directoryPath: Path.Join(directoryPath, nugetUpdate.DirectoryValue.GetString()),
-            nugetFeedAuthentications
+            nugetFeedAuthentications,
+            nugetUpdate.TargetFramework is { } targetFramework ? [new NugetTargetFramework(targetFramework.TargetFramework)] : []
         );
     }
 }
