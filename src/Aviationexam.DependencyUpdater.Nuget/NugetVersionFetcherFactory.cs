@@ -20,15 +20,15 @@ public sealed class NugetVersionFetcherFactory(
 
         var packageSource = new PackageSource(nugetSource.Source)
         {
-            Credentials = nugetFeedAuthentication is null
-                ? null
-                : new PackageSourceCredential(
+            Credentials = nugetFeedAuthentication is { Username: not null, Password: not null }
+                ? new PackageSourceCredential(
                     nugetSource.Source,
-                    "<username>",
-                    "<personal_access_token>",
+                    nugetFeedAuthentication.Username,
+                    nugetFeedAuthentication.Password,
                     isPasswordClearText: true,
                     validAuthenticationTypesText: null
-                ),
+                )
+                : null,
         };
 
         return nugetSource.Version switch
