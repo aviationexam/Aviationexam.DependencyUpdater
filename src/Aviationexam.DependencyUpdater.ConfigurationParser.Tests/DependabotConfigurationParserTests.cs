@@ -42,6 +42,7 @@ public class DependabotConfigurationParserTests
                 updates:
                   - package-ecosystem: "nuget"
                     directory: "/"
+                    targetFramework: net9.0
                     groups:
                       microsoft:
                         patterns:
@@ -74,6 +75,7 @@ public class DependabotConfigurationParserTests
         var nugetUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("nuget"));
         var githubActionsUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("github-actions"));
         Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), nugetUpdate.DirectoryValue);
+        Assert.Equal(new TargetFrameworkEntity("net9.0"), nugetUpdate.TargetFramework);
         Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), githubActionsUpdate.DirectoryValue);
         var groups = nugetUpdate.Groups;
         var microsoftGroup = Assert.Single(groups, x => x.Key == "microsoft");
