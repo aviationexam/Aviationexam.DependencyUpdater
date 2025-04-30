@@ -365,3 +365,4 @@ ASALocalRun/
 /GeneratedFiles
 
 /assets/private/
+.env.local

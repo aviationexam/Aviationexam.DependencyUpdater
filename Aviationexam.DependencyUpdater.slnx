@@ -8,6 +8,7 @@
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
     <File Path=".github\dependabot.yml" />
+    <File Path=".env.local" />
   </Folder>
   <Folder Name="/Solution Items/workflow/">
     <File Path=".github\workflows\build.yml" />
