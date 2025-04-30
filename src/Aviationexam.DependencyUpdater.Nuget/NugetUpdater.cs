@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using NuGet.Protocol.Core.Types;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -12,6 +13,7 @@ public sealed class NugetUpdater(
     DirectoryPackagesPropsParser directoryPackagesPropsParser,
     CsprojParser csprojParser,
     NugetVersionFetcherFactory nugetVersionFetcherFactory,
+    NugetVersionFetcher nugetVersionFetcher,
     ILogger<NugetUpdater> logger
 )
 {
@@ -25,14 +27,23 @@ public sealed class NugetUpdater(
             directoryPath
         );
 
-        var sourceRepositories = nugetUpdaterContext.NugetConfigurations.ToDictionary(
-            x => x,
-            x => nugetVersionFetcherFactory.CreateSourceRepository(x, nugetFeedAuthentications)
-        );
+        var sourceRepositories = nugetUpdaterContext.NugetConfigurations
+            .GroupBy(x => x.Source)
+            .Select(x => x.First())
+            .ToDictionary(
+                x => x,
+                x => nugetVersionFetcherFactory.CreateSourceRepository(x, nugetFeedAuthentications)
+            );
 
         var dependencies = nugetUpdaterContext.MapSourceToDependency(logger);
         foreach (var (dependency, sources) in dependencies)
         {
+            var versions = await FetchDependencyVersionsAsync(
+                dependency,
+                sources,
+                sourceRepositories,
+                cancellationToken
+            );
         }
     }
 
@@ -55,5 +66,33 @@ public sealed class NugetUpdater(
             nugetConfigurations,
             dependencies
         );
+    }
+
+    private async Task<IReadOnlyCollection<KeyValuePair<NugetSource, IPackageSearchMetadata>>> FetchDependencyVersionsAsync(
+        NugetDependency dependency,
+        IReadOnlyCollection<NugetSource> sources,
+        IReadOnlyDictionary<NugetSource, SourceRepository> sourceRepositories,
+        CancellationToken cancellationToken
+    )
+    {
+        var versions = new List<KeyValuePair<NugetSource, IPackageSearchMetadata>>();
+        var tasks = sources.Select(async nugetSource =>
+        {
+            if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
+            {
+                using var nugetCache = new SourceCacheContext();
+                var packageVersions = await nugetVersionFetcher.FetchPackageVersionsAsync(sourceRepository, dependency, nugetCache, cancellationToken);
+                return packageVersions.Select(x => KeyValuePair.Create(nugetSource, x)).ToList();
+            }
+
+            return [];
+        });
+
+        await foreach (var job in Task.WhenEach(tasks).WithCancellation(cancellationToken))
+        {
+            versions.AddRange(await job);
+        }
+
+        return versions;
     }
 }

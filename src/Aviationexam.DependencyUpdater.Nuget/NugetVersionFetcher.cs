@@ -13,18 +13,17 @@ public sealed class NugetVersionFetcher(
     public async Task<IEnumerable<IPackageSearchMetadata>> FetchPackageVersionsAsync(
         SourceRepository repository,
         NugetDependency nugetDependency,
+        SourceCacheContext nugetCache,
         CancellationToken cancellationToken
     )
     {
-        using var cache = new SourceCacheContext();
-
         var resource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
 
         return await resource.GetMetadataAsync(
             nugetDependency.NugetPackage.GetPackageName(),
             includePrerelease: true,
             includeUnlisted: false,
-            cache,
+            nugetCache,
             logger,
             cancellationToken
         );
