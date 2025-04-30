@@ -49,6 +49,13 @@ public sealed class NugetUpdater(
                 sourceRepositories,
                 cancellationToken
             );
+
+            FutureVersionResolver.ResolveFutureVersion(
+                dependency.NugetPackage.GetPackageName(),
+                dependency.NugetPackage.GetVersion(),
+                versions.Select(NugetMapper.MapToPackageVersion),
+                ignoreEntries
+            );
         }
     }
 

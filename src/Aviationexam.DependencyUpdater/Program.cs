@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater;
+using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.ConfigurationParser;
 using Aviationexam.DependencyUpdater.DefaultImplementations;
 using Aviationexam.DependencyUpdater.Interfaces;
@@ -21,6 +22,7 @@ var builder = Host.CreateEmptyApplicationBuilder(settings);
 
 builder.Services.AddLogging(x => x.AddConsole());
 
+builder.Services.AddCommon();
 builder.Services.AddConfigurationParser();
 builder.Services.AddNuget();
 builder.Services.AddDefaultImplementations();

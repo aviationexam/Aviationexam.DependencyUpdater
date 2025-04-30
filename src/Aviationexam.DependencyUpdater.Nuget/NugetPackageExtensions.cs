@@ -12,4 +12,13 @@ public static class NugetPackageExtensions
         NugetPackageVersion nugetPackageVersion => nugetPackageVersion.Name,
         _ => throw new ArgumentOutOfRangeException(nameof(nugetPackage), nugetPackage, null),
     };
+
+    public static Version? GetVersion(
+        this INugetPackage nugetPackage
+    ) => nugetPackage switch
+    {
+        NugetPackageReference nugetPackageReference => nugetPackageReference.VersionRange?.MinVersion?.Version,
+        NugetPackageVersion nugetPackageVersion => new Version(nugetPackageVersion.Version),
+        _ => throw new ArgumentOutOfRangeException(nameof(nugetPackage), nugetPackage, null),
+    };
 }
