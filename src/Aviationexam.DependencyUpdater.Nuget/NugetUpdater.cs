@@ -20,11 +20,13 @@ public sealed class NugetUpdater(
     public async Task ProcessUpdatesAsync(
         string directoryPath,
         IReadOnlyCollection<NugetFeedAuthentication> nugetFeedAuthentications,
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
         CancellationToken cancellationToken = default
     )
     {
         var nugetUpdaterContext = CreateContext(
-            directoryPath
+            directoryPath,
+            targetFrameworks
         );
 
         var sourceRepositories = nugetUpdaterContext.NugetConfigurations
@@ -47,17 +49,20 @@ public sealed class NugetUpdater(
         }
     }
 
-    public NugetUpdaterContext CreateContext(string directoryPath)
+    public NugetUpdaterContext CreateContext(
+        string directoryPath,
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks
+    )
     {
         var nugetConfigurations = nugetFinder.GetNugetConfig(directoryPath)
             .SelectMany(nugetConfigParser.Parse)
             .ToList();
 
         var dependencies = nugetFinder.GetDirectoryPackagesPropsFiles(directoryPath)
-            .SelectMany(nugetDirectoryPackagesPropsParser.Parse)
+            .SelectMany(x => nugetDirectoryPackagesPropsParser.Parse(x, targetFrameworks))
             .Concat(
                 nugetFinder.GetAllCsprojFiles(directoryPath)
-                    .SelectMany(nugetCsprojParser.Parse)
+                    .SelectMany(x => nugetCsprojParser.Parse(x))
                     .Where(x => x.NugetPackage is NugetPackageReference { VersionRange: not null })
             )
             .ToList();

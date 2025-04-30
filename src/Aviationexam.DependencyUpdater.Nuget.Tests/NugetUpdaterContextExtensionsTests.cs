@@ -20,7 +20,8 @@ public class NugetUpdaterContextExtensionsTests
             [
                 dependency1 = new NugetDependency(
                     new NugetFile("AProject.csproj", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.Logging.Abstractions", new VersionRange(new NuGetVersion("9.0.0")))
+                    new NugetPackageReference("Microsoft.Extensions.Logging.Abstractions", new VersionRange(new NuGetVersion("9.0.0"))),
+                    []
                 ),
             ]
         );
@@ -48,7 +49,8 @@ public class NugetUpdaterContextExtensionsTests
             [
                 dependency1 = new NugetDependency(
                     new NugetFile("AProject.csproj", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.Logging.Abstractions", new VersionRange(new NuGetVersion("9.0.0")))
+                    new NugetPackageReference("Microsoft.Extensions.Logging.Abstractions", new VersionRange(new NuGetVersion("9.0.0"))),
+                    []
                 ),
             ]
         );
@@ -77,7 +79,8 @@ public class NugetUpdaterContextExtensionsTests
             [
                 dependency1 = new NugetDependency(
                     new NugetFile("AProject.csproj", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.Logging.Abstractions", new VersionRange(new NuGetVersion("9.0.0")))
+                    new NugetPackageReference("Microsoft.Extensions.Logging.Abstractions", new VersionRange(new NuGetVersion("9.0.0"))),
+                    []
                 ),
             ]
         );
@@ -115,23 +118,28 @@ public class NugetUpdaterContextExtensionsTests
             [
                 dependency1 = new NugetDependency(
                     new NugetFile("AProject.csproj", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.Logging.Abstractions", new VersionRange(new NuGetVersion("9.0.0")))
+                    new NugetPackageReference("Microsoft.Extensions.Logging.Abstractions", new VersionRange(new NuGetVersion("9.0.0"))),
+                    []
                 ),
                 dependency2 = new NugetDependency(
                     new NugetFile("AProject.csproj", ENugetFileType.Csproj),
-                    new NugetPackageReference("System.Memory", new VersionRange(new NuGetVersion("4.6.3")))
+                    new NugetPackageReference("System.Memory", new VersionRange(new NuGetVersion("4.6.3"))),
+                    []
                 ),
                 dependency3 = new NugetDependency(
                     new NugetFile("AProject.csproj", ENugetFileType.Csproj),
-                    new NugetPackageReference("My.Namespace.Core", new VersionRange(new NuGetVersion("1.0.0")))
+                    new NugetPackageReference("My.Namespace.Core", new VersionRange(new NuGetVersion("1.0.0"))),
+                    []
                 ),
                 dependency4 = new NugetDependency(
                     new NugetFile("AProject.csproj", ENugetFileType.Csproj),
-                    new NugetPackageReference("My.NamespaceIsNot", new VersionRange(new NuGetVersion("1.0.0")))
+                    new NugetPackageReference("My.NamespaceIsNot", new VersionRange(new NuGetVersion("1.0.0"))),
+                    []
                 ),
                 dependency5 = new NugetDependency(
                     new NugetFile("AProject.csproj", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.Logging", new VersionRange(new NuGetVersion("9.0.0")))
+                    new NugetPackageReference("Microsoft.Extensions.Logging", new VersionRange(new NuGetVersion("9.0.0"))),
+                    []
                 ),
             ]
         );

@@ -2,6 +2,7 @@ using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.TestsInfrastructure;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using System.Collections.Generic;
 using System.IO;
 using Xunit;
 
@@ -57,22 +58,24 @@ public class NugetDirectoryPackagesPropsParserTests
             logger
         );
 
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks = [new("net9.0")];
+
         var nugetFile = new NugetFile(temporaryDirectoryProvider.GetPath("Directory.Packages.props"), ENugetFileType.DirectoryPackagesProps);
-        var response = directoryPackagesPropsParser.Parse(nugetFile);
+        var response = directoryPackagesPropsParser.Parse(nugetFile, targetFrameworks);
 
         Assert.Equal([
-            new NugetDependency(nugetFile, new NugetPackageVersion("Meziantou.Analyzer", "2.0.195")),
-            new NugetDependency(nugetFile, new NugetPackageVersion("Microsoft.Extensions.Hosting", "9.0.4")),
-            new NugetDependency(nugetFile, new NugetPackageVersion("Microsoft.Extensions.Logging.Console", "9.0.4")),
-            new NugetDependency(nugetFile, new NugetPackageVersion("NuGet.ProjectModel", "6.13.2")),
-            new NugetDependency(nugetFile, new NugetPackageVersion("System.Text.Json", "9.0.4")),
-            new NugetDependency(nugetFile, new NugetPackageVersion("Microsoft.Extensions.Logging.Abstractions", "9.0.4")),
-            new NugetDependency(nugetFile, new NugetPackageVersion("Microsoft.Build", "17.13.9")),
-            new NugetDependency(nugetFile, new NugetPackageVersion("Microsoft.Build.Locator", "1.9.1")),
-            new NugetDependency(nugetFile, new NugetPackageVersion("Microsoft.NET.Test.Sdk", "17.13.0")),
-            new NugetDependency(nugetFile, new NugetPackageVersion("xunit.v3", "2.0.1")),
-            new NugetDependency(nugetFile, new NugetPackageVersion("NSubstitute", "5.3.0")),
-            new NugetDependency(nugetFile, new NugetPackageVersion("NSubstitute.Analyzers.CSharp", "1.0.17")),
+            new NugetDependency(nugetFile, new NugetPackageVersion("Meziantou.Analyzer", "2.0.195"), targetFrameworks),
+            new NugetDependency(nugetFile, new NugetPackageVersion("Microsoft.Extensions.Hosting", "9.0.4"), targetFrameworks),
+            new NugetDependency(nugetFile, new NugetPackageVersion("Microsoft.Extensions.Logging.Console", "9.0.4"), targetFrameworks),
+            new NugetDependency(nugetFile, new NugetPackageVersion("NuGet.ProjectModel", "6.13.2"), targetFrameworks),
+            new NugetDependency(nugetFile, new NugetPackageVersion("System.Text.Json", "9.0.4"), targetFrameworks),
+            new NugetDependency(nugetFile, new NugetPackageVersion("Microsoft.Extensions.Logging.Abstractions", "9.0.4"), targetFrameworks),
+            new NugetDependency(nugetFile, new NugetPackageVersion("Microsoft.Build", "17.13.9"), targetFrameworks),
+            new NugetDependency(nugetFile, new NugetPackageVersion("Microsoft.Build.Locator", "1.9.1"), targetFrameworks),
+            new NugetDependency(nugetFile, new NugetPackageVersion("Microsoft.NET.Test.Sdk", "17.13.0"), targetFrameworks),
+            new NugetDependency(nugetFile, new NugetPackageVersion("xunit.v3", "2.0.1"), targetFrameworks),
+            new NugetDependency(nugetFile, new NugetPackageVersion("NSubstitute", "5.3.0"), targetFrameworks),
+            new NugetDependency(nugetFile, new NugetPackageVersion("NSubstitute.Analyzers.CSharp", "1.0.17"), targetFrameworks),
         ], response);
     }
 
@@ -93,7 +96,7 @@ public class NugetDirectoryPackagesPropsParserTests
             logger
         );
 
-        var response = directoryPackagesPropsParser.Parse(new NugetFile($"{directoryPath}/Directory.Packages.props", ENugetFileType.Csproj));
+        var response = directoryPackagesPropsParser.Parse(new NugetFile($"{directoryPath}/Directory.Packages.props", ENugetFileType.Csproj), []);
 
         Assert.Empty(response);
     }

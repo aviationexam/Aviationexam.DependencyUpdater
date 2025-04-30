@@ -12,7 +12,10 @@ public class NugetDirectoryPackagesPropsParser(
     ILogger<NugetDirectoryPackagesPropsParser> logger
 )
 {
-    public IEnumerable<NugetDependency> Parse(NugetFile nugetFile)
+    public IEnumerable<NugetDependency> Parse(
+        NugetFile nugetFile,
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks
+    )
     {
         var csprojFilePath = nugetFile.FullPath;
 
@@ -41,7 +44,8 @@ public class NugetDirectoryPackagesPropsParser(
                 new NugetPackageVersion(
                     x.Include!,
                     x.Version!
-                )
+                ),
+                targetFrameworks
             ));
     }
 }

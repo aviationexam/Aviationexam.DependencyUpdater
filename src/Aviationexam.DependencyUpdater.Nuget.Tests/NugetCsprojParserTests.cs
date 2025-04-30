@@ -78,9 +78,68 @@ public class NugetCsprojParserTests
         var response = csprojParser.Parse(nugetFile);
 
         Assert.Equal([
-            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Extensions.Hosting", null)),
-            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Extensions.Logging.Console", null)),
-            new NugetDependency(warningConfigurationFile, new NugetPackageReference("Meziantou.Analyzer", null)),
+            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Extensions.Hosting", null), [
+                new NugetTargetFramework("net9.0"),
+            ]),
+            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Extensions.Logging.Console", null), [
+                new NugetTargetFramework("net9.0"),
+            ]),
+            new NugetDependency(warningConfigurationFile, new NugetPackageReference("Meziantou.Analyzer", null), [
+                new NugetTargetFramework("net9.0"),
+            ]),
+        ], response);
+    }
+
+    [Fact]
+    public void ParseWorks_MultipleTargetFrameworks()
+    {
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider();
+
+        var fileSystem = Substitute.For<IFileSystem>();
+        var logger = Substitute.For<ILogger<NugetCsprojParser>>();
+
+        fileSystem
+            .Exists(temporaryDirectoryProvider.GetPath("project/Project.csproj"))
+            .Returns(true);
+
+        using var projectFileStream =
+            // language=csproj
+            """
+                <Project Sdk="Microsoft.NET.Sdk">
+
+                  <PropertyGroup>
+                    <TargetFrameworks>net8.0;net9.0</TargetFramework>
+                  </PropertyGroup>
+
+                  <ItemGroup>
+                    <PackageReference Include="Microsoft.Extensions.Hosting" />
+                    <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+                  </ItemGroup>
+
+                </Project>
+                """.AsStream();
+
+        fileSystem
+            .FileOpen(temporaryDirectoryProvider.GetPath("project/Project.csproj"), FileMode.Open, FileAccess.Read, FileShare.Read)
+            .Returns(projectFileStream);
+
+        var csprojParser = new NugetCsprojParser(
+            fileSystem,
+            logger
+        );
+
+        var nugetFile = new NugetFile(temporaryDirectoryProvider.GetPath("project/Project.csproj"), ENugetFileType.Csproj);
+        var response = csprojParser.Parse(nugetFile);
+
+        Assert.Equal([
+            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Extensions.Hosting", null), [
+                new NugetTargetFramework("net8.0"),
+                new NugetTargetFramework("net9.0"),
+            ]),
+            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Extensions.Logging.Console", null), [
+                new NugetTargetFramework("net8.0"),
+                new NugetTargetFramework("net9.0"),
+            ]),
         ], response);
     }
 

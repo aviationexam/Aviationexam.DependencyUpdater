@@ -1,6 +1,7 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using Microsoft.Extensions.Logging;
 using NuGet.Versioning;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,7 +14,10 @@ public class NugetCsprojParser(
     ILogger<NugetCsprojParser> logger
 )
 {
-    public IEnumerable<NugetDependency> Parse(NugetFile nugetFile)
+    public IEnumerable<NugetDependency> Parse(
+        NugetFile nugetFile,
+        IReadOnlyCollection<NugetTargetFramework>? targetFrameworks = null
+    )
     {
         var csprojFilePath = nugetFile.FullPath;
 
@@ -27,6 +31,8 @@ public class NugetCsprojParser(
 
         using var stream = fileSystem.FileOpen(csprojFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         var doc = XDocument.Load(stream);
+
+        targetFrameworks ??= ParseTargetFrameworks(doc).Distinct().ToList();
 
         foreach (var packageReference in doc.Descendants().Where(e => e.Name.LocalName == "PackageReference"))
         {
@@ -43,7 +49,8 @@ public class NugetCsprojParser(
 
                 yield return new NugetDependency(
                     nugetFile,
-                    new NugetPackageReference(packageId, version)
+                    new NugetPackageReference(packageId, version),
+                    targetFrameworks
                 );
             }
         }
@@ -64,11 +71,32 @@ public class NugetCsprojParser(
                 continue;
             }
 
-            var importedNugetFile = new NugetFile(importedFullPath, ENugetFileType.Targets);
-
-            foreach (var importedDependency in Parse(importedNugetFile))
+            foreach (var importedDependency in Parse(new NugetFile(importedFullPath, ENugetFileType.Targets), targetFrameworks))
             {
                 yield return importedDependency;
+            }
+        }
+    }
+
+    private IEnumerable<NugetTargetFramework> ParseTargetFrameworks(XDocument doc)
+    {
+        var propertyGroups = doc.Descendants().Where(e => e.Name.LocalName == "PropertyGroup");
+
+        foreach (var propertyGroup in propertyGroups)
+        {
+            var singleTargetFramework = propertyGroup.Elements().FirstOrDefault(e => e.Name.LocalName == "TargetFramework")?.Value;
+            if (!string.IsNullOrWhiteSpace(singleTargetFramework))
+            {
+                yield return new NugetTargetFramework(singleTargetFramework.Trim());
+            }
+
+            var targetFrameworks = propertyGroup.Elements().FirstOrDefault(e => e.Name.LocalName == "TargetFrameworks")?.Value;
+            if (!string.IsNullOrWhiteSpace(targetFrameworks))
+            {
+                foreach (var targetFramework in targetFrameworks.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                {
+                    yield return new NugetTargetFramework(targetFramework.Trim());
+                }
             }
         }
     }
