@@ -76,21 +76,28 @@ public sealed class NugetUpdater(
         );
     }
 
-    private async Task<IReadOnlyCollection<KeyValuePair<NugetSource, IPackageSearchMetadata>>> FetchDependencyVersionsAsync(
+    private async Task<IReadOnlyCollection<IPackageSearchMetadata>> FetchDependencyVersionsAsync(
         NugetDependency dependency,
         IReadOnlyCollection<NugetSource> sources,
         IReadOnlyDictionary<NugetSource, SourceRepository> sourceRepositories,
         CancellationToken cancellationToken
     )
     {
-        var versions = new List<KeyValuePair<NugetSource, IPackageSearchMetadata>>();
+        var versions = new List<IPackageSearchMetadata>();
         var tasks = sources.Select(async nugetSource =>
         {
             if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
             {
                 using var nugetCache = new SourceCacheContext();
-                var packageVersions = await nugetVersionFetcher.FetchPackageVersionsAsync(sourceRepository, dependency, nugetCache, cancellationToken);
-                return packageVersions.Select(x => KeyValuePair.Create(nugetSource, x)).ToList();
+
+                var packageVersions = await nugetVersionFetcher.FetchPackageVersionsAsync(
+                    sourceRepository,
+                    dependency,
+                    nugetCache,
+                    cancellationToken
+                );
+
+                return packageVersions.ToList();
             }
 
             return [];
