@@ -15,7 +15,7 @@
     <PackageVersion Include="System.Text.Json" Version="9.0.4" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Corvus.Json.ExtendedTypes" Version="4.3.3" />
+    <PackageVersion Include="Corvus.Json.ExtendedTypes" Version="4.3.4" />
     <PackageVersion Include="Corvus.Json.SourceGenerator" Version="4.3.3" />
   </ItemGroup>
   <ItemGroup>
