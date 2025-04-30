@@ -3,6 +3,7 @@ using Aviationexam.DependencyUpdater.ConfigurationParser;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Aviationexam.DependencyUpdater;
 
@@ -23,17 +24,29 @@ public static class ConfigurationMapper
         this TargetFrameworkEntity? targetFrameworkEntity
     ) => targetFrameworkEntity is { } targetFramework ? [new NugetTargetFramework(targetFramework.TargetFramework)] : [];
 
-    public static IReadOnlyCollection<IgnoreEntry> MapToIgnoreEntry(
+    public static IEnumerable<IgnoreEntry> MapToIgnoreEntry(
         this DependabotConfiguration.Update.IgnoreArray ignoreArray
     )
     {
-        return [];
+        foreach (var ignoreEntity in ignoreArray)
+        {
+            yield return new IgnoreEntry(
+                ignoreEntity.DependencyName.GetString(),
+                [.. ignoreEntity.UpdateTypesValue.Select(x => x.GetString()!)]
+            );
+        }
     }
 
-    public static IReadOnlyCollection<GroupEntry> MapToGroupEntry(
+    public static IEnumerable<GroupEntry> MapToGroupEntry(
         this DependabotConfiguration.Update.GroupsEntity groupsEntity
     )
     {
-        return [];
+        foreach (var groupEntity in groupsEntity)
+        {
+            yield return new GroupEntry(
+                groupEntity.Key.GetString(),
+                [.. groupEntity.Value.Patterns.Select(x => x.GetString()!)]
+            );
+        }
     }
 }

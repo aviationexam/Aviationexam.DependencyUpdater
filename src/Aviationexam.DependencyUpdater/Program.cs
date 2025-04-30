@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.IO;
+using System.Linq;
 
 HostApplicationBuilderSettings settings = new()
 {
@@ -53,8 +54,8 @@ foreach (var dependabotConfiguration in dependabotConfigurations)
             directoryPath: Path.Join(directoryPath, nugetUpdate.DirectoryValue.GetString()),
             nugetFeedAuthentications,
             nugetUpdate.TargetFramework.MapToNugetTargetFrameworks(),
-            nugetUpdate.Ignore.MapToIgnoreEntry(),
-            nugetUpdate.Groups.MapToGroupEntry()
+            [.. nugetUpdate.Ignore.MapToIgnoreEntry()],
+            [.. nugetUpdate.Groups.MapToGroupEntry()]
         );
     }
 }

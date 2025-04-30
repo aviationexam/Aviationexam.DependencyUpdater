@@ -1,3 +1,6 @@
 namespace Aviationexam.DependencyUpdater.Common;
 
-public record IgnoreEntry();
+public record IgnoreEntry(
+    string? DependencyName,
+    IReadOnlyCollection<string> UpdateTypes
+);
