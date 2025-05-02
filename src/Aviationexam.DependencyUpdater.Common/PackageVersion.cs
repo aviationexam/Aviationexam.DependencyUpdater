@@ -1,15 +1,18 @@
 namespace Aviationexam.DependencyUpdater.Common;
 
-public abstract record PackageVersion(
+public record PackageVersion(
     Version Version,
-    bool IsPrerelease
+    bool IsPrerelease,
+    IReadOnlyCollection<string> ReleaseLabels
 );
 
 public record PackageVersion<TOriginalReference>(
     Version Version,
     bool IsPrerelease,
+    IReadOnlyCollection<string> ReleaseLabels,
     TOriginalReference OriginalReference
 ) : PackageVersion(
     Version,
-    IsPrerelease
+    IsPrerelease,
+    ReleaseLabels
 );
