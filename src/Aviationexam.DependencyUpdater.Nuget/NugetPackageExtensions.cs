@@ -1,3 +1,4 @@
+using Aviationexam.DependencyUpdater.Common;
 using System;
 
 namespace Aviationexam.DependencyUpdater.Nuget;
@@ -13,12 +14,12 @@ public static class NugetPackageExtensions
         _ => throw new ArgumentOutOfRangeException(nameof(nugetPackage), nugetPackage, null),
     };
 
-    public static Version? GetVersion(
+    public static PackageVersion? GetVersion(
         this INugetPackage nugetPackage
     ) => nugetPackage switch
     {
-        NugetPackageReference nugetPackageReference => nugetPackageReference.VersionRange?.MinVersion?.Version,
-        NugetPackageVersion nugetPackageVersion => new Version(nugetPackageVersion.Version),
+        NugetPackageReference nugetPackageReference => nugetPackageReference.VersionRange?.MinVersion?.MapToPackageVersion(),
+        NugetPackageVersion nugetPackageVersion => nugetPackageVersion.Version.MapToPackageVersion(),
         _ => throw new ArgumentOutOfRangeException(nameof(nugetPackage), nugetPackage, null),
     };
 }

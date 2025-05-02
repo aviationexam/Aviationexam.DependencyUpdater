@@ -11,11 +11,7 @@ public static class NugetMapper
         this IPackageSearchMetadata packageSearchMetadata
     ) => packageSearchMetadata switch
     {
-        PackageSearchMetadataRegistration packageSearchMetadataRegistration => new PackageVersion<PackageSearchMetadataRegistration>(
-            packageSearchMetadataRegistration.Version.Version,
-            packageSearchMetadataRegistration.Version.IsPrerelease,
-            packageSearchMetadataRegistration
-        ),
+        PackageSearchMetadataRegistration packageSearchMetadataRegistration => packageSearchMetadataRegistration.MapToPackageVersion(),
         _ => throw new ArgumentOutOfRangeException(nameof(packageSearchMetadata), packageSearchMetadata, null),
     };
 }
