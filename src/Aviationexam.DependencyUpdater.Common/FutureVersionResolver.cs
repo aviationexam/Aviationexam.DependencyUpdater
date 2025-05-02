@@ -6,13 +6,15 @@ public class FutureVersionResolver
         string dependencyName,
         Version? version,
         IEnumerable<PackageVersion<TOriginalVersionReference>> versions,
-        IReadOnlyCollection<IgnoreEntry> ignoreEntries
+        IgnoreResolver ignoreResolver
     )
     {
         if (version is not null)
         {
             versions = versions.Where(x => x.Version >= version);
         }
+
+        versions = versions.Where(x => !ignoreResolver.IsIgnored(dependencyName, x));
 
         return null;
     }

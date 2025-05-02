@@ -15,6 +15,8 @@ public sealed class NugetUpdater(
     NugetCsprojParser nugetCsprojParser,
     NugetVersionFetcherFactory nugetVersionFetcherFactory,
     NugetVersionFetcher nugetVersionFetcher,
+    FutureVersionResolver futureVersionResolver,
+    IgnoreResolverFactory ignoreResolverFactory,
     ILogger<NugetUpdater> logger
 )
 {
@@ -40,6 +42,8 @@ public sealed class NugetUpdater(
                 x => nugetVersionFetcherFactory.CreateSourceRepository(x, nugetFeedAuthentications)
             );
 
+        var ignoreResolver = ignoreResolverFactory.Create(ignoreEntries);
+
         var dependencies = nugetUpdaterContext.MapSourceToDependency(logger);
         foreach (var (dependency, sources) in dependencies)
         {
@@ -50,11 +54,11 @@ public sealed class NugetUpdater(
                 cancellationToken
             );
 
-            FutureVersionResolver.ResolveFutureVersion(
+            futureVersionResolver.ResolveFutureVersion(
                 dependency.NugetPackage.GetPackageName(),
                 dependency.NugetPackage.GetVersion(),
                 versions.Select(NugetMapper.MapToPackageVersion),
-                ignoreEntries
+                ignoreResolver
             );
         }
     }
