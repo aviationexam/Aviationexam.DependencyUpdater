@@ -2,7 +2,7 @@ namespace Aviationexam.DependencyUpdater.Common;
 
 public class FutureVersionResolver
 {
-    public PackageVersion<TOriginalVersionReference>? ResolveFutureVersion<TOriginalVersionReference>(
+    public IEnumerable<PackageVersion<TOriginalVersionReference>> ResolveFutureVersion<TOriginalVersionReference>(
         string dependencyName,
         PackageVersion? version,
         IEnumerable<PackageVersion<TOriginalVersionReference>> versions,
@@ -12,7 +12,8 @@ public class FutureVersionResolver
         if (version is not null)
         {
             versions = versions
-                .Where(x => x.Version >= version)
+                .Where(x => x.IsPrerelease == version.IsPrerelease || x.IsPrerelease is false)
+                .Where(x => x > version)
                 .Where(x => !ignoreResolver.IsIgnored(
                     dependencyName,
                     version,
@@ -20,6 +21,6 @@ public class FutureVersionResolver
                 ));
         }
 
-        return null;
+        return versions.OrderByDescending(x => x.Version);
     }
 }
