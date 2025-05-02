@@ -4,7 +4,7 @@ public class FutureVersionResolver
 {
     public PackageVersion<TOriginalVersionReference>? ResolveFutureVersion<TOriginalVersionReference>(
         string dependencyName,
-        Version? version,
+        PackageVersion? version,
         IEnumerable<PackageVersion<TOriginalVersionReference>> versions,
         IgnoreResolver ignoreResolver
     )

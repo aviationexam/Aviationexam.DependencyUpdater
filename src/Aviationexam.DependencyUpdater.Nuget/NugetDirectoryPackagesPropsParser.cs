@@ -1,5 +1,6 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using Microsoft.Extensions.Logging;
+using NuGet.Versioning;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,7 +44,7 @@ public class NugetDirectoryPackagesPropsParser(
                 nugetFile,
                 new NugetPackageVersion(
                     x.Include!,
-                    x.Version!
+                    new NuGetVersion(x.Version!)
                 ),
                 targetFrameworks
             ));

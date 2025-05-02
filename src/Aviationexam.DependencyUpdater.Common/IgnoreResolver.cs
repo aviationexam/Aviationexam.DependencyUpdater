@@ -9,7 +9,7 @@ public class IgnoreResolver(
 {
     public bool IsIgnored(
         string dependencyName,
-        Version currentVersion,
+        PackageVersion currentVersion,
         PackageVersion proposedVersion
     )
     {
@@ -51,19 +51,19 @@ public class IgnoreResolver(
     }
 
     private bool DoesItViolate(
-        Version currentVersion,
+        PackageVersion currentVersion,
         PackageVersion proposedVersion,
         EIgnoreRule ignoreRule
     )
     {
         return ignoreRule switch
         {
-            EIgnoreRule.SemverMajor => proposedVersion.Version.Major != currentVersion.Major,
-            EIgnoreRule.SemverMinor => proposedVersion.Version.Major != currentVersion.Major
-                                       || proposedVersion.Version.Minor != currentVersion.Minor,
-            EIgnoreRule.SemverPatch => proposedVersion.Version.Major != currentVersion.Major
-                                       || proposedVersion.Version.Minor != currentVersion.Minor
-                                       || proposedVersion.Version.Build != currentVersion.Build,
+            EIgnoreRule.SemverMajor => proposedVersion.Version.Major != currentVersion.Version.Major,
+            EIgnoreRule.SemverMinor => proposedVersion.Version.Major != currentVersion.Version.Major
+                                       || proposedVersion.Version.Minor != currentVersion.Version.Minor,
+            EIgnoreRule.SemverPatch => proposedVersion.Version.Major != currentVersion.Version.Major
+                                       || proposedVersion.Version.Minor != currentVersion.Version.Minor
+                                       || proposedVersion.Version.Build != currentVersion.Version.Build,
             _ => throw new ArgumentOutOfRangeException(nameof(ignoreRule), ignoreRule, null),
         };
     }
