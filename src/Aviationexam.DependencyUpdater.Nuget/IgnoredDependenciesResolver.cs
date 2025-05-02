@@ -1,5 +1,6 @@
 using Aviationexam.DependencyUpdater.Common;
 using NuGet.Packaging;
+using NuGet.Packaging.Core;
 using System.Collections.Generic;
 
 namespace Aviationexam.DependencyUpdater.Nuget;
@@ -35,25 +36,41 @@ public sealed class IgnoredDependenciesResolver
     {
         foreach (var packageDependency in packageDependencyGroup.Packages)
         {
-            var proposedVersion = packageDependency.VersionRange.MinVersion?.MapToPackageVersion();
-
-            if (proposedVersion is null)
-            {
-                continue;
-            }
-
-            var currentVersion = currentPackageVersions.GetValueOrDefault(packageDependency.Id, proposedVersion);
-
-            var isIgnored = ignoreResolver.IsIgnored(
-                packageDependency.Id,
-                currentVersion,
-                proposedVersion
-            );
+            var isIgnored = IsDependencyIgnored(packageDependency, ignoreResolver, currentPackageVersions);
 
             if (isIgnored)
             {
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    public bool IsDependencyIgnored(
+        PackageDependency packageDependency,
+        IgnoreResolver ignoreResolver,
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions
+    )
+    {
+        var proposedVersion = packageDependency.VersionRange.MinVersion?.MapToPackageVersion();
+
+        if (proposedVersion is null)
+        {
+            return false;
+        }
+
+        var currentVersion = currentPackageVersions.GetValueOrDefault(packageDependency.Id, proposedVersion);
+
+        var isIgnored = ignoreResolver.IsIgnored(
+            packageDependency.Id,
+            currentVersion,
+            proposedVersion
+        );
+
+        if (isIgnored)
+        {
+            return true;
         }
 
         return false;
