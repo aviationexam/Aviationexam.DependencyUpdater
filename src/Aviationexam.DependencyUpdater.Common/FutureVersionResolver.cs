@@ -21,6 +21,6 @@ public class FutureVersionResolver
                 ));
         }
 
-        return versions.OrderByDescending(x => x.Version);
+        return versions.OrderDescending();
     }
 }

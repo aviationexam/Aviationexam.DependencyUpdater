@@ -16,5 +16,6 @@ public static class ServiceCollectionExtensions
         .AddSingleton<Repository.RepositoryFactory>(_ => Repository.Factory)
         .AddScoped<NuGet.Common.ILogger, NuGetLoggerAdapter>()
         .AddScoped<NugetVersionFetcherFactory>()
-        .AddScoped<NugetVersionFetcher>();
+        .AddScoped<NugetVersionFetcher>()
+        .AddScoped<TargetFrameworksResolver>();
 }

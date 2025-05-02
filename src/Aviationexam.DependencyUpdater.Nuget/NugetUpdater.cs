@@ -17,6 +17,7 @@ public sealed class NugetUpdater(
     NugetVersionFetcher nugetVersionFetcher,
     FutureVersionResolver futureVersionResolver,
     IgnoreResolverFactory ignoreResolverFactory,
+    TargetFrameworksResolver targetFrameworksResolver,
     ILogger<NugetUpdater> logger
 )
 {
@@ -58,12 +59,17 @@ public sealed class NugetUpdater(
             var dependencyVersion = dependency.NugetPackage.GetVersion();
 
             var futureVersions = futureVersionResolver.ResolveFutureVersion(
-                dependencyName,
-                dependencyVersion,
-                versions.Select(NugetMapper.MapToPackageVersion),
-                ignoreResolver
-            );
-            ).ToList();
+                    dependencyName,
+                    dependencyVersion,
+                    versions.Select(NugetMapper.MapToPackageVersion),
+                    ignoreResolver
+                )
+                .Select(x => (x, CompatiblePackageDependencyGroups: targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
+                    x.OriginalReference,
+                    dependency.TargetFrameworks
+                )))
+                .Where(x => x.CompatiblePackageDependencyGroups.Count > 0)
+                .ToList();
 
             if (futureVersions.Count == 0)
             {
