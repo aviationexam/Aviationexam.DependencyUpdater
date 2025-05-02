@@ -1,5 +1,6 @@
 namespace Aviationexam.DependencyUpdater.Common;
 
 public record WildcardIgnoreRule(
-    string DependencyPrefix
+    string DependencyPrefix,
+    IReadOnlyCollection<string> UpdateTypes
 ) : IIgnoreRule;

@@ -11,10 +11,14 @@ public class FutureVersionResolver
     {
         if (version is not null)
         {
-            versions = versions.Where(x => x.Version >= version);
+            versions = versions
+                .Where(x => x.Version >= version)
+                .Where(x => !ignoreResolver.IsIgnored(
+                    dependencyName,
+                    version,
+                    x
+                ));
         }
-
-        versions = versions.Where(x => !ignoreResolver.IsIgnored(dependencyName, x));
 
         return null;
     }

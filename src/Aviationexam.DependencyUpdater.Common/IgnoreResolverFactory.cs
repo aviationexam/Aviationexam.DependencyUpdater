@@ -1,6 +1,10 @@
+using Microsoft.Extensions.Logging;
+
 namespace Aviationexam.DependencyUpdater.Common;
 
-public class IgnoreResolverFactory
+public class IgnoreResolverFactory(
+    ILogger<IgnoreResolverFactory> logger
+    )
 {
     public IgnoreResolver Create(IReadOnlyCollection<IgnoreEntry> ignoreEntries)
     {
@@ -10,10 +14,16 @@ public class IgnoreResolverFactory
             {
                 if (x.DependencyName!.EndsWith('*'))
                 {
-                    return new WildcardIgnoreRule(x.DependencyName.TrimEnd('*'));
+                    return new WildcardIgnoreRule(
+                        x.DependencyName.TrimEnd('*'),
+                        x.UpdateTypes
+                    );
                 }
 
-                return new ExplicitIgnoreRule(x.DependencyName);
+                return new ExplicitIgnoreRule(
+                    x.DependencyName,
+                    x.UpdateTypes
+                );
             })
             .OrderBy(x => x switch
             {
@@ -29,7 +39,8 @@ public class IgnoreResolverFactory
             });
 
         return new IgnoreResolver(
-            [.. ignoreRules]
+            [.. ignoreRules],
+            logger
         );
     }
 }
