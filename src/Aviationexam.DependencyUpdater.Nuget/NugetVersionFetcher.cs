@@ -1,8 +1,10 @@
+using Aviationexam.DependencyUpdater.Common;
 using NuGet.Protocol.Core.Types;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
+using NuGet.Packaging.Core;
 
 namespace Aviationexam.DependencyUpdater.Nuget;
 
@@ -27,5 +29,19 @@ public sealed class NugetVersionFetcher(
             logger,
             cancellationToken
         );
+    }
+
+    public async Task<IPackageSearchMetadata?> FetchPackageMetadataAsync(
+        SourceRepository repository,
+        Package package,
+        SourceCacheContext cache,
+        CancellationToken cancellationToken
+    )
+    {
+        var resource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
+
+        var identity = new PackageIdentity(package.Name, package.Version.MapToNuGetVersion());
+
+        return await resource.GetMetadataAsync(identity, cache, logger, cancellationToken);
     }
 }
