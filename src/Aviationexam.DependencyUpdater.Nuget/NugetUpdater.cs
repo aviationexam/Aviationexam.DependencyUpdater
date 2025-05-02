@@ -54,12 +54,22 @@ public sealed class NugetUpdater(
                 cancellationToken
             );
 
-            futureVersionResolver.ResolveFutureVersion(
-                dependency.NugetPackage.GetPackageName(),
-                dependency.NugetPackage.GetVersion(),
+            var dependencyName = dependency.NugetPackage.GetPackageName();
+            var dependencyVersion = dependency.NugetPackage.GetVersion();
+
+            var futureVersions = futureVersionResolver.ResolveFutureVersion(
+                dependencyName,
+                dependencyVersion,
                 versions.Select(NugetMapper.MapToPackageVersion),
                 ignoreResolver
             );
+            ).ToList();
+
+            if (futureVersions.Count == 0)
+            {
+                logger.LogDebug("The dependency {DependencyName} with version {Version} is up to date", dependencyName, dependencyVersion);
+                continue;
+            }
         }
     }
 
