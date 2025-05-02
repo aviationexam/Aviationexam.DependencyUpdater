@@ -92,4 +92,73 @@ public static class NugetUpdaterContextExtensions
             logger.LogWarning("Unable to find packageSource for dependency {dependencyName}", packageName);
         }
     }
+
+    public static IEnumerable<NugetSource> GetSourcesForPackage(
+        this NugetUpdaterContext context,
+        string packageName,
+        ILogger logger
+    )
+    {
+        var configurations = context.NugetConfigurations
+            .SelectMany(x =>
+                x.PackageMapping.Select(p => (PackageMapping: p, NugetSource: x))
+            );
+
+        var explicitMappings = new Dictionary<string, NugetSource>();
+        var wildcardMappings = new List<KeyValuePair<string, NugetSource>>();
+
+        foreach (var (packageMapping, nugetSource) in configurations)
+        {
+            if (packageMapping.IsWildcard())
+            {
+                wildcardMappings.Add(KeyValuePair.Create(packageMapping.Pattern.TrimEnd('*'), nugetSource));
+            }
+            else
+            {
+                explicitMappings.Add(packageMapping.Pattern, nugetSource);
+            }
+        }
+
+        if (context.NugetConfigurations.Count == 0)
+        {
+            yield return new NugetSource(DefaultNugetSourceKey, DefaultNugetSourceUrl, NugetSourceVersion.V3, []);
+
+            yield break;
+        }
+
+        if (
+            explicitMappings.Count == 0
+            && wildcardMappings.Count == 0
+        )
+        {
+            foreach (var nugetConfiguration in context.NugetConfigurations)
+            {
+                yield return nugetConfiguration;
+            }
+
+
+            yield break;
+        }
+
+        var sortedWildcardMappings = wildcardMappings.OrderByDescending(x => x.Key.Length).ToList();
+
+
+        if (explicitMappings.TryGetValue(packageName, out var explicitNugetSource))
+        {
+            yield return explicitNugetSource;
+            yield break;
+        }
+
+        foreach (var (pattern, nugetSource) in sortedWildcardMappings)
+        {
+            if (packageName.StartsWith(pattern, StringComparison.Ordinal))
+            {
+                yield return nugetSource;
+
+                yield break;
+            }
+        }
+
+        logger.LogWarning("Unable to find packageSource for dependency {dependencyName}", packageName);
+    }
 }
