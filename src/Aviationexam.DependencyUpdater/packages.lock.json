@@ -481,7 +481,8 @@
         "type": "Project",
         "dependencies": {
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.4, )"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.4, )",
+          "Microsoft.Extensions.Logging.Abstractions": "[9.0.4, )"
         }
       },
       "aviationexam.dependencyupdater.configurationparser": {
