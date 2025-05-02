@@ -64,4 +64,15 @@ public record PackageVersion<TOriginalReference>(
     IsPrerelease,
     ReleaseLabels,
     ReleaseLabelsComparable
-);
+)
+{
+    public virtual bool Equals(PackageVersion<TOriginalReference>? other)
+    {
+        return base.Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
+}
