@@ -1,8 +1,11 @@
 using Aviationexam.DependencyUpdater.Common;
 using Microsoft.Extensions.Logging;
+using NuGet.Packaging;
+using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +21,7 @@ public sealed class NugetUpdater(
     FutureVersionResolver futureVersionResolver,
     IgnoreResolverFactory ignoreResolverFactory,
     TargetFrameworksResolver targetFrameworksResolver,
+    IgnoredDependenciesResolver ignoredDependenciesResolver,
     ILogger<NugetUpdater> logger
 )
 {
@@ -35,6 +39,13 @@ public sealed class NugetUpdater(
             targetFrameworks
         );
 
+        var currentPackageVersions = nugetUpdaterContext.Dependencies
+            .Select(x => x.NugetPackage)
+            .Select(x => (PackageName: x.GetPackageName(), Version: x.GetVersion()))
+            .Where(x => x.Version is not null)
+            .GroupBy(x => x.PackageName)
+            .ToDictionary(x => x.Key, x => x.OrderBy(y => y.Version).First().Version!);
+
         var sourceRepositories = nugetUpdaterContext.NugetConfigurations
             .GroupBy(x => x.Source)
             .Select(x => x.First())
@@ -45,38 +56,19 @@ public sealed class NugetUpdater(
 
         var ignoreResolver = ignoreResolverFactory.Create(ignoreEntries);
 
-        var dependencies = nugetUpdaterContext.MapSourceToDependency(logger);
-        foreach (var (dependency, sources) in dependencies)
-        {
-            var versions = await FetchDependencyVersionsAsync(
-                dependency,
-                sources,
-                sourceRepositories,
-                cancellationToken
-            );
+        var dependencyToUpdate = await ResolvePossiblePackageVersions(
+            nugetUpdaterContext,
+            currentPackageVersions,
+            sourceRepositories,
+            ignoreResolver,
+            cancellationToken
+        ).ToDictionaryAsync(
+            x => x.dependency,
+            x => x.futureVersions,
+            cancellationToken
+        );
 
-            var dependencyName = dependency.NugetPackage.GetPackageName();
-            var dependencyVersion = dependency.NugetPackage.GetVersion();
-
-            var futureVersions = futureVersionResolver.ResolveFutureVersion(
-                    dependencyName,
-                    dependencyVersion,
-                    versions.Select(NugetMapper.MapToPackageVersion),
-                    ignoreResolver
-                )
-                .Select(x => (x, CompatiblePackageDependencyGroups: targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
-                    x.OriginalReference,
-                    dependency.TargetFrameworks
-                )))
-                .Where(x => x.CompatiblePackageDependencyGroups.Count > 0)
-                .ToList();
-
-            if (futureVersions.Count == 0)
-            {
-                logger.LogDebug("The dependency {DependencyName} with version {Version} is up to date", dependencyName, dependencyVersion);
-                continue;
-            }
-        }
+        var a = dependencyToUpdate;
     }
 
     public NugetUpdaterContext CreateContext(
@@ -101,6 +93,66 @@ public sealed class NugetUpdater(
             nugetConfigurations,
             dependencies
         );
+    }
+
+    private sealed record PossiblePackageVersion(
+        PackageVersion<PackageSearchMetadataRegistration> PackageVersion,
+        IReadOnlyCollection<PackageDependencyGroup> CompatiblePackageDependencyGroups
+    );
+
+    private async IAsyncEnumerable<(NugetDependency dependency, IReadOnlyCollection<PossiblePackageVersion> futureVersions)> ResolvePossiblePackageVersions(
+        NugetUpdaterContext nugetUpdaterContext,
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        IReadOnlyDictionary<NugetSource, SourceRepository> sourceRepositories,
+        IgnoreResolver ignoreResolver,
+        [EnumeratorCancellation] CancellationToken cancellationToken
+    )
+    {
+        var dependencies = nugetUpdaterContext.MapSourceToDependency(logger);
+        foreach (var (dependency, sources) in dependencies)
+        {
+            var versions = await FetchDependencyVersionsAsync(
+                dependency,
+                sources,
+                sourceRepositories,
+                cancellationToken
+            );
+
+            var dependencyName = dependency.NugetPackage.GetPackageName();
+            var dependencyVersion = dependency.NugetPackage.GetVersion();
+
+            var futureVersions = futureVersionResolver.ResolveFutureVersion(
+                    dependencyName,
+                    dependencyVersion,
+                    versions.Select(NugetMapper.MapToPackageVersion),
+                    ignoreResolver
+                )
+                .Select(x => new PossiblePackageVersion(
+                    x,
+                    targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
+                        x.OriginalReference,
+                        dependency.TargetFrameworks
+                    ).ToList()
+                ))
+                .Select(x => x with
+                {
+                    CompatiblePackageDependencyGroups = ignoredDependenciesResolver.FilterDependencyGroupsRequiringIgnoredPackages(
+                        x.CompatiblePackageDependencyGroups,
+                        ignoreResolver,
+                        currentPackageVersions
+                    ).ToList(),
+                })
+                .Where(x => x.CompatiblePackageDependencyGroups.Count > 0)
+                .ToList();
+
+            if (futureVersions.Count == 0)
+            {
+                logger.LogDebug("The dependency {DependencyName} with version {Version} is up to date", dependencyName, dependencyVersion);
+                continue;
+            }
+
+            yield return (dependency, futureVersions);
+        }
     }
 
     private async Task<IReadOnlyCollection<IPackageSearchMetadata>> FetchDependencyVersionsAsync(
