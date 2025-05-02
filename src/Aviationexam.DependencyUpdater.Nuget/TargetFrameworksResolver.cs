@@ -8,12 +8,12 @@ namespace Aviationexam.DependencyUpdater.Nuget;
 
 public sealed class TargetFrameworksResolver
 {
-    public IReadOnlyCollection<PackageDependencyGroup> GetCompatiblePackageDependencyGroups(
+    public IEnumerable<PackageDependencyGroup> GetCompatiblePackageDependencyGroups(
         PackageSearchMetadataRegistration packageSearchMetadataRegistration,
         IReadOnlyCollection<NugetTargetFramework> dependencyTargetFrameworks
     )
     {
-        var compatiblePackageDependencyGroups = packageSearchMetadataRegistration.DependencySets.ToList();
+        var compatiblePackageDependencyGroups = packageSearchMetadataRegistration.DependencySets;
 
         foreach (var dependencyTargetFramework in dependencyTargetFrameworks)
         {
@@ -24,12 +24,7 @@ public sealed class TargetFrameworksResolver
 
             compatiblePackageDependencyGroups = GetCompatiblePackageDependencyGroups(
                 tarGetFramework, compatiblePackageDependencyGroups
-            ).ToList();
-
-            if (compatiblePackageDependencyGroups.Count == 0)
-            {
-                return [];
-            }
+            );
         }
 
         return compatiblePackageDependencyGroups;
