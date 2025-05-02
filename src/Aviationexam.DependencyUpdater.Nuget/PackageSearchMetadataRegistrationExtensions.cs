@@ -11,6 +11,7 @@ public static class PackageSearchMetadataRegistrationExtensions
         packageSearchMetadataRegistration.Version.Version,
         packageSearchMetadataRegistration.Version.IsPrerelease,
         [.. packageSearchMetadataRegistration.Version.ReleaseLabels],
+        NugetReleaseLabelComparer.Instance,
         packageSearchMetadataRegistration
     );
 }

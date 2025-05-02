@@ -10,6 +10,7 @@ public static class NuGetVersionExtensions
     ) => new(
         nuGetVersion.Version,
         nuGetVersion.IsPrerelease,
-        [.. nuGetVersion.ReleaseLabels]
+        [.. nuGetVersion.ReleaseLabels],
+        NugetReleaseLabelComparer.Instance
     );
 }
