@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using NuGet.Packaging;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -28,7 +29,7 @@ public sealed class NugetUpdater(
     public async Task ProcessUpdatesAsync(
         string directoryPath,
         IReadOnlyCollection<NugetFeedAuthentication> nugetFeedAuthentications,
-        IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
+        IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks,
         IReadOnlyCollection<IgnoreEntry> ignoreEntries,
         IReadOnlyCollection<GroupEntry> groupEntries,
         CancellationToken cancellationToken = default
@@ -36,7 +37,7 @@ public sealed class NugetUpdater(
     {
         var nugetUpdaterContext = CreateContext(
             directoryPath,
-            targetFrameworks
+            defaultTargetFrameworks
         );
 
         var currentPackageVersions = nugetUpdaterContext.Dependencies
@@ -58,7 +59,6 @@ public sealed class NugetUpdater(
 
         var dependencyToUpdate = await ResolvePossiblePackageVersions(
             nugetUpdaterContext,
-            currentPackageVersions,
             sourceRepositories,
             ignoreResolver,
             cancellationToken
@@ -68,12 +68,214 @@ public sealed class NugetUpdater(
             cancellationToken
         );
 
-        var a = dependencyToUpdate;
+        var packageFlags = new Dictionary<Package, EDependencyFlag>();
+        var dependenciesToCheck = new Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
+        var dependenciesToRevisit = new Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)>();
+
+        foreach (var (dependency, possiblePackageVersions) in dependencyToUpdate)
+        {
+            foreach (var possiblePackageVersion in possiblePackageVersions)
+            {
+                foreach (var compatiblePackageDependencyGroup in possiblePackageVersion.CompatiblePackageDependencyGroups)
+                {
+                    foreach (var packageDependency in compatiblePackageDependencyGroup.Packages)
+                    {
+                        var isDependencyIgnored = ignoredDependenciesResolver.IsDependencyIgnored(
+                            packageDependency,
+                            ignoreResolver,
+                            currentPackageVersions
+                        );
+
+                        if (packageDependency.VersionRange.MinVersion is not { } minVersion)
+                        {
+                            continue;
+                        }
+
+                        var package = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
+
+                        if (isDependencyIgnored)
+                        {
+                            packageFlags[package] = EDependencyFlag.ContainsIgnoredDependency;
+                        }
+                        else
+                        {
+                            dependenciesToCheck.Enqueue((package, dependency.TargetFrameworks));
+                        }
+                    }
+                }
+            }
+        }
+
+        while (dependenciesToCheck.TryDequeue(out var item))
+        {
+            var (package, targetFrameworks) = item;
+
+            if (packageFlags.TryAdd(package, EDependencyFlag.Unknown) is false)
+            {
+                continue;
+            }
+
+            var nugetSources = nugetUpdaterContext.GetSourcesForPackage(package.Name, logger);
+
+            foreach (var nugetSource in nugetSources)
+            {
+                if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
+                {
+                    using var nugetCache = new SourceCacheContext();
+
+                    var packageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
+                        sourceRepository,
+                        package,
+                        nugetCache,
+                        cancellationToken
+                    );
+
+                    if (packageMetadata is null)
+                    {
+                        continue;
+                    }
+
+                    if (packageMetadata is PackageSearchMetadataRegistration packageSearchMetadataRegistration)
+                    {
+                        var compatiblePackageDependencyGroups = targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
+                            packageSearchMetadataRegistration,
+                            targetFrameworks
+                        );
+
+                        EDependencyFlag? dependencyFlag = null;
+
+                        var dependencies = new List<Package>();
+
+                        foreach (var compatiblePackageDependencyGroup in compatiblePackageDependencyGroups)
+                        {
+                            foreach (var packageDependency in compatiblePackageDependencyGroup.Packages)
+                            {
+                                var isDependencyIgnored = ignoredDependenciesResolver.IsDependencyIgnored(
+                                    packageDependency,
+                                    ignoreResolver,
+                                    currentPackageVersions
+                                );
+
+                                if (packageDependency.VersionRange.MinVersion is not { } minVersion)
+                                {
+                                    continue;
+                                }
+
+                                var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
+
+                                if (isDependencyIgnored)
+                                {
+                                    packageFlags[dependentPackage] = EDependencyFlag.ContainsIgnoredDependency;
+                                    dependencyFlag = EDependencyFlag.ContainsIgnoredDependency;
+                                }
+                                else if (dependencyFlag is null)
+                                {
+                                    dependencies.Add(dependentPackage);
+                                    dependenciesToCheck.Enqueue((dependentPackage, targetFrameworks));
+                                }
+                            }
+                        }
+
+                        if (dependencyFlag.HasValue)
+                        {
+                            packageFlags[package] = dependencyFlag.Value;
+                        }
+                        else
+                        {
+                            dependenciesToRevisit.Push((package, dependencies));
+                        }
+                    }
+                    else
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(packageMetadata), packageMetadata, null);
+                    }
+                }
+            }
+        }
+
+        while (dependenciesToRevisit.TryPop(out var item))
+        {
+            var (package, dependencies) = item;
+
+            var isIgnored = false;
+
+            foreach (var dependency in dependencies)
+            {
+                if (packageFlags.TryGetValue(dependency, out var dependencyFlag) && dependencyFlag == EDependencyFlag.ContainsIgnoredDependency)
+                {
+                    packageFlags[package] = EDependencyFlag.ContainsIgnoredDependency;
+                    isIgnored = true;
+                    break;
+                }
+            }
+
+            if (isIgnored)
+            {
+                packageFlags[package] = EDependencyFlag.Valid;
+            }
+        }
+
+        var packageToUpdate = new Dictionary<NugetDependency, PackageVersion<PackageSearchMetadataRegistration>>();
+        foreach (var (dependency, possiblePackageVersions) in dependencyToUpdate)
+        {
+            var newPossiblePackageVersions = new List<PossiblePackageVersion>();
+            foreach (var possiblePackageVersion in possiblePackageVersions)
+            {
+                var compatiblePackageDependencyGroups = new List<PackageDependencyGroup>();
+                foreach (var compatiblePackageDependencyGroup in possiblePackageVersion.CompatiblePackageDependencyGroups)
+                {
+                    var isIgnored = false;
+                    var isValid = true;
+                    foreach (var packageDependency in compatiblePackageDependencyGroup.Packages)
+                    {
+                        if (packageDependency.VersionRange.MinVersion is not { } minVersion)
+                        {
+                            continue;
+                        }
+
+                        var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
+
+                        if (packageFlags.TryGetValue(dependentPackage, out var flag) && flag == EDependencyFlag.ContainsIgnoredDependency)
+                        {
+                            isIgnored = true;
+                        }
+                        else
+                        {
+                            isValid = false;
+                        }
+                    }
+
+                    if (isIgnored is false && isValid)
+                    {
+                        compatiblePackageDependencyGroups.Add(compatiblePackageDependencyGroup);
+                    }
+                }
+
+                if (compatiblePackageDependencyGroups.Count > 0)
+                {
+                    newPossiblePackageVersions.Add(possiblePackageVersion with { CompatiblePackageDependencyGroups = compatiblePackageDependencyGroups });
+                }
+            }
+
+            if (newPossiblePackageVersions.Count > 0)
+            {
+                packageToUpdate.Add(dependency, newPossiblePackageVersions.OrderBy(x => x.PackageVersion).First().PackageVersion);
+            }
+        }
+
+        var a = packageToUpdate;
+    }
+
+    private enum EDependencyFlag
+    {
+        Unknown,
+        ContainsIgnoredDependency,
+        Valid,
     }
 
     public NugetUpdaterContext CreateContext(
         string directoryPath,
-        IReadOnlyCollection<NugetTargetFramework> targetFrameworks
+        IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks
     )
     {
         var nugetConfigurations = nugetFinder.GetNugetConfig(directoryPath)
@@ -81,7 +283,7 @@ public sealed class NugetUpdater(
             .ToList();
 
         var dependencies = nugetFinder.GetDirectoryPackagesPropsFiles(directoryPath)
-            .SelectMany(x => nugetDirectoryPackagesPropsParser.Parse(x, targetFrameworks))
+            .SelectMany(x => nugetDirectoryPackagesPropsParser.Parse(x, defaultTargetFrameworks))
             .Concat(
                 nugetFinder.GetAllCsprojFiles(directoryPath)
                     .SelectMany(x => nugetCsprojParser.Parse(x))
@@ -102,7 +304,6 @@ public sealed class NugetUpdater(
 
     private async IAsyncEnumerable<(NugetDependency dependency, IReadOnlyCollection<PossiblePackageVersion> futureVersions)> ResolvePossiblePackageVersions(
         NugetUpdaterContext nugetUpdaterContext,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
         IReadOnlyDictionary<NugetSource, SourceRepository> sourceRepositories,
         IgnoreResolver ignoreResolver,
         [EnumeratorCancellation] CancellationToken cancellationToken
@@ -134,14 +335,6 @@ public sealed class NugetUpdater(
                         dependency.TargetFrameworks
                     ).ToList()
                 ))
-                .Select(x => x with
-                {
-                    CompatiblePackageDependencyGroups = ignoredDependenciesResolver.FilterDependencyGroupsRequiringIgnoredPackages(
-                        x.CompatiblePackageDependencyGroups,
-                        ignoreResolver,
-                        currentPackageVersions
-                    ).ToList(),
-                })
                 .Where(x => x.CompatiblePackageDependencyGroups.Count > 0)
                 .ToList();
 
