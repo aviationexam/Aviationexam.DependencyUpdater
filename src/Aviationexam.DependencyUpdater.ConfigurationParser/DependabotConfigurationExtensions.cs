@@ -1,5 +1,3 @@
-using Corvus.Json;
-
 namespace Aviationexam.DependencyUpdater.ConfigurationParser;
 
 public static class DependabotConfigurationExtensions
@@ -8,7 +6,7 @@ public static class DependabotConfigurationExtensions
         this DependabotConfiguration config,
         string packageEcosystem
     ) => config.Updates
-        .Where(x => x.PackageEcosystem == packageEcosystem)
+        .Where(x => x.PackageEcosystem.GetString() == packageEcosystem)
         .ToList();
 
     public static IReadOnlyCollection<KeyValuePair<string, DependabotConfiguration.Registry.Entity>> ExtractFeeds(
@@ -16,8 +14,7 @@ public static class DependabotConfigurationExtensions
         string registryType
     ) => config.Registries
         .Select(x => KeyValuePair.Create(x.Key.GetString(), x.Value.As<DependabotConfiguration.Registry.Entity>()))
-        .Where(x => x.Value.Type == registryType)
-        .Where(x => x.Value.IsValid())
+        .Where(x => x.Value.Type.GetString() == registryType)
         .ToList();
 
     public static IReadOnlyCollection<T> ExtractFeeds<T>(
