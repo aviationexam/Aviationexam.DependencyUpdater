@@ -1,4 +1,6 @@
+using Aviationexam.DependencyUpdater.Common;
 using Microsoft.Extensions.Logging;
+using NuGet.Protocol.Core.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -161,4 +163,25 @@ public static class NugetUpdaterContextExtensions
 
         logger.LogWarning("Unable to find packageSource for dependency {dependencyName}", packageName);
     }
+
+    public static IReadOnlyDictionary<string, PackageVersion> GetCurrentPackageVersions(
+        this NugetUpdaterContext context
+    ) => context.Dependencies
+        .Select(x => x.NugetPackage)
+        .Select(x => (PackageName: x.GetPackageName(), Version: x.GetVersion()))
+        .Where(x => x.Version is not null)
+        .GroupBy(x => x.PackageName)
+        .ToDictionary(x => x.Key, x => x.OrderBy(y => y.Version).First().Version!);
+
+    public static IReadOnlyDictionary<NugetSource, SourceRepository> GetSourceRepositories(
+        this NugetUpdaterContext context,
+        IReadOnlyCollection<NugetFeedAuthentication> nugetFeedAuthentications,
+        NugetVersionFetcherFactory nugetVersionFetcherFactory
+    ) => context.NugetConfigurations
+        .GroupBy(x => x.Source)
+        .Select(x => x.First())
+        .ToDictionary(
+            x => x,
+            x => nugetVersionFetcherFactory.CreateSourceRepository(x, nugetFeedAuthentications)
+        );
 }

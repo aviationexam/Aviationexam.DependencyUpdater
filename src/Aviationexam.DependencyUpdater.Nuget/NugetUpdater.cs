@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using NuGet.Packaging;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -35,36 +34,22 @@ public sealed class NugetUpdater(
         CancellationToken cancellationToken = default
     )
     {
-        var nugetUpdaterContext = CreateContext(
-            directoryPath,
-            defaultTargetFrameworks
+        var nugetUpdaterContext = CreateContext(directoryPath, defaultTargetFrameworks);
+
+        var currentPackageVersions = nugetUpdaterContext.GetCurrentPackageVersions();
+        var sourceRepositories = nugetUpdaterContext.GetSourceRepositories(
+            nugetFeedAuthentications, nugetVersionFetcherFactory
         );
-
-        var currentPackageVersions = nugetUpdaterContext.Dependencies
-            .Select(x => x.NugetPackage)
-            .Select(x => (PackageName: x.GetPackageName(), Version: x.GetVersion()))
-            .Where(x => x.Version is not null)
-            .GroupBy(x => x.PackageName)
-            .ToDictionary(x => x.Key, x => x.OrderBy(y => y.Version).First().Version!);
-
-        var sourceRepositories = nugetUpdaterContext.NugetConfigurations
-            .GroupBy(x => x.Source)
-            .Select(x => x.First())
-            .ToDictionary(
-                x => x,
-                x => nugetVersionFetcherFactory.CreateSourceRepository(x, nugetFeedAuthentications)
-            );
-
         var ignoreResolver = ignoreResolverFactory.Create(ignoreEntries);
 
-        var dependencyToUpdate = await ResolvePossiblePackageVersions(
+        var dependencyToUpdate = await ResolvePossiblePackageVersionsAsync(
             nugetUpdaterContext,
             sourceRepositories,
             ignoreResolver,
             cancellationToken
         ).ToDictionaryAsync(
-            x => x.dependency,
-            x => x.futureVersions,
+            x => x.Key,
+            x => x.Value,
             cancellationToken
         );
 
@@ -72,6 +57,41 @@ public sealed class NugetUpdater(
         var dependenciesToCheck = new Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
         var dependenciesToRevisit = new Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)>();
 
+        ProcessDependenciesToUpdate(
+            ignoreResolver,
+            currentPackageVersions,
+            dependencyToUpdate,
+            packageFlags,
+            dependenciesToCheck
+        );
+
+        await ProcessDependenciesToCheckAsync(
+            ignoreResolver,
+            currentPackageVersions,
+            packageFlags,
+            dependenciesToCheck,
+            sourceRepositories,
+            nugetUpdaterContext,
+            dependenciesToRevisit,
+            cancellationToken
+        );
+
+        ProcessDependenciesToRevisit(dependenciesToRevisit, packageFlags);
+
+        var packageToUpdate = FilterPackagesToUpdate(dependencyToUpdate, packageFlags);
+
+        var a = packageToUpdate.ToList();
+        // Use packageToUpdate for further processing...
+    }
+
+    private void ProcessDependenciesToUpdate(
+        IgnoreResolver ignoreResolver,
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>> dependencyToUpdate,
+        IDictionary<Package, EDependencyFlag> packageFlags,
+        Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck
+    )
+    {
         foreach (var (dependency, possiblePackageVersions) in dependencyToUpdate)
         {
             foreach (var possiblePackageVersion in possiblePackageVersions)
@@ -80,42 +100,49 @@ public sealed class NugetUpdater(
                 {
                     foreach (var packageDependency in compatiblePackageDependencyGroup.Packages)
                     {
+                        if (packageDependency.VersionRange.MinVersion is not { } minVersion)
+                        {
+                            continue;
+                        }
+
+                        var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
+
                         var isDependencyIgnored = ignoredDependenciesResolver.IsDependencyIgnored(
                             packageDependency,
                             ignoreResolver,
                             currentPackageVersions
                         );
 
-                        if (packageDependency.VersionRange.MinVersion is not { } minVersion)
-                        {
-                            continue;
-                        }
-
-                        var package = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
-
                         if (isDependencyIgnored)
                         {
-                            packageFlags[package] = EDependencyFlag.ContainsIgnoredDependency;
+                            packageFlags[dependentPackage] = EDependencyFlag.ContainsIgnoredDependency;
                         }
-                        else
+                        else if (packageFlags.TryAdd(dependentPackage, EDependencyFlag.Unknown))
                         {
-                            dependenciesToCheck.Enqueue((package, dependency.TargetFrameworks));
+                            dependenciesToCheck.Enqueue((dependentPackage, dependency.TargetFrameworks));
                         }
                     }
                 }
             }
         }
+    }
 
+    private async Task ProcessDependenciesToCheckAsync(
+        IgnoreResolver ignoreResolver,
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        IDictionary<Package, EDependencyFlag> packageFlags,
+        Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
+        IReadOnlyDictionary<NugetSource, SourceRepository> sourceRepositories,
+        NugetUpdaterContext context,
+        Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit,
+        CancellationToken cancellationToken
+    )
+    {
         while (dependenciesToCheck.TryDequeue(out var item))
         {
             var (package, targetFrameworks) = item;
 
-            if (packageFlags.TryAdd(package, EDependencyFlag.Unknown) is false)
-            {
-                continue;
-            }
-
-            var nugetSources = nugetUpdaterContext.GetSourcesForPackage(package.Name, logger);
+            var nugetSources = context.GetSourcesForPackage(package.Name, logger);
 
             foreach (var nugetSource in nugetSources)
             {
@@ -135,135 +162,128 @@ public sealed class NugetUpdater(
                         continue;
                     }
 
-                    if (packageMetadata is PackageSearchMetadataRegistration packageSearchMetadataRegistration)
-                    {
-                        var compatiblePackageDependencyGroups = targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
-                            packageSearchMetadataRegistration,
-                            targetFrameworks
-                        );
-
-                        EDependencyFlag? dependencyFlag = null;
-
-                        var dependencies = new List<Package>();
-
-                        foreach (var compatiblePackageDependencyGroup in compatiblePackageDependencyGroups)
-                        {
-                            foreach (var packageDependency in compatiblePackageDependencyGroup.Packages)
-                            {
-                                var isDependencyIgnored = ignoredDependenciesResolver.IsDependencyIgnored(
-                                    packageDependency,
-                                    ignoreResolver,
-                                    currentPackageVersions
-                                );
-
-                                if (packageDependency.VersionRange.MinVersion is not { } minVersion)
-                                {
-                                    continue;
-                                }
-
-                                var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
-
-                                if (isDependencyIgnored)
-                                {
-                                    packageFlags[dependentPackage] = EDependencyFlag.ContainsIgnoredDependency;
-                                    dependencyFlag = EDependencyFlag.ContainsIgnoredDependency;
-                                }
-                                else if (dependencyFlag is null)
-                                {
-                                    dependencies.Add(dependentPackage);
-                                    dependenciesToCheck.Enqueue((dependentPackage, targetFrameworks));
-                                }
-                            }
-                        }
-
-                        if (dependencyFlag.HasValue)
-                        {
-                            packageFlags[package] = dependencyFlag.Value;
-                        }
-                        else
-                        {
-                            dependenciesToRevisit.Push((package, dependencies));
-                        }
-                    }
-                    else
-                    {
-                        throw new ArgumentOutOfRangeException(nameof(packageMetadata), packageMetadata, null);
-                    }
+                    ProcessPackageMetadata(
+                        ignoreResolver,
+                        currentPackageVersions,
+                        package,
+                        targetFrameworks,
+                        packageMetadata,
+                        packageFlags,
+                        dependenciesToCheck,
+                        dependenciesToRevisit
+                    );
                 }
             }
         }
+    }
 
+    private void ProcessPackageMetadata(
+        IgnoreResolver ignoreResolver,
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        Package package,
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
+        IPackageSearchMetadata packageMetadata,
+        IDictionary<Package, EDependencyFlag> packageFlags,
+        Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
+        Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit
+    )
+    {
+        if (packageMetadata is PackageSearchMetadataRegistration packageSearchMetadataRegistration)
+        {
+            var compatiblePackageDependencyGroups = targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
+                packageSearchMetadataRegistration,
+                targetFrameworks
+            );
+
+            var dependencies = new List<Package>();
+
+            foreach (var compatiblePackageDependencyGroup in compatiblePackageDependencyGroups)
+            {
+                foreach (var packageDependency in compatiblePackageDependencyGroup.Packages)
+                {
+                    if (packageDependency.VersionRange.MinVersion is not { } minVersion)
+                    {
+                        continue;
+                    }
+
+                    var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
+
+                    var isDependencyIgnored = ignoredDependenciesResolver.IsDependencyIgnored(
+                        packageDependency,
+                        ignoreResolver,
+                        currentPackageVersions
+                    );
+
+                    dependencies.Add(dependentPackage);
+
+                    if (isDependencyIgnored)
+                    {
+                        packageFlags[dependentPackage] = EDependencyFlag.ContainsIgnoredDependency;
+                    }
+                    else if (packageFlags.TryAdd(dependentPackage, EDependencyFlag.Unknown))
+                    {
+                        dependenciesToCheck.Enqueue((dependentPackage, targetFrameworks));
+                    }
+                }
+            }
+
+            dependenciesToRevisit.Push((package, dependencies));
+        }
+    }
+
+    private void ProcessDependenciesToRevisit(
+        Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit,
+        IDictionary<Package, EDependencyFlag> packageFlags
+    )
+    {
         while (dependenciesToRevisit.TryPop(out var item))
         {
             var (package, dependencies) = item;
 
-            var isIgnored = false;
+            var isIgnored = dependencies.Any(dependency =>
+                packageFlags.TryGetValue(dependency, out var dependencyFlag)
+                && dependencyFlag is EDependencyFlag.ContainsIgnoredDependency
+            );
 
-            foreach (var dependency in dependencies)
-            {
-                if (packageFlags.TryGetValue(dependency, out var dependencyFlag) && dependencyFlag == EDependencyFlag.ContainsIgnoredDependency)
-                {
-                    packageFlags[package] = EDependencyFlag.ContainsIgnoredDependency;
-                    isIgnored = true;
-                    break;
-                }
-            }
-
-            if (isIgnored)
-            {
-                packageFlags[package] = EDependencyFlag.Valid;
-            }
+            packageFlags[package] = isIgnored
+                ? EDependencyFlag.ContainsIgnoredDependency
+                : EDependencyFlag.Valid;
         }
+    }
 
-        var packageToUpdate = new Dictionary<NugetDependency, PackageVersion<PackageSearchMetadataRegistration>>();
+    private IEnumerable<KeyValuePair<NugetDependency, PackageVersion<PackageSearchMetadataRegistration>>> FilterPackagesToUpdate(
+        IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>> dependencyToUpdate,
+        IDictionary<Package, EDependencyFlag> packageFlags
+    )
+    {
         foreach (var (dependency, possiblePackageVersions) in dependencyToUpdate)
         {
-            var newPossiblePackageVersions = new List<PossiblePackageVersion>();
-            foreach (var possiblePackageVersion in possiblePackageVersions)
-            {
-                var compatiblePackageDependencyGroups = new List<PackageDependencyGroup>();
-                foreach (var compatiblePackageDependencyGroup in possiblePackageVersion.CompatiblePackageDependencyGroups)
+            var newPossiblePackageVersions = possiblePackageVersions
+                .Select(possiblePackageVersion => possiblePackageVersion with
                 {
-                    var isIgnored = false;
-                    var isValid = true;
-                    foreach (var packageDependency in compatiblePackageDependencyGroup.Packages)
-                    {
-                        if (packageDependency.VersionRange.MinVersion is not { } minVersion)
-                        {
-                            continue;
-                        }
-
-                        var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
-
-                        if (packageFlags.TryGetValue(dependentPackage, out var flag) && flag == EDependencyFlag.ContainsIgnoredDependency)
-                        {
-                            isIgnored = true;
-                        }
-                        else
-                        {
-                            isValid = false;
-                        }
-                    }
-
-                    if (isIgnored is false && isValid)
-                    {
-                        compatiblePackageDependencyGroups.Add(compatiblePackageDependencyGroup);
-                    }
-                }
-
-                if (compatiblePackageDependencyGroups.Count > 0)
-                {
-                    newPossiblePackageVersions.Add(possiblePackageVersion with { CompatiblePackageDependencyGroups = compatiblePackageDependencyGroups });
-                }
-            }
+                    CompatiblePackageDependencyGroups =
+                    [
+                        .. possiblePackageVersion
+                            .CompatiblePackageDependencyGroups
+                            .Where(group => group.Packages.All(package =>
+                                packageFlags.TryGetValue(
+                                    new Package(package.Id, package.VersionRange.MinVersion!.MapToPackageVersion()),
+                                    out var flag
+                                ) && flag is EDependencyFlag.Valid
+                            )),
+                    ],
+                })
+                .Where(x => x.CompatiblePackageDependencyGroups.Count > 0)
+                .ToList();
 
             if (newPossiblePackageVersions.Count > 0)
             {
-                packageToUpdate.Add(dependency, newPossiblePackageVersions.OrderBy(x => x.PackageVersion).First().PackageVersion);
+                yield return KeyValuePair.Create(dependency, newPossiblePackageVersions
+                    .OrderBy(x => x.PackageVersion)
+                    .First()
+                    .PackageVersion);
             }
         }
-
-        var a = packageToUpdate;
     }
 
     private enum EDependencyFlag
@@ -302,7 +322,7 @@ public sealed class NugetUpdater(
         IReadOnlyCollection<PackageDependencyGroup> CompatiblePackageDependencyGroups
     );
 
-    private async IAsyncEnumerable<(NugetDependency dependency, IReadOnlyCollection<PossiblePackageVersion> futureVersions)> ResolvePossiblePackageVersions(
+    private async IAsyncEnumerable<KeyValuePair<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>>> ResolvePossiblePackageVersionsAsync(
         NugetUpdaterContext nugetUpdaterContext,
         IReadOnlyDictionary<NugetSource, SourceRepository> sourceRepositories,
         IgnoreResolver ignoreResolver,
@@ -322,7 +342,7 @@ public sealed class NugetUpdater(
             var dependencyName = dependency.NugetPackage.GetPackageName();
             var dependencyVersion = dependency.NugetPackage.GetVersion();
 
-            var futureVersions = futureVersionResolver.ResolveFutureVersion(
+            IReadOnlyCollection<PossiblePackageVersion> futureVersions = futureVersionResolver.ResolveFutureVersion(
                     dependencyName,
                     dependencyVersion,
                     versions.Select(NugetMapper.MapToPackageVersion),
@@ -344,7 +364,7 @@ public sealed class NugetUpdater(
                 continue;
             }
 
-            yield return (dependency, futureVersions);
+            yield return KeyValuePair.Create(dependency, futureVersions);
         }
     }
 
