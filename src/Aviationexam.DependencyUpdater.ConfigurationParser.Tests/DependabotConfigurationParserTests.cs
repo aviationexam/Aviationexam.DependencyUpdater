@@ -3,6 +3,7 @@ using Aviationexam.DependencyUpdater.TestsInfrastructure;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace Aviationexam.DependencyUpdater.ConfigurationParser.Tests;
@@ -38,11 +39,18 @@ public class DependabotConfigurationParserTests
                     type: nuget-feed
                     url: https://pkgs.dev.azure.com/org/orgId/_packaging/nuget-feed/nuget/v3/index.json
                     token: PAT:${{ DEVOPS_TOKEN }}
+                  nuget.org:
+                    type: nuget-feed
+                    url: https://api.nuget.org/v3/index.json
 
                 updates:
                   - package-ecosystem: "nuget"
                     directory: "/"
                     targetFramework: net9.0
+                    registries:
+                      - nuget-feed
+                    fallback-registries:
+                      - nuget.org
                     groups:
                       microsoft:
                         patterns:
@@ -89,6 +97,12 @@ public class DependabotConfigurationParserTests
         Assert.Equal(new DependabotConfiguration.Registry.Entity.TypeEntity("nuget-feed"), nugetRegistry.Type);
         Assert.Equal("https://pkgs.dev.azure.com/org/orgId/_packaging/nuget-feed/nuget/v3/index.json", nugetRegistry.Url);
         Assert.Equal("PAT:${{ DEVOPS_TOKEN }}", nugetRegistry.Token);
+
+        var registry = nugetUpdate.Registries.Single();
+        var fallbackRegistry = nugetUpdate.FallbackRegistries.Single();
+
+        Assert.Equal("nuget-feed", registry.AsString.GetString());
+        Assert.Equal("nuget.org", fallbackRegistry.AsString.GetString());
     }
 
     [Fact]

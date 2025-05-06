@@ -12,6 +12,7 @@ public readonly partial struct DependabotConfiguration
     public readonly partial struct Update
     {
         public static ReadOnlySpan<byte> TargetFrameworkUtf8 => "targetFramework"u8;
+        public static ReadOnlySpan<byte> FallbackRegistriesUtf8 => "fallback-registries"u8;
 
         public TargetFrameworkEntity? TargetFramework
         {
@@ -48,6 +49,39 @@ public readonly partial struct DependabotConfiguration
                 }
 
                 return null;
+            }
+        }
+
+
+        /// <summary>
+        /// Gets the (optional) <c>fallback-registries</c> property.
+        /// </summary>
+        public RegistriesEntity FallbackRegistries
+        {
+            get
+            {
+                if (backing.HasFlag(Backing.JsonElement))
+                {
+                    if (jsonElementBacking.ValueKind != JsonValueKind.Object)
+                    {
+                        return default;
+                    }
+
+                    if (jsonElementBacking.TryGetProperty(FallbackRegistriesUtf8, out var result))
+                    {
+                        return new(result);
+                    }
+                }
+
+                if (backing.HasFlag(Backing.Object))
+                {
+                    if (objectBacking.TryGetValue(FallbackRegistriesUtf8, out var result))
+                    {
+                        return result.As<RegistriesEntity>();
+                    }
+                }
+
+                return default;
             }
         }
     }
