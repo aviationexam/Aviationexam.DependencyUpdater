@@ -47,7 +47,7 @@ foreach (var dependabotConfiguration in dependabotConfigurations)
 
     var nugetFeedAuthentications = dependabotConfiguration.ExtractFeeds(
         "nuget-feed",
-        x => x.MapToNugetFeedAuthentication(envVariableProvider)
+        (key,value ) => value.MapToNugetFeedAuthentication(key, envVariableProvider)
     );
 
     foreach (var nugetUpdate in nugetUpdates)

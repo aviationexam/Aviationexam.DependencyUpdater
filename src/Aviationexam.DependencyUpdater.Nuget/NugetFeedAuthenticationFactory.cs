@@ -8,6 +8,7 @@ public static class NugetFeedAuthenticationFactory
 {
     public static NugetFeedAuthentication CreateNugetFeedAuthentication(
         IEnvVariableProvider envVariableProvider,
+        string key,
         string url,
         string? username,
         string? password,
@@ -30,6 +31,7 @@ public static class NugetFeedAuthenticationFactory
         }
 
         return new NugetFeedAuthentication(
+            key,
             url,
             username,
             password

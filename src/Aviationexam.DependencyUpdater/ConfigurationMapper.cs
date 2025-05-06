@@ -11,9 +11,11 @@ public static class ConfigurationMapper
 {
     public static NugetFeedAuthentication MapToNugetFeedAuthentication(
         this DependabotConfiguration.Registry.Entity registry,
+        string key,
         IEnvVariableProvider envVariableProvider
     ) => NugetFeedAuthenticationFactory.CreateNugetFeedAuthentication(
         envVariableProvider,
+        key,
         registry.Url.GetString()!,
         registry.Username.GetString(),
         registry.Password.GetString(),

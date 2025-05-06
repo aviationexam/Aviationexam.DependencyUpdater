@@ -23,8 +23,8 @@ public static class DependabotConfigurationExtensions
     public static IReadOnlyCollection<T> ExtractFeeds<T>(
         this DependabotConfiguration config,
         string registryType,
-        Func<DependabotConfiguration.Registry.Entity, T> selector
+        Func<string, DependabotConfiguration.Registry.Entity, T> selector
     ) => config.ExtractFeeds(registryType)
-        .Select(x => selector(x.Value))
+        .Select(x => selector(x.Key, x.Value))
         .ToList();
 }
