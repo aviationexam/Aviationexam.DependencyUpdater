@@ -19,7 +19,8 @@ public static class ConfigurationMapper
         registry.Url.GetString()!,
         registry.Username.GetString(),
         registry.Password.GetString(),
-        registry.Token.GetString()
+        registry.Token.GetString(),
+        registry.NugetFeedVersion.GetString()
     );
 
     public static IReadOnlyCollection<NugetTargetFramework> MapToNugetTargetFrameworks(

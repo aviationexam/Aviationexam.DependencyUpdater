@@ -5,5 +5,5 @@ public sealed record NugetFeedAuthentication(
     string FeedUrl,
     string? Username,
     string? Password,
-    NugetSourceVersion Version = NugetSourceVersion.Unknown
+    NugetSourceVersion Version
 );

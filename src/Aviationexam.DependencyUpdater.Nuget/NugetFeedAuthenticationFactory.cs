@@ -12,12 +12,18 @@ public static class NugetFeedAuthenticationFactory
         string url,
         string? username,
         string? password,
-        string? token
+        string? token,
+        string? nugetFeedVersion
     )
     {
         username = username is null ? null : envVariableProvider.PopulateEnvironmentVariables(username);
         password = password is null ? null : envVariableProvider.PopulateEnvironmentVariables(password);
         token = token is null ? null : envVariableProvider.PopulateEnvironmentVariables(token);
+
+        if (!Enum.TryParse<NugetSourceVersion>(nugetFeedVersion, ignoreCase: true, out var nugetSourceVersion))
+        {
+            nugetSourceVersion = NugetSourceVersion.Unknown;
+        }
 
         if (
             string.IsNullOrEmpty(username)
@@ -34,7 +40,8 @@ public static class NugetFeedAuthenticationFactory
             key,
             url,
             username,
-            password
+            password,
+            nugetSourceVersion
         );
     }
 }
