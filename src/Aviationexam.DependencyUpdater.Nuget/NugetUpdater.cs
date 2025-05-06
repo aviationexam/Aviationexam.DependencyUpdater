@@ -216,21 +216,19 @@ public sealed class NugetUpdater(
                 targetFrameworks
             );
 
-            var dependencies = new List<Package>();
-
-            foreach (var compatiblePackageDependencyGroup in compatiblePackageDependencyGroups)
-            {
-                dependencies.AddRange(ProcessPackageDependencyGroup(
-                    ignoreResolver,
-                    currentPackageVersions,
-                    packageFlags,
-                    dependenciesToCheck,
-                    compatiblePackageDependencyGroup,
-                    targetFrameworks
-                ));
-            }
-
-            dependenciesToRevisit.Push((package, dependencies));
+            dependenciesToRevisit.Push((package, [
+                .. compatiblePackageDependencyGroups.Aggregate(
+                    [],
+                    (IEnumerable<Package> acc, PackageDependencyGroup compatiblePackageDependencyGroup) => acc.Concat(ProcessPackageDependencyGroup(
+                        ignoreResolver,
+                        currentPackageVersions,
+                        packageFlags,
+                        dependenciesToCheck,
+                        compatiblePackageDependencyGroup,
+                        targetFrameworks
+                    ))
+                ),
+            ]));
         }
     }
 
