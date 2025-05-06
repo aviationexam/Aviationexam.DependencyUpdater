@@ -1,6 +1,6 @@
 namespace Aviationexam.DependencyUpdater.Common;
 
-public record ExplicitIgnoreRule(
+public sealed record ExplicitIgnoreRule(
     string DependencyName,
     IReadOnlyCollection<string> UpdateTypes
 ) : IIgnoreRule;

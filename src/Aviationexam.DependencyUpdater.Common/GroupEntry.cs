@@ -1,6 +1,6 @@
 namespace Aviationexam.DependencyUpdater.Common;
 
-public record GroupEntry(
+public sealed record GroupEntry(
     string GroupName,
     IReadOnlyCollection<string> Patterns
 );

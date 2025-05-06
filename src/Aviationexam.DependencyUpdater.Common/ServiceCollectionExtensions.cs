@@ -8,5 +8,6 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services
     ) => services
         .AddScoped<FutureVersionResolver>()
-        .AddScoped<IgnoreResolverFactory>();
+        .AddScoped<IgnoreResolverFactory>()
+        .AddScoped<GroupResolverFactory>();
 }

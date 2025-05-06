@@ -21,6 +21,7 @@ public sealed class NugetUpdater(
     NugetVersionFetcher nugetVersionFetcher,
     FutureVersionResolver futureVersionResolver,
     IgnoreResolverFactory ignoreResolverFactory,
+    GroupResolverFactory groupResolverFactory,
     TargetFrameworksResolver targetFrameworksResolver,
     IgnoredDependenciesResolver ignoredDependenciesResolver,
     ILogger<NugetUpdater> logger
@@ -45,6 +46,7 @@ public sealed class NugetUpdater(
             nugetVersionFetcherFactory
         );
         var ignoreResolver = ignoreResolverFactory.Create(ignoreEntries);
+        var groupResolver = groupResolverFactory.Create(groupEntries);
 
         var dependencyToUpdate = await ResolvePossiblePackageVersionsAsync(
             nugetUpdaterContext,
@@ -82,9 +84,16 @@ public sealed class NugetUpdater(
 
         ProcessDependenciesToRevisit(dependenciesToRevisit, packageFlags);
 
-        var packageToUpdate = FilterPackagesToUpdate(dependencyToUpdate, packageFlags);
+        var packageToUpdate = FilterPackagesToUpdate(dependencyToUpdate, packageFlags)
+            .Select(x => new
+            {
+                NugetDependency = x.Key,
+                PackageVersion = x.Value,
+                Group = groupResolver.ResolveGroup(x.Key.NugetPackage.GetPackageName()),
+            });
 
-        var a = packageToUpdate.ToList();
+        var a = string.Join('\n', packageToUpdate.Select(x => $"{x.NugetDependency.NugetPackage}: {x.PackageVersion.Version} ({x.Group?.GroupName})"));
+        Console.WriteLine(a);
         // Use packageToUpdate for further processing...
     }
 

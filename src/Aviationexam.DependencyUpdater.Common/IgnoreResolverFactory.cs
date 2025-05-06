@@ -4,7 +4,7 @@ namespace Aviationexam.DependencyUpdater.Common;
 
 public class IgnoreResolverFactory(
     ILogger<IgnoreResolverFactory> logger
-    )
+)
 {
     public IgnoreResolver Create(IReadOnlyCollection<IgnoreEntry> ignoreEntries)
     {
