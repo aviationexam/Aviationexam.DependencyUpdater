@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using NuGet.Packaging;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -229,6 +230,10 @@ public sealed class NugetUpdater(
                     ))
                 ),
             ]));
+        }
+        else
+        {
+            throw new ArgumentOutOfRangeException(nameof(packageMetadata), packageMetadata, null);
         }
     }
 
