@@ -115,4 +115,41 @@ public readonly partial struct DependabotConfiguration
             }
         }
     }
+
+    public readonly partial struct Registry
+    {
+        public static ReadOnlySpan<byte> NugetFeedVersionUtf8 => "nuget-feed-version"u8;
+
+        public readonly partial struct Entity
+        {
+            public JsonString NugetFeedVersion
+            {
+                get
+                {
+                    if (backing.HasFlag(Backing.JsonElement))
+                    {
+                        if (jsonElementBacking.ValueKind is not JsonValueKind.Object)
+                        {
+                            return default;
+                        }
+
+                        if (jsonElementBacking.TryGetProperty(NugetFeedVersionUtf8, out var result))
+                        {
+                            return new(result);
+                        }
+                    }
+
+                    if (backing.HasFlag(Backing.Object))
+                    {
+                        if (objectBacking.TryGetValue(NugetFeedVersionUtf8, out var result))
+                        {
+                            return result.As<JsonString>();
+                        }
+                    }
+
+                    return default;
+                }
+            }
+        }
+    }
 }

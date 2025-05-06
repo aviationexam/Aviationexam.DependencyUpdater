@@ -42,6 +42,7 @@ public class DependabotConfigurationParserTests
                   nuget.org:
                     type: nuget-feed
                     url: https://api.nuget.org/v3/index.json
+                    nuget-feed-version: V3
 
                 updates:
                   - package-ecosystem: "nuget"
@@ -93,10 +94,16 @@ public class DependabotConfigurationParserTests
         Assert.Equal(["xunit", "xunit.*"], xunitGroup.Value.Patterns);
 
         var nugetRegistry = Assert.Contains("nuget-feed", response.Value.Registries).As<DependabotConfiguration.Registry.Entity>();
+        var nugetOrgRegistry = Assert.Contains("nuget.org", response.Value.Registries).As<DependabotConfiguration.Registry.Entity>();
         Assert.Equal(3, nugetRegistry.Count);
         Assert.Equal(new DependabotConfiguration.Registry.Entity.TypeEntity("nuget-feed"), nugetRegistry.Type);
         Assert.Equal("https://pkgs.dev.azure.com/org/orgId/_packaging/nuget-feed/nuget/v3/index.json", nugetRegistry.Url);
         Assert.Equal("PAT:${{ DEVOPS_TOKEN }}", nugetRegistry.Token);
+
+        Assert.Equal(3, nugetOrgRegistry.Count);
+        Assert.Equal(new DependabotConfiguration.Registry.Entity.TypeEntity("nuget-feed"), nugetOrgRegistry.Type);
+        Assert.Equal("https://api.nuget.org/v3/index.json", nugetOrgRegistry.Url);
+        Assert.Equal("V3", nugetOrgRegistry.NugetFeedVersion.GetString());
 
         var registry = nugetUpdate.Registries.Single();
         var fallbackRegistry = nugetUpdate.FallbackRegistries.Single();
