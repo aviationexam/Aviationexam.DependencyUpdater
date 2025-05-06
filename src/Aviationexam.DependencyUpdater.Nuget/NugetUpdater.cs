@@ -29,6 +29,7 @@ public sealed class NugetUpdater(
     public async Task ProcessUpdatesAsync(
         string directoryPath,
         IReadOnlyCollection<NugetFeedAuthentication> nugetFeedAuthentications,
+        IReadOnlyDictionary<string, string> fallbackRegistries,
         IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks,
         IReadOnlyCollection<IgnoreEntry> ignoreEntries,
         IReadOnlyCollection<GroupEntry> groupEntries,
@@ -39,7 +40,9 @@ public sealed class NugetUpdater(
 
         var currentPackageVersions = nugetUpdaterContext.GetCurrentPackageVersions();
         var sourceRepositories = nugetUpdaterContext.GetSourceRepositories(
-            nugetFeedAuthentications, nugetVersionFetcherFactory
+            nugetFeedAuthentications,
+            fallbackRegistries,
+            nugetVersionFetcherFactory
         );
         var ignoreResolver = ignoreResolverFactory.Create(ignoreEntries);
 
@@ -154,7 +157,7 @@ public sealed class NugetUpdater(
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
         IDictionary<Package, EDependencyFlag> packageFlags,
         Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
-        IReadOnlyDictionary<NugetSource, SourceRepository> sourceRepositories,
+        IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
         NugetUpdaterContext context,
         Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit,
         CancellationToken cancellationToken
@@ -173,11 +176,23 @@ public sealed class NugetUpdater(
                     using var nugetCache = new SourceCacheContext();
 
                     var packageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
-                        sourceRepository,
+                        sourceRepository.SourceRepository,
                         package,
                         nugetCache,
                         cancellationToken
                     );
+
+                    if (
+                        packageMetadata is null
+                        && sourceRepository.FallbackSourceRepository is { } fallbackSourceRepository)
+                    {
+                        packageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
+                            fallbackSourceRepository,
+                            package,
+                            nugetCache,
+                            cancellationToken
+                        );
+                    }
 
                     if (packageMetadata is null)
                     {
@@ -330,7 +345,7 @@ public sealed class NugetUpdater(
 
     private async IAsyncEnumerable<KeyValuePair<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>>> ResolvePossiblePackageVersionsAsync(
         NugetUpdaterContext nugetUpdaterContext,
-        IReadOnlyDictionary<NugetSource, SourceRepository> sourceRepositories,
+        IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
         IgnoreResolver ignoreResolver,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
@@ -377,7 +392,7 @@ public sealed class NugetUpdater(
     private async Task<IReadOnlyCollection<IPackageSearchMetadata>> FetchDependencyVersionsAsync(
         NugetDependency dependency,
         IReadOnlyCollection<NugetSource> sources,
-        IReadOnlyDictionary<NugetSource, SourceRepository> sourceRepositories,
+        IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
         CancellationToken cancellationToken
     )
     {
@@ -389,7 +404,7 @@ public sealed class NugetUpdater(
                 using var nugetCache = new SourceCacheContext();
 
                 var packageVersions = await nugetVersionFetcher.FetchPackageVersionsAsync(
-                    sourceRepository,
+                    sourceRepository.SourceRepository,
                     dependency,
                     nugetCache,
                     cancellationToken

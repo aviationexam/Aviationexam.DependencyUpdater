@@ -47,14 +47,23 @@ foreach (var dependabotConfiguration in dependabotConfigurations)
 
     var nugetFeedAuthentications = dependabotConfiguration.ExtractFeeds(
         "nuget-feed",
-        (key,value ) => value.MapToNugetFeedAuthentication(key, envVariableProvider)
+        (key, value) => value.MapToNugetFeedAuthentication(key, envVariableProvider)
     );
 
     foreach (var nugetUpdate in nugetUpdates)
     {
+        var registries = nugetUpdate.Registries.Select(x => x.AsString.GetString()!).ToList();
+        var fallbackRegistries = nugetUpdate.FallbackRegistries;
+
         await nugetUpdater.ProcessUpdatesAsync(
             directoryPath: Path.Join(directoryPath, nugetUpdate.DirectoryValue.GetString()),
-            nugetFeedAuthentications,
+            [
+                .. nugetFeedAuthentications.Where(x =>
+                    registries.Contains(x.Key)
+                    || fallbackRegistries.Any(r => r.Value == x.Key)
+                ),
+            ],
+            fallbackRegistries,
             nugetUpdate.TargetFramework.MapToNugetTargetFrameworks(),
             [.. nugetUpdate.Ignore.MapToIgnoreEntry()],
             [.. nugetUpdate.Groups.MapToGroupEntry()]

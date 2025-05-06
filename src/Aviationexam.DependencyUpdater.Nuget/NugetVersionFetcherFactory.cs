@@ -11,13 +11,39 @@ public sealed class NugetVersionFetcherFactory(
     Repository.RepositoryFactory repositoryFactory
 )
 {
-    public SourceRepository CreateSourceRepository(
+    public NugetSourceRepository CreateSourceRepositories(
         NugetSource nugetSource,
+        IReadOnlyDictionary<string, string> fallbackRegistries,
         IReadOnlyCollection<NugetFeedAuthentication> nugetFeedAuthentications
     )
     {
         var nugetFeedAuthentication = nugetFeedAuthentications.SingleOrDefault(x => x.FeedUrl == nugetSource.Source);
 
+        var sourceRepository = CreateSourceRepository(nugetSource, nugetFeedAuthentication);
+
+        var fallbackSourceRepository =
+            nugetFeedAuthentication is { Key: { } registryKey }
+            && fallbackRegistries.TryGetValue(registryKey, out var fallbackRegistryKey)
+            && nugetFeedAuthentications.SingleOrDefault(x => x.Key == fallbackRegistryKey) is { } nugetFallbackFeedAuthentication
+                ? CreateSourceRepository(new NugetSource(
+                    fallbackRegistryKey,
+                    nugetFallbackFeedAuthentication.FeedUrl,
+                    nugetFallbackFeedAuthentication.Version,
+                    []
+                ), nugetFallbackFeedAuthentication)
+                : null;
+
+        return new NugetSourceRepository(
+            sourceRepository,
+            fallbackSourceRepository
+        );
+    }
+
+    private SourceRepository CreateSourceRepository(
+        NugetSource nugetSource,
+        NugetFeedAuthentication? nugetFeedAuthentication
+    )
+    {
         var packageSource = new PackageSource(nugetSource.Source)
         {
             Credentials = nugetFeedAuthentication is { Username: not null, Password: not null }

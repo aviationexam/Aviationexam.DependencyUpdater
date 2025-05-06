@@ -173,15 +173,16 @@ public static class NugetUpdaterContextExtensions
         .GroupBy(x => x.PackageName)
         .ToDictionary(x => x.Key, x => x.OrderBy(y => y.Version).First().Version!);
 
-    public static IReadOnlyDictionary<NugetSource, SourceRepository> GetSourceRepositories(
+    public static IReadOnlyDictionary<NugetSource, NugetSourceRepository> GetSourceRepositories(
         this NugetUpdaterContext context,
         IReadOnlyCollection<NugetFeedAuthentication> nugetFeedAuthentications,
+        IReadOnlyDictionary<string, string> fallbackRegistries,
         NugetVersionFetcherFactory nugetVersionFetcherFactory
     ) => context.NugetConfigurations
         .GroupBy(x => x.Source)
         .Select(x => x.First())
         .ToDictionary(
             x => x,
-            x => nugetVersionFetcherFactory.CreateSourceRepository(x, nugetFeedAuthentications)
+            x => nugetVersionFetcherFactory.CreateSourceRepositories(x, fallbackRegistries, nugetFeedAuthentications)
         );
 }
