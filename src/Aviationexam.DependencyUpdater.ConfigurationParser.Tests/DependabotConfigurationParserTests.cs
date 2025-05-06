@@ -50,7 +50,7 @@ public class DependabotConfigurationParserTests
                     registries:
                       - nuget-feed
                     fallback-registries:
-                      - nuget.org
+                      nuget-feed: nuget.org
                     groups:
                       microsoft:
                         patterns:
@@ -102,7 +102,8 @@ public class DependabotConfigurationParserTests
         var fallbackRegistry = nugetUpdate.FallbackRegistries.Single();
 
         Assert.Equal("nuget-feed", registry.AsString.GetString());
-        Assert.Equal("nuget.org", fallbackRegistry.AsString.GetString());
+        Assert.Equal("nuget-feed", fallbackRegistry.Key);
+        Assert.Equal("nuget.org", fallbackRegistry.Value);
     }
 
     [Fact]

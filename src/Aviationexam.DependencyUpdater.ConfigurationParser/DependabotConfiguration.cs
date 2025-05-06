@@ -1,5 +1,6 @@
 using Corvus.Json;
 using Corvus.Json.Internal;
+using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
@@ -20,7 +21,7 @@ public readonly partial struct DependabotConfiguration
             {
                 if (backing.HasFlag(Backing.JsonElement))
                 {
-                    if (jsonElementBacking.ValueKind != JsonValueKind.Object)
+                    if (jsonElementBacking.ValueKind is not JsonValueKind.Object)
                     {
                         return null;
                     }
@@ -56,20 +57,23 @@ public readonly partial struct DependabotConfiguration
         /// <summary>
         /// Gets the (optional) <c>fallback-registries</c> property.
         /// </summary>
-        public RegistriesEntity FallbackRegistries
+        public IReadOnlyDictionary<string, string> FallbackRegistries
         {
             get
             {
                 if (backing.HasFlag(Backing.JsonElement))
                 {
-                    if (jsonElementBacking.ValueKind != JsonValueKind.Object)
+                    if (jsonElementBacking.ValueKind is not JsonValueKind.Object)
                     {
-                        return default;
+                        return FrozenDictionary<string, string>.Empty;
                     }
 
-                    if (jsonElementBacking.TryGetProperty(FallbackRegistriesUtf8, out var result))
+                    if (
+                        jsonElementBacking.TryGetProperty(FallbackRegistriesUtf8, out var result)
+                        && result.ValueKind is JsonValueKind.Object
+                    )
                     {
-                        return new(result);
+                        return JsonElementToKeyValuePair(result).ToDictionary();
                     }
                 }
 
@@ -77,11 +81,37 @@ public readonly partial struct DependabotConfiguration
                 {
                     if (objectBacking.TryGetValue(FallbackRegistriesUtf8, out var result))
                     {
-                        return result.As<RegistriesEntity>();
+                        return JsonObjectToKeyValuePair(result.AsObject).ToDictionary();
                     }
                 }
 
-                return default;
+                return FrozenDictionary<string, string>.Empty;
+            }
+        }
+
+        private IEnumerable<KeyValuePair<string, string>> JsonElementToKeyValuePair(
+            JsonElement jsonElement
+        )
+        {
+            foreach (var property in jsonElement.EnumerateObject())
+            {
+                yield return new KeyValuePair<string, string>(
+                    property.Name,
+                    property.Value.GetString()!
+                );
+            }
+        }
+
+        private IEnumerable<KeyValuePair<string, string>> JsonObjectToKeyValuePair(
+            JsonObject jsonObject
+        )
+        {
+            foreach (var property in jsonObject.EnumerateObject())
+            {
+                yield return new KeyValuePair<string, string>(
+                    property.Name.GetString(),
+                    property.Value.AsString.GetString()!
+                );
             }
         }
     }
