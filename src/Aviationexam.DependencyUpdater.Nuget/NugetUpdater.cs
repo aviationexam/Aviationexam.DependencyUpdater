@@ -98,32 +98,53 @@ public sealed class NugetUpdater(
             {
                 foreach (var compatiblePackageDependencyGroup in possiblePackageVersion.CompatiblePackageDependencyGroups)
                 {
-                    foreach (var packageDependency in compatiblePackageDependencyGroup.Packages)
-                    {
-                        if (packageDependency.VersionRange.MinVersion is not { } minVersion)
-                        {
-                            continue;
-                        }
-
-                        var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
-
-                        var isDependencyIgnored = ignoredDependenciesResolver.IsDependencyIgnored(
-                            packageDependency,
-                            ignoreResolver,
-                            currentPackageVersions
-                        );
-
-                        if (isDependencyIgnored)
-                        {
-                            packageFlags[dependentPackage] = EDependencyFlag.ContainsIgnoredDependency;
-                        }
-                        else if (packageFlags.TryAdd(dependentPackage, EDependencyFlag.Unknown))
-                        {
-                            dependenciesToCheck.Enqueue((dependentPackage, dependency.TargetFrameworks));
-                        }
-                    }
+                    _ = ProcessPackageDependencyGroup(
+                        ignoreResolver,
+                        currentPackageVersions,
+                        packageFlags,
+                        dependenciesToCheck,
+                        compatiblePackageDependencyGroup,
+                        dependency.TargetFrameworks
+                    ).Count();
                 }
             }
+        }
+    }
+
+    private IEnumerable<Package> ProcessPackageDependencyGroup(
+        IgnoreResolver ignoreResolver,
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        IDictionary<Package, EDependencyFlag> packageFlags,
+        Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
+        PackageDependencyGroup compatiblePackageDependencyGroup,
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks
+    )
+    {
+        foreach (var packageDependency in compatiblePackageDependencyGroup.Packages)
+        {
+            if (packageDependency.VersionRange.MinVersion is not { } minVersion)
+            {
+                continue;
+            }
+
+            var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
+
+            var isDependencyIgnored = ignoredDependenciesResolver.IsDependencyIgnored(
+                packageDependency,
+                ignoreResolver,
+                currentPackageVersions
+            );
+
+            if (isDependencyIgnored)
+            {
+                packageFlags[dependentPackage] = EDependencyFlag.ContainsIgnoredDependency;
+            }
+            else if (packageFlags.TryAdd(dependentPackage, EDependencyFlag.Unknown))
+            {
+                dependenciesToCheck.Enqueue((dependentPackage, targetFrameworks));
+            }
+
+            yield return dependentPackage;
         }
     }
 
@@ -199,32 +220,14 @@ public sealed class NugetUpdater(
 
             foreach (var compatiblePackageDependencyGroup in compatiblePackageDependencyGroups)
             {
-                foreach (var packageDependency in compatiblePackageDependencyGroup.Packages)
-                {
-                    if (packageDependency.VersionRange.MinVersion is not { } minVersion)
-                    {
-                        continue;
-                    }
-
-                    var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
-
-                    var isDependencyIgnored = ignoredDependenciesResolver.IsDependencyIgnored(
-                        packageDependency,
-                        ignoreResolver,
-                        currentPackageVersions
-                    );
-
-                    dependencies.Add(dependentPackage);
-
-                    if (isDependencyIgnored)
-                    {
-                        packageFlags[dependentPackage] = EDependencyFlag.ContainsIgnoredDependency;
-                    }
-                    else if (packageFlags.TryAdd(dependentPackage, EDependencyFlag.Unknown))
-                    {
-                        dependenciesToCheck.Enqueue((dependentPackage, targetFrameworks));
-                    }
-                }
+                dependencies.AddRange(ProcessPackageDependencyGroup(
+                    ignoreResolver,
+                    currentPackageVersions,
+                    packageFlags,
+                    dependenciesToCheck,
+                    compatiblePackageDependencyGroup,
+                    targetFrameworks
+                ));
             }
 
             dependenciesToRevisit.Push((package, dependencies));
