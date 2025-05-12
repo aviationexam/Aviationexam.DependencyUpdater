@@ -1,4 +1,4 @@
-﻿using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Interfaces;
 using NSubstitute;
 using Xunit;
 
