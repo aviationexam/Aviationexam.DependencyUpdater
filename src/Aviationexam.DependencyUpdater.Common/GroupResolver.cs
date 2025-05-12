@@ -4,7 +4,9 @@ public class GroupResolver(
     IReadOnlyCollection<IGroupRule> groupRules
 )
 {
-    public GroupEntry? ResolveGroup(string dependencyName)
+    public GroupEntry Empty { get; } = new("Default", []);
+
+    public GroupEntry ResolveGroup(string dependencyName)
     {
         foreach (var groupRule in groupRules)
         {
@@ -21,7 +23,6 @@ public class GroupResolver(
             }
         }
 
-        return null;
+        return Empty;
     }
 }
-
