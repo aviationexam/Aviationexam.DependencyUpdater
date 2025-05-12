@@ -28,7 +28,8 @@ public sealed class NugetUpdater(
 )
 {
     public async Task ProcessUpdatesAsync(
-        string directoryPath,
+        string repositoryPath,
+        string? subdirectoryPath,
         IReadOnlyCollection<NugetFeedAuthentication> nugetFeedAuthentications,
         IReadOnlyDictionary<string, string> fallbackRegistries,
         IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks,
@@ -37,6 +38,7 @@ public sealed class NugetUpdater(
         CancellationToken cancellationToken = default
     )
     {
+        var directoryPath = Path.Join(repositoryPath, subdirectoryPath);
         var nugetUpdaterContext = CreateContext(directoryPath, defaultTargetFrameworks);
 
         var currentPackageVersions = nugetUpdaterContext.GetCurrentPackageVersions();

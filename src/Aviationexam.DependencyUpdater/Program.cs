@@ -56,7 +56,8 @@ foreach (var dependabotConfiguration in dependabotConfigurations)
         var fallbackRegistries = nugetUpdate.FallbackRegistries;
 
         await nugetUpdater.ProcessUpdatesAsync(
-            directoryPath: Path.Join(directoryPath, nugetUpdate.DirectoryValue.GetString()),
+            repositoryPath: directoryPath,
+            subdirectoryPath: nugetUpdate.DirectoryValue.GetString(),
             [
                 .. nugetFeedAuthentications.Where(x =>
                     registries.Contains(x.Key)
