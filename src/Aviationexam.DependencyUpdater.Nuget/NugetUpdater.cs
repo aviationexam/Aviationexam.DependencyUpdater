@@ -1,10 +1,12 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Interfaces;
 using Microsoft.Extensions.Logging;
 using NuGet.Packaging;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -24,6 +26,7 @@ public sealed class NugetUpdater(
     GroupResolverFactory groupResolverFactory,
     TargetFrameworksResolver targetFrameworksResolver,
     IgnoredDependenciesResolver ignoredDependenciesResolver,
+    IGitVersioning gitVersioning,
     ILogger<NugetUpdater> logger
 )
 {
