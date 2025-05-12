@@ -1,8 +1,4 @@
-using System;
-using System.IO;
-using System.Linq;
-
-namespace Aviationexam.DependencyUpdater.TestsInfrastructure;
+namespace Aviationexam.DependencyUpdater.Common;
 
 public sealed class TemporaryDirectoryProvider : IDisposable
 {

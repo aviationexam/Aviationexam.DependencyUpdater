@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Aviationexam.DependencyUpdater.Common\Aviationexam.DependencyUpdater.Common.csproj" />
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.ConfigurationParser\Aviationexam.DependencyUpdater.ConfigurationParser.csproj" />
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.TestsInfrastructure\Aviationexam.DependencyUpdater.TestsInfrastructure.csproj" />
   </ItemGroup>
