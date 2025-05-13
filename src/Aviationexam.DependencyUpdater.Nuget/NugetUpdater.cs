@@ -88,16 +88,95 @@ public sealed class NugetUpdater(
 
         ProcessDependenciesToRevisit(dependenciesToRevisit, packageFlags);
 
-        var packageToUpdate = FilterPackagesToUpdate(dependencyToUpdate, packageFlags)
+        var packagesToUpdate = FilterPackagesToUpdate(dependencyToUpdate, packageFlags)
             .Select(x => new
             {
-                NugetDependency = x.Key,
-                PackageVersion = x.Value,
-                Group = groupResolver.ResolveGroup(x.Key.NugetPackage.GetPackageName()),
-            });
+                NugetUpdateCandidate = new NugetUpdateCandidate<PackageSearchMetadataRegistration>(
+                    x.Key,
+                    x.Value
+                ),
+                GroupEntry = groupResolver.ResolveGroup(x.Key.NugetPackage.GetPackageName()),
+            })
+            .GroupBy(x => x.GroupEntry, x => x.NugetUpdateCandidate);
 
-        var a = string.Join('\n', packageToUpdate.Select(x => $"{x.NugetDependency.NugetPackage}: {x.PackageVersion.Version} ({x.Group?.GroupName})"));
-        Console.WriteLine(a);
+        var groupedPackagesToUpdateQueue = new Queue<(IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> NugetUpdateCandidates, GroupEntry GroupEntry)>();
+        foreach (var grouping in packagesToUpdate)
+        {
+            var groupEntry = grouping.Key;
+            if (groupEntry == groupResolver.Empty)
+            {
+                foreach (var nugetUpdateCandidate in grouping)
+                {
+                    groupedPackagesToUpdateQueue.Enqueue((
+                        [nugetUpdateCandidate],
+                        new GroupEntry($"{nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName()}/{nugetUpdateCandidate.PackageVersion.GetSerializedVersion()}", [])
+                    ));
+                }
+            }
+            else
+            {
+                groupedPackagesToUpdateQueue.Enqueue((grouping.ToList(), groupEntry));
+            }
+        }
+
+        using var sourceVersioning = sourceVersioningFactory.CreateSourceVersioning(repositoryPath);
+
+        while (groupedPackagesToUpdateQueue.TryDequeue(out var groupedPackagesToUpdate))
+        {
+            using var temporaryDirectory = new TemporaryDirectoryProvider(create: false);
+            using var gitWorkspace = sourceVersioning.CreateWorkspace(
+                temporaryDirectory.TemporaryDirectory,
+                branchName: groupedPackagesToUpdate.GroupEntry.GetBranchName(),
+                worktreeName: groupedPackagesToUpdate.GroupEntry.GroupName.Replace('/', '-')
+            );
+
+            var groupPackageVersions = currentPackageVersions.ToDictionary();
+
+            var updatedPackages = new List<NugetUpdateCandidate<PackageSearchMetadataRegistration>>();
+            var packagesToUpdateQueue = new Queue<(NugetUpdateCandidate<PackageSearchMetadataRegistration> NugetUpdateCandidate, int Epoch)>(
+                groupedPackagesToUpdate.NugetUpdateCandidates.Select(x => (x, 0))
+            );
+            var epoch = 1;
+            while (packagesToUpdateQueue.TryDequeue(out var packageToUpdate))
+            {
+                if (packageToUpdate.Epoch == epoch)
+                {
+                    logger.LogWarning(
+                        "Unable to set version for {PackageName} to {Version} due to other package version constraints",
+                        packageToUpdate.NugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
+                        packageToUpdate.NugetUpdateCandidate.PackageVersion.GetSerializedVersion()
+                    );
+                    continue;
+                }
+
+                if (
+                    packageToUpdate.NugetUpdateCandidate.TrySetVersion(
+                        gitWorkspace,
+                        groupPackageVersions
+                    )
+                )
+                {
+                    epoch++;
+                    updatedPackages.Add(packageToUpdate.NugetUpdateCandidate);
+                }
+                else
+                {
+                    packagesToUpdateQueue.Enqueue(packageToUpdate with { Epoch = epoch });
+                }
+            }
+
+            if (
+                gitWorkspace.HasUncommitedChanges()
+                && updatedPackages.GetCommitMessage() is { } commitMessage
+            )
+            {
+                gitWorkspace.CommitChanges(commitMessage);
+                gitWorkspace.Push();
+            }
+        }
+
+        //var a = string.Join('\n', packagesToUpdate.Select(x => $"{x.NugetDependency.NugetPackage}: {x.PackageVersion.Version} ({x.GroupEntry?.GroupName})"));
+        //Console.WriteLine(a);
         // Use packageToUpdate for further processing...
     }
 
@@ -327,7 +406,7 @@ public sealed class NugetUpdater(
         Valid,
     }
 
-    public NugetUpdaterContext CreateContext(
+    private NugetUpdaterContext CreateContext(
         string repositoryPath,
         string? subdirectoryPath,
         IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks
