@@ -1,4 +1,4 @@
-using Aviationexam.DependencyUpdater.Common;
+using NuGet.Protocol;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,7 +8,7 @@ public static class NugetUpdatesExtensions
 {
     public static string? GetCommitMessage<T>(
         this T updatedPackages
-    ) where T : IReadOnlyCollection<(NugetDependency NugetDependency, PackageVersion PackageVersion)>
+    ) where T : IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>>
     {
         var stringBuilder = new StringBuilder();
 
