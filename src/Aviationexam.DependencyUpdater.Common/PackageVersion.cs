@@ -67,6 +67,19 @@ public record PackageVersion(
         builder.AppendJoin('.', ReleaseLabels);
         return true;
     }
+
+    public string GetSerializedVersion()
+    {
+        var builder = new StringBuilder();
+        builder.Append(Version);
+        if (ReleaseLabels.Count > 0)
+        {
+            builder.Append('-');
+            builder.AppendJoin('.', ReleaseLabels);
+        }
+
+        return builder.ToString();
+    }
 }
 
 public record PackageVersion<TOriginalReference>(
