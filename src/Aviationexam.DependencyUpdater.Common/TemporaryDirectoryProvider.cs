@@ -4,10 +4,13 @@ public sealed class TemporaryDirectoryProvider : IDisposable
 {
     public string TemporaryDirectory { get; }
 
-    public TemporaryDirectoryProvider()
+    public TemporaryDirectoryProvider(bool create = true)
     {
         TemporaryDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        Directory.CreateDirectory(TemporaryDirectory);
+        if (create)
+        {
+            Directory.CreateDirectory(TemporaryDirectory);
+        }
     }
 
     public string GetPath(
@@ -19,7 +22,9 @@ public sealed class TemporaryDirectoryProvider : IDisposable
         try
         {
             if (Directory.Exists(TemporaryDirectory))
+            {
                 Directory.Delete(TemporaryDirectory, recursive: true);
+            }
         }
         catch
         {
