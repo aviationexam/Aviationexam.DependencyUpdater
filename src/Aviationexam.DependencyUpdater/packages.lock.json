@@ -98,6 +98,11 @@
           "System.Collections.Immutable": "8.0.0"
         }
       },
+      "LibGit2Sharp.NativeBinaries": {
+        "type": "Transitive",
+        "resolved": "2.0.323",
+        "contentHash": "Kg+fJGWhGj5qRXG0Ilj4ddhuodGXZg57yhfX6OVUDR0M2DKg/UR42/d74+qv5l1qotc1qJilo/ho7xQnULP6yA=="
+      },
       "Microsoft.Bcl.AsyncInterfaces": {
         "type": "Transitive",
         "resolved": "6.0.0",
@@ -521,6 +526,14 @@
           "System.Linq.Async": "[6.0.1, )"
         }
       },
+      "aviationexam.dependencyupdater.vcs.git": {
+        "type": "Project",
+        "dependencies": {
+          "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
+          "LibGit2Sharp": "[0.31.0, )",
+          "Microsoft.Extensions.Logging.Abstractions": "[9.0.4, )"
+        }
+      },
       "Corvus.Json.ExtendedTypes": {
         "type": "CentralTransitive",
         "requested": "[4.3.8, )",
@@ -541,6 +554,15 @@
         "contentHash": "OXfkM9K6N4OAxCzgw75kdSHyfe8vz0t05INXgASUWsGOOKYmI0/6U2Lt2Xp/dA0Y9jiFkbC6J0AyS7bWy97nQA==",
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp": "4.11.0"
+        }
+      },
+      "LibGit2Sharp": {
+        "type": "CentralTransitive",
+        "requested": "[0.31.0, )",
+        "resolved": "0.31.0",
+        "contentHash": "b3+UfV7LjKMjAHWwl7VawejiOv2gJIC6dTCA/S0puLTHACAA/Oeb5JJmWUQMeyH/T/WR/LaIK8bk2RbdFnrZvg==",
+        "dependencies": {
+          "LibGit2Sharp.NativeBinaries": "[2.0.323]"
         }
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
@@ -609,6 +631,11 @@
           "runtime.linux-x64.Microsoft.DotNet.ILCompiler": "9.0.4"
         }
       },
+      "LibGit2Sharp.NativeBinaries": {
+        "type": "Transitive",
+        "resolved": "2.0.323",
+        "contentHash": "Kg+fJGWhGj5qRXG0Ilj4ddhuodGXZg57yhfX6OVUDR0M2DKg/UR42/d74+qv5l1qotc1qJilo/ho7xQnULP6yA=="
+      },
       "runtime.linux-x64.Microsoft.DotNet.ILCompiler": {
         "type": "Transitive",
         "resolved": "9.0.4",
@@ -642,6 +669,11 @@
         "dependencies": {
           "runtime.win-x64.Microsoft.DotNet.ILCompiler": "9.0.4"
         }
+      },
+      "LibGit2Sharp.NativeBinaries": {
+        "type": "Transitive",
+        "resolved": "2.0.323",
+        "contentHash": "Kg+fJGWhGj5qRXG0Ilj4ddhuodGXZg57yhfX6OVUDR0M2DKg/UR42/d74+qv5l1qotc1qJilo/ho7xQnULP6yA=="
       },
       "runtime.win-x64.Microsoft.DotNet.ILCompiler": {
         "type": "Transitive",
