@@ -12,7 +12,8 @@ public sealed class GitSourceVersioning(
         var worktree = repository.Worktrees.Add(branchName, targetDirectory, isLocked: false);
 
         return new GitSourceVersioningWorkspace(
-            worktree
+            worktree,
+            targetDirectory
         );
     }
 
