@@ -6,6 +6,10 @@ public interface ISourceVersioningWorkspace : IDisposable
 {
     string GetWorkspaceDirectory();
 
+    bool IsPathInsideRepository(
+        string fullPath
+    );
+
     bool HasUncommitedChanges();
 
     void CommitChanges(string message);

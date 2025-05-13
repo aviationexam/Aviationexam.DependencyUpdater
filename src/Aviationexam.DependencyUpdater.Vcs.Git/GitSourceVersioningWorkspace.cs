@@ -1,25 +1,62 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using LibGit2Sharp;
+using System.IO;
 using System.Linq;
 
 namespace Aviationexam.DependencyUpdater.Vcs.Git;
 
 public sealed class GitSourceVersioningWorkspace(
-    Worktree worktree,
-    string worktreeDirectory
+    Repository rootRepository,
+    Worktree worktree
 ) : ISourceVersioningWorkspace
 {
-    private readonly Repository _repository = new(worktreeDirectory);
-
     public void Dispose()
     {
-        _repository.Dispose();
+        var worktreeName = worktree.Name;
+        var branchName = worktree.WorktreeRepository.Head.FriendlyName;
+
         worktree.WorktreeRepository.Worktrees.Prune(worktree, ifLocked: false);
+
+        var existingBranch = rootRepository.Branches.SingleOrDefault(x => x.FriendlyName == branchName);
+        if (existingBranch is not null)
+        {
+            rootRepository.Branches.Remove(existingBranch);
+        }
+
+        existingBranch = rootRepository.Branches.SingleOrDefault(x => x.FriendlyName == worktreeName);
+        if (existingBranch is not null)
+        {
+            rootRepository.Branches.Remove(existingBranch);
+        }
     }
 
-    public string GetWorkspaceDirectory() => worktreeDirectory;
+    public string GetWorkspaceDirectory() => worktree.WorktreeRepository.Info.WorkingDirectory;
 
-    public bool HasUncommitedChanges() => _repository.RetrieveStatus()
+    public bool IsPathInsideRepository(
+        string fullPath
+    )
+    {
+        var workingDirectory = GetWorkspaceDirectory();
+
+        if (!fullPath.StartsWith(workingDirectory))
+        {
+            return false;
+        }
+
+        foreach (var submodule in worktree.WorktreeRepository.Submodules)
+        {
+            var submodulePath = Path.Combine(workingDirectory, submodule.Path);
+
+            if (fullPath.StartsWith(submodulePath))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public bool HasUncommitedChanges() => worktree.WorktreeRepository.RetrieveStatus()
         .Modified
         .Where(x => x.FilePath.Length > 0)
         .Any();
