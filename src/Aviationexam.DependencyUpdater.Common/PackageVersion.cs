@@ -1,3 +1,7 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using System.Text;
+
 namespace Aviationexam.DependencyUpdater.Common;
 
 public record PackageVersion(
@@ -51,12 +55,25 @@ public record PackageVersion(
 
         return hash.ToHashCode();
     }
+
+    protected virtual bool PrintMembers(StringBuilder builder)
+    {
+        RuntimeHelpers.EnsureSufficientExecutionStack();
+        builder.Append("Version = ");
+        builder.Append(Version);
+        builder.Append(", IsPrerelease = ");
+        builder.Append(IsPrerelease);
+        builder.Append(", ReleaseLabels = ");
+        builder.AppendJoin('.', ReleaseLabels);
+        return true;
+    }
 }
 
 public record PackageVersion<TOriginalReference>(
     Version Version,
     bool IsPrerelease,
     IReadOnlyCollection<string> ReleaseLabels,
+    [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Global")]
     IComparer<IReadOnlyCollection<string>> ReleaseLabelsComparable,
     TOriginalReference OriginalReference
 ) : PackageVersion(
@@ -66,13 +83,13 @@ public record PackageVersion<TOriginalReference>(
     ReleaseLabelsComparable
 )
 {
-    public virtual bool Equals(PackageVersion<TOriginalReference>? other)
-    {
-        return base.Equals(other);
-    }
+    public virtual bool Equals(
+        PackageVersion<TOriginalReference>? other
+    ) => base.Equals(other);
 
-    public override int GetHashCode()
-    {
-        return base.GetHashCode();
-    }
+    public override int GetHashCode() => base.GetHashCode();
+
+    protected override bool PrintMembers(
+        StringBuilder builder
+    ) => base.PrintMembers(builder);
 }
