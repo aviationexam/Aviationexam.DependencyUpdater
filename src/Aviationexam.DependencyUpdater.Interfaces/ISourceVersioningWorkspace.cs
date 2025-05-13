@@ -2,4 +2,4 @@ using System;
 
 namespace Aviationexam.DependencyUpdater.Interfaces;
 
-public interface IGitWorkspace : IDisposable;
+public interface ISourceVersioningWorkspace : IDisposable;

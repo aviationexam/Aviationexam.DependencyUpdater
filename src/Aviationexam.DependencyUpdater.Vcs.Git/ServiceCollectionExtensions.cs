@@ -2,16 +2,15 @@ using Aviationexam.DependencyUpdater.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Aviationexam.DependencyUpdater.DefaultImplementations;
+namespace Aviationexam.DependencyUpdater.Vcs.Git;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddDefaultImplementations(
+    public static IServiceCollection AddVcsGit(
         this IServiceCollection services
     )
     {
-        services.TryAddScoped<IFileSystem, FileSystem>();
-        services.TryAddScoped<IEnvVariableProvider, EnvVariableProvider>();
+        services.TryAddScoped<ISourceVersioningFactory, GitSourceVersioningFactory>();
 
         return services;
     }

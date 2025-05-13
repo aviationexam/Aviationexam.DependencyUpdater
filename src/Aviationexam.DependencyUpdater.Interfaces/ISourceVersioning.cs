@@ -1,8 +1,10 @@
+using System;
+
 namespace Aviationexam.DependencyUpdater.Interfaces;
 
-public interface IGitVersioning
+public interface ISourceVersioning : IDisposable
 {
-    IGitWorkspace CreateWorkspace(
+    ISourceVersioningWorkspace CreateWorkspace(
         string sourceDirectory, string targetDirectory, string branchName
     );
 }

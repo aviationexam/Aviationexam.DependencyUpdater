@@ -26,7 +26,7 @@ public sealed class NugetUpdater(
     GroupResolverFactory groupResolverFactory,
     TargetFrameworksResolver targetFrameworksResolver,
     IgnoredDependenciesResolver ignoredDependenciesResolver,
-    IGitVersioning gitVersioning,
+    ISourceVersioningFactory sourceVersioningFactory,
     ILogger<NugetUpdater> logger
 )
 {
