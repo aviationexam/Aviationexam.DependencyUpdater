@@ -4,7 +4,6 @@ using Aviationexam.DependencyUpdater.TestsInfrastructure;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using System.IO;
-using System.Linq;
 using Xunit;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Tests;
@@ -59,8 +58,8 @@ public class NugetConfigParserTests
             logger
         );
 
-        var nugetConfigFile = new NugetFile(temporaryDirectoryProvider.GetPath("nuget.config"), ENugetFileType.NugetConfig);
-        var response = nugetConfigParser.Parse(nugetConfigFile);
+        var nugetConfigFile = new NugetFile("nuget.config", ENugetFileType.NugetConfig);
+        var response = nugetConfigParser.Parse(temporaryDirectoryProvider.TemporaryDirectory, nugetConfigFile);
 
         Assert.Equal([
             new NugetSource("nuget-feed", "https://pkgs.dev.azure.com/org/orgId/_packaging/nuget-feed/nuget/v3/index.json", NugetSourceVersion.V3, PackageMapping:
@@ -91,7 +90,7 @@ public class NugetConfigParserTests
             logger
         );
 
-        var response = nugetConfigParser.Parse(new NugetFile($"{directoryPath}/nuget.config", ENugetFileType.NugetConfig));
+        var response = nugetConfigParser.Parse(directoryPath, new NugetFile("nuget.config", ENugetFileType.NugetConfig));
 
         Assert.Empty(response);
     }

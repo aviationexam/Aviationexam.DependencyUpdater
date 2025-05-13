@@ -13,9 +13,12 @@ public class NugetConfigParser(
     ILogger<NugetConfigParser> logger
 )
 {
-    public IEnumerable<NugetSource> Parse(NugetFile nugetFile)
+    public IEnumerable<NugetSource> Parse(
+        string repositoryPath,
+        NugetFile nugetFile
+    )
     {
-        var configFilePath = nugetFile.FullPath;
+        var configFilePath = nugetFile.GetFullPath(repositoryPath);
 
         if (!fileSystem.Exists(configFilePath))
         {

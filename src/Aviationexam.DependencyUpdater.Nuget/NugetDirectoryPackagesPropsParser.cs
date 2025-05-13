@@ -14,21 +14,22 @@ public class NugetDirectoryPackagesPropsParser(
 )
 {
     public IEnumerable<NugetDependency> Parse(
+        string repositoryPath,
         NugetFile nugetFile,
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks
     )
     {
-        var csprojFilePath = nugetFile.FullPath;
+        var directoryPackagesPropsFilePath = nugetFile.GetFullPath(repositoryPath);
 
         // Check if file exists
-        if (!fileSystem.Exists(csprojFilePath))
+        if (!fileSystem.Exists(directoryPackagesPropsFilePath))
         {
-            logger.LogError("csproj file not found at {path}", csprojFilePath);
+            logger.LogError("csproj file not found at {path}", directoryPackagesPropsFilePath);
 
             return [];
         }
 
-        using var stream = fileSystem.FileOpen(nugetFile.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        using var stream = fileSystem.FileOpen(directoryPackagesPropsFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         var doc = XDocument.Load(stream);
 
         return doc

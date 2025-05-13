@@ -61,8 +61,8 @@ public class NugetDirectoryPackagesPropsParserTests
 
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks = [new("net9.0")];
 
-        var nugetFile = new NugetFile(temporaryDirectoryProvider.GetPath("Directory.Packages.props"), ENugetFileType.DirectoryPackagesProps);
-        var response = directoryPackagesPropsParser.Parse(nugetFile, targetFrameworks);
+        var nugetFile = new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps);
+        var response = directoryPackagesPropsParser.Parse(temporaryDirectoryProvider.TemporaryDirectory, nugetFile, targetFrameworks);
 
         Assert.Equal([
             new NugetDependency(nugetFile, new NugetPackageVersion("Meziantou.Analyzer", "2.0.195"), targetFrameworks),
@@ -97,7 +97,7 @@ public class NugetDirectoryPackagesPropsParserTests
             logger
         );
 
-        var response = directoryPackagesPropsParser.Parse(new NugetFile($"{directoryPath}/Directory.Packages.props", ENugetFileType.Csproj), []);
+        var response = directoryPackagesPropsParser.Parse(directoryPath, new NugetFile("Directory.Packages.props", ENugetFileType.Csproj), []);
 
         Assert.Empty(response);
     }

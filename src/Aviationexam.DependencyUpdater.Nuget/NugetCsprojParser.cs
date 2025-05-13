@@ -15,11 +15,12 @@ public class NugetCsprojParser(
 )
 {
     public IEnumerable<NugetDependency> Parse(
+        string repositoryPath,
         NugetFile nugetFile,
         IReadOnlyCollection<NugetTargetFramework>? targetFrameworks = null
     )
     {
-        var csprojFilePath = nugetFile.FullPath;
+        var csprojFilePath = nugetFile.GetFullPath(repositoryPath);
 
         if (!fileSystem.Exists(csprojFilePath))
         {
@@ -27,7 +28,7 @@ public class NugetCsprojParser(
             yield break;
         }
 
-        var baseDir = Path.GetDirectoryName(csprojFilePath)!;
+        var baseDir = Path.GetDirectoryName(nugetFile.RelativePath);
 
         using var stream = fileSystem.FileOpen(csprojFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         var doc = XDocument.Load(stream);
@@ -63,15 +64,22 @@ public class NugetCsprojParser(
                 continue;
             }
 
-            var importedFullPath = Path.GetFullPath(Path.Combine(baseDir, importProject));
-
-            if (!fileSystem.Exists(importedFullPath))
+            if (baseDir is not null)
             {
-                logger.LogError("Imported file not found: {path}", importedFullPath);
+                importProject = Path.Combine(baseDir, importProject);
+            }
+
+            var importedFullPath = Path.GetFullPath(Path.Combine(repositoryPath, importProject));
+
+            var importedPath = Path.GetRelativePath(repositoryPath, importedFullPath);
+
+            if (!fileSystem.Exists(Path.Combine(repositoryPath, importedPath)))
+            {
+                logger.LogError("Imported file not found: {path}", importedPath);
                 continue;
             }
 
-            foreach (var importedDependency in Parse(new NugetFile(importedFullPath, ENugetFileType.Targets), targetFrameworks))
+            foreach (var importedDependency in Parse(repositoryPath, new NugetFile(importedPath, ENugetFileType.Targets), targetFrameworks))
             {
                 yield return importedDependency;
             }

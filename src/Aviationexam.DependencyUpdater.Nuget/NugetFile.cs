@@ -1,6 +1,13 @@
+using System.IO;
+
 namespace Aviationexam.DependencyUpdater.Nuget;
 
 public sealed record NugetFile(
-    string FullPath,
+    string RelativePath,
     ENugetFileType Type
-);
+)
+{
+    public string GetFullPath(
+        string repositoryPath
+    ) => Path.Combine(repositoryPath, RelativePath);
+}

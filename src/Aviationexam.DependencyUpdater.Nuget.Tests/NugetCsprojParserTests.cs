@@ -74,9 +74,9 @@ public class NugetCsprojParserTests
             logger
         );
 
-        var nugetFile = new NugetFile(temporaryDirectoryProvider.GetPath("project/Project.csproj"), ENugetFileType.Csproj);
-        var warningConfigurationFile = new NugetFile(temporaryDirectoryProvider.GetPath("WarningConfiguration.targets"), ENugetFileType.Targets);
-        var response = csprojParser.Parse(nugetFile);
+        var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
+        var warningConfigurationFile = new NugetFile("WarningConfiguration.targets", ENugetFileType.Targets);
+        var response = csprojParser.Parse(temporaryDirectoryProvider.TemporaryDirectory, nugetFile);
 
         Assert.Equal([
             new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Extensions.Hosting", null), [
@@ -129,8 +129,8 @@ public class NugetCsprojParserTests
             logger
         );
 
-        var nugetFile = new NugetFile(temporaryDirectoryProvider.GetPath("project/Project.csproj"), ENugetFileType.Csproj);
-        var response = csprojParser.Parse(nugetFile);
+        var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
+        var response = csprojParser.Parse(temporaryDirectoryProvider.TemporaryDirectory, nugetFile);
 
         Assert.Equal([
             new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Extensions.Hosting", null), [
@@ -161,7 +161,7 @@ public class NugetCsprojParserTests
             logger
         );
 
-        var response = csprojParser.Parse(new NugetFile($"{directoryPath}/project/Project.csproj", ENugetFileType.Csproj));
+        var response = csprojParser.Parse(directoryPath, new NugetFile("project/Project.csproj", ENugetFileType.Csproj));
 
         Assert.Empty(response);
     }

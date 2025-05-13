@@ -41,8 +41,7 @@ public sealed class NugetUpdater(
         CancellationToken cancellationToken = default
     )
     {
-        var directoryPath = Path.Join(repositoryPath, subdirectoryPath);
-        var nugetUpdaterContext = CreateContext(directoryPath, defaultTargetFrameworks);
+        var nugetUpdaterContext = CreateContext(repositoryPath, subdirectoryPath, defaultTargetFrameworks);
 
         var currentPackageVersions = nugetUpdaterContext.GetCurrentPackageVersions();
         var sourceRepositories = nugetUpdaterContext.GetSourceRepositories(
@@ -329,19 +328,22 @@ public sealed class NugetUpdater(
     }
 
     public NugetUpdaterContext CreateContext(
-        string directoryPath,
+        string repositoryPath,
+        string? subdirectoryPath,
         IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks
     )
     {
+        var directoryPath = Path.Join(repositoryPath, subdirectoryPath);
+
         var nugetConfigurations = nugetFinder.GetNugetConfig(directoryPath)
-            .SelectMany(nugetConfigParser.Parse)
+            .SelectMany(x => nugetConfigParser.Parse(repositoryPath, x))
             .ToList();
 
         var dependencies = nugetFinder.GetDirectoryPackagesPropsFiles(directoryPath)
-            .SelectMany(x => nugetDirectoryPackagesPropsParser.Parse(x, defaultTargetFrameworks))
+            .SelectMany(x => nugetDirectoryPackagesPropsParser.Parse(repositoryPath, x, defaultTargetFrameworks))
             .Concat(
                 nugetFinder.GetAllCsprojFiles(directoryPath)
-                    .SelectMany(x => nugetCsprojParser.Parse(x))
+                    .SelectMany(x => nugetCsprojParser.Parse(repositoryPath, x))
                     .Where(x => x.NugetPackage is NugetPackageReference { VersionRange: not null })
             )
             .ToList();
