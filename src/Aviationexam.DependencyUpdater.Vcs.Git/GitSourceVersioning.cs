@@ -1,4 +1,4 @@
-﻿using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Interfaces;
 using LibGit2Sharp;
 using System.Linq;
 
