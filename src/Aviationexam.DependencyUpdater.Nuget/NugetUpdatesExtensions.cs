@@ -18,7 +18,7 @@ public static class NugetUpdatesExtensions
         foreach (var updatedPackage in updatedPackages)
         {
             stringBuilder.AppendLine(
-                $"- Update {updatedPackage.NugetDependency.NugetPackage.GetPackageName()} from {updatedPackage.NugetDependency.NugetPackage.GetVersion()} to {updatedPackage.PackageVersion}"
+                $"- Update {updatedPackage.NugetDependency.NugetPackage.GetPackageName()} from {updatedPackage.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion()} to {updatedPackage.PackageVersion.GetSerializedVersion()}"
             );
         }
 
