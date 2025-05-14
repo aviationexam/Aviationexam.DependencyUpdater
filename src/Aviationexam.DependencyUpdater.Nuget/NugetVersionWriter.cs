@@ -61,7 +61,7 @@ public sealed class NugetVersionWriter(
                         if (
                             dependencyPackage.VersionRange.MinVersion is { } dependencyPackageMinVersion
                             && dependencyPackageMinVersion.MapToPackageVersion() is { } dependencyPackageVersion
-                            && dependencyPackageVersion < dependencyCurrentVersion
+                            && dependencyPackageVersion > dependencyCurrentVersion
                         )
                         {
                             conflictingPackageVersion = new Package(
