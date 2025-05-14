@@ -15,7 +15,7 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
     IFileSystem fileSystem
 )
 {
-    public async Task<bool> TrySetVersion<T>(
+    public async Task<ESetVersion> TrySetVersion<T>(
         NugetUpdateCandidate<T> nugetUpdateCandidate,
         string fullPath,
         IDictionary<string, PackageVersion> groupPackageVersions,
@@ -37,10 +37,10 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
 
         if (versionAttribute is null)
         {
-            return false;
+            return ESetVersion.VersionNotSet;
         }
 
-        versionAttribute.Value = nugetUpdateCandidate.PackageVersion.Version.ToString();
+        versionAttribute.Value = nugetUpdateCandidate.PackageVersion.GetSerializedVersion();
 
         fileStream.Seek(0, SeekOrigin.Begin);
         await using var xmlWriter = XmlWriter.Create(fileStream, new XmlWriterSettings
@@ -65,6 +65,6 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
             groupPackageVersions[packageName] = nugetUpdateCandidate.PackageVersion;
         }
 
-        return true;
+        return ESetVersion.VersionSet;
     }
 }

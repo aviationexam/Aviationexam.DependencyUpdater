@@ -14,7 +14,7 @@ public sealed class NugetVersionWriter(
     NugetCsprojVersionWriter csprojVersionWriter
 )
 {
-    public Task<bool> TrySetVersion<T>(
+    public Task<ESetVersion> TrySetVersion<T>(
         NugetUpdateCandidate<T> nugetUpdateCandidate,
         ISourceVersioningWorkspace gitWorkspace,
         IDictionary<string, PackageVersion> groupPackageVersions,
@@ -23,12 +23,17 @@ public sealed class NugetVersionWriter(
     {
         if (!IsCompatibleWithCurrentVersions(nugetUpdateCandidate.PackageVersion, groupPackageVersions, out _))
         {
-            return Task.FromResult(false);
+            return Task.FromResult(ESetVersion.VersionNotSet);
         }
 
         var workspaceDirectory = gitWorkspace.GetWorkspaceDirectory();
 
         var targetFullPath = nugetUpdateCandidate.NugetDependency.NugetFile.GetFullPath(workspaceDirectory);
+
+        if (!gitWorkspace.IsPathInsideRepository(targetFullPath))
+        {
+            return Task.FromResult(ESetVersion.OutOfRepository);
+        }
 
         return nugetUpdateCandidate.NugetDependency.NugetFile.Type switch
         {

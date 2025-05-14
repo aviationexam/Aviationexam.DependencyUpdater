@@ -171,21 +171,26 @@ public sealed class NugetUpdater(
                     continue;
                 }
 
-                if (
-                    await nugetVersionWriter.TrySetVersion(
-                        packageToUpdate.NugetUpdateCandidate,
-                        gitWorkspace,
-                        groupPackageVersions,
-                        cancellationToken
-                    )
-                )
+                var trySetVersion = await nugetVersionWriter.TrySetVersion(
+                    packageToUpdate.NugetUpdateCandidate,
+                    gitWorkspace,
+                    groupPackageVersions,
+                    cancellationToken
+                );
+
+                switch (trySetVersion)
                 {
-                    epoch++;
-                    updatedPackages.Add(packageToUpdate.NugetUpdateCandidate);
-                }
-                else
-                {
-                    packagesToUpdateQueue.Enqueue(packageToUpdate with { Epoch = epoch });
+                    case ESetVersion.VersionSet:
+                        epoch++;
+                        updatedPackages.Add(packageToUpdate.NugetUpdateCandidate);
+                        break;
+                    case ESetVersion.VersionNotSet:
+                        packagesToUpdateQueue.Enqueue(packageToUpdate with { Epoch = epoch });
+                        break;
+                    case ESetVersion.OutOfRepository:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(trySetVersion), trySetVersion, null);
                 }
             }
 
