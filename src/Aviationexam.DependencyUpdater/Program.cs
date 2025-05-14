@@ -25,7 +25,7 @@ var builder = Host.CreateEmptyApplicationBuilder(settings);
 
 builder.Services.AddLogging(x => x.AddConsole());
 
-builder.Services.AddSingleton<TimeProvider>();
+builder.Services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
 builder.Services.AddCommon();
 builder.Services.AddConfigurationParser();
 builder.Services.AddNuget();
