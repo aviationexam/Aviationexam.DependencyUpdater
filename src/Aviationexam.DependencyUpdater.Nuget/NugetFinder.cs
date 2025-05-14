@@ -21,33 +21,37 @@ public sealed class NugetFinder(
 
 
     public IEnumerable<NugetFile> GetAllNugetFiles(
+        string repositoryPath,
         string directoryPath
-    ) => GetDirectoryPackagesPropsFiles(directoryPath)
-        .Concat(GetAllCsprojFiles(directoryPath))
-        .Concat(GetNugetConfig(directoryPath));
+    ) => GetDirectoryPackagesPropsFiles(repositoryPath, directoryPath)
+        .Concat(GetAllCsprojFiles(repositoryPath, directoryPath))
+        .Concat(GetNugetConfig(repositoryPath, directoryPath));
 
     public IEnumerable<NugetFile> GetDirectoryPackagesPropsFiles(
+        string repositoryPath,
         string directoryPath
     )
     {
         foreach (
             var file in filesystem.EnumerateFiles(directoryPath, "Directory.Packages.props", EnumerateFilesOptions))
         {
-            yield return new NugetFile(file, ENugetFileType.DirectoryPackagesProps);
+            yield return new NugetFile(Path.GetRelativePath(repositoryPath, file), ENugetFileType.DirectoryPackagesProps);
         }
     }
 
     public IEnumerable<NugetFile> GetAllCsprojFiles(
+        string repositoryPath,
         string directoryPath
     )
     {
         foreach (var file in filesystem.EnumerateFiles(directoryPath, "*.csproj", EnumerateFilesOptions))
         {
-            yield return new NugetFile(file, ENugetFileType.Csproj);
+            yield return new NugetFile(Path.GetRelativePath(repositoryPath, file), ENugetFileType.Csproj);
         }
     }
 
     public IEnumerable<NugetFile> GetNugetConfig(
+        string repositoryPath,
         string directoryPath
     )
     {
@@ -57,7 +61,7 @@ public sealed class NugetFinder(
 
             if (string.Equals(fileName, "nuget.config", StringComparison.OrdinalIgnoreCase))
             {
-                yield return new NugetFile(file, ENugetFileType.NugetConfig);
+                yield return new NugetFile(Path.GetRelativePath(repositoryPath, file), ENugetFileType.NugetConfig);
             }
         }
     }

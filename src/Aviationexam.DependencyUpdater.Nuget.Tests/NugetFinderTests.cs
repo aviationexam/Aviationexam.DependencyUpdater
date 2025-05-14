@@ -1,6 +1,5 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using NSubstitute;
-using System.IO;
 using Xunit;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Tests;
@@ -27,13 +26,13 @@ public class NugetFinderTests
 
         var nugetFinder = new NugetFinder(fileSystem);
 
-        var response = nugetFinder.GetAllNugetFiles(directoryPath);
+        var response = nugetFinder.GetAllNugetFiles(directoryPath, directoryPath);
 
         Assert.Equal([
-            new NugetFile($"{directoryPath}/Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
-            new NugetFile($"{directoryPath}/project/Project.csproj", ENugetFileType.Csproj),
-            new NugetFile($"{directoryPath}/project2/Project2.csproj", ENugetFileType.Csproj),
-            new NugetFile($"{directoryPath}/nuget.config", ENugetFileType.NugetConfig),
+            new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
+            new NugetFile("project/Project.csproj", ENugetFileType.Csproj),
+            new NugetFile("project2/Project2.csproj", ENugetFileType.Csproj),
+            new NugetFile("nuget.config", ENugetFileType.NugetConfig),
         ], response);
     }
 
@@ -49,10 +48,10 @@ public class NugetFinderTests
 
         var nugetFinder = new NugetFinder(fileSystem);
 
-        var response = nugetFinder.GetDirectoryPackagesPropsFiles(directoryPath);
+        var response = nugetFinder.GetDirectoryPackagesPropsFiles(directoryPath, directoryPath);
 
         Assert.Equal([
-            new NugetFile($"{directoryPath}/Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
+            new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
         ], response);
     }
 
@@ -69,11 +68,11 @@ public class NugetFinderTests
 
         var nugetFinder = new NugetFinder(fileSystem);
 
-        var response = nugetFinder.GetAllCsprojFiles(directoryPath);
+        var response = nugetFinder.GetAllCsprojFiles(directoryPath, directoryPath);
 
         Assert.Equal([
-            new NugetFile($"{directoryPath}/project/Project.csproj", ENugetFileType.Csproj),
-            new NugetFile($"{directoryPath}/project2/Project2.csproj", ENugetFileType.Csproj),
+            new NugetFile("project/Project.csproj", ENugetFileType.Csproj),
+            new NugetFile("project2/Project2.csproj", ENugetFileType.Csproj),
         ], response);
     }
 
@@ -89,10 +88,10 @@ public class NugetFinderTests
 
         var nugetFinder = new NugetFinder(fileSystem);
 
-        var response = nugetFinder.GetNugetConfig(directoryPath);
+        var response = nugetFinder.GetNugetConfig(directoryPath, directoryPath);
 
         Assert.Equal([
-            new NugetFile($"{directoryPath}/nuget.config", ENugetFileType.NugetConfig),
+            new NugetFile("nuget.config", ENugetFileType.NugetConfig),
         ], response);
     }
 }
