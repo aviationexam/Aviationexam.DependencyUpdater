@@ -401,6 +401,9 @@
           "YamlDotNet": "[16.3.0, )"
         }
       },
+      "aviationexam.dependencyupdater.constants": {
+        "type": "Project"
+      },
       "aviationexam.dependencyupdater.defaultimplementations": {
         "type": "Project",
         "dependencies": {
