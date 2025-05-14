@@ -56,10 +56,7 @@ public sealed class GitSourceVersioningWorkspace(
         return true;
     }
 
-    public bool HasUncommitedChanges() => worktree.WorktreeRepository.RetrieveStatus()
-        .Modified
-        .Where(x => x.FilePath.Length > 0)
-        .Any();
+    public bool HasUncommitedChanges() => worktree.WorktreeRepository.RetrieveStatus().IsDirty;
 
     public void CommitChanges(string message)
     {
