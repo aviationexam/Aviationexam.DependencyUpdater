@@ -59,6 +59,7 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
         });
 
         await doc.SaveAsync(xmlWriter, cancellationToken);
+        fileStream.SetLength(fileStream.Position);
 
         if (groupPackageVersions.ContainsKey(packageName))
         {
