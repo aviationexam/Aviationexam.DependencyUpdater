@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -23,6 +24,7 @@ var builder = Host.CreateEmptyApplicationBuilder(settings);
 
 builder.Services.AddLogging(x => x.AddConsole());
 
+builder.Services.AddSingleton<TimeProvider>();
 builder.Services.AddCommon();
 builder.Services.AddConfigurationParser();
 builder.Services.AddNuget();

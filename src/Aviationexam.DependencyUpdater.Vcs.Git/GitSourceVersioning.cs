@@ -1,11 +1,13 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using LibGit2Sharp;
+using System;
 using System.Linq;
 
 namespace Aviationexam.DependencyUpdater.Vcs.Git;
 
 public sealed class GitSourceVersioning(
-    Repository repository
+    Repository repository,
+    TimeProvider timeProvider
 ) : ISourceVersioning
 {
     public ISourceVersioningWorkspace CreateWorkspace(
@@ -39,7 +41,8 @@ public sealed class GitSourceVersioning(
 
         return new GitSourceVersioningWorkspace(
             repository,
-            worktree
+            worktree,
+            timeProvider
         );
     }
 
