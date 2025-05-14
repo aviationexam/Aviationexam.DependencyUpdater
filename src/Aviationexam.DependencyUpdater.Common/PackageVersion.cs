@@ -71,7 +71,16 @@ public record PackageVersion(
     public string GetSerializedVersion()
     {
         var builder = new StringBuilder();
-        builder.Append(Version);
+
+        if (Version.Revision > 0)
+        {
+            builder.Append(Version);
+        }
+        else
+        {
+            builder.Append(Version.ToString(3));
+        }
+
         if (ReleaseLabels.Count > 0)
         {
             builder.Append('-');
