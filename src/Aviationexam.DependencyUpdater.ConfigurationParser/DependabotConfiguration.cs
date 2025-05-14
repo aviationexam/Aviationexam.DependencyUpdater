@@ -13,6 +13,8 @@ public readonly partial struct DependabotConfiguration
     public readonly partial struct Update
     {
         public static ReadOnlySpan<byte> TargetFrameworkUtf8 => "targetFramework"u8;
+        public static ReadOnlySpan<byte> CommitAuthorUtf8 => "commit-author"u8;
+        public static ReadOnlySpan<byte> CommitAuthorEmailUtf8 => "commit-author-email"u8;
         public static ReadOnlySpan<byte> FallbackRegistriesUtf8 => "fallback-registries"u8;
 
         public TargetFrameworkEntity? TargetFramework
@@ -45,6 +47,82 @@ public readonly partial struct DependabotConfiguration
                         )
                         {
                             return new TargetFrameworkEntity(targetFramework);
+                        }
+                    }
+                }
+
+                return null;
+            }
+        }
+
+        public string? CommitAuthor
+        {
+            get
+            {
+                if (backing.HasFlag(Backing.JsonElement))
+                {
+                    if (jsonElementBacking.ValueKind is not JsonValueKind.Object)
+                    {
+                        return null;
+                    }
+
+                    if (
+                        jsonElementBacking.TryGetProperty(CommitAuthorUtf8, out var result)
+                        && result.GetString() is { } commitAuthor
+                    )
+                    {
+                        return commitAuthor;
+                    }
+                }
+
+                if (backing.HasFlag(Backing.Object))
+                {
+                    if (objectBacking.TryGetValue(CommitAuthorUtf8, out var result))
+                    {
+                        if (
+                            result.ValueKind is JsonValueKind.String
+                            && result.AsString.GetString() is { } commitAuthor
+                        )
+                        {
+                            return commitAuthor;
+                        }
+                    }
+                }
+
+                return null;
+            }
+        }
+
+        public string? CommitAuthorEmail
+        {
+            get
+            {
+                if (backing.HasFlag(Backing.JsonElement))
+                {
+                    if (jsonElementBacking.ValueKind is not JsonValueKind.Object)
+                    {
+                        return null;
+                    }
+
+                    if (
+                        jsonElementBacking.TryGetProperty(CommitAuthorEmailUtf8, out var result)
+                        && result.GetString() is { } commitAuthor
+                    )
+                    {
+                        return commitAuthor;
+                    }
+                }
+
+                if (backing.HasFlag(Backing.Object))
+                {
+                    if (objectBacking.TryGetValue(CommitAuthorEmailUtf8, out var result))
+                    {
+                        if (
+                            result.ValueKind is JsonValueKind.String
+                            && result.AsString.GetString() is { } commitAuthor
+                        )
+                        {
+                            return commitAuthor;
                         }
                     }
                 }

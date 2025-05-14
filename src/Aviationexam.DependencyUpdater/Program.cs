@@ -1,6 +1,7 @@
 using Aviationexam.DependencyUpdater;
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.ConfigurationParser;
+using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.DefaultImplementations;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget;
@@ -62,6 +63,8 @@ foreach (var dependabotConfiguration in dependabotConfigurations)
         await nugetUpdater.ProcessUpdatesAsync(
             repositoryPath: directoryPath,
             subdirectoryPath: nugetUpdate.DirectoryValue.GetString(),
+            nugetUpdate.CommitAuthor ?? GitAuthorConstants.DefaultCommitAuthor,
+            nugetUpdate.CommitAuthorEmail ?? GitAuthorConstants.DefaultCommitAuthorEmail,
             [
                 .. nugetFeedAuthentications.Where(x =>
                     registries.Contains(x.Key)

@@ -34,6 +34,8 @@ public sealed class NugetUpdater(
     public async Task ProcessUpdatesAsync(
         string repositoryPath,
         string? subdirectoryPath,
+        string commitAuthor,
+        string commitAuthorEmail,
         IReadOnlyCollection<NugetFeedAuthentication> nugetFeedAuthentications,
         IReadOnlyDictionary<string, string> fallbackRegistries,
         IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks,
@@ -199,7 +201,11 @@ public sealed class NugetUpdater(
                 && updatedPackages.GetCommitMessage() is { } commitMessage
             )
             {
-                gitWorkspace.CommitChanges(commitMessage);
+                gitWorkspace.CommitChanges(
+                    message: commitMessage,
+                    authorName: commitAuthor,
+                    authorEmail: commitAuthorEmail
+                );
                 gitWorkspace.Push();
             }
         }
