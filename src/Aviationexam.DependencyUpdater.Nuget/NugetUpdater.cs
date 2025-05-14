@@ -438,14 +438,14 @@ public sealed class NugetUpdater(
     {
         var directoryPath = Path.Join(repositoryPath, subdirectoryPath);
 
-        var nugetConfigurations = nugetFinder.GetNugetConfig(directoryPath)
+        var nugetConfigurations = nugetFinder.GetNugetConfig(repositoryPath, directoryPath)
             .SelectMany(x => nugetConfigParser.Parse(repositoryPath, x))
             .ToList();
 
-        var dependencies = nugetFinder.GetDirectoryPackagesPropsFiles(directoryPath)
+        var dependencies = nugetFinder.GetDirectoryPackagesPropsFiles(repositoryPath, directoryPath)
             .SelectMany(x => nugetDirectoryPackagesPropsParser.Parse(repositoryPath, x, defaultTargetFrameworks))
             .Concat(
-                nugetFinder.GetAllCsprojFiles(directoryPath)
+                nugetFinder.GetAllCsprojFiles(repositoryPath, directoryPath)
                     .SelectMany(x => nugetCsprojParser.Parse(repositoryPath, x))
                     .Where(x => x.NugetPackage is NugetPackageReference { VersionRange: not null })
             )
