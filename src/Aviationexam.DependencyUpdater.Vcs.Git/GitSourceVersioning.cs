@@ -14,7 +14,9 @@ public sealed class GitSourceVersioning(
         string worktreeName
     )
     {
-        var existingWorktree = repository.Worktrees.SingleOrDefault(x => x.Name == worktreeName);
+        var existingWorktree = repository.Worktrees
+            .Where(x => x is not null)
+            .SingleOrDefault(x => x.Name == worktreeName);
         if (existingWorktree is not null)
         {
             repository.Worktrees.Prune(existingWorktree, ifLocked: false);
