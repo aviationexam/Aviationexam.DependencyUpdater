@@ -3,6 +3,7 @@ using Aviationexam.DependencyUpdater.Interfaces;
 using NuGet.Protocol;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Aviationexam.DependencyUpdater.Nuget;
 
@@ -29,7 +30,7 @@ public sealed class NugetVersionWriter
     public bool IsCompatibleWithCurrentVersions<T>(
         PackageVersion<T> packageVersion,
         IDictionary<string, PackageVersion> groupPackageVersions,
-        out Package? conflictingPackageVersion
+        [NotNullWhen(false)] out Package? conflictingPackageVersion
     )
     {
         if (packageVersion is PackageVersion<PackageSearchMetadataRegistration> packageSearchMetadataRegistration)

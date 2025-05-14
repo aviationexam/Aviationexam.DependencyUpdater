@@ -142,11 +142,32 @@ public sealed class NugetUpdater(
             {
                 if (packageToUpdate.Epoch == epoch)
                 {
-                    logger.LogWarning(
-                        "Unable to set version for {PackageName} to {Version} due to other package version constraints",
-                        packageToUpdate.NugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
-                        packageToUpdate.NugetUpdateCandidate.PackageVersion.GetSerializedVersion()
-                    );
+                    if (
+                        !nugetVersionWriter.IsCompatibleWithCurrentVersions(
+                            packageToUpdate.NugetUpdateCandidate.PackageVersion,
+                            groupPackageVersions,
+                            out var conflictingPackageVersion
+                        )
+                    )
+                    {
+                        logger.LogError(
+                            "Cannot update '{PackageName}' to version '{Version}': it depends on '{ConflictingPackageName}' version '{ConflictingPackageVersionRequired}', but the current solution uses version '{ConflictingPackageVersionCurrent}'",
+                            packageToUpdate.NugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
+                            packageToUpdate.NugetUpdateCandidate.PackageVersion.GetSerializedVersion(),
+                            conflictingPackageVersion.Name,
+                            conflictingPackageVersion.Version.GetSerializedVersion(),
+                            groupPackageVersions[conflictingPackageVersion.Name].GetSerializedVersion()
+                        );
+                    }
+                    else
+                    {
+                        logger.LogError(
+                            "Cannot set version '{Version}' for package '{PackageName}' due to conflicting version constraints from other packages",
+                            packageToUpdate.NugetUpdateCandidate.PackageVersion.GetSerializedVersion(),
+                            packageToUpdate.NugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName()
+                        );
+                    }
+
                     continue;
                 }
 
