@@ -12,7 +12,11 @@ public interface ISourceVersioningWorkspace : IDisposable
 
     bool HasUncommitedChanges();
 
-    void CommitChanges(string message);
+    void CommitChanges(
+        string message,
+        string authorName,
+        string authorEmail
+    );
 
     void Push();
 }

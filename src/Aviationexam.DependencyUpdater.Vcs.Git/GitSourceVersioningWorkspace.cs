@@ -1,5 +1,6 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using LibGit2Sharp;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -7,7 +8,8 @@ namespace Aviationexam.DependencyUpdater.Vcs.Git;
 
 public sealed class GitSourceVersioningWorkspace(
     Repository rootRepository,
-    Worktree worktree
+    Worktree worktree,
+    TimeProvider timeProvider
 ) : ISourceVersioningWorkspace
 {
     public void Dispose()
@@ -58,13 +60,44 @@ public sealed class GitSourceVersioningWorkspace(
 
     public bool HasUncommitedChanges() => worktree.WorktreeRepository.RetrieveStatus().IsDirty;
 
-    public void CommitChanges(string message)
+    public void CommitChanges(
+        string message,
+        string authorName,
+        string authorEmail
+    )
     {
-        //throw new System.NotImplementedException();
+        var repo = worktree.WorktreeRepository;
+
+        // Stage all changes (modified, added, removed)
+        Commands.Stage(repo, "*");
+
+        // Check if there is anything to commit
+        if (!repo.RetrieveStatus().IsDirty)
+        {
+            return;
+        }
+
+        // Create the commit
+        var signature = new Signature(
+            name: authorName,
+            email: authorEmail,
+            timeProvider.GetUtcNow()
+        );
+
+        repo.Commit(message, signature, signature);
     }
 
     public void Push()
     {
-        //throw new System.NotImplementedException();
+        var repository = worktree.WorktreeRepository;
+
+        repository.Network.Push(
+            remote: repository.Network.Remotes["origin"],
+            pushRefSpec: repository.Head.CanonicalName,
+            pushOptions: new PushOptions
+            {
+                CredentialsProvider = (_, _, _) => new DefaultCredentials(),
+            }
+        );
     }
 }
