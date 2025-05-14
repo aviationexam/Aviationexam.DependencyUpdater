@@ -91,9 +91,11 @@ public sealed class GitSourceVersioningWorkspace(
     {
         var repository = worktree.WorktreeRepository;
 
+        var canonicalName = repository.Head.CanonicalName;
+
         repository.Network.Push(
             remote: repository.Network.Remotes["origin"],
-            pushRefSpec: repository.Head.CanonicalName,
+            pushRefSpec: $"+{canonicalName}:{canonicalName}",
             pushOptions: new PushOptions
             {
                 CredentialsProvider = (_, _, _) => new DefaultCredentials(),
