@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 namespace Aviationexam.DependencyUpdater.Nuget;
 
-public static class NugetDependencyExtensions
+public sealed class NugetVersionWriter
 {
-    public static bool TrySetVersion<T>(
-        this NugetUpdateCandidate<T> nugetUpdateCandidate,
+    public bool TrySetVersion<T>(
+        NugetUpdateCandidate<T> nugetUpdateCandidate,
         ISourceVersioningWorkspace gitWorkspace,
         IDictionary<string, PackageVersion> groupPackageVersions
     )

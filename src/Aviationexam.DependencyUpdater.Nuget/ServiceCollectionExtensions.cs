@@ -18,5 +18,6 @@ public static class ServiceCollectionExtensions
         .AddScoped<NugetVersionFetcherFactory>()
         .AddScoped<NugetVersionFetcher>()
         .AddScoped<TargetFrameworksResolver>()
-        .AddScoped<IgnoredDependenciesResolver>();
+        .AddScoped<IgnoredDependenciesResolver>()
+        .AddScoped<NugetVersionWriter>();
 }

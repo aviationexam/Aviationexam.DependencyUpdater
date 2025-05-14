@@ -27,6 +27,7 @@ public sealed class NugetUpdater(
     TargetFrameworksResolver targetFrameworksResolver,
     IgnoredDependenciesResolver ignoredDependenciesResolver,
     ISourceVersioningFactory sourceVersioningFactory,
+    NugetVersionWriter nugetVersionWriter,
     ILogger<NugetUpdater> logger
 )
 {
@@ -150,7 +151,8 @@ public sealed class NugetUpdater(
                 }
 
                 if (
-                    packageToUpdate.NugetUpdateCandidate.TrySetVersion(
+                    nugetVersionWriter.TrySetVersion(
+                        packageToUpdate.NugetUpdateCandidate,
                         gitWorkspace,
                         groupPackageVersions
                     )
