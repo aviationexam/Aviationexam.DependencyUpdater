@@ -3,6 +3,7 @@ using Aviationexam.DependencyUpdater.Interfaces;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -48,11 +49,12 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
             CloseOutput = false,
             ConformanceLevel = ConformanceLevel.Auto,
             DoNotEscapeUriAttributes = false,
+            Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
             Indent = false,
             NamespaceHandling = NamespaceHandling.Default,
             NewLineHandling = NewLineHandling.None,
             NewLineOnAttributes = false,
-            OmitXmlDeclaration = false,
+            OmitXmlDeclaration = true,
             WriteEndDocumentOnClose = false,
         });
 
