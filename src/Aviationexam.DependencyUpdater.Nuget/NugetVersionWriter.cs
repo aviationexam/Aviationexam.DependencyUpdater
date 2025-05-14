@@ -7,7 +7,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Aviationexam.DependencyUpdater.Nuget;
 
-public sealed class NugetVersionWriter
+public sealed class NugetVersionWriter(
+    NugetDirectoryPackagesPropsVersionWriter directoryPackagesPropsVersionWriter,
+    NugetCsprojVersionWriter csprojVersionWriter
+)
 {
     public bool TrySetVersion<T>(
         NugetUpdateCandidate<T> nugetUpdateCandidate,
@@ -24,7 +27,13 @@ public sealed class NugetVersionWriter
 
         var targetFullPath = nugetUpdateCandidate.NugetDependency.NugetFile.GetFullPath(workspaceDirectory);
 
-        return true;
+        return nugetUpdateCandidate.NugetDependency.NugetFile.Type switch
+        {
+            ENugetFileType.DirectoryPackagesProps => directoryPackagesPropsVersionWriter.TrySetVersion(nugetUpdateCandidate, targetFullPath, groupPackageVersions),
+            ENugetFileType.Csproj or ENugetFileType.Targets => csprojVersionWriter.TrySetVersion(nugetUpdateCandidate, targetFullPath, groupPackageVersions),
+            // ENugetFileType.NugetConfig => false,
+            _ => throw new ArgumentOutOfRangeException(nameof(nugetUpdateCandidate.NugetDependency.NugetFile.Type), nugetUpdateCandidate.NugetDependency.NugetFile.Type, null),
+        };
     }
 
     public bool IsCompatibleWithCurrentVersions<T>(
