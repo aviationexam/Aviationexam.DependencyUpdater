@@ -1,0 +1,68 @@
+using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Interfaces;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
+
+namespace Aviationexam.DependencyUpdater.Nuget;
+
+public sealed class NugetDirectoryPackagesPropsVersionWriter(
+    IFileSystem fileSystem
+)
+{
+    public async Task<bool> TrySetVersion<T>(
+        NugetUpdateCandidate<T> nugetUpdateCandidate,
+        string fullPath,
+        IDictionary<string, PackageVersion> groupPackageVersions,
+        CancellationToken cancellationToken
+    )
+    {
+        var packageName = nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName();
+
+        await using var fileStream = fileSystem.FileOpen(fullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+
+        var doc = await XDocument.LoadAsync(fileStream, LoadOptions.PreserveWhitespace, cancellationToken);
+
+        var versionAttribute = doc
+            .Descendants()
+            .Where(e => e.Name.LocalName == "PackageVersion")
+            .Where(e => e.Attribute("Include")?.Value == packageName)
+            .Select(x => x.Attribute("Version"))
+            .SingleOrDefault();
+
+        if (versionAttribute is null)
+        {
+            return false;
+        }
+
+        versionAttribute.Value = nugetUpdateCandidate.PackageVersion.Version.ToString();
+
+        fileStream.Seek(0, SeekOrigin.Begin);
+        await using var xmlWriter = XmlWriter.Create(fileStream, new XmlWriterSettings
+        {
+            Async = true,
+            CloseOutput = false,
+            ConformanceLevel = ConformanceLevel.Auto,
+            DoNotEscapeUriAttributes = false,
+            Indent = false,
+            NamespaceHandling = NamespaceHandling.Default,
+            NewLineHandling = NewLineHandling.None,
+            NewLineOnAttributes = false,
+            OmitXmlDeclaration = false,
+            WriteEndDocumentOnClose = false,
+        });
+
+        await doc.SaveAsync(xmlWriter, cancellationToken);
+
+        if (groupPackageVersions.ContainsKey(packageName))
+        {
+            groupPackageVersions[packageName] = nugetUpdateCandidate.PackageVersion;
+        }
+
+        return true;
+    }
+}

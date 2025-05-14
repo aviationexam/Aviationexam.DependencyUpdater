@@ -172,10 +172,11 @@ public sealed class NugetUpdater(
                 }
 
                 if (
-                    nugetVersionWriter.TrySetVersion(
+                    await nugetVersionWriter.TrySetVersion(
                         packageToUpdate.NugetUpdateCandidate,
                         gitWorkspace,
-                        groupPackageVersions
+                        groupPackageVersions,
+                        cancellationToken
                     )
                 )
                 {

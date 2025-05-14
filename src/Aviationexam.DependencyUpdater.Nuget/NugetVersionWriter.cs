@@ -4,6 +4,8 @@ using NuGet.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Aviationexam.DependencyUpdater.Nuget;
 
@@ -12,15 +14,16 @@ public sealed class NugetVersionWriter(
     NugetCsprojVersionWriter csprojVersionWriter
 )
 {
-    public bool TrySetVersion<T>(
+    public Task<bool> TrySetVersion<T>(
         NugetUpdateCandidate<T> nugetUpdateCandidate,
         ISourceVersioningWorkspace gitWorkspace,
-        IDictionary<string, PackageVersion> groupPackageVersions
+        IDictionary<string, PackageVersion> groupPackageVersions,
+        CancellationToken cancellationToken
     )
     {
         if (!IsCompatibleWithCurrentVersions(nugetUpdateCandidate.PackageVersion, groupPackageVersions, out _))
         {
-            return false;
+            return Task.FromResult(false);
         }
 
         var workspaceDirectory = gitWorkspace.GetWorkspaceDirectory();
@@ -29,9 +32,9 @@ public sealed class NugetVersionWriter(
 
         return nugetUpdateCandidate.NugetDependency.NugetFile.Type switch
         {
-            ENugetFileType.DirectoryPackagesProps => directoryPackagesPropsVersionWriter.TrySetVersion(nugetUpdateCandidate, targetFullPath, groupPackageVersions),
-            ENugetFileType.Csproj or ENugetFileType.Targets => csprojVersionWriter.TrySetVersion(nugetUpdateCandidate, targetFullPath, groupPackageVersions),
-            // ENugetFileType.NugetConfig => false,
+            ENugetFileType.DirectoryPackagesProps => directoryPackagesPropsVersionWriter.TrySetVersion(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
+            ENugetFileType.Csproj or ENugetFileType.Targets => csprojVersionWriter.TrySetVersion(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
+            // ENugetFileType.NugetConfig => false, // we should not update nuget.config
             _ => throw new ArgumentOutOfRangeException(nameof(nugetUpdateCandidate.NugetDependency.NugetFile.Type), nugetUpdateCandidate.NugetDependency.NugetFile.Type, null),
         };
     }
