@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "dependencies": {
+    "net9.0": {
+      "Meziantou.Analyzer": {
+        "type": "Direct",
+        "requested": "[2.0.201, )",
+        "resolved": "2.0.201",
+        "contentHash": "ehMMCZcz1jFsMlxf62K4LBp9t+dF1spSwr4vjWRAiMvc8lVKw27dNpKH7bnrropwdWTSWDim9arCvyNyfPTEnA=="
+      },
+      "Microsoft.NET.ILLink.Tasks": {
+        "type": "Direct",
+        "requested": "[9.0.5, )",
+        "resolved": "9.0.5",
+        "contentHash": "4L7wbb3Y4BJgIeSnmAf/C6S/qCs9rT1b0dX72uj3qo0qvUH7D0U1tU5ZlC7A3Wb8E/dXK4caOi4JkdLTVJaXhw=="
+      }
+    },
+    "net9.0/linux-x64": {},
+    "net9.0/win-x64": {}
+  }
+}
