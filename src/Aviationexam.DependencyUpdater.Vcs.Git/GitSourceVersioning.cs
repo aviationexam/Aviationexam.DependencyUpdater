@@ -48,6 +48,17 @@ public sealed class GitSourceVersioning(
             worktree.WorktreeRepository.Reset(ResetMode.Hard, repository.Branches[sourceBranchName].Tip);
         }
 
+        foreach (var submodule in worktree.WorktreeRepository.Submodules)
+        {
+            worktree.WorktreeRepository.Submodules.Update(
+                submodule.Name,
+                new SubmoduleUpdateOptions
+                {
+                    Init = true,
+                }
+            );
+        }
+
         return new GitSourceVersioningWorkspace(
             repository,
             worktree,
