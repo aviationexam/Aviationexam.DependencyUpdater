@@ -1087,6 +1087,9 @@
           "System.Xml.XmlDocument": "4.3.0"
         }
       },
+      "aviationexam.dependencyupdater.interfaces": {
+        "type": "Project"
+      },
       "Newtonsoft.Json": {
         "type": "CentralTransitive",
         "requested": "[13.0.3, )",

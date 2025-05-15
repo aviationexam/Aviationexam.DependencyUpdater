@@ -1481,6 +1481,7 @@
       "aviationexam.dependencyupdater.repository.devops": {
         "type": "Project",
         "dependencies": {
+          "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.5, )",
           "Microsoft.TeamFoundationServer.Client": "[19.225.1, )"
         }

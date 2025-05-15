@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Aviationexam.DependencyUpdater.Interfaces\Aviationexam.DependencyUpdater.Interfaces.csproj" />
+  </ItemGroup>
+
 </Project>
