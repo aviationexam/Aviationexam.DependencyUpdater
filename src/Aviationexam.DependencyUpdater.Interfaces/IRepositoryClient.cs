@@ -13,9 +13,10 @@ public interface IRepositoryClient
 
     Task CreatePullRequestAsync(
         string branchName,
+        string? targetBranchName,
         string title,
         string description,
-        long milestone,
+        string? milestone,
         IReadOnlyCollection<string> reviewers,
         CancellationToken cancellationToken
     );
@@ -24,7 +25,7 @@ public interface IRepositoryClient
         string pullRequestId,
         string title,
         string description,
-        long milestone,
+        string? milestone,
         IReadOnlyCollection<string> reviewers,
         CancellationToken cancellationToken
     );

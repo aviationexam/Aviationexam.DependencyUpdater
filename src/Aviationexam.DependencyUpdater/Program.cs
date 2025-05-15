@@ -70,7 +70,7 @@ foreach (var dependabotConfiguration in dependabotConfigurations)
             repositoryPath: directoryPath,
             subdirectoryPath: nugetUpdate.DirectoryValue.GetString(),
             sourceBranchName: nugetUpdate.TargetBranch.GetString(),
-            milestone: nugetUpdate.Milestone.AsInt64(),
+            milestone: nugetUpdate.Milestone.AsAny.AsString.GetString(),
             reviewers: [.. nugetUpdate.Reviewers.Select(x => x.GetString()!)],
             nugetUpdate.CommitAuthor ?? GitAuthorConstants.DefaultCommitAuthor,
             nugetUpdate.CommitAuthorEmail ?? GitAuthorConstants.DefaultCommitAuthorEmail,

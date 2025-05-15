@@ -37,7 +37,7 @@ public sealed class NugetUpdater(
         string repositoryPath,
         string? subdirectoryPath,
         string? sourceBranchName,
-        long milestone,
+        string? milestone,
         IReadOnlyCollection<string> reviewers,
         string commitAuthor,
         string commitAuthorEmail,
@@ -256,6 +256,7 @@ public sealed class NugetUpdater(
                 {
                     await repositoryClient.CreatePullRequestAsync(
                         branchName: gitWorkspace.GetBranchName(),
+                        targetBranchName: sourceBranchName,
                         title: groupedPackagesToUpdate.GroupEntry.GetTitle(groupedPackagesToUpdate.NugetUpdateCandidates),
                         description: commitMessage,
                         milestone,
