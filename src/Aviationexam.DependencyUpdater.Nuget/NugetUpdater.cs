@@ -253,7 +253,6 @@ public sealed class NugetUpdater(
                         pullRequestId: pullRequestId,
                         title: groupedPackagesToUpdate.GroupEntry.GetTitle(groupedPackagesToUpdate.NugetUpdateCandidates),
                         description: commitMessage,
-                        milestone,
                         reviewers,
                         cancellationToken
                     );

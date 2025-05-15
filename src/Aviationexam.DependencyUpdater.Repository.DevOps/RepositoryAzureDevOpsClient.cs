@@ -106,7 +106,6 @@ public class RepositoryAzureDevOpsClient(
         string pullRequestId,
         string title,
         string description,
-        string? milestone,
         IReadOnlyCollection<string> reviewers,
         CancellationToken cancellationToken
     )
@@ -120,20 +119,6 @@ public class RepositoryAzureDevOpsClient(
             Title = title,
             Description = description,
             Reviewers = [.. reviewers.Select(u => new IdentityRefWithVote { Id = u })],
-            WorkItemRefs = milestone is not null ? [new ResourceRef { Id = milestone }] : [],
-            CompletionOptions = new GitPullRequestCompletionOptions
-            {
-                DeleteSourceBranch = true,
-                MergeStrategy = GitPullRequestMergeStrategy.Squash,
-                AutoCompleteIgnoreConfigIds = [],
-                TransitionWorkItems = true,
-                MergeCommitMessage = description,
-            },
-            AutoCompleteSetBy = new IdentityRef { DisplayName = "DependencyUpdater" },
-            Labels =
-            [
-                new WebApiTagDefinition { Name = "dependency-updater" },
-            ],
         };
 
         await gitClient.UpdatePullRequestAsync(
