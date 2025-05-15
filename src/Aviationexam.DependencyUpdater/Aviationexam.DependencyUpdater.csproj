@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.Constants\Aviationexam.DependencyUpdater.Constants.csproj" />
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.DefaultImplementations\Aviationexam.DependencyUpdater.DefaultImplementations.csproj" />
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.Nuget\Aviationexam.DependencyUpdater.Nuget.csproj" />
+    <ProjectReference Include="..\Aviationexam.DependencyUpdater.Repository.DevOps\Aviationexam.DependencyUpdater.Repository.DevOps.csproj" />
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.Vcs.Git\Aviationexam.DependencyUpdater.Vcs.Git.csproj" />
   </ItemGroup>
   

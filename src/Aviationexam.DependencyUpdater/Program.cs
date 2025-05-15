@@ -5,6 +5,7 @@ using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.DefaultImplementations;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget;
+using Aviationexam.DependencyUpdater.Repository.DevOps;
 using Aviationexam.DependencyUpdater.Vcs.Git;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,7 @@ builder.Services.AddCommon();
 builder.Services.AddConfigurationParser();
 builder.Services.AddNuget();
 builder.Services.AddVcsGit();
+builder.Services.AddRepositoryDevOps();
 builder.Services.AddDefaultImplementations();
 
 using var host = builder.Build();
