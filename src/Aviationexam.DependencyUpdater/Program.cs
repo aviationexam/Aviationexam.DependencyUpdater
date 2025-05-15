@@ -28,7 +28,10 @@ builder.Configuration
     .AddEnvironmentVariables("DEPENDENCY_UPDATER_")
     .AddCommandLine(args);
 
-builder.Services.AddLogging(x => x.AddConsole());
+builder.Services.AddLogging(x => x
+    .AddConsole()
+    .AddFilter("Aviationexam.DependencyUpdater.Repository.DevOps.RepositoryAzureDevOpsClient", LogLevel.Trace)
+);
 
 builder.Services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
 builder.Services.AddCommon();
