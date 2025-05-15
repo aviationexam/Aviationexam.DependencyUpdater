@@ -1,5 +1,6 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using LibGit2Sharp;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 
@@ -7,7 +8,8 @@ namespace Aviationexam.DependencyUpdater.Vcs.Git;
 
 public sealed class GitSourceVersioning(
     Repository repository,
-    TimeProvider timeProvider
+    TimeProvider timeProvider,
+    ILogger<GitSourceVersioning> logger
 ) : ISourceVersioning
 {
     public ISourceVersioningWorkspace CreateWorkspace(
@@ -62,7 +64,8 @@ public sealed class GitSourceVersioning(
         return new GitSourceVersioningWorkspace(
             repository,
             worktree,
-            timeProvider
+            timeProvider,
+            logger
         );
     }
 

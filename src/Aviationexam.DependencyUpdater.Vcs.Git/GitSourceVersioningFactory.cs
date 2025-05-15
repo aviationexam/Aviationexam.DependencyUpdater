@@ -1,11 +1,13 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using LibGit2Sharp;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace Aviationexam.DependencyUpdater.Vcs.Git;
 
 public sealed class GitSourceVersioningFactory(
-    TimeProvider timeProvider
+    TimeProvider timeProvider,
+    ILoggerFactory loggerFactory
 ) : ISourceVersioningFactory
 {
     public ISourceVersioning CreateSourceVersioning(
@@ -14,6 +16,7 @@ public sealed class GitSourceVersioningFactory(
 #pragma warning disable CA2000
         new Repository(sourceDirectory),
 #pragma warning restore CA2000
-        timeProvider
+        timeProvider,
+        loggerFactory.CreateLogger<GitSourceVersioning>()
     );
 }

@@ -1,5 +1,6 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using LibGit2Sharp;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
@@ -9,7 +10,8 @@ namespace Aviationexam.DependencyUpdater.Vcs.Git;
 public sealed class GitSourceVersioningWorkspace(
     Repository rootRepository,
     Worktree worktree,
-    TimeProvider timeProvider
+    TimeProvider timeProvider,
+    ILogger logger
 ) : ISourceVersioningWorkspace
 {
     public void Dispose()
@@ -111,6 +113,8 @@ public sealed class GitSourceVersioningWorkspace(
             return; // remote branch doesn't exist
         }
 
+        logger.LogInformation("Try to rebase onto remote {BranchName}", branch.FriendlyName);
+
         try
         {
             var options = new RebaseOptions
@@ -124,12 +128,15 @@ public sealed class GitSourceVersioningWorkspace(
                 email: authorEmail
             );
 
-            worktree.WorktreeRepository.Rebase.Start(branch, upstream, upstream, identity, options);
+            var rebaseResult = worktree.WorktreeRepository.Rebase.Start(branch, upstream, upstream, identity, options);
+            logger.LogInformation("Rebase status: {RebaseResult}", rebaseResult.Status);
         }
         catch (Exception)
         {
             worktree.WorktreeRepository.Reset(ResetMode.Hard, originalHead);
             Commands.Checkout(worktree.WorktreeRepository, originalHead);
+
+            logger.LogInformation("Unable to rebase onto remote {BranchName}", branch.FriendlyName);
         }
     }
 
