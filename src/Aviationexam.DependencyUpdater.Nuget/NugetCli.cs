@@ -44,7 +44,7 @@ public class NugetCli(
                 var line = await process.StandardOutput.ReadLineAsync(cancellationToken);
                 if (!string.IsNullOrWhiteSpace(line))
                 {
-                    logger.LogInformation("[restore] {Line}", line);
+                    logger.LogTrace("[restore] {Line}", line);
                 }
             }
         }, cancellationToken);
