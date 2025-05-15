@@ -24,6 +24,10 @@ HostApplicationBuilderSettings settings = new()
 
 var builder = Host.CreateEmptyApplicationBuilder(settings);
 
+builder.Configuration
+    .AddEnvironmentVariables("DEPENDENCY_UPDATER_")
+    .AddCommandLine(args);
+
 builder.Services.AddLogging(x => x.AddConsole());
 
 builder.Services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
@@ -31,7 +35,7 @@ builder.Services.AddCommon();
 builder.Services.AddConfigurationParser();
 builder.Services.AddNuget();
 builder.Services.AddVcsGit();
-builder.Services.AddRepositoryDevOps();
+builder.Services.AddRepositoryDevOps(builder.Configuration);
 builder.Services.AddDefaultImplementations();
 
 using var host = builder.Build();
