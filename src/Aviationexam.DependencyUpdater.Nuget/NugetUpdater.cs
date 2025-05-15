@@ -29,6 +29,7 @@ public sealed class NugetUpdater(
     ISourceVersioningFactory sourceVersioningFactory,
     NugetVersionWriter nugetVersionWriter,
     NugetCli nugetCli,
+    IRepositoryClient repositoryClient,
     ILogger<NugetUpdater> logger
 )
 {
@@ -36,6 +37,8 @@ public sealed class NugetUpdater(
         string repositoryPath,
         string? subdirectoryPath,
         string? sourceBranchName,
+        long milestone,
+        IReadOnlyCollection<string> reviewers,
         string commitAuthor,
         string commitAuthorEmail,
         IReadOnlyCollection<NugetFeedAuthentication> nugetFeedAuthentications,
@@ -233,6 +236,33 @@ public sealed class NugetUpdater(
                 }
 
                 gitWorkspace.Push();
+
+                var pullRequestId = await repositoryClient.GetPullRequestForBranchAsync(
+                    branchName: gitWorkspace.GetBranchName(),
+                    cancellationToken
+                );
+                if (pullRequestId is not null)
+                {
+                    await repositoryClient.UpdatePullRequestAsync(
+                        pullRequestId: pullRequestId,
+                        title: groupedPackagesToUpdate.GroupEntry.GetTitle(groupedPackagesToUpdate.NugetUpdateCandidates),
+                        description: commitMessage,
+                        milestone,
+                        reviewers,
+                        cancellationToken
+                    );
+                }
+                else
+                {
+                    await repositoryClient.CreatePullRequestAsync(
+                        branchName: gitWorkspace.GetBranchName(),
+                        title: groupedPackagesToUpdate.GroupEntry.GetTitle(groupedPackagesToUpdate.NugetUpdateCandidates),
+                        description: commitMessage,
+                        milestone,
+                        reviewers,
+                        cancellationToken
+                    );
+                }
             }
         }
 
