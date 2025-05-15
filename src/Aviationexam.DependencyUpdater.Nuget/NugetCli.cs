@@ -32,7 +32,7 @@ public class NugetCli(
 
         var tcs = new TaskCompletionSource<bool>();
 
-        process.Exited += [SuppressMessage("ReSharper", "AccessToDisposedClosure")](_, _) => tcs.TrySetResult(process.ExitCode == 0);
+        process.Exited += [SuppressMessage("ReSharper", "AccessToDisposedClosure")] (_, _) => tcs.TrySetResult(process.ExitCode == 0);
 
         process.Start();
 
@@ -61,7 +61,7 @@ public class NugetCli(
             }
         }, cancellationToken);
 
-        await using var register = cancellationToken.Register([SuppressMessage("ReSharper", "AccessToDisposedClosure")]() => process.Kill(entireProcessTree: true));
+        await using var register = cancellationToken.Register([SuppressMessage("ReSharper", "AccessToDisposedClosure")] () => process.Kill(entireProcessTree: true));
 
         return await tcs.Task;
     }
