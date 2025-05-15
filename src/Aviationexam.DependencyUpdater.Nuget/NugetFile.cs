@@ -9,5 +9,5 @@ public sealed record NugetFile(
 {
     public string GetFullPath(
         string repositoryPath
-    ) => Path.Combine(repositoryPath, RelativePath);
+    ) => Path.Join(repositoryPath, RelativePath);
 }

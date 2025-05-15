@@ -66,14 +66,14 @@ public class NugetCsprojParser(
 
             if (baseDir is not null)
             {
-                importProject = Path.Combine(baseDir, importProject);
+                importProject = Path.Join(baseDir, importProject);
             }
 
-            var importedFullPath = Path.GetFullPath(Path.Combine(repositoryPath, importProject));
+            var importedFullPath = Path.GetFullPath(Path.Join(repositoryPath, importProject));
 
             var importedPath = Path.GetRelativePath(repositoryPath, importedFullPath);
 
-            if (!fileSystem.Exists(Path.Combine(repositoryPath, importedPath)))
+            if (!fileSystem.Exists(Path.Join(repositoryPath, importedPath)))
             {
                 logger.LogError("Imported file not found: {path}", importedPath);
                 continue;

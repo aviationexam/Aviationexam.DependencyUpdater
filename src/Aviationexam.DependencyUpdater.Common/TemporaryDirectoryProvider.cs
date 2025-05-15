@@ -6,7 +6,7 @@ public sealed class TemporaryDirectoryProvider : IDisposable
 
     public TemporaryDirectoryProvider(bool create = true)
     {
-        TemporaryDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        TemporaryDirectory = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         if (create)
         {
             Directory.CreateDirectory(TemporaryDirectory);
@@ -15,7 +15,7 @@ public sealed class TemporaryDirectoryProvider : IDisposable
 
     public string GetPath(
         params string[] subPaths
-    ) => Path.Combine(new[] { TemporaryDirectory }.Concat(subPaths).ToArray());
+    ) => Path.Join(new[] { TemporaryDirectory }.Concat(subPaths).ToArray());
 
     public void Dispose()
     {

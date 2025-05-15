@@ -47,7 +47,7 @@ public sealed class GitSourceVersioningWorkspace(
 
         foreach (var submodule in worktree.WorktreeRepository.Submodules)
         {
-            var submodulePath = Path.Combine(workingDirectory, submodule.Path);
+            var submodulePath = Path.Join(workingDirectory, submodule.Path);
 
             if (fullPath.StartsWith(submodulePath))
             {
