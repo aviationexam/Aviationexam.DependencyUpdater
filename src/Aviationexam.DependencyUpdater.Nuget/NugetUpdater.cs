@@ -28,6 +28,7 @@ public sealed class NugetUpdater(
     IgnoredDependenciesResolver ignoredDependenciesResolver,
     ISourceVersioningFactory sourceVersioningFactory,
     NugetVersionWriter nugetVersionWriter,
+    NugetCli nugetCli,
     ILogger<NugetUpdater> logger
 )
 {
@@ -127,7 +128,9 @@ public sealed class NugetUpdater(
 
         while (groupedPackagesToUpdateQueue.TryDequeue(out var groupedPackagesToUpdate))
         {
+#pragma warning disable CA2000
             using var temporaryDirectory = new TemporaryDirectoryProvider(create: false);
+#pragma warning restore CA2000
             using var gitWorkspace = sourceVersioning.CreateWorkspace(
                 temporaryDirectory.TemporaryDirectory,
                 sourceBranchName: sourceBranchName,
@@ -208,6 +211,27 @@ public sealed class NugetUpdater(
                     authorName: commitAuthor,
                     authorEmail: commitAuthorEmail
                 );
+
+                var workingDirectory = gitWorkspace.GetWorkspaceDirectory();
+                if (subdirectoryPath is not null)
+                {
+                    workingDirectory = Path.Join(workingDirectory, subdirectoryPath);
+                }
+
+                var restored = await nugetCli.Restore(
+                    workingDirectory,
+                    cancellationToken
+                );
+
+                if (restored && gitWorkspace.HasUncommitedChanges())
+                {
+                    gitWorkspace.CommitChanges(
+                        message: "Update package.lock.json",
+                        authorName: commitAuthor,
+                        authorEmail: commitAuthorEmail
+                    );
+                }
+
                 gitWorkspace.Push();
             }
         }

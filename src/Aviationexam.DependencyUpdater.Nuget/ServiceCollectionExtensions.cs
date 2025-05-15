@@ -21,5 +21,6 @@ public static class ServiceCollectionExtensions
         .AddScoped<IgnoredDependenciesResolver>()
         .AddScoped<NugetVersionWriter>()
         .AddScoped<NugetCsprojVersionWriter>()
-        .AddScoped<NugetDirectoryPackagesPropsVersionWriter>();
+        .AddScoped<NugetDirectoryPackagesPropsVersionWriter>()
+        .AddScoped<NugetCli>();
 }
