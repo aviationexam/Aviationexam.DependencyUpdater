@@ -8,4 +8,8 @@
 
   <Import Project="..\WarningConfiguration.targets" />
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.TeamFoundationServer.Client" />
+  </ItemGroup>
+
 </Project>
