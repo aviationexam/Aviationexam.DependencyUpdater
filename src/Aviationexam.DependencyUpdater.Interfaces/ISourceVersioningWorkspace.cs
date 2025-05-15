@@ -6,6 +6,8 @@ public interface ISourceVersioningWorkspace : IDisposable
 {
     string GetWorkspaceDirectory();
 
+    string GetBranchName();
+
     bool IsPathInsideRepository(
         string fullPath
     );

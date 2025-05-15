@@ -34,6 +34,8 @@ public sealed class GitSourceVersioningWorkspace(
 
     public string GetWorkspaceDirectory() => worktree.WorktreeRepository.Info.WorkingDirectory;
 
+    public string GetBranchName() => worktree.WorktreeRepository.Head.FriendlyName;
+
     public bool IsPathInsideRepository(
         string fullPath
     )
