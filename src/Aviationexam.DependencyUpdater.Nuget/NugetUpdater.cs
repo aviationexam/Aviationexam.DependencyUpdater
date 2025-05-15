@@ -34,6 +34,7 @@ public sealed class NugetUpdater(
     public async Task ProcessUpdatesAsync(
         string repositoryPath,
         string? subdirectoryPath,
+        string? sourceBranchName,
         string commitAuthor,
         string commitAuthorEmail,
         IReadOnlyCollection<NugetFeedAuthentication> nugetFeedAuthentications,
@@ -129,6 +130,7 @@ public sealed class NugetUpdater(
             using var temporaryDirectory = new TemporaryDirectoryProvider(create: false);
             using var gitWorkspace = sourceVersioning.CreateWorkspace(
                 temporaryDirectory.TemporaryDirectory,
+                sourceBranchName: sourceBranchName,
                 branchName: groupedPackagesToUpdate.GroupEntry.GetBranchName(),
                 worktreeName: groupedPackagesToUpdate.GroupEntry.GroupName.Replace('/', '-')
             );

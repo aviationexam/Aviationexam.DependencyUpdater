@@ -12,6 +12,7 @@ public sealed class GitSourceVersioning(
 {
     public ISourceVersioningWorkspace CreateWorkspace(
         string targetDirectory,
+        string? sourceBranchName,
         string branchName,
         string worktreeName
     )
@@ -38,6 +39,14 @@ public sealed class GitSourceVersioning(
 
         var worktree = repository.Worktrees.Add(name: worktreeName, path: targetDirectory, isLocked: false);
         worktree.WorktreeRepository.Branches.Rename(worktreeName, branchName);
+
+        if (
+            sourceBranchName is not null
+            && repository.Branches.Any(x => x.FriendlyName == sourceBranchName)
+        )
+        {
+            worktree.WorktreeRepository.Reset(ResetMode.Hard, repository.Branches[sourceBranchName].Tip);
+        }
 
         return new GitSourceVersioningWorkspace(
             repository,

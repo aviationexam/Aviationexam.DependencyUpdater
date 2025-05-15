@@ -63,6 +63,7 @@ foreach (var dependabotConfiguration in dependabotConfigurations)
         await nugetUpdater.ProcessUpdatesAsync(
             repositoryPath: directoryPath,
             subdirectoryPath: nugetUpdate.DirectoryValue.GetString(),
+            sourceBranchName: nugetUpdate.TargetBranch.GetString(),
             nugetUpdate.CommitAuthor ?? GitAuthorConstants.DefaultCommitAuthor,
             nugetUpdate.CommitAuthorEmail ?? GitAuthorConstants.DefaultCommitAuthorEmail,
             [
