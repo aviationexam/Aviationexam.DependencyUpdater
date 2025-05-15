@@ -1395,6 +1395,7 @@
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
           "Microsoft.Extensions.Configuration.Abstractions": "[9.0.5, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.5, )",
+          "Microsoft.Extensions.Logging.Abstractions": "[9.0.5, )",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "[9.0.5, )",
           "Microsoft.TeamFoundationServer.Client": "[19.225.1, )"
         }
