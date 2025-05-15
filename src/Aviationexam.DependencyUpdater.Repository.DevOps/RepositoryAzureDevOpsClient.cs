@@ -110,7 +110,6 @@ public class RepositoryAzureDevOpsClient(
         string pullRequestId,
         string title,
         string description,
-        IReadOnlyCollection<string> reviewers,
         CancellationToken cancellationToken
     )
     {
@@ -122,7 +121,6 @@ public class RepositoryAzureDevOpsClient(
         {
             Title = title,
             Description = description,
-            Reviewers = [.. reviewers.Select(u => new IdentityRefWithVote { Id = u })],
         };
 
         await gitClient.UpdatePullRequestAsync(

@@ -25,7 +25,6 @@ public interface IRepositoryClient
         string pullRequestId,
         string title,
         string description,
-        IReadOnlyCollection<string> reviewers,
         CancellationToken cancellationToken
     );
 }
