@@ -21,7 +21,11 @@ public class RepositoryAzureDevOpsClient(
 
     private readonly VssConnection _connection = new(
         devOpsConfiguration.Value.OrganizationEndpoint,
-        new VssBasicCredential(string.Empty, devOpsConfiguration.Value.PersonalAccessToken)
+        new VssHttpMessageHandler(
+            new VssCredentials(new VssBasicCredential(string.Empty, devOpsConfiguration.Value.PersonalAccessToken)),
+            new VssClientHttpRequestSettings()
+        ),
+        [new LoggingHandler(logger)]
     );
 
     public async Task<string?> GetPullRequestForBranchAsync(
