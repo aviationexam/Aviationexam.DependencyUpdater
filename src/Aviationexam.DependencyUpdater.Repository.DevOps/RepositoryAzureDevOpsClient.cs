@@ -130,5 +130,7 @@ public class RepositoryAzureDevOpsClient(
             project: _config.Project,
             cancellationToken: cancellationToken
         );
+
+        logger.LogTrace("Update pull request {pullRequestId}", pullRequestId);
     }
 }
