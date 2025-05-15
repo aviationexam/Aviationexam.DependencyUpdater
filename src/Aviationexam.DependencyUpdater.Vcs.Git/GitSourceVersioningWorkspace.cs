@@ -110,6 +110,13 @@ public sealed class GitSourceVersioningWorkspace(
             CredentialsProvider = (_, _, _) => new DefaultCredentials(),
         }, null);
 
+        var upstreamBranch = worktree.WorktreeRepository.Branches[$"origin/{branch.FriendlyName}"];
+
+        if (upstreamBranch is not null)
+        {
+            worktree.WorktreeRepository.Reset(ResetMode.Hard, upstreamBranch.Tip);
+        }
+
         var sourceBranch = worktree.WorktreeRepository.Branches[$"origin/{sourceBranchName}"];
         if (sourceBranch is null)
         {
@@ -132,17 +139,27 @@ public sealed class GitSourceVersioningWorkspace(
                 email: authorEmail
             );
 
-            var rebaseResult = worktree.WorktreeRepository.Rebase.Start(branch, sourceBranch, sourceBranch, identity, options);
+            var rebaseResult = worktree.WorktreeRepository.Rebase.Start(worktree.WorktreeRepository.Head, sourceBranch, sourceBranch, identity, options);
             logger.LogInformation("Rebase status: {RebaseResult}", rebaseResult.Status);
+
+            if (rebaseResult.Status is RebaseStatus.Conflicts)
+            {
+                ResetToOriginalHead(worktree.WorktreeRepository, originalHead, branch);
+            }
         }
         catch (Exception exception)
         {
             logger.LogWarning(exception, "Rebase failed — restoring HEAD and workspace");
 
-            worktree.WorktreeRepository.Rebase.Abort();
-            worktree.WorktreeRepository.Reset(ResetMode.Hard, originalHead);
-            Commands.Checkout(worktree.WorktreeRepository, originalHead);
+            ResetToOriginalHead(worktree.WorktreeRepository, originalHead, branch);
         }
+    }
+
+    private void ResetToOriginalHead(Repository repository, Commit originalHead, Branch branch)
+    {
+        repository.Rebase.Abort();
+        repository.Reset(ResetMode.Hard, originalHead);
+        Commands.Checkout(repository, branch);
     }
 
     public void Push()
@@ -150,6 +167,8 @@ public sealed class GitSourceVersioningWorkspace(
         var repository = worktree.WorktreeRepository;
 
         var canonicalName = repository.Head.CanonicalName;
+
+        logger.LogInformation("Push {BranchName}", canonicalName);
 
         repository.Network.Push(
             remote: repository.Network.Remotes["origin"],
