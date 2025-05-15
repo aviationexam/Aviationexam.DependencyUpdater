@@ -89,6 +89,50 @@ public sealed class GitSourceVersioningWorkspace(
         repo.Commit(message, signature, signature);
     }
 
+    public void TryPullRebase(
+        string authorName,
+        string authorEmail
+    )
+    {
+        var branch = worktree.WorktreeRepository.Head;
+        var originalHead = branch.Tip;
+
+        var remote = worktree.WorktreeRepository.Network.Remotes["origin"];
+        var refspec = $"+refs/heads/{branch.FriendlyName}:refs/remotes/origin/{branch.FriendlyName}";
+
+        Commands.Fetch(worktree.WorktreeRepository, remote.Name, [refspec], new FetchOptions
+        {
+            CredentialsProvider = (_, _, _) => new DefaultCredentials(),
+        }, null);
+
+        var upstream = worktree.WorktreeRepository.Branches[$"origin/{branch.FriendlyName}"];
+        if (upstream is null)
+        {
+            return; // remote branch doesn't exist
+        }
+
+        try
+        {
+            var options = new RebaseOptions
+            {
+                FileConflictStrategy = CheckoutFileConflictStrategy.Theirs,
+            };
+
+            // Create the commit
+            var identity = new Identity(
+                name: authorName,
+                email: authorEmail
+            );
+
+            worktree.WorktreeRepository.Rebase.Start(branch, upstream, upstream, identity, options);
+        }
+        catch (Exception)
+        {
+            worktree.WorktreeRepository.Reset(ResetMode.Hard, originalHead);
+            Commands.Checkout(worktree.WorktreeRepository, originalHead);
+        }
+    }
+
     public void Push()
     {
         var repository = worktree.WorktreeRepository;

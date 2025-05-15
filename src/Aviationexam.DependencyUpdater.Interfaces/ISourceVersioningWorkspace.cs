@@ -20,5 +20,10 @@ public interface ISourceVersioningWorkspace : IDisposable
         string authorEmail
     );
 
+    void TryPullRebase(
+        string authorName,
+        string authorEmail
+    );
+
     void Push();
 }

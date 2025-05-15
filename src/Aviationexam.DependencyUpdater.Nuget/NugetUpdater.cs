@@ -141,6 +141,11 @@ public sealed class NugetUpdater(
                 worktreeName: groupedPackagesToUpdate.GroupEntry.GroupName.Replace('/', '-')
             );
 
+            gitWorkspace.TryPullRebase(
+                authorName: commitAuthor,
+                authorEmail: commitAuthorEmail
+            );
+
             var groupPackageVersions = currentPackageVersions.ToDictionary();
 
             var updatedPackages = new List<NugetUpdateCandidate<PackageSearchMetadataRegistration>>();
@@ -266,10 +271,6 @@ public sealed class NugetUpdater(
                 }
             }
         }
-
-        //var a = string.Join('\n', packagesToUpdate.Select(x => $"{x.NugetDependency.NugetPackage}: {x.PackageVersion.Version} ({x.GroupEntry?.GroupName})"));
-        //Console.WriteLine(a);
-        // Use packageToUpdate for further processing...
     }
 
     private void ProcessDependenciesToUpdate(
