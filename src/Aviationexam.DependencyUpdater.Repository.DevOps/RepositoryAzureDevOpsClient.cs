@@ -102,7 +102,7 @@ public class RepositoryAzureDevOpsClient(
         logger.LogTrace("Created pull request {pullRequestId} for branch {BranchName}", pullRequest.PullRequestId, branchName);
     }
 
-    public Task UpdatePullRequestAsync(
+    public async Task UpdatePullRequestAsync(
         string pullRequestId,
         string title,
         string description,
@@ -111,6 +111,37 @@ public class RepositoryAzureDevOpsClient(
         CancellationToken cancellationToken
     )
     {
-        throw new System.NotImplementedException();
+        var pullRequestIdAsInt = int.Parse(pullRequestId);
+
+        var gitClient = await _connection.GetClientAsync<GitHttpClient>(cancellationToken);
+
+        var updated = new GitPullRequest
+        {
+            Title = title,
+            Description = description,
+            Reviewers = [.. reviewers.Select(u => new IdentityRefWithVote { Id = u })],
+            WorkItemRefs = milestone is not null ? [new ResourceRef { Id = milestone }] : [],
+            CompletionOptions = new GitPullRequestCompletionOptions
+            {
+                DeleteSourceBranch = true,
+                MergeStrategy = GitPullRequestMergeStrategy.Squash,
+                AutoCompleteIgnoreConfigIds = [],
+                TransitionWorkItems = true,
+                MergeCommitMessage = description,
+            },
+            AutoCompleteSetBy = new IdentityRef { DisplayName = "DependencyUpdater" },
+            Labels =
+            [
+                new WebApiTagDefinition { Name = "dependency-updater" },
+            ],
+        };
+
+        await gitClient.UpdatePullRequestAsync(
+            gitPullRequestToUpdate: updated,
+            repositoryId: _config.Repository,
+            pullRequestId: pullRequestIdAsInt,
+            project: _config.Project,
+            cancellationToken: cancellationToken
+        );
     }
 }
