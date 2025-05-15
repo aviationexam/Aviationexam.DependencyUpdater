@@ -142,6 +142,7 @@ public sealed class NugetUpdater(
             );
 
             gitWorkspace.TryPullRebase(
+                sourceBranchName: sourceBranchName,
                 authorName: commitAuthor,
                 authorEmail: commitAuthorEmail
             );

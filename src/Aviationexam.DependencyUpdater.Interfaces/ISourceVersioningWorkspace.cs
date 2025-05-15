@@ -21,6 +21,7 @@ public interface ISourceVersioningWorkspace : IDisposable
     );
 
     void TryPullRebase(
+        string? sourceBranchName,
         string authorName,
         string authorEmail
     );

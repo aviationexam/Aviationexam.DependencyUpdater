@@ -92,6 +92,7 @@ public sealed class GitSourceVersioningWorkspace(
     }
 
     public void TryPullRebase(
+        string? sourceBranchName,
         string authorName,
         string authorEmail
     )
@@ -100,20 +101,23 @@ public sealed class GitSourceVersioningWorkspace(
         var originalHead = branch.Tip;
 
         var remote = worktree.WorktreeRepository.Network.Remotes["origin"];
-        var refspec = $"+refs/heads/{branch.FriendlyName}:refs/remotes/origin/{branch.FriendlyName}";
 
-        Commands.Fetch(worktree.WorktreeRepository, remote.Name, [refspec], new FetchOptions
+        Commands.Fetch(worktree.WorktreeRepository, remote.Name, [
+            $"+refs/heads/{branch.FriendlyName}:refs/remotes/origin/{branch.FriendlyName}",
+            $"+refs/heads/{sourceBranchName}:refs/remotes/origin/{sourceBranchName}",
+        ], new FetchOptions
         {
             CredentialsProvider = (_, _, _) => new DefaultCredentials(),
         }, null);
 
-        var upstream = worktree.WorktreeRepository.Branches[$"origin/{branch.FriendlyName}"];
-        if (upstream is null)
+        var sourceBranch = worktree.WorktreeRepository.Branches[$"origin/{sourceBranchName}"];
+        if (sourceBranch is null)
         {
+            logger.LogWarning("Target branch {SourceBranchName} not found locally", sourceBranchName);
             return; // remote branch doesn't exist
         }
 
-        logger.LogInformation("Try to rebase onto remote {BranchName}", branch.FriendlyName);
+        logger.LogInformation("Rebasing {CurrentBranch} onto {SourceBranch}", branch.FriendlyName, sourceBranchName);
 
         try
         {
@@ -128,15 +132,16 @@ public sealed class GitSourceVersioningWorkspace(
                 email: authorEmail
             );
 
-            var rebaseResult = worktree.WorktreeRepository.Rebase.Start(branch, upstream, upstream, identity, options);
+            var rebaseResult = worktree.WorktreeRepository.Rebase.Start(branch, sourceBranch, sourceBranch, identity, options);
             logger.LogInformation("Rebase status: {RebaseResult}", rebaseResult.Status);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            logger.LogWarning(exception, "Rebase failed — restoring HEAD and workspace");
+
+            worktree.WorktreeRepository.Rebase.Abort();
             worktree.WorktreeRepository.Reset(ResetMode.Hard, originalHead);
             Commands.Checkout(worktree.WorktreeRepository, originalHead);
-
-            logger.LogInformation("Unable to rebase onto remote {BranchName}", branch.FriendlyName);
         }
     }
 
