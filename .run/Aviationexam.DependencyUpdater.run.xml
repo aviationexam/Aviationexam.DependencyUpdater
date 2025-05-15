@@ -12,6 +12,7 @@
     <option name="RUNTIME_ARGUMENTS" value="" />
     <option name="AUTO_ATTACH_CHILDREN" value="0" />
     <option name="MIXED_MODE_DEBUG" value="0" />
+    <option name="RUNTIME_TYPE" value="coreclr" />
     <option name="PROJECT_PATH" value="$PROJECT_DIR$/src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj" />
     <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
     <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
