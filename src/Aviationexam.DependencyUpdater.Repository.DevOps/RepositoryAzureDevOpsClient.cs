@@ -220,15 +220,16 @@ public class RepositoryAzureDevOpsClient(
 
         logger.LogTrace("Abandoned pull request {PullRequestId}", pullRequest.PullRequestId);
 
-        await gitClient.UpdateRefAsync(
-            new GitRefUpdate
-            {
-                Name = $"{GitConstants.HeadsPrefix}{pullRequest.BranchName}",
-                OldObjectId = pullRequest.BranchTipCommitId,
-                NewObjectId = new string('0', 40),
-            },
+        await gitClient.UpdateRefsAsync(
+            [
+                new GitRefUpdate
+                {
+                    Name = $"{GitConstants.HeadsPrefix}{pullRequest.BranchName}",
+                    OldObjectId = pullRequest.BranchTipCommitId,
+                    NewObjectId = new string('0', 40),
+                },
+            ],
             repositoryId: _config.Repository,
-            filter: pullRequest.BranchName,
             projectId: _config.Project,
             cancellationToken: cancellationToken
         );
