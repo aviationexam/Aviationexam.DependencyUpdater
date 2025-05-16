@@ -13,6 +13,14 @@ public sealed class TargetFrameworksResolver
         IReadOnlyCollection<NugetTargetFramework> dependencyTargetFrameworks
     )
     {
+        if (!packageSearchMetadataRegistration.DependencySets.Any())
+        {
+            return dependencyTargetFrameworks.Select(x => new PackageDependencyGroup(NuGetFramework.Parse(
+                x.TargetFramework,
+                DefaultFrameworkNameProvider.Instance
+            ), []));
+        }
+
         var compatiblePackageDependencyGroups = packageSearchMetadataRegistration.DependencySets;
 
         foreach (var dependencyTargetFramework in dependencyTargetFrameworks)
