@@ -66,6 +66,7 @@ public class RepositoryAzureDevOpsClient(
         string description,
         string? milestone,
         IReadOnlyCollection<string> reviewers,
+        string updater,
         CancellationToken cancellationToken
     )
     {
@@ -93,6 +94,7 @@ public class RepositoryAzureDevOpsClient(
             Labels =
             [
                 new WebApiTagDefinition { Name = "dependency-updater" },
+                new WebApiTagDefinition { Name = $"dependency-updater={updater}" },
             ],
         };
 

@@ -18,6 +18,7 @@ public interface IRepositoryClient
         string description,
         string? milestone,
         IReadOnlyCollection<string> reviewers,
+        string updater,
         CancellationToken cancellationToken
     );
 

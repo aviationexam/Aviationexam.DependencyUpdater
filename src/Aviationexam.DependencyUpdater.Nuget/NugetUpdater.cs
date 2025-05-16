@@ -49,6 +49,7 @@ public sealed class NugetUpdater(
         CancellationToken cancellationToken = default
     )
     {
+        const string updater = "nuget";
         var nugetUpdaterContext = CreateContext(repositoryPath, subdirectoryPath, defaultTargetFrameworks);
 
         var currentPackageVersions = nugetUpdaterContext.GetCurrentPackageVersions();
@@ -272,6 +273,7 @@ public sealed class NugetUpdater(
                         description: commitMessage,
                         milestone,
                         reviewers,
+                        updater: updater,
                         cancellationToken
                     );
 
