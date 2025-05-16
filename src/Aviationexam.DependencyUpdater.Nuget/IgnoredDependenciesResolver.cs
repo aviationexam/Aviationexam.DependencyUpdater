@@ -62,6 +62,11 @@ public sealed class IgnoredDependenciesResolver
 
         var currentVersion = currentPackageVersions.GetValueOrDefault(packageDependency.Id, proposedVersion);
 
+        if (currentVersion > proposedVersion)
+        {
+            return false;
+        }
+
         var isIgnored = ignoreResolver.IsIgnored(
             packageDependency.Id,
             currentVersion,
