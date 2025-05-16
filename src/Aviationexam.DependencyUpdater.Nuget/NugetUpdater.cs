@@ -515,7 +515,7 @@ public sealed class NugetUpdater(
             if (newPossiblePackageVersions.Count > 0)
             {
                 yield return KeyValuePair.Create(dependency, newPossiblePackageVersions
-                    .OrderBy(x => x.PackageVersion)
+                    .OrderByDescending(x => x.PackageVersion)
                     .First()
                     .PackageVersion);
             }
