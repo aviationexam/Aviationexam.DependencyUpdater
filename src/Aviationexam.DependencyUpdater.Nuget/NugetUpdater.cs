@@ -139,7 +139,7 @@ public sealed class NugetUpdater(
             using var gitWorkspace = sourceVersioning.CreateWorkspace(
                 temporaryDirectory.TemporaryDirectory,
                 sourceBranchName: sourceBranchName,
-                branchName: groupedPackagesToUpdate.GroupEntry.GetBranchName(),
+                branchName: groupedPackagesToUpdate.GroupEntry.GetBranchName(updater),
                 worktreeName: groupedPackagesToUpdate.GroupEntry.GroupName.Replace('/', '-')
             );
 
