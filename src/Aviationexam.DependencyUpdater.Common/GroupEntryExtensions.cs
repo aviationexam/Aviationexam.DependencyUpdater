@@ -1,3 +1,5 @@
+using Aviationexam.DependencyUpdater.Constants;
+
 namespace Aviationexam.DependencyUpdater.Common;
 
 public static class GroupEntryExtensions
@@ -6,6 +8,6 @@ public static class GroupEntryExtensions
         this GroupEntry groupEntry,
         string updater
     ) => groupEntry.Patterns.Count == 0
-        ? $"dependency-updater/{updater}/package-{groupEntry.GroupName}"
-        : $"dependency-updater/{updater}/group-{groupEntry.GroupName}";
+        ? $"{GitConstants.UpdaterBranchPrefix}{updater}/package-{groupEntry.GroupName}"
+        : $"{GitConstants.UpdaterBranchPrefix}{updater}/group-{groupEntry.GroupName}";
 }
