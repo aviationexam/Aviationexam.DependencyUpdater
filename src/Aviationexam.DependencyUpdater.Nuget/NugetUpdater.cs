@@ -615,7 +615,7 @@ public sealed class NugetUpdater(
     )
     {
         var versions = new List<IPackageSearchMetadata>();
-        var tasks = sources.Select(async nugetSource =>
+        var tasks = sources.Select<NugetSource, Task<IEnumerable<IPackageSearchMetadata>>>(async nugetSource =>
         {
             if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
             {
@@ -628,7 +628,19 @@ public sealed class NugetUpdater(
                     cancellationToken
                 );
 
-                return packageVersions.ToList();
+                if (sourceRepository.FallbackSourceRepository is { } fallbackSourceRepository)
+                {
+                    var fallbackPackageVersions = await nugetVersionFetcher.FetchPackageVersionsAsync(
+                        fallbackSourceRepository,
+                        dependency,
+                        nugetCache,
+                        cancellationToken
+                    );
+
+                    return packageVersions.Concat(fallbackPackageVersions);
+                }
+
+                return packageVersions;
             }
 
             return [];
