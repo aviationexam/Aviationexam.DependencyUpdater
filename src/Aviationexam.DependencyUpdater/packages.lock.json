@@ -1392,6 +1392,7 @@
       "aviationexam.dependencyupdater.repository.devops": {
         "type": "Project",
         "dependencies": {
+          "Aviationexam.DependencyUpdater.Constants": "[1.0.0, )",
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
           "Microsoft.Extensions.Configuration.Abstractions": "[9.0.5, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.5, )",
@@ -1403,6 +1404,7 @@
       "aviationexam.dependencyupdater.vcs.git": {
         "type": "Project",
         "dependencies": {
+          "Aviationexam.DependencyUpdater.Constants": "[1.0.0, )",
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
           "LibGit2Sharp": "[0.31.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[9.0.5, )"

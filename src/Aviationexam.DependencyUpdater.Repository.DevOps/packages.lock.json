@@ -1076,6 +1076,9 @@
           "System.Xml.XmlDocument": "4.3.0"
         }
       },
+      "aviationexam.dependencyupdater.constants": {
+        "type": "Project"
+      },
       "aviationexam.dependencyupdater.interfaces": {
         "type": "Project"
       },

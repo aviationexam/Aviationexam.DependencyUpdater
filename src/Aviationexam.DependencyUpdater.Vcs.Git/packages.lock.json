@@ -37,6 +37,9 @@
         "resolved": "2.0.323",
         "contentHash": "Kg+fJGWhGj5qRXG0Ilj4ddhuodGXZg57yhfX6OVUDR0M2DKg/UR42/d74+qv5l1qotc1qJilo/ho7xQnULP6yA=="
       },
+      "aviationexam.dependencyupdater.constants": {
+        "type": "Project"
+      },
       "aviationexam.dependencyupdater.interfaces": {
         "type": "Project"
       },
