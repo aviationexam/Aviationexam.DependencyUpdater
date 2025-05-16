@@ -151,10 +151,14 @@
       "aviationexam.dependencyupdater.common": {
         "type": "Project",
         "dependencies": {
+          "Aviationexam.DependencyUpdater.Constants": "[1.0.0, )",
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.5, )",
           "Microsoft.Extensions.Logging.Abstractions": "[9.0.5, )"
         }
+      },
+      "aviationexam.dependencyupdater.constants": {
+        "type": "Project"
       },
       "aviationexam.dependencyupdater.interfaces": {
         "type": "Project"
