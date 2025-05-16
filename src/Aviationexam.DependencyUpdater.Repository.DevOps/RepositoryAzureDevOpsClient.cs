@@ -89,7 +89,7 @@ public class RepositoryAzureDevOpsClient(
                 TransitionWorkItems = true,
                 MergeCommitMessage = description,
             },
-            AutoCompleteSetBy = new IdentityRef { DisplayName = "DependencyUpdater" },
+            AutoCompleteSetBy = new IdentityRef { Id = _config.AccountId },
             Labels =
             [
                 new WebApiTagDefinition { Name = "dependency-updater" },
@@ -104,6 +104,27 @@ public class RepositoryAzureDevOpsClient(
         );
 
         logger.LogTrace("Created pull request {pullRequestId} for branch {BranchName}", pullRequest.PullRequestId, branchName);
+
+        var updated = new GitPullRequest
+        {
+            AutoCompleteSetBy = new IdentityRef { Id = _config.AccountId },
+            CompletionOptions = new GitPullRequestCompletionOptions
+            {
+                DeleteSourceBranch = true,
+                MergeStrategy = GitPullRequestMergeStrategy.Squash,
+                AutoCompleteIgnoreConfigIds = [],
+                TransitionWorkItems = true,
+                MergeCommitMessage = description,
+            },
+        };
+
+        await gitClient.UpdatePullRequestAsync(
+            gitPullRequestToUpdate: updated,
+            repositoryId: _config.Repository,
+            pullRequestId: pullRequest.PullRequestId,
+            project: _config.Project,
+            cancellationToken: cancellationToken
+        );
     }
 
     public async Task UpdatePullRequestAsync(
@@ -121,6 +142,15 @@ public class RepositoryAzureDevOpsClient(
         {
             Title = title,
             Description = description,
+            AutoCompleteSetBy = new IdentityRef { Id = _config.AccountId },
+            CompletionOptions = new GitPullRequestCompletionOptions
+            {
+                DeleteSourceBranch = true,
+                MergeStrategy = GitPullRequestMergeStrategy.Squash,
+                AutoCompleteIgnoreConfigIds = [],
+                TransitionWorkItems = true,
+                MergeCommitMessage = description,
+            },
         };
 
         await gitClient.UpdatePullRequestAsync(

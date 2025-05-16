@@ -210,6 +210,11 @@ public sealed class NugetUpdater(
                 }
             }
 
+            var pullRequestId = await repositoryClient.GetPullRequestForBranchAsync(
+                branchName: gitWorkspace.GetBranchName(),
+                cancellationToken
+            );
+
             if (
                 gitWorkspace.HasUncommitedChanges()
                 && updatedPackages.GetCommitMessage() is { } commitMessage
@@ -243,10 +248,6 @@ public sealed class NugetUpdater(
 
                 gitWorkspace.Push();
 
-                var pullRequestId = await repositoryClient.GetPullRequestForBranchAsync(
-                    branchName: gitWorkspace.GetBranchName(),
-                    cancellationToken
-                );
                 if (pullRequestId is not null)
                 {
                     await repositoryClient.UpdatePullRequestAsync(
@@ -268,6 +269,18 @@ public sealed class NugetUpdater(
                         cancellationToken
                     );
                 }
+            }
+            else if (
+                pullRequestId is not null
+                && updatedPackages.GetCommitMessage() is { } commitMessage2
+            )
+            {
+                await repositoryClient.UpdatePullRequestAsync(
+                    pullRequestId: pullRequestId,
+                    title: groupedPackagesToUpdate.GroupEntry.GetTitle(groupedPackagesToUpdate.NugetUpdateCandidates),
+                    description: commitMessage2,
+                    cancellationToken
+                );
             }
         }
     }
