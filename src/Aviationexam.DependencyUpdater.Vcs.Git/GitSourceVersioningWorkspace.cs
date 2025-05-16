@@ -1,3 +1,4 @@
+using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.Interfaces;
 using LibGit2Sharp;
 using Microsoft.Extensions.Logging;
@@ -100,24 +101,24 @@ public sealed class GitSourceVersioningWorkspace(
         var branch = worktree.WorktreeRepository.Head;
         var originalHead = branch.Tip;
 
-        var remote = worktree.WorktreeRepository.Network.Remotes["origin"];
+        var remote = worktree.WorktreeRepository.Network.Remotes[GitConstants.DefaultRemote];
 
         Commands.Fetch(worktree.WorktreeRepository, remote.Name, [
-            $"+refs/heads/{branch.FriendlyName}:refs/remotes/origin/{branch.FriendlyName}",
-            $"+refs/heads/{sourceBranchName}:refs/remotes/origin/{sourceBranchName}",
+            $"+{GitConstants.HeadsPrefix}{branch.FriendlyName}:{GitConstants.RemoteRef(GitConstants.DefaultRemote)}{branch.FriendlyName}",
+            $"+{GitConstants.HeadsPrefix}{sourceBranchName}:{GitConstants.RemoteRef(GitConstants.DefaultRemote)}{sourceBranchName}",
         ], new FetchOptions
         {
             CredentialsProvider = (_, _, _) => new DefaultCredentials(),
         }, null);
 
-        var upstreamBranch = worktree.WorktreeRepository.Branches[$"origin/{branch.FriendlyName}"];
+        var upstreamBranch = worktree.WorktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{branch.FriendlyName}"];
 
         if (upstreamBranch is not null)
         {
             worktree.WorktreeRepository.Reset(ResetMode.Hard, upstreamBranch.Tip);
         }
 
-        var sourceBranch = worktree.WorktreeRepository.Branches[$"origin/{sourceBranchName}"];
+        var sourceBranch = worktree.WorktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{sourceBranchName}"];
         if (sourceBranch is null)
         {
             logger.LogWarning("Target branch {SourceBranchName} not found locally", sourceBranchName);
@@ -171,7 +172,7 @@ public sealed class GitSourceVersioningWorkspace(
         logger.LogInformation("Push {BranchName}", canonicalName);
 
         repository.Network.Push(
-            remote: repository.Network.Remotes["origin"],
+            remote: repository.Network.Remotes[GitConstants.DefaultRemote],
             pushRefSpec: $"+{canonicalName}:{canonicalName}",
             pushOptions: new PushOptions
             {

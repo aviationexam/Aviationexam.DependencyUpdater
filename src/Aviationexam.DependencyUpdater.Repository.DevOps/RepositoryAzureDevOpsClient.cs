@@ -1,3 +1,4 @@
+using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using GitConstants = Aviationexam.DependencyUpdater.Constants.GitConstants;
 
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 
@@ -40,7 +42,7 @@ public class RepositoryAzureDevOpsClient(
             searchCriteria: new GitPullRequestSearchCriteria
             {
                 Status = PullRequestStatus.Active,
-                SourceRefName = $"refs/heads/{branchName}",
+                SourceRefName = $"{GitConstants.HeadsPrefix}{branchName}",
             },
             cancellationToken: cancellationToken
         );
@@ -76,10 +78,10 @@ public class RepositoryAzureDevOpsClient(
         {
             Title = title,
             Description = description,
-            SourceRefName = $"refs/heads/{branchName}",
+            SourceRefName = $"{GitConstants.HeadsPrefix}{branchName}",
             TargetRefName = targetBranchName is not null
-                ? $"refs/heads/{targetBranchName}"
-                : "refs/heads/main",
+                ? $"{GitConstants.HeadsPrefix}{targetBranchName}"
+                : $"{GitConstants.HeadsPrefix}{PullRequestConstants.DefaultBranch}",
             Reviewers = [.. reviewers.Select(u => new IdentityRefWithVote { Id = u })],
             WorkItemRefs = milestone is not null ? [new ResourceRef { Id = milestone }] : [],
             CompletionOptions = new GitPullRequestCompletionOptions
@@ -93,8 +95,8 @@ public class RepositoryAzureDevOpsClient(
             AutoCompleteSetBy = new IdentityRef { Id = _config.AccountId },
             Labels =
             [
-                new WebApiTagDefinition { Name = "dependency-updater" },
-                new WebApiTagDefinition { Name = $"dependency-updater={updater}" },
+                new WebApiTagDefinition { Name = PullRequestConstants.TagName },
+                new WebApiTagDefinition { Name = $"{PullRequestConstants.TagName}={updater}" },
             ],
         };
 
