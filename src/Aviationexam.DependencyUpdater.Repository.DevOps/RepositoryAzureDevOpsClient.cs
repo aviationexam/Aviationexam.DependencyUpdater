@@ -120,7 +120,7 @@ public class RepositoryAzureDevOpsClient(
                 MergeStrategy = GitPullRequestMergeStrategy.Squash,
                 AutoCompleteIgnoreConfigIds = [],
                 TransitionWorkItems = true,
-                MergeCommitMessage = description,
+                MergeCommitMessage = $"{title}\n\n{description}",
             },
             AutoCompleteSetBy = new IdentityRef { Id = _config.AccountId },
             Labels =
@@ -148,7 +148,7 @@ public class RepositoryAzureDevOpsClient(
                 MergeStrategy = GitPullRequestMergeStrategy.Squash,
                 AutoCompleteIgnoreConfigIds = [],
                 TransitionWorkItems = true,
-                MergeCommitMessage = description,
+                MergeCommitMessage = $"{title}\n\n{description}",
             },
         };
 
@@ -185,7 +185,7 @@ public class RepositoryAzureDevOpsClient(
                 MergeStrategy = GitPullRequestMergeStrategy.Squash,
                 AutoCompleteIgnoreConfigIds = [],
                 TransitionWorkItems = true,
-                MergeCommitMessage = description,
+                MergeCommitMessage = $"{title}\n\n{description}",
             },
         };
 
