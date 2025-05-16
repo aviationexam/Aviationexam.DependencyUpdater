@@ -59,7 +59,7 @@ public class RepositoryAzureDevOpsClient(
         return pullRequestId;
     }
 
-    public async Task CreatePullRequestAsync(
+    public async Task<string> CreatePullRequestAsync(
         string branchName,
         string? targetBranchName,
         string title,
@@ -125,6 +125,8 @@ public class RepositoryAzureDevOpsClient(
             project: _config.Project,
             cancellationToken: cancellationToken
         );
+
+        return pullRequest.PullRequestId.ToString();
     }
 
     public async Task UpdatePullRequestAsync(

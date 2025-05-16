@@ -11,7 +11,7 @@ public interface IRepositoryClient
         CancellationToken cancellationToken
     );
 
-    Task CreatePullRequestAsync(
+    Task<string> CreatePullRequestAsync(
         string branchName,
         string? targetBranchName,
         string title,

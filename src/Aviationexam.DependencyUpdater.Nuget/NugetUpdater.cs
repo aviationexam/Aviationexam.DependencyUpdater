@@ -129,6 +129,7 @@ public sealed class NugetUpdater(
 
         using var sourceVersioning = sourceVersioningFactory.CreateSourceVersioning(repositoryPath);
 
+        var knownPullRequests = new List<string>();
         while (groupedPackagesToUpdateQueue.TryDequeue(out var groupedPackagesToUpdate))
         {
 #pragma warning disable CA2000
@@ -215,6 +216,11 @@ public sealed class NugetUpdater(
                 cancellationToken
             );
 
+            if (pullRequestId is not null)
+            {
+                knownPullRequests.Add(pullRequestId);
+            }
+
             if (
                 gitWorkspace.HasUncommitedChanges()
                 && updatedPackages.GetCommitMessage() is { } commitMessage
@@ -259,7 +265,7 @@ public sealed class NugetUpdater(
                 }
                 else
                 {
-                    await repositoryClient.CreatePullRequestAsync(
+                    pullRequestId = await repositoryClient.CreatePullRequestAsync(
                         branchName: gitWorkspace.GetBranchName(),
                         targetBranchName: sourceBranchName,
                         title: groupedPackagesToUpdate.GroupEntry.GetTitle(groupedPackagesToUpdate.NugetUpdateCandidates),
@@ -268,6 +274,8 @@ public sealed class NugetUpdater(
                         reviewers,
                         cancellationToken
                     );
+
+                    knownPullRequests.Add(pullRequestId);
                 }
             }
             else if (
