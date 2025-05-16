@@ -30,6 +30,36 @@ public class RepositoryAzureDevOpsClient(
         [new LoggingHandler(logger)]
     );
 
+    public async Task<IEnumerable<PullRequest>> ListActivePullRequestsAsync(
+        string updater,
+        CancellationToken cancellationToken
+    )
+    {
+        var gitClient = await _connection.GetClientAsync<GitHttpClient>(cancellationToken);
+
+        var pullRequests = await gitClient.GetPullRequestsAsync(
+            project: _config.Project,
+            repositoryId: _config.Repository,
+            searchCriteria: new GitPullRequestSearchCriteria
+            {
+                Status = PullRequestStatus.Active,
+            },
+            cancellationToken: cancellationToken
+        );
+
+        return pullRequests
+            .Where(pr =>
+                pr.SourceRefName?.StartsWith($"{GitConstants.HeadsPrefix}{GitConstants.UpdaterBranchPrefix}{updater}/") == true
+                && pr.Labels?.Any(l => l.Name == PullRequestConstants.TagName) == true
+                && pr.Labels?.Any(l => l.Name == $"{PullRequestConstants.TagName}={updater}") == true
+            )
+            .Select(x => new PullRequest(
+                x.PullRequestId.ToString(),
+                x.SourceRefName[GitConstants.HeadsPrefix.Length..],
+                x.LastMergeSourceCommit.CommitId
+            ));
+    }
+
     public async Task<string?> GetPullRequestForBranchAsync(
         string branchName, CancellationToken cancellationToken
     )
@@ -168,5 +198,41 @@ public class RepositoryAzureDevOpsClient(
         );
 
         logger.LogTrace("Update pull request {pullRequestId}", pullRequestId);
+    }
+
+    public async Task AbandonPullRequestAsync(
+        PullRequest pullRequest,
+        CancellationToken cancellationToken
+    )
+    {
+        var gitClient = await _connection.GetClientAsync<GitHttpClient>(cancellationToken);
+
+        var pullRequestIdInt = int.Parse(pullRequest.PullRequestId);
+
+        // Abandon PR
+        await gitClient.UpdatePullRequestAsync(
+            new GitPullRequest { Status = PullRequestStatus.Abandoned },
+            _config.Repository,
+            pullRequestIdInt,
+            _config.Project,
+            cancellationToken
+        );
+
+        logger.LogTrace("Abandoned pull request {PullRequestId}", pullRequest.PullRequestId);
+
+        await gitClient.UpdateRefAsync(
+            new GitRefUpdate
+            {
+                Name = $"{GitConstants.HeadsPrefix}{pullRequest.BranchName}",
+                OldObjectId = pullRequest.BranchTipCommitId,
+                NewObjectId = new string('0', 40),
+            },
+            repositoryId: _config.Repository,
+            filter: pullRequest.BranchName,
+            projectId: _config.Project,
+            cancellationToken: cancellationToken
+        );
+
+        logger.LogTrace("Deleted remote branch {Branch}", pullRequest.BranchName);
     }
 }

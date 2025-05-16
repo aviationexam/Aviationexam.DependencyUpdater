@@ -6,6 +6,11 @@ namespace Aviationexam.DependencyUpdater.Interfaces;
 
 public interface IRepositoryClient
 {
+    Task<IEnumerable<PullRequest>> ListActivePullRequestsAsync(
+        string updater,
+        CancellationToken cancellationToken
+    );
+
     Task<string?> GetPullRequestForBranchAsync(
         string branchName,
         CancellationToken cancellationToken
@@ -26,6 +31,11 @@ public interface IRepositoryClient
         string pullRequestId,
         string title,
         string description,
+        CancellationToken cancellationToken
+    );
+
+    Task AbandonPullRequestAsync(
+        PullRequest pullRequest,
         CancellationToken cancellationToken
     );
 }

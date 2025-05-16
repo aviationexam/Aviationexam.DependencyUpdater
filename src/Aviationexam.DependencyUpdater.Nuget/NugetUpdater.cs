@@ -293,6 +293,14 @@ public sealed class NugetUpdater(
                 );
             }
         }
+
+        foreach (var pullRequest in await repositoryClient.ListActivePullRequestsAsync(updater, cancellationToken))
+        {
+            if (!knownPullRequests.Contains(pullRequest.PullRequestId))
+            {
+                await repositoryClient.AbandonPullRequestAsync(pullRequest, cancellationToken);
+            }
+        }
     }
 
     private void ProcessDependenciesToUpdate(
