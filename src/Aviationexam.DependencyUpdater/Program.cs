@@ -30,7 +30,7 @@ builder.Configuration
 
 builder.Services.AddLogging(x => x
     .AddConsole()
-    .AddFilter("Aviationexam.DependencyUpdater.Repository.DevOps.RepositoryAzureDevOpsClient", LogLevel.Trace)
+    //.AddFilter("Aviationexam.DependencyUpdater.Repository.DevOps.RepositoryAzureDevOpsClient", LogLevel.Trace)
 );
 
 builder.Services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
