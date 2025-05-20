@@ -533,10 +533,13 @@ public sealed class NugetUpdater(
 
             if (newPossiblePackageVersions.Count > 0)
             {
-                yield return KeyValuePair.Create(dependency, newPossiblePackageVersions
-                    .OrderByDescending(x => x.PackageVersion)
-                    .First()
-                    .PackageVersion);
+                yield return KeyValuePair.Create(
+                    dependency,
+                    newPossiblePackageVersions
+                        .OrderByDescending(x => x.PackageVersion)
+                        .First()
+                        .PackageVersion
+                );
             }
         }
     }
