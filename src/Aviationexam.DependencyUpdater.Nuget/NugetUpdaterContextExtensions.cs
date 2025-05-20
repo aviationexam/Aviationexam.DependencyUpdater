@@ -1,6 +1,5 @@
 using Aviationexam.DependencyUpdater.Common;
 using Microsoft.Extensions.Logging;
-using NuGet.Protocol.Core.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
