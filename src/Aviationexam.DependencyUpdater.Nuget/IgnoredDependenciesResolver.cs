@@ -10,7 +10,8 @@ public sealed class IgnoredDependenciesResolver
     public IEnumerable<PackageDependencyGroup> FilterDependencyGroupsRequiringIgnoredPackages(
         IEnumerable<PackageDependencyGroup> packageDependencyGroups,
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        EPackageSource packageSource
     )
     {
         foreach (var packageDependencyGroup in packageDependencyGroups)
@@ -18,7 +19,8 @@ public sealed class IgnoredDependenciesResolver
             var containsIgnoredDependencies = ContainsIgnoredDependencies(
                 packageDependencyGroup,
                 ignoreResolver,
-                currentPackageVersions
+                currentPackageVersions,
+                packageSource
             );
 
             if (containsIgnoredDependencies is false)
@@ -31,12 +33,13 @@ public sealed class IgnoredDependenciesResolver
     private bool ContainsIgnoredDependencies(
         PackageDependencyGroup packageDependencyGroup,
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        EPackageSource packageSource
     )
     {
         foreach (var packageDependency in packageDependencyGroup.Packages)
         {
-            var isIgnored = IsDependencyIgnored(packageDependency, ignoreResolver, currentPackageVersions);
+            var isIgnored = IsDependencyIgnored(packageDependency, ignoreResolver, currentPackageVersions, packageSource);
 
             if (isIgnored)
             {
@@ -50,10 +53,11 @@ public sealed class IgnoredDependenciesResolver
     public bool IsDependencyIgnored(
         PackageDependency packageDependency,
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        EPackageSource packageSource
     )
     {
-        var proposedVersion = packageDependency.VersionRange.MinVersion?.MapToPackageVersion();
+        var proposedVersion = packageDependency.VersionRange.MinVersion?.MapToPackageVersion(packageSource);
 
         if (proposedVersion is null)
         {

@@ -60,7 +60,7 @@ public sealed class NugetVersionWriter(
                     {
                         if (
                             dependencyPackage.VersionRange.MinVersion is { } dependencyPackageMinVersion
-                            && dependencyPackageMinVersion.MapToPackageVersion() is { } dependencyPackageVersion
+                            && dependencyPackageMinVersion.MapToPackageVersion(dependencyCurrentVersion.PackageSource) is { } dependencyPackageVersion
                             && dependencyPackageVersion > dependencyCurrentVersion
                         )
                         {

@@ -323,7 +323,8 @@ public sealed class NugetUpdater(
                         packageFlags,
                         dependenciesToCheck,
                         compatiblePackageDependencyGroup,
-                        dependency.TargetFrameworks
+                        dependency.TargetFrameworks,
+                        possiblePackageVersion.PackageVersion.PackageSource
                     ).Count();
                 }
             }
@@ -336,7 +337,8 @@ public sealed class NugetUpdater(
         IDictionary<Package, EDependencyFlag> packageFlags,
         Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
         PackageDependencyGroup compatiblePackageDependencyGroup,
-        IReadOnlyCollection<NugetTargetFramework> targetFrameworks
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
+        EPackageSource packageSource
     )
     {
         foreach (var packageDependency in compatiblePackageDependencyGroup.Packages)
@@ -346,12 +348,13 @@ public sealed class NugetUpdater(
                 continue;
             }
 
-            var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
+            var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion(packageSource));
 
             var isDependencyIgnored = ignoredDependenciesResolver.IsDependencyIgnored(
                 packageDependency,
                 ignoreResolver,
-                currentPackageVersions
+                currentPackageVersions,
+                packageSource
             );
 
             if (isDependencyIgnored)
@@ -442,31 +445,26 @@ public sealed class NugetUpdater(
         Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit
     )
     {
-        if (packageMetadata is PackageSearchMetadataRegistration packageSearchMetadataRegistration)
-        {
-            var compatiblePackageDependencyGroups = targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
-                packageSearchMetadataRegistration,
-                targetFrameworks
-            );
+        var packageSearchMetadataRegistration = packageVersion.OriginalReference;
+        var compatiblePackageDependencyGroups = targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
+            packageSearchMetadataRegistration,
+            targetFrameworks
+        );
 
-            dependenciesToRevisit.Push((package, [
-                .. compatiblePackageDependencyGroups.Aggregate(
-                    [],
-                    (IEnumerable<Package> acc, PackageDependencyGroup compatiblePackageDependencyGroup) => acc.Concat(ProcessPackageDependencyGroup(
-                        ignoreResolver,
-                        currentPackageVersions,
-                        packageFlags,
-                        dependenciesToCheck,
-                        compatiblePackageDependencyGroup,
-                        targetFrameworks
-                    ))
-                ),
-            ]));
-        }
-        else
-        {
-            throw new ArgumentOutOfRangeException(nameof(packageMetadata), packageMetadata, null);
-        }
+        dependenciesToRevisit.Push((package, [
+            .. compatiblePackageDependencyGroups.Aggregate(
+                [],
+                (IEnumerable<Package> acc, PackageDependencyGroup compatiblePackageDependencyGroup) => acc.Concat(ProcessPackageDependencyGroup(
+                    ignoreResolver,
+                    currentPackageVersions,
+                    packageFlags,
+                    dependenciesToCheck,
+                    compatiblePackageDependencyGroup,
+                    targetFrameworks,
+                    packageVersion.PackageSource
+                ))
+            ),
+        ]));
     }
 
     private void ProcessDependenciesToRevisit(
@@ -505,7 +503,7 @@ public sealed class NugetUpdater(
                             .CompatiblePackageDependencyGroups
                             .Where(group => group.Packages.All(package =>
                                 packageFlags.TryGetValue(
-                                    new Package(package.Id, package.VersionRange.MinVersion!.MapToPackageVersion()),
+                                    new Package(package.Id, package.VersionRange.MinVersion!.MapToPackageVersion(possiblePackageVersion.PackageVersion.PackageSource)),
                                     out var flag
                                 ) && flag is EDependencyFlag.Valid
                             )),
