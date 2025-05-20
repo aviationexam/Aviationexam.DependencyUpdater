@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.IO;
 using System.Linq;
@@ -30,11 +31,11 @@ builder.Configuration
 
 builder.Services.AddLogging(x => x
     .AddConsole()
-    //.AddFilter("Aviationexam.DependencyUpdater.Repository.DevOps.RepositoryAzureDevOpsClient", LogLevel.Trace)
+//.AddFilter("Aviationexam.DependencyUpdater.Repository.DevOps.RepositoryAzureDevOpsClient", LogLevel.Trace)
 );
 
 builder.Services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
-builder.Services.AddCommon();
+builder.Services.AddCommon(builder.Configuration);
 builder.Services.AddConfigurationParser();
 builder.Services.AddNuget();
 builder.Services.AddVcsGit();
@@ -43,12 +44,12 @@ builder.Services.AddDefaultImplementations();
 
 using var host = builder.Build();
 
+var sourceConfiguration = host.Services.GetRequiredService<IOptions<SourceConfiguration>>().Value;
 var dependabotConfigurationLoader = host.Services.GetRequiredService<DependabotConfigurationLoader>();
 var envVariableProvider = host.Services.GetRequiredService<IEnvVariableProvider>();
 var nugetUpdater = host.Services.GetRequiredService<NugetUpdater>();
 
-var directoryPath = "/opt/asp.net/AviationexamWebV3/";
-var dependabotConfigurations = dependabotConfigurationLoader.LoadConfiguration(directoryPath);
+var dependabotConfigurations = dependabotConfigurationLoader.LoadConfiguration(sourceConfiguration.Directory);
 
 foreach (var dependabotConfiguration in dependabotConfigurations)
 {
@@ -70,7 +71,7 @@ foreach (var dependabotConfiguration in dependabotConfigurations)
         var fallbackRegistries = nugetUpdate.FallbackRegistries;
 
         await nugetUpdater.ProcessUpdatesAsync(
-            repositoryPath: directoryPath,
+            repositoryPath: sourceConfiguration.Directory,
             subdirectoryPath: nugetUpdate.DirectoryValue.GetString(),
             sourceBranchName: nugetUpdate.TargetBranch.GetString(),
             milestone: nugetUpdate.Milestone.AsAny.AsString.GetString(),
