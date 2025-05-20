@@ -324,8 +324,7 @@ public sealed class NugetUpdater(
                         packageFlags,
                         dependenciesToCheck,
                         compatiblePackageDependencyGroup,
-                        dependency.TargetFrameworks,
-                        possiblePackageVersion.PackageVersion.PackageSource
+                        dependency.TargetFrameworks
                     ).Count();
                 }
             }
@@ -338,8 +337,7 @@ public sealed class NugetUpdater(
         IDictionary<Package, EDependencyFlag> packageFlags,
         Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
         PackageDependencyGroup compatiblePackageDependencyGroup,
-        IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
-        EPackageSource packageSource
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks
     )
     {
         foreach (var packageDependency in compatiblePackageDependencyGroup.Packages)
@@ -349,13 +347,12 @@ public sealed class NugetUpdater(
                 continue;
             }
 
-            var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion(packageSource));
+            var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
 
             var isDependencyIgnored = ignoredDependenciesResolver.IsDependencyIgnored(
                 packageDependency,
                 ignoreResolver,
-                currentPackageVersions,
-                packageSource
+                currentPackageVersions
             );
 
             if (isDependencyIgnored)
@@ -446,7 +443,7 @@ public sealed class NugetUpdater(
         Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit
     )
     {
-        var packageSearchMetadataRegistration = packageVersion.OriginalReference;
+        var packageSearchMetadataRegistration = GetPreferredPackageSearchMetadataRegistration(packageVersion.OriginalReference);
         var compatiblePackageDependencyGroups = targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
             packageSearchMetadataRegistration,
             targetFrameworks
@@ -461,12 +458,23 @@ public sealed class NugetUpdater(
                     packageFlags,
                     dependenciesToCheck,
                     compatiblePackageDependencyGroup,
-                    targetFrameworks,
-                    packageVersion.PackageSource
+                    targetFrameworks
                 ))
             ),
         ]));
     }
+
+    private TOriginalReference GetPreferredPackageSearchMetadataRegistration<TOriginalReference>(
+        IReadOnlyDictionary<EPackageSource, TOriginalReference> originalReference
+    ) => originalReference
+        .OrderBy(x => x.Key switch
+        {
+            EPackageSource.Default => 0,
+            EPackageSource.Fallback => 1,
+            _ => throw new ArgumentOutOfRangeException(nameof(x.Key), x.Key, null),
+        })
+        .Select(x => x.Value)
+        .First();
 
     private void ProcessDependenciesToRevisit(
         Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit,
@@ -504,7 +512,7 @@ public sealed class NugetUpdater(
                             .CompatiblePackageDependencyGroups
                             .Where(group => group.Packages.All(package =>
                                 packageFlags.TryGetValue(
-                                    new Package(package.Id, package.VersionRange.MinVersion!.MapToPackageVersion(possiblePackageVersion.PackageVersion.PackageSource)),
+                                    new Package(package.Id, package.VersionRange.MinVersion!.MapToPackageVersion()),
                                     out var flag
                                 ) && flag is EDependencyFlag.Valid
                             )),
@@ -591,7 +599,7 @@ public sealed class NugetUpdater(
                 .Select(x => new PossiblePackageVersion(
                     x,
                     targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
-                        x.OriginalReference,
+                        GetPreferredPackageSearchMetadataRegistration(x.OriginalReference),
                         dependency.TargetFrameworks
                     ).ToList()
                 ))

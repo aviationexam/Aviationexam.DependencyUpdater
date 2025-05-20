@@ -8,7 +8,6 @@ public record PackageVersion(
     Version Version,
     bool IsPrerelease,
     IReadOnlyCollection<string> ReleaseLabels,
-    EPackageSource PackageSource,
     IComparer<IReadOnlyCollection<string>> ReleaseLabelsComparer
 ) : IComparable<PackageVersion>
 {
@@ -26,13 +25,7 @@ public record PackageVersion(
         if (IsPrerelease && !other.IsPrerelease) return -1;
         if (!IsPrerelease && other.IsPrerelease) return 1;
 
-        var releaseLabelsComparison = ReleaseLabelsComparer.Compare(ReleaseLabels, other.ReleaseLabels);
-        if (releaseLabelsComparison != 0)
-        {
-            return releaseLabelsComparison;
-        }
-
-        return PackageSource.CompareTo(other.PackageSource);
+        return ReleaseLabelsComparer.Compare(ReleaseLabels, other.ReleaseLabels);
     }
 
     public static bool operator <(PackageVersion a, PackageVersion b) => a.CompareTo(b) < 0;
@@ -47,8 +40,7 @@ public record PackageVersion(
 
         return Version.Equals(other.Version)
                && IsPrerelease == other.IsPrerelease
-               && ReleaseLabels.SequenceEqual(other.ReleaseLabels)
-               && PackageSource == other.PackageSource;
+               && ReleaseLabels.SequenceEqual(other.ReleaseLabels);
     }
 
     public override int GetHashCode()
@@ -60,8 +52,6 @@ public record PackageVersion(
         {
             hash.Add(releaseLabel);
         }
-
-        hash.Add(PackageSource);
 
         return hash.ToHashCode();
     }
@@ -75,8 +65,6 @@ public record PackageVersion(
         builder.Append(IsPrerelease);
         builder.Append(", ReleaseLabels = ");
         builder.AppendJoin('.', ReleaseLabels);
-        builder.Append(", PackageSource = ");
-        builder.Append(PackageSource);
         return true;
     }
 
@@ -107,15 +95,13 @@ public record PackageVersion<TOriginalReference>(
     Version Version,
     bool IsPrerelease,
     IReadOnlyCollection<string> ReleaseLabels,
-    EPackageSource PackageSource,
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Global")]
     IComparer<IReadOnlyCollection<string>> ReleaseLabelsComparable,
-    TOriginalReference OriginalReference
+    IReadOnlyDictionary<EPackageSource, TOriginalReference> OriginalReference
 ) : PackageVersion(
     Version,
     IsPrerelease,
     ReleaseLabels,
-    PackageSource,
     ReleaseLabelsComparable
 )
 {

@@ -11,8 +11,7 @@ public sealed class IgnoredDependenciesResolver
     public IEnumerable<PackageDependencyGroup> FilterDependencyGroupsRequiringIgnoredPackages(
         IEnumerable<PackageDependencyGroup> packageDependencyGroups,
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
-        EPackageSource packageSource
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions
     )
     {
         foreach (var packageDependencyGroup in packageDependencyGroups)
@@ -20,8 +19,7 @@ public sealed class IgnoredDependenciesResolver
             var containsIgnoredDependencies = ContainsIgnoredDependencies(
                 packageDependencyGroup,
                 ignoreResolver,
-                currentPackageVersions,
-                packageSource
+                currentPackageVersions
             );
 
             if (containsIgnoredDependencies is false)
@@ -34,13 +32,12 @@ public sealed class IgnoredDependenciesResolver
     private bool ContainsIgnoredDependencies(
         PackageDependencyGroup packageDependencyGroup,
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
-        EPackageSource packageSource
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions
     )
     {
         foreach (var packageDependency in packageDependencyGroup.Packages)
         {
-            var isIgnored = IsDependencyIgnored(packageDependency, ignoreResolver, currentPackageVersions, packageSource);
+            var isIgnored = IsDependencyIgnored(packageDependency, ignoreResolver, currentPackageVersions);
 
             if (isIgnored)
             {
@@ -54,11 +51,10 @@ public sealed class IgnoredDependenciesResolver
     public bool IsDependencyIgnored(
         PackageDependency packageDependency,
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
-        EPackageSource packageSource
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions
     )
     {
-        var proposedVersion = packageDependency.VersionRange.MinVersion?.MapToPackageVersion(packageSource);
+        var proposedVersion = packageDependency.VersionRange.MinVersion?.MapToPackageVersion();
 
         if (proposedVersion is null)
         {

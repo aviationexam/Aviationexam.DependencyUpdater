@@ -53,23 +53,26 @@ public sealed class NugetVersionWriter(
     {
         if (packageVersion is PackageVersion<PackageSearchMetadataRegistration> packageSearchMetadataRegistration)
         {
-            foreach (var dependencySet in packageSearchMetadataRegistration.OriginalReference.DependencySets)
+            foreach (var (_, originalReference) in packageSearchMetadataRegistration.OriginalReference)
             {
-                foreach (var dependencyPackage in dependencySet.Packages)
+                foreach (var dependencySet in originalReference.DependencySets)
                 {
-                    if (groupPackageVersions.TryGetValue(dependencyPackage.Id, out var dependencyCurrentVersion))
+                    foreach (var dependencyPackage in dependencySet.Packages)
                     {
-                        if (
-                            dependencyPackage.VersionRange.MinVersion is { } dependencyPackageMinVersion
-                            && dependencyPackageMinVersion.MapToPackageVersion(dependencyCurrentVersion.PackageSource) is { } dependencyPackageVersion
-                            && dependencyPackageVersion > dependencyCurrentVersion
-                        )
+                        if (groupPackageVersions.TryGetValue(dependencyPackage.Id, out var dependencyCurrentVersion))
                         {
-                            conflictingPackageVersion = new Package(
-                                dependencyPackage.Id,
-                                dependencyPackageVersion
-                            );
-                            return false;
+                            if (
+                                dependencyPackage.VersionRange.MinVersion is { } dependencyPackageMinVersion
+                                && dependencyPackageMinVersion.MapToPackageVersion() is { } dependencyPackageVersion
+                                && dependencyPackageVersion > dependencyCurrentVersion
+                            )
+                            {
+                                conflictingPackageVersion = new Package(
+                                    dependencyPackage.Id,
+                                    dependencyPackageVersion
+                                );
+                                return false;
+                            }
                         }
                     }
                 }

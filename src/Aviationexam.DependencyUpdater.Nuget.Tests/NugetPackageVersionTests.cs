@@ -25,108 +25,92 @@ public class NugetPackageVersionTests
     public static TheoryData<PackageVersion, PackageVersion, int, bool, bool, bool> CompareData() => new()
     {
         {
-            new PackageVersion(new Version("1.0.0"), false, [], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
-            new PackageVersion(new Version("1.0.0"), false, [], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), false, [], NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), false, [], NugetReleaseLabelComparer.Instance),
             0,
             false,
             true,
             false
         },
         {
-            new PackageVersion(new Version("1.0.1"), false, [], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
-            new PackageVersion(new Version("1.0.0"), false, [], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.1"), false, [], NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), false, [], NugetReleaseLabelComparer.Instance),
             1,
             true,
             false,
             false
         },
         {
-            new PackageVersion(new Version("1.0.0"), false, [], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
-            new PackageVersion(new Version("1.0.1"), false, [], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), false, [], NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.1"), false, [], NugetReleaseLabelComparer.Instance),
             -1,
             false,
             false,
             true
         },
         {
-            new PackageVersion(new Version("1.0.0"), false, [], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
-            new PackageVersion(new Version("1.0.0"), true, ["beta"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), false, [], NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), true, ["beta"], NugetReleaseLabelComparer.Instance),
             1,
             true,
             false,
             false
         },
         {
-            new PackageVersion(new Version("1.0.0"), true, ["beta"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
-            new PackageVersion(new Version("1.0.0"), false, [], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), true, ["beta"], NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), false, [], NugetReleaseLabelComparer.Instance),
             -1,
             false,
             false,
             true
         },
         {
-            new PackageVersion(new Version("1.0.0"), true, ["beta"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
-            new PackageVersion(new Version("1.0.0"), true, ["beta"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), true, ["beta"], NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), true, ["beta"], NugetReleaseLabelComparer.Instance),
             0,
             false,
             true,
             false
         },
         {
-            new PackageVersion(new Version("1.0.0"), true, ["beta", "2"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
-            new PackageVersion(new Version("1.0.0"), true, ["beta", "1"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), true, ["beta", "2"], NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), true, ["beta", "1"], NugetReleaseLabelComparer.Instance),
             1,
             true,
             false,
             false
         },
         {
-            new PackageVersion(new Version("1.0.0"), true, ["beta", "1"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
-            new PackageVersion(new Version("1.0.0"), true, ["beta", "2"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), true, ["beta", "1"], NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), true, ["beta", "2"], NugetReleaseLabelComparer.Instance),
             -1,
             false,
             false,
             true
         },
         {
-            new PackageVersion(new Version("1.0.0"), true, ["alpha"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
-            new PackageVersion(new Version("1.0.0"), true, ["beta"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), true, ["alpha"], NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), true, ["beta"], NugetReleaseLabelComparer.Instance),
             -1,
             false,
             false,
             true
         },
         {
-            new PackageVersion(new Version("1.0.0"), true, ["alpha", "2"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
-            new PackageVersion(new Version("1.0.0"), true, ["beta", "1"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), true, ["alpha", "2"], NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), true, ["beta", "1"], NugetReleaseLabelComparer.Instance),
             -1,
             false,
             false,
             true
         },
         {
-            new PackageVersion(new Version("1.0.0"), true, ["beta", "1"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
-            new PackageVersion(new Version("1.0.0"), true, ["alpha", "2"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), true, ["beta", "1"], NugetReleaseLabelComparer.Instance),
+            new PackageVersion(new Version("1.0.0"), true, ["alpha", "2"], NugetReleaseLabelComparer.Instance),
             1,
             true,
             false,
             false
-        },
-        {
-            new PackageVersion(new Version("1.0.0"), true, ["beta", "1"], EPackageSource.Fallback, NugetReleaseLabelComparer.Instance),
-            new PackageVersion(new Version("1.0.0"), true, ["beta", "1"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
-            1,
-            true,
-            false,
-            false
-        },
-        {
-            new PackageVersion(new Version("1.0.0"), true, ["beta", "1"], EPackageSource.Default, NugetReleaseLabelComparer.Instance),
-            new PackageVersion(new Version("1.0.0"), true, ["beta", "1"], EPackageSource.Fallback, NugetReleaseLabelComparer.Instance),
-            -1,
-            false,
-            false,
-            true
         },
     };
 }
