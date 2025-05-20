@@ -391,26 +391,36 @@ public sealed class NugetUpdater(
                 {
                     using var nugetCache = new SourceCacheContext();
 
-                    var rawPackageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
+                    var packageMetadataMap = new Dictionary<EPackageSource, IPackageSearchMetadata>();
+
+                    var defaultSourcePackageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
                         sourceRepository.SourceRepository,
                         package,
                         nugetCache,
                         cancellationToken
                     );
-                    var packageMetadata = rawPackageMetadata?.MapToPackageVersion(EPackageSource.Default);
 
-                    if (
-                        packageMetadata is null
-                        && sourceRepository.FallbackSourceRepository is { } fallbackSourceRepository)
+                    if (defaultSourcePackageMetadata is not null)
                     {
-                        rawPackageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
+                        packageMetadataMap.Add(EPackageSource.Default, defaultSourcePackageMetadata);
+                    }
+
+                    if (sourceRepository.FallbackSourceRepository is { } fallbackSourceRepository)
+                    {
+                        var fallbackSourcePackageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
                             fallbackSourceRepository,
                             package,
                             nugetCache,
                             cancellationToken
                         );
-                        packageMetadata = rawPackageMetadata?.MapToPackageVersion(EPackageSource.Fallback);
+
+                        if (fallbackSourcePackageMetadata is not null)
+                        {
+                            packageMetadataMap.Add(EPackageSource.Fallback, fallbackSourcePackageMetadata);
+                        }
                     }
+
+                    var packageMetadata = packageMetadataMap.MapToPackageVersion();
 
                     if (packageMetadata is null)
                     {
@@ -636,7 +646,7 @@ public sealed class NugetUpdater(
                     nugetCache,
                     cancellationToken
                 );
-                var packageVersions = rawPackageVersions.Select(x => x.MapToPackageVersion(EPackageSource.Default));
+                var packageVersions = rawPackageVersions.Select(x => (Metadata: x, PackageVersion: x.MapToPackageVersion(), PackageSource: EPackageSource.Default));
 
                 if (sourceRepository.FallbackSourceRepository is { } fallbackSourceRepository)
                 {
@@ -647,10 +657,14 @@ public sealed class NugetUpdater(
                         cancellationToken
                     );
 
-                    return packageVersions.Concat(fallbackPackageVersions.Select(x => x.MapToPackageVersion(EPackageSource.Fallback)));
+                    packageVersions = packageVersions.Concat(fallbackPackageVersions.Select(x => (Metadata: x, PackageVersion: x.MapToPackageVersion(), PackageSource: EPackageSource.Fallback)));
                 }
 
-                return packageVersions;
+                return packageVersions.GroupBy(x => x.PackageVersion)
+                    .Select(x => x.Key.MapToPackageVersion(x.ToDictionary(
+                        d => d.PackageSource,
+                        d => d.Metadata
+                    )));
             }
 
             return [];

@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -91,20 +90,20 @@ public record PackageVersion(
     }
 }
 
-public record PackageVersion<TOriginalReference>(
-    Version Version,
-    bool IsPrerelease,
-    IReadOnlyCollection<string> ReleaseLabels,
-    [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Global")]
-    IComparer<IReadOnlyCollection<string>> ReleaseLabelsComparable,
-    IReadOnlyDictionary<EPackageSource, TOriginalReference> OriginalReference
-) : PackageVersion(
-    Version,
-    IsPrerelease,
-    ReleaseLabels,
-    ReleaseLabelsComparable
-)
+public record PackageVersion<TOriginalReference> : PackageVersion
 {
+    public PackageVersion(
+        PackageVersion packageVersion,
+        IReadOnlyDictionary<EPackageSource, TOriginalReference> OriginalReference
+    ) : base(packageVersion.Version,
+        packageVersion.IsPrerelease,
+        packageVersion.ReleaseLabels,
+        packageVersion.ReleaseLabelsComparer
+    )
+    {
+        this.OriginalReference = OriginalReference;
+    }
+
     public virtual bool Equals(
         PackageVersion<TOriginalReference>? other
     ) => base.Equals(other);
@@ -114,4 +113,6 @@ public record PackageVersion<TOriginalReference>(
     protected override bool PrintMembers(
         StringBuilder builder
     ) => base.PrintMembers(builder);
+
+    public IReadOnlyDictionary<EPackageSource, TOriginalReference> OriginalReference { get; init; }
 }

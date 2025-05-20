@@ -7,16 +7,19 @@ namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 public static class PackageSearchMetadataRegistrationExtensions
 {
     public static PackageVersion<PackageSearchMetadataRegistration> MapToPackageVersion(
-        this PackageSearchMetadataRegistration packageSearchMetadataRegistration,
-        EPackageSource packageSource
+        this PackageVersion packageVersion,
+        IReadOnlyDictionary<EPackageSource, PackageSearchMetadataRegistration> packageSearchMetadata
+    ) => new(
+        packageVersion,
+        packageSearchMetadata
+    );
+
+    public static PackageVersion MapToPackageVersion(
+        this PackageSearchMetadataRegistration packageSearchMetadataRegistration
     ) => new(
         packageSearchMetadataRegistration.Version.Version,
         packageSearchMetadataRegistration.Version.IsPrerelease,
         [.. packageSearchMetadataRegistration.Version.ReleaseLabels],
-        NugetReleaseLabelComparer.Instance,
-        new Dictionary<EPackageSource, PackageSearchMetadataRegistration>
-        {
-            [packageSource] = packageSearchMetadataRegistration,
-        }
+        NugetReleaseLabelComparer.Instance
     );
 }
