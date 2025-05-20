@@ -1,4 +1,4 @@
-namespace Aviationexam.DependencyUpdater.Nuget;
+namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 
 public static class NugetPackageSourceMapExtensions
 {

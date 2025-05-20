@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using System.Collections.Generic;

@@ -1,7 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
 using NuGet.Versioning;
 
-namespace Aviationexam.DependencyUpdater.Nuget;
+namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 
 public static class PackageVersionExtensions
 {

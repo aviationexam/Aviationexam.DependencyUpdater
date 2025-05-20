@@ -1,3 +1,4 @@
+using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NuGet.Versioning;

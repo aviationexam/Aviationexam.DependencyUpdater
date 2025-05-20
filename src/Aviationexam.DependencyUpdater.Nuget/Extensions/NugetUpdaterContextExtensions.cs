@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Aviationexam.DependencyUpdater.Nuget;
+namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 
 public static class NugetUpdaterContextExtensions
 {

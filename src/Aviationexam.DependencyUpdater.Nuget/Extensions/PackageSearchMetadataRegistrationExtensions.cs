@@ -1,7 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
 using NuGet.Protocol;
 
-namespace Aviationexam.DependencyUpdater.Nuget;
+namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 
 public static class PackageSearchMetadataRegistrationExtensions
 {

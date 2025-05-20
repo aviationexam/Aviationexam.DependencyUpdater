@@ -2,7 +2,7 @@ using NuGet.Protocol;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Aviationexam.DependencyUpdater.Nuget;
+namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 
 public static class NugetUpdatesExtensions
 {

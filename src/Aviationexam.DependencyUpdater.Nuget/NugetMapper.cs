@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using System;
@@ -12,7 +13,7 @@ public static class NugetMapper
         EPackageSource packageSource
     ) => packageSearchMetadata switch
     {
-        PackageSearchMetadataRegistration packageSearchMetadataRegistration => packageSearchMetadataRegistration.MapToPackageVersion(packageSource),
+        PackageSearchMetadataRegistration packageSearchMetadataRegistration => PackageSearchMetadataRegistrationExtensions.MapToPackageVersion(packageSearchMetadataRegistration, packageSource),
         _ => throw new ArgumentOutOfRangeException(nameof(packageSearchMetadata), packageSearchMetadata, null),
     };
 }
