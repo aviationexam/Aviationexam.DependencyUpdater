@@ -1,7 +1,14 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.Services.Common;
+using Microsoft.VisualStudio.Services.WebApi;
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 
@@ -13,5 +20,42 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services, IConfigurationRoot configuration
     ) => services
         .Configure<DevOpsConfiguration>(configuration.GetSection("DevOps"))
+        .AddHttpClient<RepositoryAzureDevOpsClient>()
+        .ConfigureHttpClient((sp, client) =>
+        {
+            var connection = sp.GetRequiredService<VssConnection>();
+            client.BaseAddress = connection.Uri;
+            client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json")
+            );
+        })
+        .ConfigurePrimaryHttpMessageHandler(x => x.CreateVssHttpMessageHandler())
+        .Services
+        .AddScoped<VssHttpMessageHandler>(x => x.CreateVssHttpMessageHandler())
+        .AddScoped<VssConnection>(x =>
+        {
+            var devOpsConfiguration = x.GetRequiredService<IOptionsSnapshot<DevOpsConfiguration>>();
+            var vssHttpMessageHandler = x.GetRequiredService<VssHttpMessageHandler>();
+
+            return new VssConnection(
+                devOpsConfiguration.Value.OrganizationEndpoint,
+                vssHttpMessageHandler,
+                []
+            );
+        })
         .AddScoped<IRepositoryClient, RepositoryAzureDevOpsClient>();
+
+    private static VssHttpMessageHandler CreateVssHttpMessageHandler(this IServiceProvider serviceProvider)
+    {
+        var devOpsConfiguration = serviceProvider.GetRequiredService<IOptionsSnapshot<DevOpsConfiguration>>();
+        var logger = serviceProvider.GetRequiredService<ILogger<VssHttpMessageHandler>>();
+
+        return new VssHttpMessageHandler(
+            new VssCredentials(new VssBasicCredential(string.Empty, devOpsConfiguration.Value.PersonalAccessToken)),
+            new VssClientHttpRequestSettings(),
+#pragma warning disable CA2000
+            new LoggingHandler(logger, new HttpClientHandler())
+#pragma warning restore CA2000
+        );
+    }
 }

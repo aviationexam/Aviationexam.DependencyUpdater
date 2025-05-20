@@ -1,13 +1,17 @@
 using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Repository.DevOps.Dtos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
-using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using GitConstants = Aviationexam.DependencyUpdater.Constants.GitConstants;
@@ -16,26 +20,19 @@ namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 
 public class RepositoryAzureDevOpsClient(
     IOptionsSnapshot<DevOpsConfiguration> devOpsConfiguration,
+    VssConnection connection,
+    HttpClient httpClient,
     ILogger<RepositoryAzureDevOpsClient> logger
 ) : IRepositoryClient
 {
     private readonly DevOpsConfiguration _config = devOpsConfiguration.Value;
-
-    private readonly VssConnection _connection = new(
-        devOpsConfiguration.Value.OrganizationEndpoint,
-        new VssHttpMessageHandler(
-            new VssCredentials(new VssBasicCredential(string.Empty, devOpsConfiguration.Value.PersonalAccessToken)),
-            new VssClientHttpRequestSettings()
-        ),
-        [new LoggingHandler(logger)]
-    );
 
     public async Task<IEnumerable<PullRequest>> ListActivePullRequestsAsync(
         string updater,
         CancellationToken cancellationToken
     )
     {
-        var gitClient = await _connection.GetClientAsync<GitHttpClient>(cancellationToken);
+        var gitClient = await connection.GetClientAsync<GitHttpClient>(cancellationToken);
 
         var pullRequests = await gitClient.GetPullRequestsAsync(
             project: _config.Project,
@@ -64,7 +61,7 @@ public class RepositoryAzureDevOpsClient(
         string branchName, CancellationToken cancellationToken
     )
     {
-        var gitClient = await _connection.GetClientAsync<GitHttpClient>(cancellationToken);
+        var gitClient = await connection.GetClientAsync<GitHttpClient>(cancellationToken);
 
         var pullRequests = await gitClient.GetPullRequestsAsync(
             project: _config.Project,
@@ -102,7 +99,7 @@ public class RepositoryAzureDevOpsClient(
         CancellationToken cancellationToken
     )
     {
-        var gitClient = await _connection.GetClientAsync<GitHttpClient>(cancellationToken);
+        var gitClient = await connection.GetClientAsync<GitHttpClient>(cancellationToken);
 
         var pullRequestRequest = new GitPullRequest
         {
@@ -172,7 +169,7 @@ public class RepositoryAzureDevOpsClient(
     {
         var pullRequestIdAsInt = int.Parse(pullRequestId);
 
-        var gitClient = await _connection.GetClientAsync<GitHttpClient>(cancellationToken);
+        var gitClient = await connection.GetClientAsync<GitHttpClient>(cancellationToken);
 
         var updated = new GitPullRequest
         {
@@ -205,7 +202,8 @@ public class RepositoryAzureDevOpsClient(
         CancellationToken cancellationToken
     )
     {
-        var gitClient = await _connection.GetClientAsync<GitHttpClient>(cancellationToken);
+        var gitClient = await connection.GetClientAsync<GitHttpClient>(cancellationToken);
+
 
         var pullRequestIdInt = int.Parse(pullRequest.PullRequestId);
 
@@ -235,5 +233,58 @@ public class RepositoryAzureDevOpsClient(
         );
 
         logger.LogTrace("Deleted remote branch {Branch}", pullRequest.BranchName);
+    }
+
+    public async Task EnsurePackageVersionIsAvailableAsync(
+        string packageName,
+        string packageVersion,
+        CancellationToken cancellationToken
+    )
+    {
+        var request = new HierarchyQueryRequest
+        {
+            ContributionIds = ["ms.azure-artifacts.upstream-versions-data-provider"],
+            DataProviderContext = new DataProviderContext
+            {
+                Properties = new Properties
+                {
+                    ProjectId = _config.Project,
+                    FeedId = _config.NugetFeedId,
+                    Protocol = "NuGet",
+                    PackageName = packageName,
+                    SourcePage = new SourcePage
+                    {
+                        Url = new Uri(_config.OrganizationEndpoint, $"/{_config.Organization}/{_config.Project}/_artifacts/feed/nuget-feed/NuGet/{packageName}/upstreams").ToString(),
+                        RouteId = "ms.azure-artifacts.artifacts-route",
+                        RouteValues = new RouteValues
+                        {
+                            Project = packageName,
+                            Wildcard = $"feed/nuget-feed/NuGet/{packageName}/upstreams",
+                            Controller = "ContributedPage",
+                            Action = "Execute",
+                            ServiceHost = _config.NugetServiceHost,
+                        },
+                    },
+                },
+            },
+        };
+        var jsonBody = JsonSerializer.Serialize(request, AzureArtifactsJsonContext.Default.HierarchyQueryRequest);
+
+        var requestUri = new Uri(_config.OrganizationEndpoint, $"/{_config.Organization}/_apis/Contribution/HierarchyQuery/project/{_config.Project}");
+
+        using var hierarchyRequestContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+        using var hierarchyRequest = new HttpRequestMessage(HttpMethod.Post, requestUri);
+        hierarchyRequest.Content = hierarchyRequestContent;
+        hierarchyRequest.Headers.Add("Accept", "application/json;api-version=5.0-preview.1;excludeUrls=true;enumsAsNumbers=true;msDateFormat=true;noArrayWrap=true");
+
+        using var hierarchyResponse = await httpClient.SendAsync(
+            hierarchyRequest,
+            cancellationToken
+        );
+
+        var hierarchyResponseContent = await hierarchyResponse.Content.ReadAsStringAsync(cancellationToken);
+
+        var b = hierarchyResponseContent;
     }
 }

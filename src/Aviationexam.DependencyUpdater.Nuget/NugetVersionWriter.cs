@@ -37,14 +37,11 @@ public sealed class NugetVersionWriter(
             return ESetVersion.OutOfRepository;
         }
 
-        if (!nugetUpdateCandidate.PackageVersion.OriginalReference.ContainsKey(EPackageSource.Default))
-        {
-            await repositoryClient.EnsurePackageVersionIsAvailableAsync(
-                nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
-                nugetUpdateCandidate.PackageVersion.GetSerializedVersion(),
-                cancellationToken
-            );
-        }
+        await repositoryClient.EnsurePackageVersionIsAvailableAsync(
+            nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
+            nugetUpdateCandidate.PackageVersion.GetSerializedVersion(),
+            cancellationToken
+        );
 
         return nugetUpdateCandidate.NugetDependency.NugetFile.Type switch
         {

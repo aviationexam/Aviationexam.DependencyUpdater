@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 
 public class LoggingHandler(
-    ILogger logger
-) : DelegatingHandler
+    ILogger logger,
+    HttpMessageHandler innerHandler
+) : DelegatingHandler(innerHandler)
 {
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
