@@ -18,8 +18,8 @@ public static class NugetPackageExtensions
         this INugetPackage nugetPackage
     ) => nugetPackage switch
     {
-        NugetPackageReference nugetPackageReference => nugetPackageReference.VersionRange?.MinVersion?.MapToPackageVersion(),
-        NugetPackageVersion nugetPackageVersion => nugetPackageVersion.Version.MapToPackageVersion(),
+        NugetPackageReference nugetPackageReference => nugetPackageReference.VersionRange?.MinVersion?.MapToPackageVersion(EPackageSource.Default),
+        NugetPackageVersion nugetPackageVersion => nugetPackageVersion.Version.MapToPackageVersion(EPackageSource.Default),
         _ => throw new ArgumentOutOfRangeException(nameof(nugetPackage), nugetPackage, null),
     };
 }
