@@ -38,4 +38,10 @@ public interface IRepositoryClient
         PullRequest pullRequest,
         CancellationToken cancellationToken
     );
+
+    Task EnsurePackageVersionIsAvailableAsync(
+        string getPackageName,
+        string getSerializedVersion,
+        CancellationToken cancellationToken
+    );
 }

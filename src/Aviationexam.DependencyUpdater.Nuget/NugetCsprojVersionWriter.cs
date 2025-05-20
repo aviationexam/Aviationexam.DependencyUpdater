@@ -7,7 +7,7 @@ namespace Aviationexam.DependencyUpdater.Nuget;
 
 public sealed class NugetCsprojVersionWriter
 {
-    public Task<ESetVersion> TrySetVersion<T>(
+    public Task<ESetVersion> TrySetVersionAsync<T>(
         NugetUpdateCandidate<T> nugetUpdateCandidate,
         string fullPath,
         IDictionary<string, PackageVersion> groupPackageVersions,

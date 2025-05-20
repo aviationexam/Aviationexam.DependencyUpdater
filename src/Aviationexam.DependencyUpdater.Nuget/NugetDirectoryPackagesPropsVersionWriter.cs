@@ -16,7 +16,7 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
     IFileSystem fileSystem
 )
 {
-    public async Task<ESetVersion> TrySetVersion<T>(
+    public async Task<ESetVersion> TrySetVersionAsync<T>(
         NugetUpdateCandidate<T> nugetUpdateCandidate,
         string fullPath,
         IDictionary<string, PackageVersion> groupPackageVersions,

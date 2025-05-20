@@ -12,10 +12,11 @@ namespace Aviationexam.DependencyUpdater.Nuget;
 
 public sealed class NugetVersionWriter(
     NugetDirectoryPackagesPropsVersionWriter directoryPackagesPropsVersionWriter,
-    NugetCsprojVersionWriter csprojVersionWriter
+    NugetCsprojVersionWriter csprojVersionWriter,
+    IRepositoryClient repositoryClient
 )
 {
-    public Task<ESetVersion> TrySetVersion<T>(
+    public async Task<ESetVersion> TrySetVersion<T>(
         NugetUpdateCandidate<T> nugetUpdateCandidate,
         ISourceVersioningWorkspace gitWorkspace,
         IDictionary<string, PackageVersion> groupPackageVersions,
@@ -24,7 +25,7 @@ public sealed class NugetVersionWriter(
     {
         if (!IsCompatibleWithCurrentVersions(nugetUpdateCandidate.PackageVersion, groupPackageVersions, out _))
         {
-            return Task.FromResult(ESetVersion.VersionNotSet);
+            return ESetVersion.VersionNotSet;
         }
 
         var workspaceDirectory = gitWorkspace.GetWorkspaceDirectory();
@@ -33,13 +34,22 @@ public sealed class NugetVersionWriter(
 
         if (!gitWorkspace.IsPathInsideRepository(targetFullPath))
         {
-            return Task.FromResult(ESetVersion.OutOfRepository);
+            return ESetVersion.OutOfRepository;
+        }
+
+        if (!nugetUpdateCandidate.PackageVersion.OriginalReference.ContainsKey(EPackageSource.Default))
+        {
+            await repositoryClient.EnsurePackageVersionIsAvailableAsync(
+                nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
+                nugetUpdateCandidate.PackageVersion.GetSerializedVersion(),
+                cancellationToken
+            );
         }
 
         return nugetUpdateCandidate.NugetDependency.NugetFile.Type switch
         {
-            ENugetFileType.DirectoryPackagesProps => directoryPackagesPropsVersionWriter.TrySetVersion(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
-            ENugetFileType.Csproj or ENugetFileType.Targets => csprojVersionWriter.TrySetVersion(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
+            ENugetFileType.DirectoryPackagesProps => await directoryPackagesPropsVersionWriter.TrySetVersionAsync(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
+            ENugetFileType.Csproj or ENugetFileType.Targets => await csprojVersionWriter.TrySetVersionAsync(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
             // ENugetFileType.NugetConfig => false, // we should not update nuget.config
             _ => throw new ArgumentOutOfRangeException(nameof(nugetUpdateCandidate.NugetDependency.NugetFile.Type), nugetUpdateCandidate.NugetDependency.NugetFile.Type, null),
         };
