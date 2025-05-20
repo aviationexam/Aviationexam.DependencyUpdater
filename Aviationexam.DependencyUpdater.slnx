@@ -9,6 +9,7 @@
     <File Path=".gitignore" />
     <File Path=".github\dependabot.yml" />
     <File Path=".env.local" />
+    <File Path="Makefile" />
   </Folder>
   <Folder Name="/Solution Items/workflow/">
     <File Path=".github\workflows\build.yml" />
