@@ -390,23 +390,25 @@ public sealed class NugetUpdater(
                 {
                     using var nugetCache = new SourceCacheContext();
 
-                    var packageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
+                    var rawPackageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
                         sourceRepository.SourceRepository,
                         package,
                         nugetCache,
                         cancellationToken
                     );
+                    var packageMetadata = rawPackageMetadata?.MapToPackageVersion(EPackageSource.Default);
 
                     if (
                         packageMetadata is null
                         && sourceRepository.FallbackSourceRepository is { } fallbackSourceRepository)
                     {
-                        packageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
+                        rawPackageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
                             fallbackSourceRepository,
                             package,
                             nugetCache,
                             cancellationToken
                         );
+                        packageMetadata = rawPackageMetadata?.MapToPackageVersion(EPackageSource.Fallback);
                     }
 
                     if (packageMetadata is null)
@@ -434,7 +436,7 @@ public sealed class NugetUpdater(
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
         Package package,
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
-        IPackageSearchMetadata packageMetadata,
+        PackageVersion<PackageSearchMetadataRegistration> packageVersion,
         IDictionary<Package, EDependencyFlag> packageFlags,
         Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
         Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit
@@ -584,7 +586,7 @@ public sealed class NugetUpdater(
             IReadOnlyCollection<PossiblePackageVersion> futureVersions = futureVersionResolver.ResolveFutureVersion(
                     dependencyName,
                     dependencyVersion,
-                    versions.Select(NugetMapper.MapToPackageVersion),
+                    versions,
                     ignoreResolver
                 )
                 .Select(x => new PossiblePackageVersion(
@@ -607,26 +609,27 @@ public sealed class NugetUpdater(
         }
     }
 
-    private async Task<IReadOnlyCollection<IPackageSearchMetadata>> FetchDependencyVersionsAsync(
+    private async Task<IReadOnlyCollection<PackageVersion<PackageSearchMetadataRegistration>>> FetchDependencyVersionsAsync(
         NugetDependency dependency,
         IReadOnlyCollection<NugetSource> sources,
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
         CancellationToken cancellationToken
     )
     {
-        var versions = new List<IPackageSearchMetadata>();
-        var tasks = sources.Select<NugetSource, Task<IEnumerable<IPackageSearchMetadata>>>(async nugetSource =>
+        var versions = new List<PackageVersion<PackageSearchMetadataRegistration>>();
+        var tasks = sources.Select<NugetSource, Task<IEnumerable<PackageVersion<PackageSearchMetadataRegistration>>>>(async nugetSource =>
         {
             if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
             {
                 using var nugetCache = new SourceCacheContext();
 
-                var packageVersions = await nugetVersionFetcher.FetchPackageVersionsAsync(
+                var rawPackageVersions = await nugetVersionFetcher.FetchPackageVersionsAsync(
                     sourceRepository.SourceRepository,
                     dependency,
                     nugetCache,
                     cancellationToken
                 );
+                var packageVersions = rawPackageVersions.Select(x => x.MapToPackageVersion(EPackageSource.Default));
 
                 if (sourceRepository.FallbackSourceRepository is { } fallbackSourceRepository)
                 {
@@ -637,7 +640,7 @@ public sealed class NugetUpdater(
                         cancellationToken
                     );
 
-                    return packageVersions.Concat(fallbackPackageVersions);
+                    return packageVersions.Concat(fallbackPackageVersions.Select(x => x.MapToPackageVersion(EPackageSource.Fallback)));
                 }
 
                 return packageVersions;
