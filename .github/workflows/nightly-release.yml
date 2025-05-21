@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+    strategy:
+      matrix:
+        rid: [linux-x64, win-x64]
     steps:
       - name: Setup .Net
         uses: actions/setup-dotnet@v4
@@ -17,32 +20,21 @@ jobs:
           dotnet-version: |
             9.0.x
       - uses: actions/checkout@v4
-      - name: Fetch all history for all tags and branches
-        run: git fetch --prune --unshallow
-      - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v3.2.1
-        with:
-          versionSpec: '6.0.5'
-      - name: Use GitVersion
-        id: gitversion # step id used as reference for output values
-        uses: gittools/actions/gitversion/execute@v3.2.1
-      - run: |
-          echo "MajorMinorPatch: ${{ steps.gitversion.outputs.MajorMinorPatch }}"
-          echo "FullSemVer: ${{ steps.gitversion.outputs.FullSemVer }}"
-          echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"
-      - name: Restore with .Net
-        run: dotnet restore --nologo
-      - name: Build with .Net
-        run: dotnet build --configuration Release --no-restore --nologo "-p:Version=${{ steps.gitversion.outputs.FullSemVer }}"
-      - name: Pack with .Net
-        run: dotnet pack src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
+      - name: Install native AOT toolchain
+        run: sudo apt-get update && sudo apt-get install -y clang lld gcc-mingw-w64 binutils-mingw-w64
+
+      - name: Publish AOT binary for ${{ matrix.rid }}
+        run: |
+          dotnet publish src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj \
+            -c Release \
+            -r ${{ matrix.rid }} \
+            --self-contained true \
+            -p:PublishAot=true \
+            -p:Version=0.0.1-nightly.${{ github.run_number }} \
+            -p:InvariantGlobalization=true \
+            -o out/${{ matrix.rid }}
+
       - uses: actions/upload-artifact@v4
         with:
-          name: Nuget-packages-${{ steps.gitversion.outputs.FullSemVer }}
-          path: nuget-packages
-      - name: Push package to Myget
-        if: ${{ vars.USE_MYGET == 'true' }}
-        run: dotnet nuget push 'nuget-packages/*.nupkg' --api-key ${{ secrets.MYGET_API_KEY }} --source https://www.myget.org/F/dependency-updater/api/v3/index.json
-      - name: Push package to Feedz
-        if: ${{ vars.USE_FEEDZ == 'true' }}
-        run: dotnet nuget push 'nuget-packages/*.nupkg' --api-key ${{ secrets.FEEDZ_API_KEY }} --source https://f.feedz.io/aviationexam/dependency-updater/nuget/index.json
+          name: dependency-updater-${{ matrix.rid }}
+          path: out/${{ matrix.rid }}
