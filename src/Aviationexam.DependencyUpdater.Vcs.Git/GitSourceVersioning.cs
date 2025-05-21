@@ -2,6 +2,7 @@ using Aviationexam.DependencyUpdater.Interfaces;
 using LibGit2Sharp;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Aviationexam.DependencyUpdater.Vcs.Git;
@@ -12,6 +13,51 @@ public sealed class GitSourceVersioning(
     ILogger<GitSourceVersioning> logger
 ) : ISourceVersioning
 {
+    public void RunGitWorktreePrune(
+        string repositoryPath
+    )
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "git",
+            Arguments = "worktree prune",
+            WorkingDirectory = repositoryPath,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        };
+
+        using var process = new Process();
+        process.StartInfo = startInfo;
+
+        process.OutputDataReceived += (_, args) =>
+        {
+            if (!string.IsNullOrWhiteSpace(args.Data))
+            {
+                logger.LogTrace("[worktree prune] {Line}", args.Data);
+            }
+        };
+
+        process.ErrorDataReceived += (_, args) =>
+        {
+            if (!string.IsNullOrWhiteSpace(args.Data))
+            {
+                logger.LogError("[worktree prune] {Line}", args.Data);
+            }
+        };
+
+        process.Start();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+        process.WaitForExit();
+
+        if (process.ExitCode != 0)
+        {
+            logger.LogError("[worktree prune] failed with exit code {ExitCode}", process.ExitCode);
+        }
+    }
+
     public ISourceVersioningWorkspace CreateWorkspace(
         string targetDirectory,
         string? sourceBranchName,
@@ -19,6 +65,8 @@ public sealed class GitSourceVersioning(
         string worktreeName
     )
     {
+        RunGitWorktreePrune(repository.Info.WorkingDirectory);
+
         var existingWorktree = repository.Worktrees
             .Where(x => x is not null)
             .SingleOrDefault(x => x.Name == worktreeName);
