@@ -10,7 +10,6 @@
   <PropertyGroup Label="dotnet tool">
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dependency-updater</ToolCommandName>
-    <AssemblyName>dependency-updater</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Label="AoT">
@@ -33,6 +32,10 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DotnetToolSettings.xml" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
