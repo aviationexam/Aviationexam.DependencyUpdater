@@ -34,8 +34,4 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="DotnetToolSettings.xml" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
 </Project>
