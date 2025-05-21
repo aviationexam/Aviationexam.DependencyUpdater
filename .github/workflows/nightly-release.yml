@@ -27,6 +27,17 @@ jobs:
           dotnet-version: |
             9.0.x
       - uses: actions/checkout@v4
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3.2.1
+        with:
+          versionSpec: '6.0.5'
+      - name: Use GitVersion
+        id: gitversion # step id used as reference for output values
+        uses: gittools/actions/gitversion/execute@v3.2.1
+      - run: |
+          echo "MajorMinorPatch: ${{ steps.gitversion.outputs.MajorMinorPatch }}"
+          echo "FullSemVer: ${{ steps.gitversion.outputs.FullSemVer }}"
+          echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"
       - name: Publish Native AOT binary
         run: >
           dotnet publish src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj
@@ -35,7 +46,7 @@ jobs:
           --self-contained true
           -p:PublishAot=true
           -p:InvariantGlobalization=true
-          -p:Version=0.0.1-nightly.${{ github.run_number }}
+          -p:Version=${{ steps.gitversion.outputs.FullSemVer }}
           -o ${{ matrix.output }}
 
       - uses: actions/upload-artifact@v4
