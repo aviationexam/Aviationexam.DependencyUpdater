@@ -1,4 +1,4 @@
-name: Nightly MyGet Package Deploy
+name: Nightly Native Binaries Release
 
 on:
   push:
@@ -7,12 +7,19 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
-    env:
-      DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
     strategy:
       matrix:
-        rid: [linux-x64, win-x64]
+        include:
+          - os: ubuntu-latest
+            rid: linux-x64
+            output: out/linux-x64
+          - os: windows-latest
+            rid: win-x64
+            output: out/win-x64
+    runs-on: ${{ matrix.os }}
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+
     steps:
       - name: Setup .Net
         uses: actions/setup-dotnet@v4
@@ -20,21 +27,18 @@ jobs:
           dotnet-version: |
             9.0.x
       - uses: actions/checkout@v4
-      - name: Install native AOT toolchain
-        run: sudo apt update && sudo apt install -y --no-install-recommends clang lld gcc-mingw-w64 binutils-mingw-w64
-
-      - name: Publish AOT binary for ${{ matrix.rid }}
-        run: |
-          dotnet publish src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj \
-            -c Release \
-            -r ${{ matrix.rid }} \
-            --self-contained true \
-            -p:PublishAot=true \
-            -p:Version=0.0.1-nightly.${{ github.run_number }} \
-            -p:InvariantGlobalization=true \
-            -o out/${{ matrix.rid }}
+      - name: Publish Native AOT binary
+        run: >
+          dotnet publish src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj
+          -c Release
+          -r ${{ matrix.rid }}
+          --self-contained true
+          -p:PublishAot=true
+          -p:InvariantGlobalization=true
+          -p:Version=0.0.1-nightly.${{ github.run_number }}
+          -o ${{ matrix.output }}
 
       - uses: actions/upload-artifact@v4
         with:
           name: dependency-updater-${{ matrix.rid }}
-          path: out/${{ matrix.rid }}
+          path: ${{ matrix.output }}
