@@ -5,31 +5,45 @@ using System.Threading.Tasks;
 
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 
-public class LoggingHandler(
-    ILogger logger,
-    HttpMessageHandler innerHandler
-) : DelegatingHandler(innerHandler)
+public class LoggingHandler : DelegatingHandler
 {
+    private readonly ILogger _logger;
+
+    public LoggingHandler(
+        ILogger logger
+    )
+    {
+        _logger = logger;
+    }
+
+    public LoggingHandler(
+        ILogger logger,
+        HttpMessageHandler innerHandler
+    ) : base(innerHandler)
+    {
+        _logger = logger;
+    }
+
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        logger.LogTrace("Request: {Method} {RequestUri}", request.Method, request.RequestUri);
+        _logger.LogTrace("Request: {Method} {RequestUri}", request.Method, request.RequestUri);
 
         if (request.Content != null)
         {
             await request.Content.LoadIntoBufferAsync(cancellationToken);
             var requestBody = await request.Content.ReadAsStringAsync(cancellationToken);
 
-            logger.LogTrace("Request Body: {RequestBody}", requestBody);
+            _logger.LogTrace("Request Body: {RequestBody}", requestBody);
         }
 
         var response = await base.SendAsync(request, cancellationToken);
 
-        logger.LogTrace("Response: {StatusCode}", response.StatusCode);
+        _logger.LogTrace("Response: {StatusCode}", response.StatusCode);
 
         await response.Content.LoadIntoBufferAsync(cancellationToken);
         var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
 
-        logger.LogTrace("Response Body: {ResponseBody}", responseBody);
+        _logger.LogTrace("Response Body: {ResponseBody}", responseBody);
 
         return response;
     }

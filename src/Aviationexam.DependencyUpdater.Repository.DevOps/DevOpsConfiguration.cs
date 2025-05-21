@@ -15,8 +15,4 @@ public sealed class DevOpsConfiguration
     public required string PersonalAccessToken { get; set; }
 
     public required string AccountId { get; set; }
-
-    public required string NugetFeedId { get; set; }
-
-    public required string NugetServiceHost { get; set; }
 }

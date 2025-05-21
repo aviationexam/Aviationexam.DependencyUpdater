@@ -1,6 +1,6 @@
 namespace Aviationexam.DependencyUpdater.Repository.DevOps.Dtos;
 
-public class RouteValues
+public sealed class RouteValues
 {
     public required string Project { get; set; }
     public required string Wildcard { get; set; }

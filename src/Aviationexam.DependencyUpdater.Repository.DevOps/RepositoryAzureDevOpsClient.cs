@@ -1,17 +1,12 @@
 using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.Interfaces;
-using Aviationexam.DependencyUpdater.Repository.DevOps.Dtos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.VisualStudio.Services.WebApi;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using GitConstants = Aviationexam.DependencyUpdater.Constants.GitConstants;
@@ -21,7 +16,7 @@ namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 public class RepositoryAzureDevOpsClient(
     IOptionsSnapshot<DevOpsConfiguration> devOpsConfiguration,
     VssConnection connection,
-    HttpClient httpClient,
+    AzureDevOpsUndocumentedClient azureDevOpsUndocumentedClient,
     ILogger<RepositoryAzureDevOpsClient> logger
 ) : IRepositoryClient
 {
@@ -241,50 +236,25 @@ public class RepositoryAzureDevOpsClient(
         CancellationToken cancellationToken
     )
     {
-        var request = new HierarchyQueryRequest
-        {
-            ContributionIds = ["ms.azure-artifacts.upstream-versions-data-provider"],
-            DataProviderContext = new DataProviderContext
-            {
-                Properties = new Properties
-                {
-                    ProjectId = _config.Project,
-                    FeedId = _config.NugetFeedId,
-                    Protocol = "NuGet",
-                    PackageName = packageName,
-                    SourcePage = new SourcePage
-                    {
-                        Url = new Uri(_config.OrganizationEndpoint, $"/{_config.Organization}/{_config.Project}/_artifacts/feed/nuget-feed/NuGet/{packageName}/upstreams").ToString(),
-                        RouteId = "ms.azure-artifacts.artifacts-route",
-                        RouteValues = new RouteValues
-                        {
-                            Project = packageName,
-                            Wildcard = $"feed/nuget-feed/NuGet/{packageName}/upstreams",
-                            Controller = "ContributedPage",
-                            Action = "Execute",
-                            ServiceHost = _config.NugetServiceHost,
-                        },
-                    },
-                },
-            },
-        };
-        var jsonBody = JsonSerializer.Serialize(request, AzureArtifactsJsonContext.Default.HierarchyQueryRequest);
-
-        var requestUri = new Uri(_config.OrganizationEndpoint, $"/{_config.Organization}/_apis/Contribution/HierarchyQuery/project/{_config.Project}");
-
-        using var hierarchyRequestContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-
-        using var hierarchyRequest = new HttpRequestMessage(HttpMethod.Post, requestUri);
-        hierarchyRequest.Content = hierarchyRequestContent;
-        hierarchyRequest.Headers.Add("Accept", "application/json;api-version=5.0-preview.1;excludeUrls=true;enumsAsNumbers=true;msDateFormat=true;noArrayWrap=true");
-
-        using var hierarchyResponse = await httpClient.SendAsync(
-            hierarchyRequest,
+        var versions = await azureDevOpsUndocumentedClient.GetContributionHierarchyQueryAsync(
+            packageName,
             cancellationToken
         );
 
-        var hierarchyResponseContent = await hierarchyResponse.Content.ReadAsStringAsync(cancellationToken);
+        if (versions is null)
+        {
+            return;
+        }
 
-        var b = hierarchyResponseContent;
+        var version = versions.SingleOrDefault(x => x.NormalizedVersion == packageVersion);
+
+        if (version?.IsLocal is false or null)
+        {
+            await azureDevOpsUndocumentedClient.ManualUpstreamIngestionAsync(
+                packageName,
+                packageVersion,
+                cancellationToken
+            );
+        }
     }
 }

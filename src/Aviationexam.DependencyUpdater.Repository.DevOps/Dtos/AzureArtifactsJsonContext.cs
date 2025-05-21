@@ -7,4 +7,6 @@ namespace Aviationexam.DependencyUpdater.Repository.DevOps.Dtos;
     WriteIndented = false
 )]
 [JsonSerializable(typeof(HierarchyQueryRequest))]
-internal partial class AzureArtifactsJsonContext : JsonSerializerContext;
+[JsonSerializable(typeof(HierarchyQueryResponse))]
+[JsonSerializable(typeof(ManualUpstreamIngestionRequest))]
+internal sealed partial class AzureArtifactsJsonContext : JsonSerializerContext;

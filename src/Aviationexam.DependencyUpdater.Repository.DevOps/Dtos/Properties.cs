@@ -1,6 +1,6 @@
 namespace Aviationexam.DependencyUpdater.Repository.DevOps.Dtos;
 
-internal class Properties
+internal sealed class Properties
 {
     public required string ProjectId { get; set; }
     public required string FeedId { get; set; }

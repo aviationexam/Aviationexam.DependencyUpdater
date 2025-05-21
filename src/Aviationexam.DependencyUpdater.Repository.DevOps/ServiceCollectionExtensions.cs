@@ -8,7 +8,6 @@ using Microsoft.VisualStudio.Services.WebApi;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
-using System.Net.Http.Headers;
 
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 
@@ -20,16 +19,9 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services, IConfigurationRoot configuration
     ) => services
         .Configure<DevOpsConfiguration>(configuration.GetSection("DevOps"))
-        .AddHttpClient<RepositoryAzureDevOpsClient>()
-        .ConfigureHttpClient((sp, client) =>
-        {
-            var connection = sp.GetRequiredService<VssConnection>();
-            client.BaseAddress = connection.Uri;
-            client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json")
-            );
-        })
-        .ConfigurePrimaryHttpMessageHandler(x => x.CreateVssHttpMessageHandler())
+        .Configure<DevOpsUndocumentedConfiguration>(configuration.GetSection("DevOps"))
+        .AddHttpClient<AzureDevOpsUndocumentedClient>()
+        .AddHttpMessageHandler(x => new LoggingHandler(x.GetRequiredService<ILogger<AzureDevOpsUndocumentedClient>>()))
         .Services
         .AddScoped<VssHttpMessageHandler>(x => x.CreateVssHttpMessageHandler())
         .AddScoped<VssConnection>(x =>
