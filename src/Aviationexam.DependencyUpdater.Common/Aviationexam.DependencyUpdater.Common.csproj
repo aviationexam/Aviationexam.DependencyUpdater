@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PublishAot>true</PublishAot>
+    <PublishAot Condition="'$(AotBuild)' != 'false'">true</PublishAot>
     <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
   </PropertyGroup>
 

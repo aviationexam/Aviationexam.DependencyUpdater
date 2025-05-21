@@ -7,8 +7,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <PublishAot>true</PublishAot>
+  <PropertyGroup Label="dotnet tool">
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dependency-updater</ToolCommandName>
+  </PropertyGroup>
+
+  <PropertyGroup Label="AoT">
+    <PublishAot Condition="'$(AotBuild)' != 'false'">true</PublishAot>
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
