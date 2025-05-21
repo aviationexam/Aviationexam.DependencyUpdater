@@ -5,15 +5,17 @@
     <TargetFramework>net9.0</TargetFramework>
     <LangVersion>13</LangVersion>
     <Nullable>enable</Nullable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dependency-updater</ToolCommandName>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <PublishAot>true</PublishAot>
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
   <Import Project="..\WarningConfiguration.targets" />
-  
+
   <ItemGroup>
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.ConfigurationParser\Aviationexam.DependencyUpdater.ConfigurationParser.csproj" />
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.Constants\Aviationexam.DependencyUpdater.Constants.csproj" />
@@ -22,7 +24,7 @@
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.Repository.DevOps\Aviationexam.DependencyUpdater.Repository.DevOps.csproj" />
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.Vcs.Git\Aviationexam.DependencyUpdater.Vcs.Git.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />

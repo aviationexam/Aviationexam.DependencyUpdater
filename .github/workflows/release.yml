@@ -33,15 +33,15 @@ jobs:
         run: dotnet restore --nologo
       - name: Build with .Net
         run: dotnet build --configuration Release --no-restore --nologo "-p:Version=${{ steps.gitversion.outputs.FullSemVer }}"
-      #- name: Pack with .Net
-      #  run: dotnet pack src/PayPal.Sdk.Checkout/PayPal.Sdk.Checkout.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
-      #- uses: actions/upload-artifact@v4
-      #  with:
-      #    name: Nuget-packages-${{ steps.gitversion.outputs.FullSemVer }}
-      #    path: nuget-packages
-      #- name: Configure Github Nuget Feed
-      #  run: dotnet nuget add source --name github https://nuget.pkg.github.com/aviationexam/index.json
-      #- name: Push package to Github Packages
-      #  run: dotnet nuget push 'nuget-packages/*.nupkg' --api-key ${{ secrets.GITHUB_TOKEN  }} --source github
-      #- name: Push package to Nuget
-      #  run: dotnet nuget push 'nuget-packages/*.nupkg' --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      - name: Pack with .Net
+        run: dotnet pack src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj --nologo --no-build --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Nuget-packages-${{ steps.gitversion.outputs.FullSemVer }}
+          path: nuget-packages
+      - name: Configure Github Nuget Feed
+        run: dotnet nuget add source --name github https://nuget.pkg.github.com/aviationexam/index.json
+      - name: Push package to Github Packages
+        run: dotnet nuget push 'nuget-packages/*.nupkg' --api-key ${{ secrets.GITHUB_TOKEN  }} --source github
+      - name: Push package to Nuget
+        run: dotnet nuget push 'nuget-packages/*.nupkg' --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
