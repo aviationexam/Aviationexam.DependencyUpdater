@@ -10,6 +10,7 @@
   <PropertyGroup Label="dotnet tool">
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dependency-updater</ToolCommandName>
+    <AssemblyName>dependency-updater</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Label="AoT">
