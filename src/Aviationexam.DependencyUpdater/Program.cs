@@ -1,5 +1,7 @@
 using Aviationexam.DependencyUpdater;
 using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Parsing;
 using System.IO;
 
 var directory = new Option<string>(
@@ -87,16 +89,15 @@ var rootCommand = new RootCommand("Dependency updater tool that processes depend
     serviceHost,
     accessTokenResourceId,
 };
+rootCommand.Handler = DefaultCommandHandler.GetHandler();
 
-rootCommand.SetHandler(
-    async (sourceConfiguration, devOpsConfiguration, devOpsUndocumentedConfiguration) =>
+return await new CommandLineBuilder(rootCommand)
+    .UseHost(HostBuilderFactory.Create, (hostApplicationBuilder, modelBinder) =>
     {
-        using var host = DefaultCommandHandler.CreateHostBuilder(args, sourceConfiguration, devOpsConfiguration, devOpsUndocumentedConfiguration);
-        await DefaultCommandHandler.ExecuteWithBuilderAsync(host.Services);
-    },
-    new SourceConfigurationBinder(directory),
-    new DevOpsConfigurationBinder(organization, project, repository, pat, accountId),
-    new DevOpsUndocumentedConfigurationBinder(nugetFeedId, serviceHost, accessTokenResourceId)
-);
-
-return await rootCommand.InvokeAsync(args);
+        hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new SourceConfigurationBinder(directory));
+        hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new DevOpsConfigurationBinder(organization, project, repository, pat, accountId));
+        hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new DevOpsUndocumentedConfigurationBinder(nugetFeedId, serviceHost, accessTokenResourceId));
+    })
+    .UseDefaults()
+    .Build()
+    .InvokeAsync(args);

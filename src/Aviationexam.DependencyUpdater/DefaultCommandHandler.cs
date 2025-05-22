@@ -1,56 +1,28 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.ConfigurationParser;
 using Aviationexam.DependencyUpdater.Constants;
-using Aviationexam.DependencyUpdater.DefaultImplementations;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget;
-using Aviationexam.DependencyUpdater.Repository.DevOps;
-using Aviationexam.DependencyUpdater.Vcs.Git;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
+using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Aviationexam.DependencyUpdater;
 
-internal sealed class DefaultCommandHandler
+internal static class DefaultCommandHandler
 {
-    public static IHost CreateHostBuilder(
-        string[] args,
+    public static ICommandHandler GetHandler() => CommandHandler.Create<SourceConfiguration, DependabotConfigurationLoader, IEnvVariableProvider, NugetUpdater>(
+        ExecuteWithBuilderAsync
+    );
+
+    private static async Task ExecuteWithBuilderAsync(
         SourceConfiguration sourceConfiguration,
-        DevOpsConfiguration devOpsConfiguration,
-        DevOpsUndocumentedConfiguration devOpsUndocumentedConfiguration
+        DependabotConfigurationLoader dependabotConfigurationLoader,
+        IEnvVariableProvider envVariableProvider,
+        NugetUpdater nugetUpdater
     )
     {
-        HostApplicationBuilderSettings settings = new()
-        {
-            Args = args,
-            ContentRootPath = sourceConfiguration.Directory,
-        };
-
-        var builder = Host.CreateEmptyApplicationBuilder(settings);
-
-        builder.Services.AddLogging(x => x.AddConsole());
-        builder.Services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
-        builder.Services.AddCommon(sourceConfiguration);
-        builder.Services.AddConfigurationParser();
-        builder.Services.AddNuget();
-        builder.Services.AddVcsGit();
-        builder.Services.AddRepositoryDevOps(devOpsConfiguration, devOpsUndocumentedConfiguration);
-        builder.Services.AddDefaultImplementations();
-
-        return builder.Build();
-    }
-
-    public static async Task ExecuteWithBuilderAsync(IServiceProvider serviceProvider)
-    {
-        var sourceConfiguration = serviceProvider.GetRequiredService<SourceConfiguration>();
-        var dependabotConfigurationLoader = serviceProvider.GetRequiredService<DependabotConfigurationLoader>();
-        var envVariableProvider = serviceProvider.GetRequiredService<IEnvVariableProvider>();
-        var nugetUpdater = serviceProvider.GetRequiredService<NugetUpdater>();
-
         var dependabotConfigurations = dependabotConfigurationLoader.LoadConfiguration(sourceConfiguration.Directory);
 
         foreach (var dependabotConfiguration in dependabotConfigurations)

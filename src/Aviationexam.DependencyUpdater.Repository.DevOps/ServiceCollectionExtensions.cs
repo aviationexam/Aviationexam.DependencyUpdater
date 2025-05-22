@@ -11,12 +11,8 @@ namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddRepositoryDevOps(
-        this IServiceCollection services,
-        DevOpsConfiguration devOpsConfiguration,
-        DevOpsUndocumentedConfiguration devOpsUndocumentedConfiguration
+        this IServiceCollection services
     ) => services
-        .AddSingleton(devOpsConfiguration)
-        .AddSingleton(devOpsUndocumentedConfiguration)
         .AddHttpClient<AzureDevOpsUndocumentedClient>()
         .AddHttpMessageHandler(static x => new LoggingHandler(x.GetRequiredService<ILogger<AzureDevOpsUndocumentedClient>>()))
         .Services
