@@ -1,7 +1,6 @@
 using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.VisualStudio.Services.WebApi;
@@ -14,14 +13,12 @@ using GitConstants = Aviationexam.DependencyUpdater.Constants.GitConstants;
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 
 public class RepositoryAzureDevOpsClient(
-    IOptionsSnapshot<DevOpsConfiguration> devOpsConfiguration,
+    DevOpsConfiguration devOpsConfiguration,
     VssConnection connection,
     AzureDevOpsUndocumentedClient azureDevOpsUndocumentedClient,
     ILogger<RepositoryAzureDevOpsClient> logger
 ) : IRepositoryClient
 {
-    private readonly DevOpsConfiguration _config = devOpsConfiguration.Value;
-
     public async Task<IEnumerable<PullRequest>> ListActivePullRequestsAsync(
         string updater,
         CancellationToken cancellationToken
@@ -30,8 +27,8 @@ public class RepositoryAzureDevOpsClient(
         var gitClient = await connection.GetClientAsync<GitHttpClient>(cancellationToken);
 
         var pullRequests = await gitClient.GetPullRequestsAsync(
-            project: _config.Project,
-            repositoryId: _config.Repository,
+            project: devOpsConfiguration.Project,
+            repositoryId: devOpsConfiguration.Repository,
             searchCriteria: new GitPullRequestSearchCriteria
             {
                 Status = PullRequestStatus.Active,
@@ -59,8 +56,8 @@ public class RepositoryAzureDevOpsClient(
         var gitClient = await connection.GetClientAsync<GitHttpClient>(cancellationToken);
 
         var pullRequests = await gitClient.GetPullRequestsAsync(
-            project: _config.Project,
-            repositoryId: _config.Repository,
+            project: devOpsConfiguration.Project,
+            repositoryId: devOpsConfiguration.Repository,
             searchCriteria: new GitPullRequestSearchCriteria
             {
                 Status = PullRequestStatus.Active,
@@ -114,7 +111,7 @@ public class RepositoryAzureDevOpsClient(
                 TransitionWorkItems = true,
                 MergeCommitMessage = $"{title}\n\n{description}",
             },
-            AutoCompleteSetBy = new IdentityRef { Id = _config.AccountId },
+            AutoCompleteSetBy = new IdentityRef { Id = devOpsConfiguration.AccountId },
             Labels =
             [
                 new WebApiTagDefinition { Name = PullRequestConstants.TagName },
@@ -124,8 +121,8 @@ public class RepositoryAzureDevOpsClient(
 
         var pullRequest = await gitClient.CreatePullRequestAsync(
             gitPullRequestToCreate: pullRequestRequest,
-            repositoryId: _config.Repository,
-            project: _config.Project,
+            repositoryId: devOpsConfiguration.Repository,
+            project: devOpsConfiguration.Project,
             cancellationToken: cancellationToken
         );
 
@@ -133,7 +130,7 @@ public class RepositoryAzureDevOpsClient(
 
         var updated = new GitPullRequest
         {
-            AutoCompleteSetBy = new IdentityRef { Id = _config.AccountId },
+            AutoCompleteSetBy = new IdentityRef { Id = devOpsConfiguration.AccountId },
             CompletionOptions = new GitPullRequestCompletionOptions
             {
                 DeleteSourceBranch = true,
@@ -146,9 +143,9 @@ public class RepositoryAzureDevOpsClient(
 
         await gitClient.UpdatePullRequestAsync(
             gitPullRequestToUpdate: updated,
-            repositoryId: _config.Repository,
+            repositoryId: devOpsConfiguration.Repository,
             pullRequestId: pullRequest.PullRequestId,
-            project: _config.Project,
+            project: devOpsConfiguration.Project,
             cancellationToken: cancellationToken
         );
 
@@ -170,7 +167,7 @@ public class RepositoryAzureDevOpsClient(
         {
             Title = title,
             Description = description,
-            AutoCompleteSetBy = new IdentityRef { Id = _config.AccountId },
+            AutoCompleteSetBy = new IdentityRef { Id = devOpsConfiguration.AccountId },
             CompletionOptions = new GitPullRequestCompletionOptions
             {
                 DeleteSourceBranch = true,
@@ -183,9 +180,9 @@ public class RepositoryAzureDevOpsClient(
 
         await gitClient.UpdatePullRequestAsync(
             gitPullRequestToUpdate: updated,
-            repositoryId: _config.Repository,
+            repositoryId: devOpsConfiguration.Repository,
             pullRequestId: pullRequestIdAsInt,
-            project: _config.Project,
+            project: devOpsConfiguration.Project,
             cancellationToken: cancellationToken
         );
 
@@ -205,9 +202,9 @@ public class RepositoryAzureDevOpsClient(
         // Abandon PR
         await gitClient.UpdatePullRequestAsync(
             new GitPullRequest { Status = PullRequestStatus.Abandoned },
-            _config.Repository,
+            devOpsConfiguration.Repository,
             pullRequestIdInt,
-            _config.Project,
+            devOpsConfiguration.Project,
             cancellationToken
         );
 
@@ -222,8 +219,8 @@ public class RepositoryAzureDevOpsClient(
                     NewObjectId = new string('0', 40),
                 },
             ],
-            repositoryId: _config.Repository,
-            projectId: _config.Project,
+            repositoryId: devOpsConfiguration.Repository,
+            projectId: devOpsConfiguration.Project,
             cancellationToken: cancellationToken
         );
 

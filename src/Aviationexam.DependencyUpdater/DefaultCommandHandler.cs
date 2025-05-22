@@ -9,7 +9,6 @@ using Aviationexam.DependencyUpdater.Vcs.Git;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,7 +46,7 @@ internal sealed class DefaultCommandHandler
 
     public static async Task ExecuteWithBuilderAsync(IServiceProvider serviceProvider)
     {
-        var sourceConfiguration = serviceProvider.GetRequiredService<IOptions<SourceConfiguration>>().Value;
+        var sourceConfiguration = serviceProvider.GetRequiredService<SourceConfiguration>();
         var dependabotConfigurationLoader = serviceProvider.GetRequiredService<DependabotConfigurationLoader>();
         var envVariableProvider = serviceProvider.GetRequiredService<IEnvVariableProvider>();
         var nugetUpdater = serviceProvider.GetRequiredService<NugetUpdater>();

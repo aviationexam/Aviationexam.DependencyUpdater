@@ -2,7 +2,6 @@ using Aviationexam.DependencyUpdater.Repository.DevOps.Dtos;
 using Azure.Core;
 using Azure.Identity;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -16,16 +15,13 @@ using System.Threading.Tasks;
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 
 public class AzureDevOpsUndocumentedClient(
-    IOptionsSnapshot<DevOpsConfiguration> devOpsConfiguration,
-    IOptionsSnapshot<DevOpsUndocumentedConfiguration> devOpsUndocumentedConfiguration,
+    DevOpsConfiguration devOpsConfiguration,
+    DevOpsUndocumentedConfiguration devOpsUndocumentedConfiguration,
     HttpClient httpClient,
     TimeProvider timeProvider,
     ILogger<AzureDevOpsUndocumentedClient> logger
 )
 {
-    private readonly DevOpsConfiguration _devOpsConfiguration = devOpsConfiguration.Value;
-    private readonly DevOpsUndocumentedConfiguration _devOpsUndocumentedConfiguration = devOpsUndocumentedConfiguration.Value;
-
     private readonly TokenCredential _credential = new DefaultAzureCredential();
     private readonly ConcurrentDictionary<string, AzureDevOpsToken> _tokenCache = new();
 
@@ -62,7 +58,7 @@ public class AzureDevOpsUndocumentedClient(
     )
     {
         var accessToken = await GetAccessTokenAsync(
-            _devOpsUndocumentedConfiguration.AccessTokenResourceId,
+            devOpsUndocumentedConfiguration.AccessTokenResourceId,
             cancellationToken
         );
 
@@ -75,13 +71,13 @@ public class AzureDevOpsUndocumentedClient(
             {
                 Properties = new Properties
                 {
-                    ProjectId = _devOpsConfiguration.Project,
-                    FeedId = _devOpsUndocumentedConfiguration.NugetFeedId,
+                    ProjectId = devOpsConfiguration.Project,
+                    FeedId = devOpsUndocumentedConfiguration.NugetFeedId,
                     Protocol = "NuGet",
                     PackageName = packageName,
                     SourcePage = new SourcePage
                     {
-                        Url = $"https://dev.azure.com/{_devOpsConfiguration.Organization}/{_devOpsConfiguration.Project}/_artifacts/feed/nuget-feed/NuGet/{packageName}/upstreams",
+                        Url = $"https://dev.azure.com/{devOpsConfiguration.Organization}/{devOpsConfiguration.Project}/_artifacts/feed/nuget-feed/NuGet/{packageName}/upstreams",
                         RouteId = "ms.azure-artifacts.artifacts-route",
                         RouteValues = new RouteValues
                         {
@@ -89,7 +85,7 @@ public class AzureDevOpsUndocumentedClient(
                             Wildcard = $"feed/nuget-feed/NuGet/{packageName}/upstreams",
                             Controller = "ContributedPage",
                             Action = "Execute",
-                            ServiceHost = _devOpsUndocumentedConfiguration.NugetServiceHost,
+                            ServiceHost = devOpsUndocumentedConfiguration.NugetServiceHost,
                         },
                     },
                 },
@@ -100,7 +96,7 @@ public class AzureDevOpsUndocumentedClient(
             AzureArtifactsJsonContext.Default.HierarchyQueryRequest
         );
 
-        var requestUri = new Uri($"https://pkgs.dev.azure.com/{_devOpsConfiguration.Organization}/_apis/Contribution/HierarchyQuery/project/{_devOpsConfiguration.Project}", UriKind.Absolute);
+        var requestUri = new Uri($"https://pkgs.dev.azure.com/{devOpsConfiguration.Organization}/_apis/Contribution/HierarchyQuery/project/{devOpsConfiguration.Project}", UriKind.Absolute);
 
         using var hierarchyRequestContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
@@ -134,12 +130,12 @@ public class AzureDevOpsUndocumentedClient(
     )
     {
         var accessToken = await GetAccessTokenAsync(
-            _devOpsUndocumentedConfiguration.AccessTokenResourceId,
+            devOpsUndocumentedConfiguration.AccessTokenResourceId,
             cancellationToken
         );
 
         var requestUri = new Uri(
-            $"https://pkgs.dev.azure.com/{_devOpsConfiguration.Organization}/{_devOpsConfiguration.Project}/_apis/packaging/feeds/{_devOpsUndocumentedConfiguration.NugetFeedId}/NuGet/packages/{packageName}/versions/{packageVersion}/ManualUpstreamIngestion",
+            $"https://pkgs.dev.azure.com/{devOpsConfiguration.Organization}/{devOpsConfiguration.Project}/_apis/packaging/feeds/{devOpsUndocumentedConfiguration.NugetFeedId}/NuGet/packages/{packageName}/versions/{packageVersion}/ManualUpstreamIngestion",
             UriKind.Absolute
         );
 
