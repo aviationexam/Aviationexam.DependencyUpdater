@@ -62,6 +62,50 @@ public sealed class NugetUpdater(
         var ignoreResolver = ignoreResolverFactory.Create(ignoreEntries);
         var groupResolver = groupResolverFactory.Create(groupEntries);
 
+        // Analyze dependencies
+        var dependencyAnalysisResult = await AnalyzeDependenciesAsync(
+            nugetUpdaterContext,
+            sourceRepositories,
+            ignoreResolver,
+            currentPackageVersions,
+            cancellationToken
+        );
+
+        // Group packages for updates
+        var groupedPackagesToUpdate = GroupPackagesForUpdate(
+            dependencyAnalysisResult.DependenciesToUpdate,
+            dependencyAnalysisResult.PackageFlags,
+            groupResolver
+        );
+
+        // Process package updates and create pull requests
+        var knownPullRequests = await ProcessPackageUpdatesAsync(
+            repositoryPath,
+            subdirectoryPath,
+            sourceBranchName,
+            milestone,
+            reviewers,
+            commitAuthor,
+            commitAuthorEmail,
+            groupedPackagesToUpdate,
+            currentPackageVersions,
+            updater,
+            cancellationToken
+        ).ToListAsync(cancellationToken);
+
+        // Clean up abandoned pull requests
+        await CleanupAbandonedPullRequestsAsync(updater, knownPullRequests, cancellationToken);
+    }
+
+    private async Task<DependencyAnalysisResult> AnalyzeDependenciesAsync(
+        NugetUpdaterContext nugetUpdaterContext,
+        IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
+        IgnoreResolver ignoreResolver,
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        CancellationToken cancellationToken
+    )
+    {
+        // Resolve possible package versions
         var dependencyToUpdate = await ResolvePossiblePackageVersionsAsync(
             nugetUpdaterContext,
             sourceRepositories,
@@ -73,10 +117,12 @@ public sealed class NugetUpdater(
             cancellationToken
         );
 
+        // Initialize data structures for dependency analysis
         var packageFlags = new Dictionary<Package, EDependencyFlag>();
         var dependenciesToCheck = new Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
         var dependenciesToRevisit = new Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)>();
 
+        // Process dependencies to update
         ProcessDependenciesToUpdate(
             ignoreResolver,
             currentPackageVersions,
@@ -85,6 +131,7 @@ public sealed class NugetUpdater(
             dependenciesToCheck
         );
 
+        // Process dependencies to check
         await ProcessDependenciesToCheckAsync(
             ignoreResolver,
             currentPackageVersions,
@@ -96,8 +143,18 @@ public sealed class NugetUpdater(
             cancellationToken
         );
 
+        // Process dependencies to revisit
         ProcessDependenciesToRevisit(dependenciesToRevisit, packageFlags);
 
+        return new DependencyAnalysisResult(dependencyToUpdate, packageFlags);
+    }
+
+    private Queue<(IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> NugetUpdateCandidates, GroupEntry GroupEntry)> GroupPackagesForUpdate(
+        IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>> dependencyToUpdate,
+        IDictionary<Package, EDependencyFlag> packageFlags,
+        GroupResolver groupResolver
+    )
+    {
         var packagesToUpdate = FilterPackagesToUpdate(dependencyToUpdate, packageFlags)
             .Select(x => new
             {
@@ -110,6 +167,7 @@ public sealed class NugetUpdater(
             .GroupBy(x => x.GroupEntry, x => x.NugetUpdateCandidate);
 
         var groupedPackagesToUpdateQueue = new Queue<(IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> NugetUpdateCandidates, GroupEntry GroupEntry)>();
+
         foreach (var grouping in packagesToUpdate)
         {
             var groupEntry = grouping.Key;
@@ -129,172 +187,320 @@ public sealed class NugetUpdater(
             }
         }
 
+        return groupedPackagesToUpdateQueue;
+    }
+
+    private async IAsyncEnumerable<string> ProcessPackageUpdatesAsync(
+        string repositoryPath,
+        string? subdirectoryPath,
+        string? sourceBranchName,
+        string? milestone,
+        IReadOnlyCollection<string> reviewers,
+        string commitAuthor,
+        string commitAuthorEmail,
+        Queue<(IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> NugetUpdateCandidates, GroupEntry GroupEntry)> groupedPackagesToUpdateQueue,
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        string updater,
+        [EnumeratorCancellation] CancellationToken cancellationToken
+    )
+    {
         using var sourceVersioning = sourceVersioningFactory.CreateSourceVersioning(repositoryPath);
 
-        var knownPullRequests = new List<string>();
         while (groupedPackagesToUpdateQueue.TryDequeue(out var groupedPackagesToUpdate))
         {
-#pragma warning disable CA2000
-            using var temporaryDirectory = new TemporaryDirectoryProvider(create: false);
-#pragma warning restore CA2000
-            using var gitWorkspace = sourceVersioning.CreateWorkspace(
-                temporaryDirectory.TemporaryDirectory,
-                sourceBranchName: sourceBranchName,
-                branchName: groupedPackagesToUpdate.GroupEntry.GetBranchName(updater),
-                worktreeName: groupedPackagesToUpdate.GroupEntry.GroupName.Replace('/', '-')
-            );
-
-            gitWorkspace.TryPullRebase(
-                sourceBranchName: sourceBranchName,
-                authorName: commitAuthor,
-                authorEmail: commitAuthorEmail
-            );
-
-            var groupPackageVersions = currentPackageVersions.ToDictionary();
-
-            var updatedPackages = new List<NugetUpdateCandidate<PackageSearchMetadataRegistration>>();
-            var packagesToUpdateQueue = new Queue<(NugetUpdateCandidate<PackageSearchMetadataRegistration> NugetUpdateCandidate, int Epoch)>(
-                groupedPackagesToUpdate.NugetUpdateCandidates.Select(x => (x, 0))
-            );
-            var epoch = 1;
-            while (packagesToUpdateQueue.TryDequeue(out var packageToUpdate))
-            {
-                if (packageToUpdate.Epoch == epoch)
-                {
-                    if (
-                        !nugetVersionWriter.IsCompatibleWithCurrentVersions(
-                            packageToUpdate.NugetUpdateCandidate.PackageVersion,
-                            groupPackageVersions,
-                            out var conflictingPackageVersion
-                        )
-                    )
-                    {
-                        logger.LogError(
-                            "Cannot update '{PackageName}' to version '{Version}': it depends on '{ConflictingPackageName}' version '{ConflictingPackageVersionRequired}', but the current solution uses version '{ConflictingPackageVersionCurrent}'",
-                            packageToUpdate.NugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
-                            packageToUpdate.NugetUpdateCandidate.PackageVersion.GetSerializedVersion(),
-                            conflictingPackageVersion.Name,
-                            conflictingPackageVersion.Version.GetSerializedVersion(),
-                            groupPackageVersions[conflictingPackageVersion.Name].GetSerializedVersion()
-                        );
-                    }
-                    else
-                    {
-                        logger.LogError(
-                            "Cannot set version '{Version}' for package '{PackageName}' due to conflicting version constraints from other packages",
-                            packageToUpdate.NugetUpdateCandidate.PackageVersion.GetSerializedVersion(),
-                            packageToUpdate.NugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName()
-                        );
-                    }
-
-                    continue;
-                }
-
-                var trySetVersion = await nugetVersionWriter.TrySetVersion(
-                    packageToUpdate.NugetUpdateCandidate,
-                    gitWorkspace,
-                    groupPackageVersions,
-                    cancellationToken
-                );
-
-                switch (trySetVersion)
-                {
-                    case ESetVersion.VersionSet:
-                        epoch++;
-                        updatedPackages.Add(packageToUpdate.NugetUpdateCandidate);
-                        break;
-                    case ESetVersion.VersionNotSet:
-                        packagesToUpdateQueue.Enqueue(packageToUpdate with { Epoch = epoch });
-                        break;
-                    case ESetVersion.OutOfRepository:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(trySetVersion), trySetVersion, null);
-                }
-            }
-
-            var pullRequestId = await repositoryClient.GetPullRequestForBranchAsync(
-                branchName: gitWorkspace.GetBranchName(),
+            var pullRequestId = await ProcessSinglePackageGroupAsync(
+                subdirectoryPath,
+                sourceBranchName,
+                milestone,
+                reviewers,
+                commitAuthor,
+                commitAuthorEmail,
+                groupedPackagesToUpdate.GroupEntry,
+                groupedPackagesToUpdate.NugetUpdateCandidates,
+                currentPackageVersions,
+                sourceVersioning,
+                updater,
                 cancellationToken
             );
 
             if (pullRequestId is not null)
             {
-                knownPullRequests.Add(pullRequestId);
-            }
-
-            if (
-                gitWorkspace.HasUncommitedChanges()
-                && updatedPackages.GetCommitMessage() is { } commitMessage
-            )
-            {
-                gitWorkspace.CommitChanges(
-                    message: commitMessage,
-                    authorName: commitAuthor,
-                    authorEmail: commitAuthorEmail
-                );
-
-                var workingDirectory = gitWorkspace.GetWorkspaceDirectory();
-                if (subdirectoryPath is not null)
-                {
-                    workingDirectory = Path.Join(workingDirectory, subdirectoryPath);
-                }
-
-                var restored = await nugetCli.Restore(
-                    workingDirectory,
-                    cancellationToken
-                );
-
-                if (restored && gitWorkspace.HasUncommitedChanges())
-                {
-                    gitWorkspace.CommitChanges(
-                        message: "Update package.lock.json",
-                        authorName: commitAuthor,
-                        authorEmail: commitAuthorEmail
-                    );
-                }
-
-                gitWorkspace.Push();
-
-                if (pullRequestId is not null)
-                {
-                    await repositoryClient.UpdatePullRequestAsync(
-                        pullRequestId: pullRequestId,
-                        title: groupedPackagesToUpdate.GroupEntry.GetTitle(groupedPackagesToUpdate.NugetUpdateCandidates),
-                        description: commitMessage,
-                        cancellationToken
-                    );
-                }
-                else
-                {
-                    pullRequestId = await repositoryClient.CreatePullRequestAsync(
-                        branchName: gitWorkspace.GetBranchName(),
-                        targetBranchName: sourceBranchName,
-                        title: groupedPackagesToUpdate.GroupEntry.GetTitle(groupedPackagesToUpdate.NugetUpdateCandidates),
-                        description: commitMessage,
-                        milestone,
-                        reviewers,
-                        updater: updater,
-                        cancellationToken
-                    );
-
-                    knownPullRequests.Add(pullRequestId);
-                }
-            }
-            else if (
-                pullRequestId is not null
-                && updatedPackages.GetCommitMessage() is { } commitMessage2
-            )
-            {
-                await repositoryClient.UpdatePullRequestAsync(
-                    pullRequestId: pullRequestId,
-                    title: groupedPackagesToUpdate.GroupEntry.GetTitle(groupedPackagesToUpdate.NugetUpdateCandidates),
-                    description: commitMessage2,
-                    cancellationToken
-                );
+                yield return pullRequestId;
             }
         }
+    }
 
+    private async Task<string?> ProcessSinglePackageGroupAsync(
+        string? subdirectoryPath,
+        string? sourceBranchName,
+        string? milestone,
+        IReadOnlyCollection<string> reviewers,
+        string commitAuthor,
+        string commitAuthorEmail,
+        GroupEntry groupEntry,
+        IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> nugetUpdateCandidates,
+        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        ISourceVersioning sourceVersioning,
+        string updater,
+        CancellationToken cancellationToken
+    )
+    {
+        using var temporaryDirectory = new TemporaryDirectoryProvider(create: false);
+        using var gitWorkspace = sourceVersioning.CreateWorkspace(
+            temporaryDirectory.TemporaryDirectory,
+            sourceBranchName: sourceBranchName,
+            branchName: groupEntry.GetBranchName(updater),
+            worktreeName: groupEntry.GroupName.Replace('/', '-')
+        );
+
+        gitWorkspace.TryPullRebase(
+            sourceBranchName: sourceBranchName,
+            authorName: commitAuthor,
+            authorEmail: commitAuthorEmail
+        );
+
+        var updatedPackages = await UpdatePackageVersionsAsync(
+            gitWorkspace,
+            nugetUpdateCandidates,
+            groupPackageVersions: currentPackageVersions.ToDictionary(),
+            cancellationToken
+        ).ToListAsync(cancellationToken);
+
+        // Get existing pull request if it exists
+        var pullRequestId = await repositoryClient.GetPullRequestForBranchAsync(
+            branchName: gitWorkspace.GetBranchName(),
+            cancellationToken
+        );
+
+        // Process pull request based on update status
+        return await HandlePullRequestAsync(
+            gitWorkspace,
+            updatedPackages,
+            pullRequestId,
+            subdirectoryPath,
+            sourceBranchName,
+            milestone,
+            reviewers,
+            commitAuthor,
+            commitAuthorEmail,
+            groupEntry,
+            nugetUpdateCandidates,
+            updater,
+            cancellationToken
+        );
+    }
+
+    private async IAsyncEnumerable<NugetUpdateCandidate<PackageSearchMetadataRegistration>> UpdatePackageVersionsAsync(
+        ISourceVersioningWorkspace gitWorkspace,
+        IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> packagesToUpdate,
+        Dictionary<string, PackageVersion> groupPackageVersions,
+        [EnumeratorCancellation] CancellationToken cancellationToken
+    )
+    {
+        var packagesToUpdateQueue = new Queue<(NugetUpdateCandidate<PackageSearchMetadataRegistration> NugetUpdateCandidate, int Epoch)>(
+            packagesToUpdate.Select(x => (x, 0))
+        );
+        var epoch = 1;
+
+        while (packagesToUpdateQueue.TryDequeue(out var packageToUpdate))
+        {
+            if (packageToUpdate.Epoch == epoch)
+            {
+                LogVersionConflict(packageToUpdate.NugetUpdateCandidate, groupPackageVersions);
+                continue;
+            }
+
+            var trySetVersion = await nugetVersionWriter.TrySetVersion(
+                packageToUpdate.NugetUpdateCandidate,
+                gitWorkspace,
+                groupPackageVersions,
+                cancellationToken
+            );
+
+            switch (trySetVersion)
+            {
+                case ESetVersion.VersionSet:
+                    epoch++;
+                    yield return packageToUpdate.NugetUpdateCandidate;
+                    break;
+                case ESetVersion.VersionNotSet:
+                    packagesToUpdateQueue.Enqueue(packageToUpdate with { Epoch = epoch });
+                    break;
+                case ESetVersion.OutOfRepository:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(trySetVersion), trySetVersion, null);
+            }
+        }
+    }
+
+    private void LogVersionConflict(
+        NugetUpdateCandidate<PackageSearchMetadataRegistration> nugetUpdateCandidate,
+        Dictionary<string, PackageVersion> groupPackageVersions
+    )
+    {
+        if (
+            !nugetVersionWriter.IsCompatibleWithCurrentVersions(
+                nugetUpdateCandidate.PackageVersion,
+                groupPackageVersions,
+                out var conflictingPackageVersion
+            )
+        )
+        {
+            logger.LogError(
+                "Cannot update '{PackageName}' to version '{Version}': it depends on '{ConflictingPackageName}' version '{ConflictingPackageVersionRequired}', but the current solution uses version '{ConflictingPackageVersionCurrent}'",
+                nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
+                nugetUpdateCandidate.PackageVersion.GetSerializedVersion(),
+                conflictingPackageVersion.Name,
+                conflictingPackageVersion.Version.GetSerializedVersion(),
+                groupPackageVersions[conflictingPackageVersion.Name].GetSerializedVersion()
+            );
+        }
+        else
+        {
+            logger.LogError(
+                "Cannot set version '{Version}' for package '{PackageName}' due to conflicting version constraints from other packages",
+                nugetUpdateCandidate.PackageVersion.GetSerializedVersion(),
+                nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName()
+            );
+        }
+    }
+
+    private async Task<string?> HandlePullRequestAsync(
+        ISourceVersioningWorkspace gitWorkspace,
+        List<NugetUpdateCandidate<PackageSearchMetadataRegistration>> updatedPackages,
+        string? pullRequestId,
+        string? subdirectoryPath,
+        string? sourceBranchName,
+        string? milestone,
+        IReadOnlyCollection<string> reviewers,
+        string commitAuthor,
+        string commitAuthorEmail,
+        GroupEntry groupEntry,
+        IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> nugetUpdateCandidates,
+        string updater,
+        CancellationToken cancellationToken
+    )
+    {
+        if (
+            gitWorkspace.HasUncommitedChanges()
+            && updatedPackages.GetCommitMessage() is { } commitMessage
+        )
+        {
+            // Commit changes and create/update PR
+            gitWorkspace.CommitChanges(
+                message: commitMessage,
+                authorName: commitAuthor,
+                authorEmail: commitAuthorEmail
+            );
+
+            await RestoreNugetPackagesAsync(gitWorkspace, subdirectoryPath, commitAuthor, commitAuthorEmail, cancellationToken);
+            gitWorkspace.Push();
+
+            return await CreateOrUpdatePullRequestAsync(
+                gitWorkspace,
+                pullRequestId,
+                sourceBranchName,
+                milestone,
+                reviewers,
+                groupEntry,
+                nugetUpdateCandidates,
+                commitMessage,
+                updater,
+                cancellationToken
+            );
+        }
+
+        if (
+            pullRequestId is not null
+            && updatedPackages.GetCommitMessage() is { } commitMessage2
+        )
+        {
+            // Just update PR title and description if already exists
+            await repositoryClient.UpdatePullRequestAsync(
+                pullRequestId: pullRequestId,
+                title: groupEntry.GetTitle(nugetUpdateCandidates),
+                description: commitMessage2,
+                cancellationToken
+            );
+
+            return pullRequestId;
+        }
+
+        return null;
+    }
+
+    private async Task RestoreNugetPackagesAsync(
+        ISourceVersioningWorkspace gitWorkspace,
+        string? subdirectoryPath,
+        string commitAuthor,
+        string commitAuthorEmail,
+        CancellationToken cancellationToken
+    )
+    {
+        var workingDirectory = gitWorkspace.GetWorkspaceDirectory();
+        if (subdirectoryPath is not null)
+        {
+            workingDirectory = Path.Join(workingDirectory, subdirectoryPath);
+        }
+
+        var restored = await nugetCli.Restore(
+            workingDirectory,
+            cancellationToken
+        );
+
+        if (restored && gitWorkspace.HasUncommitedChanges())
+        {
+            gitWorkspace.CommitChanges(
+                message: "Update package.lock.json",
+                authorName: commitAuthor,
+                authorEmail: commitAuthorEmail
+            );
+        }
+    }
+
+    private async Task<string?> CreateOrUpdatePullRequestAsync(
+        ISourceVersioningWorkspace gitWorkspace,
+        string? pullRequestId,
+        string? sourceBranchName,
+        string? milestone,
+        IReadOnlyCollection<string> reviewers,
+        GroupEntry groupEntry,
+        IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> nugetUpdateCandidates,
+        string commitMessage,
+        string updater,
+        CancellationToken cancellationToken
+    )
+    {
+        if (pullRequestId is not null)
+        {
+            await repositoryClient.UpdatePullRequestAsync(
+                pullRequestId: pullRequestId,
+                title: groupEntry.GetTitle(nugetUpdateCandidates),
+                description: commitMessage,
+                cancellationToken
+            );
+            return pullRequestId;
+        }
+
+        return await repositoryClient.CreatePullRequestAsync(
+            branchName: gitWorkspace.GetBranchName(),
+            targetBranchName: sourceBranchName,
+            title: groupEntry.GetTitle(nugetUpdateCandidates),
+            description: commitMessage,
+            milestone,
+            reviewers,
+            updater: updater,
+            cancellationToken
+        );
+    }
+
+    private async Task CleanupAbandonedPullRequestsAsync(
+        string updater,
+        IReadOnlyCollection<string> knownPullRequests,
+        CancellationToken cancellationToken
+    )
+    {
         foreach (var pullRequest in await repositoryClient.ListActivePullRequestsAsync(updater, cancellationToken))
         {
             if (!knownPullRequests.Contains(pullRequest.PullRequestId))
@@ -303,6 +509,11 @@ public sealed class NugetUpdater(
             }
         }
     }
+
+    private record DependencyAnalysisResult(
+        IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>> DependenciesToUpdate,
+        IDictionary<Package, EDependencyFlag> PackageFlags
+    );
 
     private void ProcessDependenciesToUpdate(
         IgnoreResolver ignoreResolver,
