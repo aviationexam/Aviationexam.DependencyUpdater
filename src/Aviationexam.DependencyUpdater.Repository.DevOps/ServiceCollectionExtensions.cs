@@ -1,30 +1,28 @@
 using Aviationexam.DependencyUpdater.Interfaces;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 
 public static class ServiceCollectionExtensions
 {
-    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Safe due to source-generated binding")]
-    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Safe due to source-generated binding")]
     public static IServiceCollection AddRepositoryDevOps(
-        this IServiceCollection services, IConfigurationRoot configuration
+        this IServiceCollection services,
+        DevOpsConfiguration devOpsConfiguration,
+        DevOpsUndocumentedConfiguration devOpsUndocumentedConfiguration
     ) => services
-        .Configure<DevOpsConfiguration>(configuration.GetSection("DevOps"))
-        .Configure<DevOpsUndocumentedConfiguration>(configuration.GetSection("DevOps"))
+        .AddSingleton(Options.Create(devOpsConfiguration))
+        .AddSingleton(Options.Create(devOpsUndocumentedConfiguration))
         .AddHttpClient<AzureDevOpsUndocumentedClient>()
-        .AddHttpMessageHandler(x => new LoggingHandler(x.GetRequiredService<ILogger<AzureDevOpsUndocumentedClient>>()))
+        .AddHttpMessageHandler(static x => new LoggingHandler(x.GetRequiredService<ILogger<AzureDevOpsUndocumentedClient>>()))
         .Services
-        .AddScoped<VssHttpMessageHandler>(x => x.CreateVssHttpMessageHandler())
-        .AddScoped<VssConnection>(x =>
+        .AddScoped<VssHttpMessageHandler>(static x => x.CreateVssHttpMessageHandler())
+        .AddScoped<VssConnection>(static x =>
         {
             var devOpsConfiguration = x.GetRequiredService<IOptionsSnapshot<DevOpsConfiguration>>();
             var vssHttpMessageHandler = x.GetRequiredService<VssHttpMessageHandler>();

@@ -6,7 +6,6 @@ using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget;
 using Aviationexam.DependencyUpdater.Repository.DevOps;
 using Aviationexam.DependencyUpdater.Vcs.Git;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -19,28 +18,28 @@ namespace Aviationexam.DependencyUpdater;
 
 internal sealed class DefaultCommandHandler
 {
-    public static IHost CreateHostBuilder(string[] args, string directory)
+    public static IHost CreateHostBuilder(
+        string[] args,
+        SourceConfiguration sourceConfiguration,
+        DevOpsConfiguration devOpsConfiguration,
+        DevOpsUndocumentedConfiguration devOpsUndocumentedConfiguration
+    )
     {
         HostApplicationBuilderSettings settings = new()
         {
             Args = args,
-            Configuration = new ConfigurationManager(),
-            ContentRootPath = directory,
+            ContentRootPath = sourceConfiguration.Directory,
         };
 
         var builder = Host.CreateEmptyApplicationBuilder(settings);
 
-        builder.Configuration
-            .AddEnvironmentVariables("DEPENDENCY_UPDATER_")
-            .AddCommandLine(args);
-
         builder.Services.AddLogging(x => x.AddConsole());
         builder.Services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
-        builder.Services.AddCommon(builder.Configuration);
+        builder.Services.AddCommon(sourceConfiguration);
         builder.Services.AddConfigurationParser();
         builder.Services.AddNuget();
         builder.Services.AddVcsGit();
-        builder.Services.AddRepositoryDevOps(builder.Configuration);
+        builder.Services.AddRepositoryDevOps(devOpsConfiguration, devOpsUndocumentedConfiguration);
         builder.Services.AddDefaultImplementations();
 
         return builder.Build();
