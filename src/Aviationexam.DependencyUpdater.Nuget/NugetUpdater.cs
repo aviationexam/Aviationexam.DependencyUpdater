@@ -6,6 +6,7 @@ using NuGet.Packaging;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -106,15 +107,16 @@ public sealed class NugetUpdater(
     )
     {
         // Resolve possible package versions
-        var dependencyToUpdate = await ResolvePossiblePackageVersionsAsync(
+        var possiblePackageVersions = await ResolvePossiblePackageVersionsAsync(
             nugetUpdaterContext,
             sourceRepositories,
             ignoreResolver,
             cancellationToken
-        ).ToDictionaryAsync(
+        );
+
+        var dependencyToUpdate = possiblePackageVersions.ToDictionary(
             x => x.Key,
-            x => x.Value,
-            cancellationToken
+            x => x.Value
         );
 
         // Initialize data structures for dependency analysis
@@ -794,50 +796,70 @@ public sealed class NugetUpdater(
         IReadOnlyCollection<PackageDependencyGroup> CompatiblePackageDependencyGroups
     );
 
-    private async IAsyncEnumerable<KeyValuePair<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>>> ResolvePossiblePackageVersionsAsync(
+    private async Task<IEnumerable<KeyValuePair<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>>>> ResolvePossiblePackageVersionsAsync(
         NugetUpdaterContext nugetUpdaterContext,
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
         IgnoreResolver ignoreResolver,
-        [EnumeratorCancellation] CancellationToken cancellationToken
+        CancellationToken cancellationToken
     )
     {
         var dependencies = nugetUpdaterContext.MapSourceToDependency(logger);
-        foreach (var (dependency, sources) in dependencies)
-        {
-            var versions = await FetchDependencyVersionsAsync(
-                dependency,
-                sources,
-                sourceRepositories,
-                cancellationToken
-            );
+        var results = new ConcurrentBag<KeyValuePair<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>>>();
 
+        // Limit parallelism to avoid overwhelming system resources
+        var parallelOptions = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount / 2),
+            CancellationToken = cancellationToken,
+        };
+
+        // Process dependencies in parallel
+        await Parallel.ForEachAsync(dependencies, parallelOptions, async (dependencyPair, token) =>
+        {
+            var (dependency, sources) = dependencyPair;
             var dependencyName = dependency.NugetPackage.GetPackageName();
             var dependencyVersion = dependency.NugetPackage.GetVersion();
 
-            IReadOnlyCollection<PossiblePackageVersion> futureVersions = futureVersionResolver.ResolveFutureVersion(
-                    dependencyName,
-                    dependencyVersion,
-                    versions,
-                    ignoreResolver
-                )
-                .Select(x => new PossiblePackageVersion(
-                    x,
-                    targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
-                        GetPreferredPackageSearchMetadataRegistration(x.OriginalReference),
-                        dependency.TargetFrameworks
-                    ).ToList()
-                ))
-                .Where(x => x.CompatiblePackageDependencyGroups.Count > 0)
-                .ToList();
-
-            if (futureVersions.Count == 0)
+            try
             {
-                logger.LogDebug("The dependency {DependencyName} with version {Version} is up to date", dependencyName, dependencyVersion);
-                continue;
-            }
+                var versions = await FetchDependencyVersionsAsync(
+                    dependency,
+                    sources,
+                    sourceRepositories,
+                    token
+                );
 
-            yield return KeyValuePair.Create(dependency, futureVersions);
-        }
+                IReadOnlyCollection<PossiblePackageVersion> futureVersions = futureVersionResolver.ResolveFutureVersion(
+                        dependencyName,
+                        dependencyVersion,
+                        versions,
+                        ignoreResolver
+                    )
+                    .Select(x => new PossiblePackageVersion(
+                        x,
+                        targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
+                            GetPreferredPackageSearchMetadataRegistration(x.OriginalReference),
+                            dependency.TargetFrameworks
+                        ).ToList()
+                    ))
+                    .Where(x => x.CompatiblePackageDependencyGroups.Count > 0)
+                    .ToList();
+
+                if (futureVersions.Count == 0)
+                {
+                    logger.LogDebug("The dependency {DependencyName} with version {Version} is up to date", dependencyName, dependencyVersion);
+                    return;
+                }
+
+                results.Add(KeyValuePair.Create(dependency, futureVersions));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error processing dependency {DependencyName} with version {Version}", dependencyName, dependencyVersion);
+            }
+        });
+
+        return results.OrderBy(r => r.Key.NugetPackage.GetPackageName());
     }
 
     private async Task<IReadOnlyCollection<PackageVersion<PackageSearchMetadataRegistration>>> FetchDependencyVersionsAsync(
