@@ -12,7 +12,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,13 +19,13 @@ namespace Aviationexam.DependencyUpdater;
 
 internal sealed class DefaultCommandHandler
 {
-    public static async Task ExecuteAsync(string[] args, string directory)
+    public static IHost CreateHostBuilder(string[] args, string directory)
     {
         HostApplicationBuilderSettings settings = new()
         {
             Args = args,
             Configuration = new ConfigurationManager(),
-            ContentRootPath = Directory.GetCurrentDirectory(),
+            ContentRootPath = directory,
         };
 
         var builder = Host.CreateEmptyApplicationBuilder(settings);
@@ -35,12 +34,7 @@ internal sealed class DefaultCommandHandler
             .AddEnvironmentVariables("DEPENDENCY_UPDATER_")
             .AddCommandLine(args);
 
-        builder.Services.AddLogging(x => x
-            .AddConsole()
-        //.AddFilter("Aviationexam.DependencyUpdater.Repository.DevOps.AzureDevOpsUndocumentedClient", LogLevel.Trace)
-        //.AddFilter("Aviationexam.DependencyUpdater.Repository.DevOps.RepositoryAzureDevOpsClient", LogLevel.Trace)
-        );
-
+        builder.Services.AddLogging(x => x.AddConsole());
         builder.Services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
         builder.Services.AddCommon(builder.Configuration);
         builder.Services.AddConfigurationParser();
@@ -49,12 +43,15 @@ internal sealed class DefaultCommandHandler
         builder.Services.AddRepositoryDevOps(builder.Configuration);
         builder.Services.AddDefaultImplementations();
 
-        using var host = builder.Build();
+        return builder.Build();
+    }
 
-        var sourceConfiguration = host.Services.GetRequiredService<IOptions<SourceConfiguration>>().Value;
-        var dependabotConfigurationLoader = host.Services.GetRequiredService<DependabotConfigurationLoader>();
-        var envVariableProvider = host.Services.GetRequiredService<IEnvVariableProvider>();
-        var nugetUpdater = host.Services.GetRequiredService<NugetUpdater>();
+    public static async Task ExecuteWithBuilderAsync(IServiceProvider serviceProvider)
+    {
+        var sourceConfiguration = serviceProvider.GetRequiredService<IOptions<SourceConfiguration>>().Value;
+        var dependabotConfigurationLoader = serviceProvider.GetRequiredService<DependabotConfigurationLoader>();
+        var envVariableProvider = serviceProvider.GetRequiredService<IEnvVariableProvider>();
+        var nugetUpdater = serviceProvider.GetRequiredService<NugetUpdater>();
 
         var dependabotConfigurations = dependabotConfigurationLoader.LoadConfiguration(sourceConfiguration.Directory);
 
@@ -87,9 +84,9 @@ internal sealed class DefaultCommandHandler
                     nugetUpdate.CommitAuthorEmail ?? GitAuthorConstants.DefaultCommitAuthorEmail,
                     [
                         .. nugetFeedAuthentications.Where(x =>
-                    registries.Contains(x.Key)
-                    || fallbackRegistries.Any(r => r.Value == x.Key)
-                ),
+                            registries.Contains(x.Key)
+                            || fallbackRegistries.Any(r => r.Value == x.Key)
+                        ),
                     ],
                     fallbackRegistries,
                     nugetUpdate.TargetFramework.MapToNugetTargetFrameworks(),
