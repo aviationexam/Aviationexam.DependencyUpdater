@@ -24,7 +24,7 @@ public sealed class NugetVersionFetcher(
 
         return await resource.GetMetadataAsync(
             nugetDependency.NugetPackage.GetPackageName(),
-            includePrerelease: true,
+            includePrerelease: nugetDependency.NugetPackage.GetVersion()?.IsPrerelease ?? true,
             includeUnlisted: false,
             nugetCache,
             logger,
