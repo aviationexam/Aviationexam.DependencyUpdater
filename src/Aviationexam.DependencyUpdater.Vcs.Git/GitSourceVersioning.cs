@@ -2,6 +2,7 @@ using Aviationexam.DependencyUpdater.Interfaces;
 using LibGit2Sharp;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -116,6 +117,8 @@ public sealed class GitSourceVersioning(
             logger
         );
     }
+
+    public IEnumerable<string> GetSubmodules() => repository.Submodules.Select(x => x.Name);
 
     public void Dispose()
     {

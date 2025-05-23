@@ -5,6 +5,10 @@ namespace Aviationexam.DependencyUpdater.Interfaces;
 
 public interface ISourceVersioning : IDisposable
 {
+    void RunGitWorktreePrune(
+        string repositoryPath
+    );
+
     ISourceVersioningWorkspace CreateWorkspace(
         string targetDirectory,
         string? sourceBranchName,
