@@ -45,6 +45,17 @@ public sealed class NugetUpdater(
     )
     {
         const string updater = "nuget";
+
+        using var sourceVersioning = sourceVersioningFactory.CreateSourceVersioning(repositoryConfig.RepositoryPath);
+
+        var knownPullRequests = await UpdateSubmodulesAsync(
+            sourceVersioning,
+            repositoryConfig,
+            gitMetadataConfig,
+            updater,
+            cancellationToken
+        );
+
         var nugetUpdaterContext = CreateContext(repositoryConfig, packageConfig.TargetFrameworks);
 
         var currentPackageVersions = nugetUpdaterContext.GetCurrentPackageVersions();
@@ -72,10 +83,8 @@ public sealed class NugetUpdater(
             groupResolver
         );
 
-        using var sourceVersioning = sourceVersioningFactory.CreateSourceVersioning(repositoryConfig.RepositoryPath);
-
         // Process package updates and create pull requests
-        var knownPullRequests = await ProcessPackageUpdatesAsync(
+        knownPullRequests = knownPullRequests.Concat(await ProcessPackageUpdatesAsync(
             sourceVersioning,
             repositoryConfig,
             gitMetadataConfig,
@@ -83,20 +92,12 @@ public sealed class NugetUpdater(
             currentPackageVersions,
             updater,
             cancellationToken
-        ).ToListAsync(cancellationToken);
-
-        knownPullRequests.AddRange(await UpdateSubmodulesAsync(
-            sourceVersioning,
-            repositoryConfig,
-            gitMetadataConfig,
-            updater,
-            cancellationToken
-        ));
+        ).ToListAsync(cancellationToken));
 
         // Clean up abandoned pull requests
         await CleanupAbandonedPullRequestsAsync(
             updater,
-            knownPullRequests,
+            [.. knownPullRequests],
             cancellationToken
         );
     }
