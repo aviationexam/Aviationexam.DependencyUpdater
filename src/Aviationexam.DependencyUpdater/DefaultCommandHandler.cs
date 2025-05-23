@@ -6,13 +6,14 @@ using Aviationexam.DependencyUpdater.Nuget;
 using System.CommandLine.Invocation;
 using System.CommandLine.NamingConventionBinder;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Aviationexam.DependencyUpdater;
 
 internal static class DefaultCommandHandler
 {
-    public static ICommandHandler GetHandler() => CommandHandler.Create<SourceConfiguration, DependabotConfigurationLoader, IEnvVariableProvider, NugetUpdater>(
+    public static ICommandHandler GetHandler() => CommandHandler.Create<SourceConfiguration, DependabotConfigurationLoader, IEnvVariableProvider, NugetUpdater, CancellationToken>(
         ExecuteWithBuilderAsync
     );
 
@@ -20,7 +21,8 @@ internal static class DefaultCommandHandler
         SourceConfiguration sourceConfiguration,
         DependabotConfigurationLoader dependabotConfigurationLoader,
         IEnvVariableProvider envVariableProvider,
-        NugetUpdater nugetUpdater
+        NugetUpdater nugetUpdater,
+        CancellationToken cancellationToken
     )
     {
         var dependabotConfigurations = dependabotConfigurationLoader.LoadConfiguration(sourceConfiguration.Directory);
@@ -44,24 +46,45 @@ internal static class DefaultCommandHandler
                 var registries = nugetUpdate.Registries.Select(x => x.AsString.GetString()!).ToList();
                 var fallbackRegistries = nugetUpdate.FallbackRegistries;
 
-                await nugetUpdater.ProcessUpdatesAsync(
+                var repositoryConfig = new RepositoryConfig(
                     repositoryPath: sourceConfiguration.Directory,
                     subdirectoryPath: nugetUpdate.DirectoryValue.GetString(),
-                    sourceBranchName: nugetUpdate.TargetBranch.GetString(),
+                    sourceBranchName: nugetUpdate.TargetBranch.GetString()
+                );
+
+                var gitMetadataConfig = new GitMetadataConfig(
                     milestone: nugetUpdate.Milestone.AsAny.AsString.GetString(),
                     reviewers: [.. nugetUpdate.Reviewers.Select(x => x.GetString()!)],
-                    nugetUpdate.CommitAuthor ?? GitAuthorConstants.DefaultCommitAuthor,
-                    nugetUpdate.CommitAuthorEmail ?? GitAuthorConstants.DefaultCommitAuthorEmail,
+                    commitAuthor: nugetUpdate.CommitAuthor ?? GitAuthorConstants.DefaultCommitAuthor,
+                    commitAuthorEmail: nugetUpdate.CommitAuthorEmail ?? GitAuthorConstants.DefaultCommitAuthorEmail,
+                    updateSubmodules: nugetUpdate.UpdateSubmodules
+                );
+
+                var packageConfig = new NugetPackageConfig
+                {
+                    TargetFrameworks = nugetUpdate.TargetFramework.MapToNugetTargetFrameworks(),
+                    IgnoreEntries = [.. nugetUpdate.Ignore.MapToIgnoreEntry()],
+                    GroupEntries = [.. nugetUpdate.Groups.MapToGroupEntry()],
+                    FallbackRegistries = fallbackRegistries,
+                };
+
+                var authConfig = new NugetAuthConfig
+                {
+                    NugetFeedAuthentications =
                     [
                         .. nugetFeedAuthentications.Where(x =>
                             registries.Contains(x.Key)
                             || fallbackRegistries.Any(r => r.Value == x.Key)
                         ),
                     ],
-                    fallbackRegistries,
-                    nugetUpdate.TargetFramework.MapToNugetTargetFrameworks(),
-                    [.. nugetUpdate.Ignore.MapToIgnoreEntry()],
-                    [.. nugetUpdate.Groups.MapToGroupEntry()]
+                };
+
+                await nugetUpdater.ProcessUpdatesAsync(
+                    repositoryConfig,
+                    gitMetadataConfig,
+                    packageConfig,
+                    authConfig,
+                    cancellationToken
                 );
             }
         }

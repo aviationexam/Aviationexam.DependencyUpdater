@@ -48,6 +48,10 @@ public static class HostingExtensions
             // ReSharper disable once AccessToDisposedClosure
             _ => host.Services
         );
+        context.BindingContext.AddService(
+            // ReSharper disable once AccessToDisposedClosure
+            _ => context.GetCancellationToken()
+        );
 
         foreach (var serviceType in uniqueServiceTypes)
         {

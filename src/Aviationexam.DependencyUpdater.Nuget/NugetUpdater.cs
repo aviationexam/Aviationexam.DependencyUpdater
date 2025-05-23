@@ -36,19 +36,11 @@ public sealed class NugetUpdater(
 )
 {
     public async Task ProcessUpdatesAsync(
-        string repositoryPath,
-        string? subdirectoryPath,
-        string? sourceBranchName,
-        string? milestone,
-        IReadOnlyCollection<string> reviewers,
-        string commitAuthor,
-        string commitAuthorEmail,
-        IReadOnlyCollection<NugetFeedAuthentication> nugetFeedAuthentications,
-        IReadOnlyDictionary<string, string> fallbackRegistries,
-        IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks,
-        IReadOnlyCollection<IgnoreEntry> ignoreEntries,
-        IReadOnlyCollection<GroupEntry> groupEntries,
-        CancellationToken cancellationToken = default
+        RepositoryConfig repositoryConfig,
+        GitMetadataConfig gitMetadataConfig,
+        NugetPackageConfig packageConfig,
+        NugetAuthConfig authConfig,
+        CancellationToken cancellationToken
     )
     {
         const string updater = "nuget";
