@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Interfaces;
+using System;
 using System.Text.RegularExpressions;
 
 namespace Aviationexam.DependencyUpdater.Common;
