@@ -195,7 +195,7 @@ public readonly partial struct DependabotConfiguration
 
                 if (backing.HasFlag(Backing.Object))
                 {
-                    if (objectBacking.TryGetValue(UpdateSubmodulesUtf8, out JsonAny result))
+                    if (objectBacking.TryGetValue(UpdateSubmodulesUtf8, out JsonAny _))
                     {
                         throw new NotImplementedException();
                     }
