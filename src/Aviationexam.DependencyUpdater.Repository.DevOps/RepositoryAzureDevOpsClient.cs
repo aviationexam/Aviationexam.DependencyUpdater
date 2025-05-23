@@ -123,12 +123,12 @@ public class RepositoryAzureDevOpsClient(
             ],
         };
 
-        var pullRequest = await createPullRequestAsyncResiliencePipeline.ExecuteAsync(async innerCancellationToken => await gitClient.CreatePullRequestAsync(
-            gitPullRequestToCreate: pullRequestRequest,
-            repositoryId: devOpsConfiguration.Repository,
-            project: devOpsConfiguration.Project,
+        var pullRequest = await createPullRequestAsyncResiliencePipeline.ExecuteAsync(static async (state, innerCancellationToken) => await state.gitClient.CreatePullRequestAsync(
+            gitPullRequestToCreate: state.pullRequestRequest,
+            repositoryId: state.devOpsConfiguration.Repository,
+            project: state.devOpsConfiguration.Project,
             cancellationToken: innerCancellationToken
-        ), cancellationToken);
+        ), new { gitClient, devOpsConfiguration, pullRequestRequest }, cancellationToken);
 
         logger.LogTrace("Created pull request {pullRequestId} for branch {BranchName}", pullRequest.PullRequestId, branchName);
 
