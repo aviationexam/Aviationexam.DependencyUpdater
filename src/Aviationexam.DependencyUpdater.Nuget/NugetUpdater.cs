@@ -82,7 +82,11 @@ public sealed class NugetUpdater(
         ).ToListAsync(cancellationToken);
 
         // Clean up abandoned pull requests
-        await CleanupAbandonedPullRequestsAsync(updater, knownPullRequests, cancellationToken);
+        await CleanupAbandonedPullRequestsAsync(
+            updater,
+            knownPullRequests,
+            cancellationToken
+        );
     }
 
     private async Task<DependencyAnalysisResult> AnalyzeDependenciesAsync(
