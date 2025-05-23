@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Microsoft.Extensions.Logging;
@@ -84,12 +85,83 @@ public sealed class NugetUpdater(
             cancellationToken
         ).ToListAsync(cancellationToken);
 
+        knownPullRequests.AddRange(await UpdateSubmodulesAsync(
+            sourceVersioning,
+            repositoryConfig,
+            gitMetadataConfig,
+            updater,
+            cancellationToken
+        ));
+
         // Clean up abandoned pull requests
         await CleanupAbandonedPullRequestsAsync(
             updater,
             knownPullRequests,
             cancellationToken
         );
+    }
+
+    private async Task<IEnumerable<string>> UpdateSubmodulesAsync(
+        ISourceVersioning sourceVersioning,
+        RepositoryConfig repositoryConfig,
+        GitMetadataConfig gitMetadataConfig,
+        string updater,
+        CancellationToken cancellationToken
+    )
+    {
+        var results = new ConcurrentBag<string>();
+
+        // Limit parallelism to avoid overwhelming system resources
+        var parallelOptions = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount / 2),
+            CancellationToken = cancellationToken,
+        };
+
+        // Process dependencies in parallel
+        await Parallel.ForEachAsync(sourceVersioning.GetSubmodules(), parallelOptions, async (submodule, token) =>
+        {
+            var branchName = $"{GitConstants.UpdaterBranchPrefix}{updater}/{submodule}";
+            using var temporaryDirectory = new TemporaryDirectoryProvider(create: false);
+            using var gitWorkspace = sourceVersioning.CreateWorkspace(
+                temporaryDirectory.TemporaryDirectory,
+                sourceBranchName: repositoryConfig.SourceBranchName,
+                branchName: branchName,
+                worktreeName: branchName.Replace('/', '-')
+            );
+            gitWorkspace.TryPullRebase(
+                sourceBranchName: repositoryConfig.SourceBranchName,
+                authorName: gitMetadataConfig.CommitAuthor,
+                authorEmail: gitMetadataConfig.CommitAuthorEmail
+            );
+
+            gitWorkspace.UpdateSubmodule(submodule);
+
+            // Get existing pull request if it exists
+            var pullRequestId = await repositoryClient.GetPullRequestForBranchAsync(
+                branchName: gitWorkspace.GetBranchName(),
+                token
+            );
+
+            // Process pull request based on update status
+            pullRequestId = await HandlePullRequestAsync(
+                gitWorkspace,
+                $"Bump submodule {submodule}",
+                pullRequestId,
+                repositoryConfig,
+                gitMetadataConfig,
+                $"Bump submodule {submodule}",
+                updater,
+                token
+            );
+
+            if (pullRequestId is not null)
+            {
+                results.Add(pullRequestId);
+            }
+        });
+
+        return results;
     }
 
     private async Task<DependencyAnalysisResult> AnalyzeDependenciesAsync(

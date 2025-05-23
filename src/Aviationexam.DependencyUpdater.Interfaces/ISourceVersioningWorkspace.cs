@@ -12,6 +12,8 @@ public interface ISourceVersioningWorkspace : IDisposable
         string fullPath
     );
 
+    void UpdateSubmodule(string submodule);
+
     bool HasUncommitedChanges();
 
     void CommitChanges(
