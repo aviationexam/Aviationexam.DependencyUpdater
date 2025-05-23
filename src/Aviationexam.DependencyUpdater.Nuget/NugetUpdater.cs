@@ -70,9 +70,11 @@ public sealed class NugetUpdater(
             dependencyAnalysisResult.PackageFlags,
             groupResolver
         );
+        using var sourceVersioning = sourceVersioningFactory.CreateSourceVersioning(repositoryConfig.RepositoryPath);
 
         // Process package updates and create pull requests
         var knownPullRequests = await ProcessPackageUpdatesAsync(
+            sourceVersioning,
             repositoryConfig,
             gitMetadataConfig,
             groupedPackagesToUpdate,
@@ -184,6 +186,7 @@ public sealed class NugetUpdater(
     }
 
     private async IAsyncEnumerable<string> ProcessPackageUpdatesAsync(
+        ISourceVersioning sourceVersioning,
         RepositoryConfig repositoryConfig,
         GitMetadataConfig gitMetadataConfig,
         Queue<(IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> NugetUpdateCandidates, GroupEntry GroupEntry)> groupedPackagesToUpdateQueue,
@@ -192,8 +195,6 @@ public sealed class NugetUpdater(
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
-        using var sourceVersioning = sourceVersioningFactory.CreateSourceVersioning(repositoryConfig.RepositoryPath);
-
         while (groupedPackagesToUpdateQueue.TryDequeue(out var groupedPackagesToUpdate))
         {
             var pullRequestId = await ProcessSinglePackageGroupAsync(
@@ -259,8 +260,7 @@ public sealed class NugetUpdater(
             pullRequestId,
             repositoryConfig,
             gitMetadataConfig,
-            groupEntry,
-            nugetUpdateCandidates,
+            groupEntry.GetTitle(nugetUpdateCandidates),
             updater,
             cancellationToken
         );
@@ -348,8 +348,7 @@ public sealed class NugetUpdater(
         string? pullRequestId,
         RepositoryConfig repositoryConfig,
         GitMetadataConfig gitMetadataConfig,
-        GroupEntry groupEntry,
-        IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> nugetUpdateCandidates,
+        string title,
         string updater,
         CancellationToken cancellationToken
     )
@@ -390,7 +389,7 @@ public sealed class NugetUpdater(
             // Just update PR title and description if already exists
             await repositoryClient.UpdatePullRequestAsync(
                 pullRequestId: pullRequestId,
-                title: groupEntry.GetTitle(nugetUpdateCandidates),
+                title: title,
                 description: commitMessage2,
                 cancellationToken
             );
@@ -434,8 +433,7 @@ public sealed class NugetUpdater(
         string? pullRequestId,
         RepositoryConfig repositoryConfig,
         GitMetadataConfig gitMetadataConfig,
-        GroupEntry groupEntry,
-        IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> nugetUpdateCandidates,
+        string title,
         string commitMessage,
         string updater,
         CancellationToken cancellationToken
@@ -445,7 +443,7 @@ public sealed class NugetUpdater(
         {
             await repositoryClient.UpdatePullRequestAsync(
                 pullRequestId: pullRequestId,
-                title: groupEntry.GetTitle(nugetUpdateCandidates),
+                title: title,
                 description: commitMessage,
                 cancellationToken
             );
@@ -455,7 +453,7 @@ public sealed class NugetUpdater(
         return await repositoryClient.CreatePullRequestAsync(
             branchName: gitWorkspace.GetBranchName(),
             targetBranchName: repositoryConfig.SourceBranchName,
-            title: groupEntry.GetTitle(nugetUpdateCandidates),
+            title: title,
             description: commitMessage,
             gitMetadataConfig.Milestone,
             gitMetadataConfig.Reviewers,
