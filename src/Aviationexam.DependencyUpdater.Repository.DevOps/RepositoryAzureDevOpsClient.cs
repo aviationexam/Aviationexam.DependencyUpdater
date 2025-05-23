@@ -1,9 +1,11 @@
 using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.VisualStudio.Services.WebApi;
+using Polly;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -16,6 +18,8 @@ public class RepositoryAzureDevOpsClient(
     DevOpsConfiguration devOpsConfiguration,
     VssConnection connection,
     AzureDevOpsUndocumentedClient azureDevOpsUndocumentedClient,
+    [FromKeyedServices($"{nameof(GitHttpClient.CreatePullRequestAsync)}-pipeline")]
+    ResiliencePipeline<GitPullRequest> createPullRequestAsyncResiliencePipeline,
     ILogger<RepositoryAzureDevOpsClient> logger
 ) : IRepositoryClient
 {
@@ -119,12 +123,12 @@ public class RepositoryAzureDevOpsClient(
             ],
         };
 
-        var pullRequest = await gitClient.CreatePullRequestAsync(
+        var pullRequest = await createPullRequestAsyncResiliencePipeline.ExecuteAsync(async innerCancellationToken => await gitClient.CreatePullRequestAsync(
             gitPullRequestToCreate: pullRequestRequest,
             repositoryId: devOpsConfiguration.Repository,
             project: devOpsConfiguration.Project,
-            cancellationToken: cancellationToken
-        );
+            cancellationToken: innerCancellationToken
+        ), cancellationToken);
 
         logger.LogTrace("Created pull request {pullRequestId} for branch {BranchName}", pullRequest.PullRequestId, branchName);
 

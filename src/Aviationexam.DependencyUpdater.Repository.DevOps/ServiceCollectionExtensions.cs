@@ -1,8 +1,11 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
+using Polly;
+using Polly.Retry;
 using System;
 using System.Net.Http;
 
@@ -28,6 +31,29 @@ public static class ServiceCollectionExtensions
                 []
             );
         })
+        .AddResiliencePipeline<string, HttpResponseMessage>(
+            $"{nameof(GitHttpClient.CreatePullRequestAsync)}-pipeline",
+            static (builder, context) => builder.AddRetry(new RetryStrategyOptions<HttpResponseMessage>
+            {
+                MaxRetryAttempts = 3,
+                BackoffType = DelayBackoffType.Exponential,
+                Delay = TimeSpan.FromSeconds(3),
+                ShouldHandle = new PredicateBuilder<HttpResponseMessage>().Handle<Exception>(),
+                OnRetry = args =>
+                {
+                    var logger = context.ServiceProvider.GetRequiredService<ILogger<GitHttpClient>>();
+
+                    logger.LogWarning(
+                        args.Outcome.Exception,
+                        "Error creating pull request (Attempt: {RetryCount}). Retrying in {RetryTimeSpan}...",
+                        args.AttemptNumber,
+                        args.RetryDelay
+                    );
+
+                    return default;
+                },
+            }).AddTimeout(TimeSpan.FromSeconds(10))
+        )
         .AddScoped<IRepositoryClient, RepositoryAzureDevOpsClient>();
 
     private static VssHttpMessageHandler CreateVssHttpMessageHandler(this IServiceProvider serviceProvider)
