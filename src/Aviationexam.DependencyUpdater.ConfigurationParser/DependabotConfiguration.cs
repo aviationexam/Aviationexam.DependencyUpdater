@@ -17,6 +17,8 @@ public readonly partial struct DependabotConfiguration
         public static ReadOnlySpan<byte> CommitAuthorEmailUtf8 => "commit-author-email"u8;
         public static ReadOnlySpan<byte> FallbackRegistriesUtf8 => "fallback-registries"u8;
         public static ReadOnlySpan<byte> UpdateSubmodulesUtf8 => "update-submodules"u8;
+        public static ReadOnlySpan<byte> PathUtf8 => "path"u8;
+        public static ReadOnlySpan<byte> BranchUtf8 => "branch"u8;
 
         public TargetFrameworkEntity? TargetFramework
         {
@@ -168,10 +170,7 @@ public readonly partial struct DependabotConfiguration
             }
         }
 
-        /// <summary>
-        /// Gets the (optional) <c>update-submodules</c> property.
-        /// </summary>
-        public bool UpdateSubmodules
+        public IReadOnlyCollection<SubmoduleEntity> UpdateSubmodules
         {
             get
             {
@@ -179,30 +178,30 @@ public readonly partial struct DependabotConfiguration
                 {
                     if (jsonElementBacking.ValueKind is not JsonValueKind.Object)
                     {
-                        return false;
+                        return [];
                     }
 
                     if (
-                        jsonElementBacking.TryGetProperty(UpdateSubmodulesUtf8, out var result)
-                        && result.ValueKind is JsonValueKind.True
+                        jsonElementBacking.TryGetProperty(UpdateSubmodulesUtf8, out JsonElement result)
+                        && result.ValueKind is JsonValueKind.Array
                     )
                     {
-                        return true;
+                        return result.EnumerateArray().Select(x => new SubmoduleEntity(
+                            x.GetProperty(PathUtf8).GetString()!,
+                            x.GetProperty(BranchUtf8).GetString()!
+                        )).ToList();
                     }
                 }
 
                 if (backing.HasFlag(Backing.Object))
                 {
-                    if (objectBacking.TryGetValue(UpdateSubmodulesUtf8, out var result))
+                    if (objectBacking.TryGetValue(UpdateSubmodulesUtf8, out JsonAny result))
                     {
-                        if (result.ValueKind is JsonValueKind.True)
-                        {
-                            return true;
-                        }
+                        throw new NotImplementedException();
                     }
                 }
 
-                return false;
+                return [];
             }
         }
 
