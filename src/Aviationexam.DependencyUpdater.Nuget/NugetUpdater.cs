@@ -70,6 +70,7 @@ public sealed class NugetUpdater(
             dependencyAnalysisResult.PackageFlags,
             groupResolver
         );
+
         using var sourceVersioning = sourceVersioningFactory.CreateSourceVersioning(repositoryConfig.RepositoryPath);
 
         // Process package updates and create pull requests
@@ -256,7 +257,7 @@ public sealed class NugetUpdater(
         // Process pull request based on update status
         return await HandlePullRequestAsync(
             gitWorkspace,
-            updatedPackages,
+            updatedPackages.GetCommitMessage(),
             pullRequestId,
             repositoryConfig,
             gitMetadataConfig,
@@ -344,7 +345,7 @@ public sealed class NugetUpdater(
 
     private async Task<string?> HandlePullRequestAsync(
         ISourceVersioningWorkspace gitWorkspace,
-        List<NugetUpdateCandidate<PackageSearchMetadataRegistration>> updatedPackages,
+        string? commitMessage,
         string? pullRequestId,
         RepositoryConfig repositoryConfig,
         GitMetadataConfig gitMetadataConfig,
@@ -354,8 +355,8 @@ public sealed class NugetUpdater(
     )
     {
         if (
-            gitWorkspace.HasUncommitedChanges()
-            && updatedPackages.GetCommitMessage() is { } commitMessage
+            commitMessage is not null
+            && gitWorkspace.HasUncommitedChanges()
         )
         {
             // Commit changes and create/update PR
@@ -373,8 +374,7 @@ public sealed class NugetUpdater(
                 pullRequestId,
                 repositoryConfig,
                 gitMetadataConfig,
-                groupEntry,
-                nugetUpdateCandidates,
+                title,
                 commitMessage,
                 updater,
                 cancellationToken
@@ -382,15 +382,15 @@ public sealed class NugetUpdater(
         }
 
         if (
-            pullRequestId is not null
-            && updatedPackages.GetCommitMessage() is { } commitMessage2
+            commitMessage is not null
+            && pullRequestId is not null
         )
         {
             // Just update PR title and description if already exists
             await repositoryClient.UpdatePullRequestAsync(
                 pullRequestId: pullRequestId,
                 title: title,
-                description: commitMessage2,
+                description: commitMessage,
                 cancellationToken
             );
 
