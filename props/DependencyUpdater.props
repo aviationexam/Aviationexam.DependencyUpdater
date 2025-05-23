@@ -1,16 +1,20 @@
 <Project>
-    <PropertyGroup Condition="'$(Configuration)'=='Release'">
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    </PropertyGroup>
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
 
-    <Target Name="DisableMoqStaticAnalysis" BeforeTargets="CoreCompile">
-        <ItemGroup>
-            <Analyzer Remove="@(Analyzer)" Condition="'%(FileName)' == 'Moq.CodeAnalysis' " />
-        </ItemGroup>
-    </Target>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
 
-    <Target Name="CheckBlockedPackages" AfterTargets="ResolvePackageDependenciesForBuild">
-        <Error Code="420" Text="Blocked package dependency detected: %(PackageDependencies.Identity)" Condition="'%(PackageDependencies.Identity)' == 'Devlooped.SponsorLink'"/>
-    </Target>
+  <Target Name="DisableMoqStaticAnalysis" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <Analyzer Remove="@(Analyzer)" Condition="'%(FileName)' == 'Moq.CodeAnalysis' " />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CheckBlockedPackages" AfterTargets="ResolvePackageDependenciesForBuild">
+    <Error Code="420" Text="Blocked package dependency detected: %(PackageDependencies.Identity)" Condition="'%(PackageDependencies.Identity)' == 'Devlooped.SponsorLink'" />
+  </Target>
 
 </Project>
