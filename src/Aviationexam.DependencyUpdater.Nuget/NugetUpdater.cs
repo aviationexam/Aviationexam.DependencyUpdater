@@ -85,13 +85,16 @@ public sealed class NugetUpdater(
             cancellationToken
         ).ToListAsync(cancellationToken);
 
-        knownPullRequests.AddRange(await UpdateSubmodulesAsync(
-            sourceVersioning,
-            repositoryConfig,
-            gitMetadataConfig,
-            updater,
-            cancellationToken
-        ));
+        if (gitMetadataConfig.UpdateSubmodules)
+        {
+            knownPullRequests.AddRange(await UpdateSubmodulesAsync(
+                sourceVersioning,
+                repositoryConfig,
+                gitMetadataConfig,
+                updater,
+                cancellationToken
+            ));
+        }
 
         // Clean up abandoned pull requests
         await CleanupAbandonedPullRequestsAsync(
