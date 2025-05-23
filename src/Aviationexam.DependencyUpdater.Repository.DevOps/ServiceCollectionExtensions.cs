@@ -31,14 +31,14 @@ public static class ServiceCollectionExtensions
                 []
             );
         })
-        .AddResiliencePipeline<string, HttpResponseMessage>(
+        .AddResiliencePipeline<string, GitPullRequest>(
             $"{nameof(GitHttpClient.CreatePullRequestAsync)}-pipeline",
-            static (builder, context) => builder.AddRetry(new RetryStrategyOptions<HttpResponseMessage>
+            static (builder, context) => builder.AddRetry(new RetryStrategyOptions<GitPullRequest>
             {
                 MaxRetryAttempts = 3,
                 BackoffType = DelayBackoffType.Exponential,
                 Delay = TimeSpan.FromSeconds(3),
-                ShouldHandle = new PredicateBuilder<HttpResponseMessage>().Handle<Exception>(),
+                ShouldHandle = new PredicateBuilder<GitPullRequest>().Handle<Exception>(),
                 OnRetry = args =>
                 {
                     var logger = context.ServiceProvider.GetRequiredService<ILogger<GitHttpClient>>();
