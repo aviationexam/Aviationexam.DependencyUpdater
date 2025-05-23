@@ -27,8 +27,5 @@ public sealed class GitMetadataConfig
     /// </summary>
     public required string CommitAuthorEmail { get; init; }
 
-    /// <summary>
-    /// Whether to update submodules.
-    /// </summary>
-    public required bool UpdateSubmodules { get; init; }
+    public required IReadOnlyCollection<SubmoduleEntry> UpdateSubmodules { get; init; }
 }

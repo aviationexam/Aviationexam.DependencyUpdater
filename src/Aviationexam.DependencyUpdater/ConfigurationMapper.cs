@@ -52,4 +52,11 @@ public static class ConfigurationMapper
             );
         }
     }
+
+    public static SubmoduleEntry MapToSubmoduleEntry(
+        this SubmoduleEntity submoduleEntity
+    ) => new(
+        submoduleEntity.Path,
+        submoduleEntity.Branch
+    );
 }

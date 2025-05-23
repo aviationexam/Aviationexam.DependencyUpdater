@@ -59,7 +59,7 @@ internal static class DefaultCommandHandler
                     Reviewers = [.. nugetUpdate.Reviewers.Select(x => x.GetString()!)],
                     CommitAuthor = nugetUpdate.CommitAuthor ?? GitAuthorConstants.DefaultCommitAuthor,
                     CommitAuthorEmail = nugetUpdate.CommitAuthorEmail ?? GitAuthorConstants.DefaultCommitAuthorEmail,
-                    UpdateSubmodules = nugetUpdate.UpdateSubmodules,
+                    UpdateSubmodules = [.. nugetUpdate.UpdateSubmodules.Select(x => x.MapToSubmoduleEntry())],
                 };
 
                 var packageConfig = new NugetPackageConfig
