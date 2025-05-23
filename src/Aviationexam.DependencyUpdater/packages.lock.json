@@ -519,6 +519,11 @@
         "resolved": "6.14.0",
         "contentHash": "4v4blkhCv8mpKtfx+z0G/X0daVCzdIaHSC51GkUspugi5JIMn2Bo8xm5PdZYF0U68gOBfz/+aPWMnpRd85Jbow=="
       },
+      "Polly.Core": {
+        "type": "Transitive",
+        "resolved": "8.5.1",
+        "contentHash": "47BFjJJhlfSrwLgKoouCJYOYd+IRtFSrvaI9/QL3hbs6qGRtByw7D3QBVnGiDPNNSZ7oHfE7Fm/QIg/gd2ypWw=="
+      },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
         "type": "Transitive",
         "resolved": "4.3.2",
@@ -1466,7 +1471,9 @@
           "Microsoft.Extensions.Http": "[9.0.5, )",
           "Microsoft.Extensions.Logging.Abstractions": "[9.0.5, )",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "[9.0.5, )",
-          "Microsoft.TeamFoundationServer.Client": "[19.225.1, )"
+          "Microsoft.TeamFoundationServer.Client": "[19.225.1, )",
+          "Polly": "[8.5.1, )",
+          "Polly.Extensions": "[8.5.1, )"
         }
       },
       "aviationexam.dependencyupdater.vcs.git": {
@@ -1670,6 +1677,26 @@
         "contentHash": "gM+d9DZTSwkNSqhLiCIQvkacF8BOjRlDk1ldt2H42SC0QU62lSpD79R5Z9dUrVbHkzxGgaA9u1S042KUy/tdzg==",
         "dependencies": {
           "NuGet.DependencyResolver.Core": "6.14.0"
+        }
+      },
+      "Polly": {
+        "type": "CentralTransitive",
+        "requested": "[8.5.1, )",
+        "resolved": "8.5.1",
+        "contentHash": "/kMFDkE3Tl6rKA1o+JJZ+r3ij8kHVRkIcHhx2fjvoTDl6risPH3KfCb0g9tfFni4qUbcPqkhDNcb0EvMPpyRKw==",
+        "dependencies": {
+          "Polly.Core": "8.5.1"
+        }
+      },
+      "Polly.Extensions": {
+        "type": "CentralTransitive",
+        "requested": "[8.5.1, )",
+        "resolved": "8.5.1",
+        "contentHash": "HeW6Dh6redTvI5ilgAD0gh5h9GoXqVKh1hQKeOtWAVCCcf0YNeVf5Eq7A+Y4llZANtOz+PS3JAThsLRgeqS87A==",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
+          "Microsoft.Extensions.Options": "8.0.0",
+          "Polly.Core": "8.5.1"
         }
       },
       "System.Buffers": {

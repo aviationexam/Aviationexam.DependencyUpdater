@@ -96,6 +96,26 @@
           "System.ComponentModel.Annotations": "5.0.0"
         }
       },
+      "Polly": {
+        "type": "Direct",
+        "requested": "[8.5.1, )",
+        "resolved": "8.5.1",
+        "contentHash": "/kMFDkE3Tl6rKA1o+JJZ+r3ij8kHVRkIcHhx2fjvoTDl6risPH3KfCb0g9tfFni4qUbcPqkhDNcb0EvMPpyRKw==",
+        "dependencies": {
+          "Polly.Core": "8.5.1"
+        }
+      },
+      "Polly.Extensions": {
+        "type": "Direct",
+        "requested": "[8.5.1, )",
+        "resolved": "8.5.1",
+        "contentHash": "HeW6Dh6redTvI5ilgAD0gh5h9GoXqVKh1hQKeOtWAVCCcf0YNeVf5Eq7A+Y4llZANtOz+PS3JAThsLRgeqS87A==",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
+          "Microsoft.Extensions.Options": "8.0.0",
+          "Polly.Core": "8.5.1"
+        }
+      },
       "Azure.Core": {
         "type": "Transitive",
         "resolved": "1.46.1",
@@ -304,6 +324,11 @@
           "NETStandard.Library": "1.6.1",
           "Newtonsoft.Json": "10.0.1"
         }
+      },
+      "Polly.Core": {
+        "type": "Transitive",
+        "resolved": "8.5.1",
+        "contentHash": "47BFjJJhlfSrwLgKoouCJYOYd+IRtFSrvaI9/QL3hbs6qGRtByw7D3QBVnGiDPNNSZ7oHfE7Fm/QIg/gd2ypWw=="
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
         "type": "Transitive",
