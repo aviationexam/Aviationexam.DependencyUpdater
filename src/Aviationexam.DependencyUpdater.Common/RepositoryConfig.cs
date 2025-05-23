@@ -1,4 +1,4 @@
-using System;
+using System.IO;
 
 namespace Aviationexam.DependencyUpdater.Common;
 
@@ -10,37 +10,17 @@ public sealed class RepositoryConfig
     /// <summary>
     /// The path to the repository.
     /// </summary>
-    public string RepositoryPath { get; }
+    public required string RepositoryPath { get; init; }
 
     /// <summary>
     /// The subdirectory path within the repository.
     /// </summary>
-    public string? SubdirectoryPath { get; }
+    public string? SubdirectoryPath { get; init; }
 
     /// <summary>
     /// The source branch name.
     /// </summary>
-    public string? SourceBranchName { get; }
+    public string? SourceBranchName { get; init; }
 
-    /// <summary>
-    /// Creates a new instance of <see cref="RepositoryConfig"/>.
-    /// </summary>
-    /// <param name="repositoryPath">The path to the repository</param>
-    /// <param name="subdirectoryPath">The subdirectory path within the repository</param>
-    /// <param name="sourceBranchName">The source branch name</param>
-    public RepositoryConfig(
-        string repositoryPath,
-        string? subdirectoryPath,
-        string? sourceBranchName
-    )
-    {
-        if (string.IsNullOrEmpty(repositoryPath))
-        {
-            throw new ArgumentException("Repository path cannot be null or empty", nameof(repositoryPath));
-        }
-
-        RepositoryPath = repositoryPath;
-        SubdirectoryPath = subdirectoryPath;
-        SourceBranchName = sourceBranchName;
-    }
+    public string TargetDirectoryPath => Path.Join(RepositoryPath, SubdirectoryPath);
 }

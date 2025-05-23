@@ -46,19 +46,21 @@ internal static class DefaultCommandHandler
                 var registries = nugetUpdate.Registries.Select(x => x.AsString.GetString()!).ToList();
                 var fallbackRegistries = nugetUpdate.FallbackRegistries;
 
-                var repositoryConfig = new RepositoryConfig(
-                    repositoryPath: sourceConfiguration.Directory,
-                    subdirectoryPath: nugetUpdate.DirectoryValue.GetString(),
-                    sourceBranchName: nugetUpdate.TargetBranch.GetString()
-                );
+                var repositoryConfig = new RepositoryConfig
+                {
+                    RepositoryPath = sourceConfiguration.Directory,
+                    SubdirectoryPath = nugetUpdate.DirectoryValue.GetString(),
+                    SourceBranchName = nugetUpdate.TargetBranch.GetString(),
+                };
 
-                var gitMetadataConfig = new GitMetadataConfig(
-                    milestone: nugetUpdate.Milestone.AsAny.AsString.GetString(),
-                    reviewers: [.. nugetUpdate.Reviewers.Select(x => x.GetString()!)],
-                    commitAuthor: nugetUpdate.CommitAuthor ?? GitAuthorConstants.DefaultCommitAuthor,
-                    commitAuthorEmail: nugetUpdate.CommitAuthorEmail ?? GitAuthorConstants.DefaultCommitAuthorEmail,
-                    updateSubmodules: nugetUpdate.UpdateSubmodules
-                );
+                var gitMetadataConfig = new GitMetadataConfig
+                {
+                    Milestone = nugetUpdate.Milestone.AsAny.AsString.GetString(),
+                    Reviewers = [.. nugetUpdate.Reviewers.Select(x => x.GetString()!)],
+                    CommitAuthor = nugetUpdate.CommitAuthor ?? GitAuthorConstants.DefaultCommitAuthor,
+                    CommitAuthorEmail = nugetUpdate.CommitAuthorEmail ?? GitAuthorConstants.DefaultCommitAuthorEmail,
+                    UpdateSubmodules = nugetUpdate.UpdateSubmodules,
+                };
 
                 var packageConfig = new NugetPackageConfig
                 {
