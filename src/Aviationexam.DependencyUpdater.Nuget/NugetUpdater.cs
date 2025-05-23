@@ -44,7 +44,7 @@ public sealed class NugetUpdater(
     )
     {
         const string updater = "nuget";
-        var nugetUpdaterContext = CreateContext(repositoryPath, subdirectoryPath, defaultTargetFrameworks);
+        var nugetUpdaterContext = CreateContext(repositoryConfig, packageConfig.TargetFrameworks);
 
         var currentPackageVersions = nugetUpdaterContext.GetCurrentPackageVersions();
         var sourceRepositories = nugetUpdaterContext.GetSourceRepositories(
@@ -757,22 +757,19 @@ public sealed class NugetUpdater(
     }
 
     private NugetUpdaterContext CreateContext(
-        string repositoryPath,
-        string? subdirectoryPath,
+        RepositoryConfig repositoryConfig,
         IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks
     )
     {
-        var directoryPath = Path.Join(repositoryPath, subdirectoryPath);
-
-        var nugetConfigurations = nugetFinder.GetNugetConfig(repositoryPath, directoryPath)
-            .SelectMany(x => nugetConfigParser.Parse(repositoryPath, x))
+        var nugetConfigurations = nugetFinder.GetNugetConfig(repositoryConfig)
+            .SelectMany(x => nugetConfigParser.Parse(repositoryConfig.RepositoryPath, x))
             .ToList();
 
-        var dependencies = nugetFinder.GetDirectoryPackagesPropsFiles(repositoryPath, directoryPath)
-            .SelectMany(x => nugetDirectoryPackagesPropsParser.Parse(repositoryPath, x, defaultTargetFrameworks))
+        var dependencies = nugetFinder.GetDirectoryPackagesPropsFiles(repositoryConfig)
+            .SelectMany(x => nugetDirectoryPackagesPropsParser.Parse(repositoryConfig.RepositoryPath, x, defaultTargetFrameworks))
             .Concat(
-                nugetFinder.GetAllCsprojFiles(repositoryPath, directoryPath)
-                    .SelectMany(x => nugetCsprojParser.Parse(repositoryPath, x))
+                nugetFinder.GetAllCsprojFiles(repositoryConfig)
+                    .SelectMany(x => nugetCsprojParser.Parse(repositoryConfig.RepositoryPath, x))
                     .Where(x => x.NugetPackage is NugetPackageReference { VersionRange: not null })
             )
             .ToList();

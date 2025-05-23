@@ -8,5 +8,5 @@ public class NugetPackageConfig : PackageConfig
     /// <summary>
     /// The target frameworks to update packages for.
     /// </summary>
-    public IReadOnlyCollection<NugetTargetFramework>? TargetFrameworks { get; init; }
+    public required IReadOnlyCollection<NugetTargetFramework> TargetFrameworks { get; init; }
 }
