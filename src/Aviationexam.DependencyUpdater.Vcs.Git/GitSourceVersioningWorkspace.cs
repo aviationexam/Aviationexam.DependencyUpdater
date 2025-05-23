@@ -63,6 +63,32 @@ public sealed class GitSourceVersioningWorkspace(
         return true;
     }
 
+    public void UpdateSubmodule(
+        string submodule,
+        string branch
+    )
+    {
+        var submoduleInstance = worktree.WorktreeRepository.Submodules[submodule];
+
+        using var submoduleRepository = new Repository(Path.Join(worktree.WorktreeRepository.Info.WorkingDirectory, submoduleInstance.Path));
+
+        var remote = submoduleRepository.Network.Remotes[GitConstants.DefaultRemote];
+
+        Commands.Fetch(submoduleRepository, remote.Name, [
+            $"+{GitConstants.HeadsPrefix}{branch}:{GitConstants.RemoteRef(GitConstants.DefaultRemote)}{branch}",
+        ], new FetchOptions
+        {
+            CredentialsProvider = (_, _, _) => new DefaultCredentials(),
+        }, null);
+
+        var upstreamBranch = submoduleRepository.Branches[$"{GitConstants.DefaultRemote}/{branch}"];
+
+        if (upstreamBranch is not null)
+        {
+            submoduleRepository.Reset(ResetMode.Hard, upstreamBranch.Tip);
+        }
+    }
+
     public bool HasUncommitedChanges() => worktree.WorktreeRepository.RetrieveStatus().IsDirty;
 
     public void CommitChanges(
