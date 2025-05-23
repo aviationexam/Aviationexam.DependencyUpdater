@@ -30,7 +30,7 @@ public class NugetFinderTests
         var response = nugetFinder.GetAllNugetFiles(new RepositoryConfig
         {
             RepositoryPath = directoryPath,
-            SubdirectoryPath = directoryPath,
+            SubdirectoryPath = null,
         });
 
         Assert.Equal([
@@ -56,7 +56,7 @@ public class NugetFinderTests
         var response = nugetFinder.GetDirectoryPackagesPropsFiles(new RepositoryConfig
         {
             RepositoryPath = directoryPath,
-            SubdirectoryPath = directoryPath,
+            SubdirectoryPath = null,
         });
 
         Assert.Equal([
@@ -80,7 +80,7 @@ public class NugetFinderTests
         var response = nugetFinder.GetAllCsprojFiles(new RepositoryConfig
         {
             RepositoryPath = directoryPath,
-            SubdirectoryPath = directoryPath,
+            SubdirectoryPath = null,
         });
 
         Assert.Equal([
@@ -104,7 +104,7 @@ public class NugetFinderTests
         var response = nugetFinder.GetNugetConfig(new RepositoryConfig
         {
             RepositoryPath = directoryPath,
-            SubdirectoryPath = directoryPath,
+            SubdirectoryPath = null,
         });
 
         Assert.Equal([
