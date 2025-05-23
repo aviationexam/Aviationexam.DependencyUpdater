@@ -1,3 +1,4 @@
+using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
 using NSubstitute;
 using Xunit;
@@ -26,7 +27,11 @@ public class NugetFinderTests
 
         var nugetFinder = new NugetFinder(fileSystem);
 
-        var response = nugetFinder.GetAllNugetFiles(directoryPath, directoryPath);
+        var response = nugetFinder.GetAllNugetFiles(new RepositoryConfig
+        {
+            RepositoryPath = directoryPath,
+            SubdirectoryPath = directoryPath,
+        });
 
         Assert.Equal([
             new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
@@ -48,7 +53,11 @@ public class NugetFinderTests
 
         var nugetFinder = new NugetFinder(fileSystem);
 
-        var response = nugetFinder.GetDirectoryPackagesPropsFiles(directoryPath, directoryPath);
+        var response = nugetFinder.GetDirectoryPackagesPropsFiles(new RepositoryConfig
+        {
+            RepositoryPath = directoryPath,
+            SubdirectoryPath = directoryPath,
+        });
 
         Assert.Equal([
             new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
@@ -68,7 +77,11 @@ public class NugetFinderTests
 
         var nugetFinder = new NugetFinder(fileSystem);
 
-        var response = nugetFinder.GetAllCsprojFiles(directoryPath, directoryPath);
+        var response = nugetFinder.GetAllCsprojFiles(new RepositoryConfig
+        {
+            RepositoryPath = directoryPath,
+            SubdirectoryPath = directoryPath,
+        });
 
         Assert.Equal([
             new NugetFile("project/Project.csproj", ENugetFileType.Csproj),
@@ -88,7 +101,11 @@ public class NugetFinderTests
 
         var nugetFinder = new NugetFinder(fileSystem);
 
-        var response = nugetFinder.GetNugetConfig(directoryPath, directoryPath);
+        var response = nugetFinder.GetNugetConfig(new RepositoryConfig
+        {
+            RepositoryPath = directoryPath,
+            SubdirectoryPath = directoryPath,
+        });
 
         Assert.Equal([
             new NugetFile("nuget.config", ENugetFileType.NugetConfig),
