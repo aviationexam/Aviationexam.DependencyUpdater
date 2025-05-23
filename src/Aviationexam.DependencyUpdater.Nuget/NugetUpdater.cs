@@ -48,12 +48,12 @@ public sealed class NugetUpdater(
 
         var currentPackageVersions = nugetUpdaterContext.GetCurrentPackageVersions();
         var sourceRepositories = nugetUpdaterContext.GetSourceRepositories(
-            nugetFeedAuthentications,
-            fallbackRegistries,
+            authConfig.NugetFeedAuthentications,
+            packageConfig.FallbackRegistries,
             nugetVersionFetcherFactory
         );
-        var ignoreResolver = ignoreResolverFactory.Create(ignoreEntries);
-        var groupResolver = groupResolverFactory.Create(groupEntries);
+        var ignoreResolver = ignoreResolverFactory.Create(packageConfig.IgnoreEntries);
+        var groupResolver = groupResolverFactory.Create(packageConfig.GroupEntries);
 
         // Analyze dependencies
         var dependencyAnalysisResult = await AnalyzeDependenciesAsync(
@@ -73,13 +73,8 @@ public sealed class NugetUpdater(
 
         // Process package updates and create pull requests
         var knownPullRequests = await ProcessPackageUpdatesAsync(
-            repositoryPath,
-            subdirectoryPath,
-            sourceBranchName,
-            milestone,
-            reviewers,
-            commitAuthor,
-            commitAuthorEmail,
+            repositoryConfig,
+            gitMetadataConfig,
             groupedPackagesToUpdate,
             currentPackageVersions,
             updater,
@@ -185,30 +180,21 @@ public sealed class NugetUpdater(
     }
 
     private async IAsyncEnumerable<string> ProcessPackageUpdatesAsync(
-        string repositoryPath,
-        string? subdirectoryPath,
-        string? sourceBranchName,
-        string? milestone,
-        IReadOnlyCollection<string> reviewers,
-        string commitAuthor,
-        string commitAuthorEmail,
+        RepositoryConfig repositoryConfig,
+        GitMetadataConfig gitMetadataConfig,
         Queue<(IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> NugetUpdateCandidates, GroupEntry GroupEntry)> groupedPackagesToUpdateQueue,
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
         string updater,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
-        using var sourceVersioning = sourceVersioningFactory.CreateSourceVersioning(repositoryPath);
+        using var sourceVersioning = sourceVersioningFactory.CreateSourceVersioning(repositoryConfig.RepositoryPath);
 
         while (groupedPackagesToUpdateQueue.TryDequeue(out var groupedPackagesToUpdate))
         {
             var pullRequestId = await ProcessSinglePackageGroupAsync(
-                subdirectoryPath,
-                sourceBranchName,
-                milestone,
-                reviewers,
-                commitAuthor,
-                commitAuthorEmail,
+                repositoryConfig,
+                gitMetadataConfig,
                 groupedPackagesToUpdate.GroupEntry,
                 groupedPackagesToUpdate.NugetUpdateCandidates,
                 currentPackageVersions,
@@ -225,12 +211,8 @@ public sealed class NugetUpdater(
     }
 
     private async Task<string?> ProcessSinglePackageGroupAsync(
-        string? subdirectoryPath,
-        string? sourceBranchName,
-        string? milestone,
-        IReadOnlyCollection<string> reviewers,
-        string commitAuthor,
-        string commitAuthorEmail,
+        RepositoryConfig repositoryConfig,
+        GitMetadataConfig gitMetadataConfig,
         GroupEntry groupEntry,
         IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> nugetUpdateCandidates,
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
@@ -242,15 +224,15 @@ public sealed class NugetUpdater(
         using var temporaryDirectory = new TemporaryDirectoryProvider(create: false);
         using var gitWorkspace = sourceVersioning.CreateWorkspace(
             temporaryDirectory.TemporaryDirectory,
-            sourceBranchName: sourceBranchName,
+            sourceBranchName: repositoryConfig.SourceBranchName,
             branchName: groupEntry.GetBranchName(updater),
             worktreeName: groupEntry.GroupName.Replace('/', '-')
         );
 
         gitWorkspace.TryPullRebase(
-            sourceBranchName: sourceBranchName,
-            authorName: commitAuthor,
-            authorEmail: commitAuthorEmail
+            sourceBranchName: repositoryConfig.SourceBranchName,
+            authorName: gitMetadataConfig.CommitAuthor,
+            authorEmail: gitMetadataConfig.CommitAuthorEmail
         );
 
         var updatedPackages = await UpdatePackageVersionsAsync(
@@ -271,12 +253,8 @@ public sealed class NugetUpdater(
             gitWorkspace,
             updatedPackages,
             pullRequestId,
-            subdirectoryPath,
-            sourceBranchName,
-            milestone,
-            reviewers,
-            commitAuthor,
-            commitAuthorEmail,
+            repositoryConfig,
+            gitMetadataConfig,
             groupEntry,
             nugetUpdateCandidates,
             updater,
@@ -364,12 +342,8 @@ public sealed class NugetUpdater(
         ISourceVersioningWorkspace gitWorkspace,
         List<NugetUpdateCandidate<PackageSearchMetadataRegistration>> updatedPackages,
         string? pullRequestId,
-        string? subdirectoryPath,
-        string? sourceBranchName,
-        string? milestone,
-        IReadOnlyCollection<string> reviewers,
-        string commitAuthor,
-        string commitAuthorEmail,
+        RepositoryConfig repositoryConfig,
+        GitMetadataConfig gitMetadataConfig,
         GroupEntry groupEntry,
         IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> nugetUpdateCandidates,
         string updater,
@@ -384,19 +358,18 @@ public sealed class NugetUpdater(
             // Commit changes and create/update PR
             gitWorkspace.CommitChanges(
                 message: commitMessage,
-                authorName: commitAuthor,
-                authorEmail: commitAuthorEmail
+                authorName: gitMetadataConfig.CommitAuthor,
+                authorEmail: gitMetadataConfig.CommitAuthorEmail
             );
 
-            await RestoreNugetPackagesAsync(gitWorkspace, subdirectoryPath, commitAuthor, commitAuthorEmail, cancellationToken);
+            await RestoreNugetPackagesAsync(gitWorkspace, repositoryConfig.SubdirectoryPath, gitMetadataConfig, cancellationToken);
             gitWorkspace.Push();
 
             return await CreateOrUpdatePullRequestAsync(
                 gitWorkspace,
                 pullRequestId,
-                sourceBranchName,
-                milestone,
-                reviewers,
+                repositoryConfig,
+                gitMetadataConfig,
                 groupEntry,
                 nugetUpdateCandidates,
                 commitMessage,
@@ -427,8 +400,7 @@ public sealed class NugetUpdater(
     private async Task RestoreNugetPackagesAsync(
         ISourceVersioningWorkspace gitWorkspace,
         string? subdirectoryPath,
-        string commitAuthor,
-        string commitAuthorEmail,
+        GitMetadataConfig gitMetadataConfig,
         CancellationToken cancellationToken
     )
     {
@@ -447,8 +419,8 @@ public sealed class NugetUpdater(
         {
             gitWorkspace.CommitChanges(
                 message: "Update package.lock.json",
-                authorName: commitAuthor,
-                authorEmail: commitAuthorEmail
+                authorName: gitMetadataConfig.CommitAuthor,
+                authorEmail: gitMetadataConfig.CommitAuthorEmail
             );
         }
     }
@@ -456,9 +428,8 @@ public sealed class NugetUpdater(
     private async Task<string?> CreateOrUpdatePullRequestAsync(
         ISourceVersioningWorkspace gitWorkspace,
         string? pullRequestId,
-        string? sourceBranchName,
-        string? milestone,
-        IReadOnlyCollection<string> reviewers,
+        RepositoryConfig repositoryConfig,
+        GitMetadataConfig gitMetadataConfig,
         GroupEntry groupEntry,
         IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> nugetUpdateCandidates,
         string commitMessage,
@@ -479,11 +450,11 @@ public sealed class NugetUpdater(
 
         return await repositoryClient.CreatePullRequestAsync(
             branchName: gitWorkspace.GetBranchName(),
-            targetBranchName: sourceBranchName,
+            targetBranchName: repositoryConfig.SourceBranchName,
             title: groupEntry.GetTitle(nugetUpdateCandidates),
             description: commitMessage,
-            milestone,
-            reviewers,
+            gitMetadataConfig.Milestone,
+            gitMetadataConfig.Reviewers,
             updater: updater,
             cancellationToken
         );
