@@ -49,6 +49,7 @@ public class DependabotConfigurationParserTests
                   - package-ecosystem: "nuget"
                     directory: "/"
                     targetFramework: net9.0
+                    update-submodules: true
                     registries:
                       - nuget-feed
                     fallback-registries:
@@ -86,6 +87,7 @@ public class DependabotConfigurationParserTests
         var githubActionsUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("github-actions"));
         Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), nugetUpdate.DirectoryValue);
         Assert.Equal(new TargetFrameworkEntity("net9.0"), nugetUpdate.TargetFramework);
+        Assert.True(nugetUpdate.UpdateSubmodules);
         Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), githubActionsUpdate.DirectoryValue);
         var groups = nugetUpdate.Groups;
         var microsoftGroup = Assert.Single(groups, x => x.Key == "microsoft");

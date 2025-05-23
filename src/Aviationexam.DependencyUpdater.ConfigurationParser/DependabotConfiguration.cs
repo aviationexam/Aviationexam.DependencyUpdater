@@ -16,6 +16,7 @@ public readonly partial struct DependabotConfiguration
         public static ReadOnlySpan<byte> CommitAuthorUtf8 => "commit-author"u8;
         public static ReadOnlySpan<byte> CommitAuthorEmailUtf8 => "commit-author-email"u8;
         public static ReadOnlySpan<byte> FallbackRegistriesUtf8 => "fallback-registries"u8;
+        public static ReadOnlySpan<byte> UpdateSubmodulesUtf8 => "update-submodules"u8;
 
         public TargetFrameworkEntity? TargetFramework
         {
@@ -164,6 +165,44 @@ public readonly partial struct DependabotConfiguration
                 }
 
                 return FrozenDictionary<string, string>.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Gets the (optional) <c>update-submodules</c> property.
+        /// </summary>
+        public bool UpdateSubmodules
+        {
+            get
+            {
+                if (backing.HasFlag(Backing.JsonElement))
+                {
+                    if (jsonElementBacking.ValueKind is not JsonValueKind.Object)
+                    {
+                        return false;
+                    }
+
+                    if (
+                        jsonElementBacking.TryGetProperty(UpdateSubmodulesUtf8, out var result)
+                        && result.ValueKind is JsonValueKind.True
+                    )
+                    {
+                        return true;
+                    }
+                }
+
+                if (backing.HasFlag(Backing.Object))
+                {
+                    if (objectBacking.TryGetValue(UpdateSubmodulesUtf8, out var result))
+                    {
+                        if (result.ValueKind is JsonValueKind.True)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
             }
         }
 
