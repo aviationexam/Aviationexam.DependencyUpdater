@@ -85,16 +85,13 @@ public sealed class NugetUpdater(
             cancellationToken
         ).ToListAsync(cancellationToken);
 
-        if (gitMetadataConfig.UpdateSubmodules)
-        {
-            knownPullRequests.AddRange(await UpdateSubmodulesAsync(
-                sourceVersioning,
-                repositoryConfig,
-                gitMetadataConfig,
-                updater,
-                cancellationToken
-            ));
-        }
+        knownPullRequests.AddRange(await UpdateSubmodulesAsync(
+            sourceVersioning,
+            repositoryConfig,
+            gitMetadataConfig,
+            updater,
+            cancellationToken
+        ));
 
         // Clean up abandoned pull requests
         await CleanupAbandonedPullRequestsAsync(
@@ -124,7 +121,13 @@ public sealed class NugetUpdater(
         // Process dependencies in parallel
         await Parallel.ForEachAsync(sourceVersioning.GetSubmodules(), parallelOptions, async (submodule, token) =>
         {
-            var branchName = $"{GitConstants.UpdaterBranchPrefix}{updater}/{submodule}";
+            var submoduleEntry = gitMetadataConfig.UpdateSubmodules.SingleOrDefault(x => x.Path == submodule);
+            if (submoduleEntry is null)
+            {
+                return;
+            }
+
+            var branchName = $"{GitConstants.UpdaterBranchPrefix}{updater}/submodule/{submodule}";
             using var temporaryDirectory = new TemporaryDirectoryProvider(create: false);
             using var gitWorkspace = sourceVersioning.CreateWorkspace(
                 temporaryDirectory.TemporaryDirectory,
@@ -138,7 +141,7 @@ public sealed class NugetUpdater(
                 authorEmail: gitMetadataConfig.CommitAuthorEmail
             );
 
-            gitWorkspace.UpdateSubmodule(submodule);
+            gitWorkspace.UpdateSubmodule(submodule, submoduleEntry.Branch);
 
             // Get existing pull request if it exists
             var pullRequestId = await repositoryClient.GetPullRequestForBranchAsync(
