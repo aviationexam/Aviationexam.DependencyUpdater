@@ -38,7 +38,7 @@ public static class ServiceCollectionExtensions
                 MaxRetryAttempts = 3,
                 BackoffType = DelayBackoffType.Exponential,
                 Delay = TimeSpan.FromSeconds(3),
-                ShouldHandle = new PredicateBuilder<GitPullRequest>().Handle<Exception>(),
+                ShouldHandle = new PredicateBuilder<GitPullRequest>().Handle<VssServiceException>(),
                 OnRetry = args =>
                 {
                     var logger = context.ServiceProvider.GetRequiredService<ILogger<GitHttpClient>>();
