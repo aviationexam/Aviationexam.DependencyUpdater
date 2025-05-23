@@ -89,7 +89,7 @@ public class DependabotConfigurationParserTests
         var githubActionsUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("github-actions"));
         Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), nugetUpdate.DirectoryValue);
         Assert.Equal(new TargetFrameworkEntity("net9.0"), nugetUpdate.TargetFramework);
-        var updateSubmodule =Assert.Single(nugetUpdate.UpdateSubmodules);
+        var updateSubmodule = Assert.Single(nugetUpdate.UpdateSubmodules);
         Assert.Equal("submodule", updateSubmodule.Path);
         Assert.Equal("main", updateSubmodule.Branch);
         Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), githubActionsUpdate.DirectoryValue);
