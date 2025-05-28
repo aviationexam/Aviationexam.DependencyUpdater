@@ -113,6 +113,17 @@ public class AzureDevOpsUndocumentedClient(
             cancellationToken
         );
 
+        if (!hierarchyResponse.IsSuccessStatusCode)
+        {
+            logger.LogError(
+                "HierarchyQuery failed with status code {StatusCode}, and response:\n{Response}",
+                hierarchyResponse.StatusCode,
+                await hierarchyResponse.Content.ReadAsStringAsync(cancellationToken)
+            );
+
+            return null;
+        }
+
         await using var hierarchyResponseStream = await hierarchyResponse.Content.ReadAsStreamAsync(cancellationToken);
         var response = await JsonSerializer.DeserializeAsync<HierarchyQueryResponse>(
             hierarchyResponseStream,
