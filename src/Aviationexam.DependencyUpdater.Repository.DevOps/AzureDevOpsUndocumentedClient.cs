@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -113,11 +114,12 @@ public class AzureDevOpsUndocumentedClient(
             cancellationToken
         );
 
-        if (!hierarchyResponse.IsSuccessStatusCode)
+        if (hierarchyResponse.StatusCode is not HttpStatusCode.OK)
         {
             logger.LogError(
-                "HierarchyQuery failed with status code {StatusCode}, and response:\n{Response}",
+                "HierarchyQuery failed with status code {StatusCode} ({StatusCodeNumber}), and response:\n{Response}",
                 hierarchyResponse.StatusCode,
+                (int) hierarchyResponse.StatusCode,
                 await hierarchyResponse.Content.ReadAsStringAsync(cancellationToken)
             );
 
@@ -174,7 +176,7 @@ public class AzureDevOpsUndocumentedClient(
             cancellationToken
         );
 
-        if (manualUpstreamIngestionResponse.StatusCode is not System.Net.HttpStatusCode.NoContent)
+        if (manualUpstreamIngestionResponse.StatusCode is not HttpStatusCode.NoContent)
         {
             logger.LogError(
                 "ManualUpstreamIngestion failed with status code {StatusCode}, and response:\n{Response}",
