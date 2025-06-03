@@ -76,6 +76,20 @@ var accessTokenResourceId = new Option<string>(
 {
     IsRequired = true,
 };
+var azSideCarAddress = new Option<string>(
+    "--az-side-car-address",
+    description: "The URL address for AZ sidecar service, used to fetch Azure DevOps access-token."
+)
+{
+    IsRequired = false,
+};
+var azSideCarToken = new Option<string>(
+    "--az-side-car-token",
+    description: "The token for AZ sidecar service, used to fetch Azure DevOps access-token."
+)
+{
+    IsRequired = false,
+};
 
 var rootCommand = new RootCommand("Dependency updater tool that processes dependency updates based on configuration files.")
 {
@@ -88,6 +102,8 @@ var rootCommand = new RootCommand("Dependency updater tool that processes depend
     nugetFeedId,
     serviceHost,
     accessTokenResourceId,
+    azSideCarAddress,
+    azSideCarToken,
 };
 rootCommand.Handler = DefaultCommandHandler.GetHandler();
 
@@ -97,6 +113,7 @@ return await new CommandLineBuilder(rootCommand)
         hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new SourceConfigurationBinder(directory));
         hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new DevOpsConfigurationBinder(organization, project, repository, pat, accountId));
         hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new DevOpsUndocumentedConfigurationBinder(nugetFeedId, serviceHost, accessTokenResourceId));
+        hostApplicationBuilder.Services.AddOptionalBinder(modelBinder, _ => new AzCliSideCarConfigurationBinder(azSideCarAddress, azSideCarToken));
     })
     .UseDefaults()
     .Build()

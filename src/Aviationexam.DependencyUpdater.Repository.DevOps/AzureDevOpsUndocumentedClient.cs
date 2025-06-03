@@ -1,3 +1,4 @@
+using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Repository.DevOps.Dtos;
 using Azure.Core;
 using Azure.Identity;
@@ -18,6 +19,7 @@ namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 public class AzureDevOpsUndocumentedClient(
     DevOpsConfiguration devOpsConfiguration,
     DevOpsUndocumentedConfiguration devOpsUndocumentedConfiguration,
+    Optional<AzCliSideCarConfiguration> azCliSideCarConfiguration,
     HttpClient httpClient,
     TimeProvider timeProvider,
     ILogger<AzureDevOpsUndocumentedClient> logger
