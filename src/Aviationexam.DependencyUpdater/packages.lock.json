@@ -1463,6 +1463,7 @@
       "aviationexam.dependencyupdater.repository.devops": {
         "type": "Project",
         "dependencies": {
+          "Aviationexam.DependencyUpdater.Common": "[1.0.0, )",
           "Aviationexam.DependencyUpdater.Constants": "[1.0.0, )",
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
           "Azure.Identity": "[1.14.0, )",
