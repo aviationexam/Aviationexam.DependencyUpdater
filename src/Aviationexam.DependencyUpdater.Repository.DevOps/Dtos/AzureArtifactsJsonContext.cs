@@ -6,6 +6,8 @@ namespace Aviationexam.DependencyUpdater.Repository.DevOps.Dtos;
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
     WriteIndented = false
 )]
+[JsonSerializable(typeof(AzSideCarRequest))]
+[JsonSerializable(typeof(AzSideCarResponse))]
 [JsonSerializable(typeof(HierarchyQueryRequest))]
 [JsonSerializable(typeof(HierarchyQueryResponse))]
 [JsonSerializable(typeof(ManualUpstreamIngestionRequest))]

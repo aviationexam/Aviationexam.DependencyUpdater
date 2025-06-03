@@ -28,31 +28,113 @@ public class AzureDevOpsUndocumentedClient(
     private readonly TokenCredential _credential = new DefaultAzureCredential();
     private readonly ConcurrentDictionary<string, AzureDevOpsToken> _tokenCache = new();
 
-    private async Task<string> GetAccessTokenAsync(
+    private async Task<string?> GetAccessTokenAsync(
         string azureDevopsResourceId,
         CancellationToken cancellationToken
     )
     {
-        var cacheKey = $"{azureDevopsResourceId}/.default";
-
         if (
-            _tokenCache.TryGetValue(cacheKey, out var cached)
+            _tokenCache.TryGetValue(azureDevopsResourceId, out var cached)
             && cached.ExpiresOn > timeProvider.GetUtcNow().AddMinutes(5)
         )
         {
             return cached.Token;
         }
 
+        var accessToken = azCliSideCarConfiguration.Value is null
+            ? await GetAccessTokenLocalAsync(
+                azureDevopsResourceId,
+                cancellationToken
+            )
+            : await GetAccessTokenFromSideCarAsync(
+                azCliSideCarConfiguration.Value,
+                azureDevopsResourceId,
+                cancellationToken
+            );
+
+        if (accessToken is null)
+        {
+            logger.LogError("Failed to obtain AccessToken for {ResourceId}", azureDevopsResourceId);
+
+            return null;
+        }
+
+        _tokenCache[azureDevopsResourceId] = accessToken;
+
+        logger.LogTrace("Created AccessToken for {ResourceId}", azureDevopsResourceId);
+
+        return accessToken.Token;
+    }
+
+    private async Task<AzureDevOpsToken?> GetAccessTokenFromSideCarAsync(
+        AzCliSideCarConfiguration azCliSideCar,
+        string azureDevopsResourceId,
+        CancellationToken cancellationToken
+    )
+    {
+        var jsonBody = JsonSerializer.Serialize(
+            new AzSideCarRequest
+            {
+                ResourceId = azureDevopsResourceId,
+            },
+            AzureArtifactsJsonContext.Default.AzSideCarRequest
+        );
+
+        var requestUri = new Uri(azCliSideCar.Address, UriKind.Absolute);
+
+        using var azSideCarRequestContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+        using var azSideCarRequest = new HttpRequestMessage(HttpMethod.Post, requestUri);
+        azSideCarRequest.Content = azSideCarRequestContent;
+        azSideCarRequest.Headers.Add("Accept", "application/json");
+        azSideCarRequest.Headers.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            azCliSideCar.Token
+        );
+
+        var azSideCarResponse = await httpClient.SendAsync(azSideCarRequest, cancellationToken);
+
+        if (azSideCarResponse.StatusCode is not HttpStatusCode.OK)
+        {
+            logger.LogError(
+                "AZ side car request failed with status code {StatusCode} ({StatusCodeNumber}), and response:\n{Response}",
+                azSideCarResponse.StatusCode,
+                (int) azSideCarResponse.StatusCode,
+                await azSideCarResponse.Content.ReadAsStringAsync(cancellationToken)
+            );
+
+            return null;
+        }
+
+        await using var hierarchyResponseStream = await azSideCarResponse.Content.ReadAsStreamAsync(cancellationToken);
+        var response = await JsonSerializer.DeserializeAsync<AzSideCarResponse>(
+            hierarchyResponseStream,
+            AzureArtifactsJsonContext.Default.AzSideCarResponse,
+            cancellationToken
+        );
+
+        if (response is null)
+        {
+            logger.LogError("Failed to deserialize AZ side car response.");
+            return null;
+        }
+
+        return new AzureDevOpsToken(response.Token, response.ExpiresOn);
+    }
+
+    private async Task<AzureDevOpsToken> GetAccessTokenLocalAsync(
+        string azureDevopsResourceId,
+        CancellationToken cancellationToken
+    )
+    {
+        var cacheKey = $"{azureDevopsResourceId}/.default";
+
         var accessToken = await _credential.GetTokenAsync(
             new TokenRequestContext([cacheKey]),
             cancellationToken
         );
 
-        _tokenCache[cacheKey] = new AzureDevOpsToken(accessToken.Token, accessToken.ExpiresOn);
-
-        logger.LogTrace("Created AccessToken for {ResourceId}", azureDevopsResourceId);
-
-        return accessToken.Token;
+        return new AzureDevOpsToken(accessToken.Token, accessToken.ExpiresOn);
     }
 
     internal async Task<IReadOnlyCollection<VersionEntry>?> GetContributionHierarchyQueryAsync(
