@@ -92,7 +92,7 @@ public class AzureDevOpsUndocumentedClient(
 
         try
         {
-            var azSideCarResponse = await httpClient.SendAsync(azSideCarRequest, cancellationToken);
+            using var azSideCarResponse = await httpClient.SendAsync(azSideCarRequest, cancellationToken);
 
             if (azSideCarResponse.StatusCode is not HttpStatusCode.OK)
             {
