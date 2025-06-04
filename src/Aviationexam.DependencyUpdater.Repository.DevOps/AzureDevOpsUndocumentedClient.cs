@@ -90,36 +90,45 @@ public class AzureDevOpsUndocumentedClient(
             azCliSideCar.Token
         );
 
-        var azSideCarResponse = await httpClient.SendAsync(azSideCarRequest, cancellationToken);
-
-        if (azSideCarResponse.StatusCode is not HttpStatusCode.OK)
+        try
         {
-            logger.LogError(
-                "AZ side car request for {ResourceId} failed with status code {StatusCode} ({StatusCodeNumber}), and response:\n{Response}",
-                azureDevopsResourceId,
-                azSideCarResponse.StatusCode,
-                (int) azSideCarResponse.StatusCode,
-                await azSideCarResponse.Content.ReadAsStringAsync(cancellationToken)
+            var azSideCarResponse = await httpClient.SendAsync(azSideCarRequest, cancellationToken);
+
+            if (azSideCarResponse.StatusCode is not HttpStatusCode.OK)
+            {
+                logger.LogError(
+                    "AZ side car request for {ResourceId} failed with status code {StatusCode} ({StatusCodeNumber}), and response:\n{Response}",
+                    azureDevopsResourceId,
+                    azSideCarResponse.StatusCode,
+                    (int) azSideCarResponse.StatusCode,
+                    await azSideCarResponse.Content.ReadAsStringAsync(cancellationToken)
+                );
+
+                return null;
+            }
+
+            await using var hierarchyResponseStream = await azSideCarResponse.Content.ReadAsStreamAsync(cancellationToken);
+            var response = await JsonSerializer.DeserializeAsync<AzSideCarResponse>(
+                hierarchyResponseStream,
+                AzureArtifactsJsonContext.Default.AzSideCarResponse,
+                cancellationToken
             );
 
-            return null;
+            if (response is null)
+            {
+                logger.LogError("Failed to deserialize AZ side car response for {ResourceId}.", azureDevopsResourceId);
+
+                return null;
+            }
+
+            return new AzureDevOpsToken(response.AccessToken, response.ExpiresOn);
         }
-
-        await using var hierarchyResponseStream = await azSideCarResponse.Content.ReadAsStreamAsync(cancellationToken);
-        var response = await JsonSerializer.DeserializeAsync<AzSideCarResponse>(
-            hierarchyResponseStream,
-            AzureArtifactsJsonContext.Default.AzSideCarResponse,
-            cancellationToken
-        );
-
-        if (response is null)
+        catch (HttpRequestException e)
         {
-            logger.LogError("Failed to deserialize AZ side car response for {ResourceId}.", azureDevopsResourceId);
+            logger.LogError(e, "Failed to connect to the AZ side car: {RequestUri}.", requestUri);
 
             return null;
         }
-
-        return new AzureDevOpsToken(response.AccessToken, response.ExpiresOn);
     }
 
     private async Task<AzureDevOpsToken?> GetAccessTokenLocalAsync(
