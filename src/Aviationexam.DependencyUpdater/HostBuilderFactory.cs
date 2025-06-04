@@ -32,7 +32,7 @@ public static class HostBuilderFactory
             .AddConsole()
             .AddDebug();
 
-        builder.Logging.AddFilter("Aviationexam.DependencyUpdater.Nuget.NugetCli", LogLevel.Trace);
+        //builder.Logging.AddFilter("Aviationexam.DependencyUpdater.Nuget.NugetCli", LogLevel.Trace);
 
         builder.Services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
         builder.Services.AddCommon();
