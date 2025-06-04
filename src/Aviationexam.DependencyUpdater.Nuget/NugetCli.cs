@@ -54,7 +54,7 @@ public class NugetCli(
 
         var tcs = new TaskCompletionSource<bool>();
 
-        process.Exited += [SuppressMessage("ReSharper", "AccessToDisposedClosure")](_, _) =>
+        process.Exited += [SuppressMessage("ReSharper", "AccessToDisposedClosure")] (_, _) =>
         {
             logger.Log(
                 process.ExitCode is 0 ? LogLevel.Trace : LogLevel.Error,
@@ -92,7 +92,7 @@ public class NugetCli(
             }
         }, cancellationToken);
 
-        await using var register = cancellationToken.Register([SuppressMessage("ReSharper", "AccessToDisposedClosure")]() =>
+        await using var register = cancellationToken.Register([SuppressMessage("ReSharper", "AccessToDisposedClosure")] () =>
         {
             logger.LogError("The dotnet restore killed");
 
