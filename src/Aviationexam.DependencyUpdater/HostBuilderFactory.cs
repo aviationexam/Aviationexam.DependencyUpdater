@@ -27,7 +27,11 @@ public static class HostBuilderFactory
 
         var builder = Host.CreateEmptyApplicationBuilder(settings);
 
-        builder.Services.AddLogging(x => x.AddConsole());
+        builder.Logging
+            .AddConfiguration(builder.Configuration.GetSection("Logging"))
+            .AddConsole()
+            .AddDebug();
+
         builder.Services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
         builder.Services.AddCommon();
         builder.Services.AddConfigurationParser();
