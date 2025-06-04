@@ -51,6 +51,7 @@ public sealed class NugetUpdater(
         var knownPullRequests = await UpdateSubmodulesAsync(
             sourceVersioning,
             repositoryConfig,
+            authConfig,
             gitMetadataConfig,
             updater,
             cancellationToken
@@ -87,6 +88,7 @@ public sealed class NugetUpdater(
         knownPullRequests = knownPullRequests.Concat(await ProcessPackageUpdatesAsync(
             sourceVersioning,
             repositoryConfig,
+            authConfig,
             gitMetadataConfig,
             groupedPackagesToUpdate,
             currentPackageVersions,
@@ -105,6 +107,7 @@ public sealed class NugetUpdater(
     private async Task<IEnumerable<string>> UpdateSubmodulesAsync(
         ISourceVersioning sourceVersioning,
         RepositoryConfig repositoryConfig,
+        NugetAuthConfig authConfig,
         GitMetadataConfig gitMetadataConfig,
         string updater,
         CancellationToken cancellationToken
@@ -156,6 +159,7 @@ public sealed class NugetUpdater(
                 $"Bump submodule {submodule}",
                 pullRequestId,
                 repositoryConfig,
+                authConfig,
                 gitMetadataConfig,
                 $"Bump submodule {submodule}",
                 updater,
@@ -268,6 +272,7 @@ public sealed class NugetUpdater(
     private async IAsyncEnumerable<string> ProcessPackageUpdatesAsync(
         ISourceVersioning sourceVersioning,
         RepositoryConfig repositoryConfig,
+        NugetAuthConfig authConfig,
         GitMetadataConfig gitMetadataConfig,
         Queue<(IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> NugetUpdateCandidates, GroupEntry GroupEntry)> groupedPackagesToUpdateQueue,
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
@@ -279,6 +284,7 @@ public sealed class NugetUpdater(
         {
             var pullRequestId = await ProcessSinglePackageGroupAsync(
                 repositoryConfig,
+                authConfig,
                 gitMetadataConfig,
                 groupedPackagesToUpdate.GroupEntry,
                 groupedPackagesToUpdate.NugetUpdateCandidates,
@@ -297,6 +303,7 @@ public sealed class NugetUpdater(
 
     private async Task<string?> ProcessSinglePackageGroupAsync(
         RepositoryConfig repositoryConfig,
+        NugetAuthConfig authConfig,
         GitMetadataConfig gitMetadataConfig,
         GroupEntry groupEntry,
         IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> nugetUpdateCandidates,
@@ -339,6 +346,7 @@ public sealed class NugetUpdater(
             updatedPackages.GetCommitMessage(),
             pullRequestId,
             repositoryConfig,
+            authConfig,
             gitMetadataConfig,
             groupEntry.GetTitle(nugetUpdateCandidates),
             updater,
@@ -427,6 +435,7 @@ public sealed class NugetUpdater(
         string? commitMessage,
         string? pullRequestId,
         RepositoryConfig repositoryConfig,
+        NugetAuthConfig authConfig,
         GitMetadataConfig gitMetadataConfig,
         string title,
         string updater,
@@ -460,7 +469,13 @@ public sealed class NugetUpdater(
             );
         }
 
-        await RestoreNugetPackagesAsync(gitWorkspace, repositoryConfig.SubdirectoryPath, gitMetadataConfig, cancellationToken);
+        await RestoreNugetPackagesAsync(
+            gitWorkspace,
+            repositoryConfig.SubdirectoryPath,
+            authConfig,
+            gitMetadataConfig,
+            cancellationToken
+        );
         gitWorkspace.Push();
 
         if (commitMessage is not null)
@@ -483,6 +498,7 @@ public sealed class NugetUpdater(
     private async Task RestoreNugetPackagesAsync(
         ISourceVersioningWorkspace gitWorkspace,
         string? subdirectoryPath,
+        NugetAuthConfig authConfig,
         GitMetadataConfig gitMetadataConfig,
         CancellationToken cancellationToken
     )
@@ -495,6 +511,7 @@ public sealed class NugetUpdater(
 
         var restored = await nugetCli.Restore(
             workingDirectory,
+            authConfig,
             cancellationToken
         );
 

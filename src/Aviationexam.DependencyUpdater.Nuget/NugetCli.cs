@@ -1,6 +1,9 @@
+using Aviationexam.DependencyUpdater.Nuget.Dtos;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,9 +15,24 @@ public class NugetCli(
 {
     public async Task<bool> Restore(
         string workingDirectory,
+        NugetAuthConfig authConfig,
         CancellationToken cancellationToken
     )
     {
+        var vssNugetExternalFeedEndpoints = new VssNugetExternalFeedEndpoints
+        {
+            EndpointCredentials =
+            [
+                .. authConfig.NugetFeedAuthentications.Select(x => new VssNugetExternalFeedEndpointCredential
+                {
+                    Endpoint = x.FeedUrl,
+                    Username = x.Username!,
+                    Password = x.Password!,
+                }),
+            ],
+        };
+        var vssNugetExternalFeedEndpointsJson = JsonSerializer.Serialize(vssNugetExternalFeedEndpoints, NugetJsonContext.Default.VssNugetExternalFeedEndpoints);
+
         var processStartInfo = new ProcessStartInfo
         {
             FileName = "dotnet",
@@ -24,6 +42,10 @@ public class NugetCli(
             RedirectStandardError = true,
             UseShellExecute = false,
             CreateNoWindow = true,
+            Environment =
+            {
+                ["VSS_NUGET_EXTERNAL_FEED_ENDPOINTS"] = vssNugetExternalFeedEndpointsJson,
+            },
         };
 
         using var process = new Process();
