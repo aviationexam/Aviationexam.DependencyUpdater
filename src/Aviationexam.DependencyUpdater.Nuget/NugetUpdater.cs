@@ -435,33 +435,6 @@ public sealed class NugetUpdater(
     {
         if (
             commitMessage is not null
-            && gitWorkspace.HasUncommitedChanges()
-        )
-        {
-            // Commit changes and create/update PR
-            gitWorkspace.CommitChanges(
-                message: commitMessage,
-                authorName: gitMetadataConfig.CommitAuthor,
-                authorEmail: gitMetadataConfig.CommitAuthorEmail
-            );
-
-            await RestoreNugetPackagesAsync(gitWorkspace, repositoryConfig.SubdirectoryPath, gitMetadataConfig, cancellationToken);
-            gitWorkspace.Push();
-
-            return await CreateOrUpdatePullRequestAsync(
-                gitWorkspace,
-                pullRequestId,
-                repositoryConfig,
-                gitMetadataConfig,
-                title,
-                commitMessage,
-                updater,
-                cancellationToken
-            );
-        }
-
-        if (
-            commitMessage is not null
             && pullRequestId is not null
         )
         {
@@ -472,8 +445,36 @@ public sealed class NugetUpdater(
                 description: commitMessage,
                 cancellationToken
             );
+        }
 
-            return pullRequestId;
+        if (
+            commitMessage is not null
+            && gitWorkspace.HasUncommitedChanges()
+        )
+        {
+            // Commit changes and create/update PR
+            gitWorkspace.CommitChanges(
+                message: commitMessage,
+                authorName: gitMetadataConfig.CommitAuthor,
+                authorEmail: gitMetadataConfig.CommitAuthorEmail
+            );
+        }
+
+        await RestoreNugetPackagesAsync(gitWorkspace, repositoryConfig.SubdirectoryPath, gitMetadataConfig, cancellationToken);
+        gitWorkspace.Push();
+
+        if (commitMessage is not null)
+        {
+            return await CreateOrUpdatePullRequestAsync(
+                gitWorkspace,
+                pullRequestId,
+                repositoryConfig,
+                gitMetadataConfig,
+                title,
+                commitMessage,
+                updater,
+                cancellationToken
+            );
         }
 
         return null;
