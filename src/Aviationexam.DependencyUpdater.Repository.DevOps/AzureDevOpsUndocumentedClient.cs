@@ -119,7 +119,7 @@ public class AzureDevOpsUndocumentedClient(
             return null;
         }
 
-        return new AzureDevOpsToken(response.Token, response.ExpiresOn);
+        return new AzureDevOpsToken(response.AccessToken, response.ExpiresOn);
     }
 
     private async Task<AzureDevOpsToken?> GetAccessTokenLocalAsync(
