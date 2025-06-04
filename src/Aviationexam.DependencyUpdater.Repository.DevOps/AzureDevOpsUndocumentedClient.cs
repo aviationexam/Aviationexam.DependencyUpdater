@@ -54,8 +54,6 @@ public class AzureDevOpsUndocumentedClient(
 
         if (accessToken is null)
         {
-            logger.LogError("Failed to obtain AccessToken for {ResourceId}", azureDevopsResourceId);
-
             return null;
         }
 
@@ -97,7 +95,8 @@ public class AzureDevOpsUndocumentedClient(
         if (azSideCarResponse.StatusCode is not HttpStatusCode.OK)
         {
             logger.LogError(
-                "AZ side car request failed with status code {StatusCode} ({StatusCodeNumber}), and response:\n{Response}",
+                "AZ side car request for {ResourceId} failed with status code {StatusCode} ({StatusCodeNumber}), and response:\n{Response}",
+                azureDevopsResourceId,
                 azSideCarResponse.StatusCode,
                 (int) azSideCarResponse.StatusCode,
                 await azSideCarResponse.Content.ReadAsStringAsync(cancellationToken)
@@ -115,26 +114,33 @@ public class AzureDevOpsUndocumentedClient(
 
         if (response is null)
         {
-            logger.LogError("Failed to deserialize AZ side car response.");
+            logger.LogError("Failed to deserialize AZ side car response for {ResourceId}.", azureDevopsResourceId);
+
             return null;
         }
 
         return new AzureDevOpsToken(response.Token, response.ExpiresOn);
     }
 
-    private async Task<AzureDevOpsToken> GetAccessTokenLocalAsync(
+    private async Task<AzureDevOpsToken?> GetAccessTokenLocalAsync(
         string azureDevopsResourceId,
         CancellationToken cancellationToken
     )
     {
-        var cacheKey = $"{azureDevopsResourceId}/.default";
+        try
+        {
+            var accessToken = await _credential.GetTokenAsync(
+                new TokenRequestContext([$"{azureDevopsResourceId}/.default"]),
+                cancellationToken
+            );
 
-        var accessToken = await _credential.GetTokenAsync(
-            new TokenRequestContext([cacheKey]),
-            cancellationToken
-        );
-
-        return new AzureDevOpsToken(accessToken.Token, accessToken.ExpiresOn);
+            return new AzureDevOpsToken(accessToken.Token, accessToken.ExpiresOn);
+        }
+        catch (CredentialUnavailableException e)
+        {
+            logger.LogError(e, "Failed to obtain AccessToken for {ResourceId}", azureDevopsResourceId);
+            return null;
+        }
     }
 
     internal async Task<IReadOnlyCollection<VersionEntry>?> GetContributionHierarchyQueryAsync(
