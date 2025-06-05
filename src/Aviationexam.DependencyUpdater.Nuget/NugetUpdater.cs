@@ -572,7 +572,10 @@ public sealed class NugetUpdater(
 
         foreach (var pullRequest in await repositoryClient.ListActivePullRequestsAsync(updater, cancellationToken))
         {
-            if (!knownPullRequests.Contains(pullRequest.PullRequestId))
+            if (
+                pullRequest.IsEmptyBranch
+                || !knownPullRequests.Contains(pullRequest.PullRequestId)
+            )
             {
                 logger.LogDebug("Abandoning pull request {PullRequestId}", pullRequest.PullRequestId);
 

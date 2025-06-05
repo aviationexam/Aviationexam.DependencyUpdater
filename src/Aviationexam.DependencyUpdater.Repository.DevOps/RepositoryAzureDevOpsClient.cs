@@ -49,7 +49,8 @@ public class RepositoryAzureDevOpsClient(
             .Select(x => new PullRequest(
                 x.PullRequestId.ToString(),
                 x.SourceRefName[GitConstants.HeadsPrefix.Length..],
-                x.LastMergeSourceCommit.CommitId
+                x.LastMergeSourceCommit.CommitId,
+                x.LastMergeSourceCommit.CommitId == x.LastMergeTargetCommit.CommitId
             ));
     }
 
