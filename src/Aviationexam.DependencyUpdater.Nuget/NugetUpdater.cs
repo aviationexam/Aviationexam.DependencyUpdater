@@ -565,10 +565,17 @@ public sealed class NugetUpdater(
         CancellationToken cancellationToken
     )
     {
+        if (logger.IsEnabled(LogLevel.Trace))
+        {
+            logger.LogTrace("Known pull requests {PullRequestsId}", string.Join(", ", knownPullRequests));
+        }
+
         foreach (var pullRequest in await repositoryClient.ListActivePullRequestsAsync(updater, cancellationToken))
         {
             if (!knownPullRequests.Contains(pullRequest.PullRequestId))
             {
+                logger.LogDebug("Abandoning pull request {PullRequestId}", pullRequest.PullRequestId);
+
                 await repositoryClient.AbandonPullRequestAsync(pullRequest, cancellationToken);
             }
         }
