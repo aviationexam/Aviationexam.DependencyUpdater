@@ -26,24 +26,30 @@ public class LoggingHandler : DelegatingHandler
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        _logger.LogTrace("Request: {Method} {RequestUri}", request.Method, request.RequestUri);
-
-        if (request.Content != null)
+        if (_logger.IsEnabled(LogLevel.Trace))
         {
-            await request.Content.LoadIntoBufferAsync(cancellationToken);
-            var requestBody = await request.Content.ReadAsStringAsync(cancellationToken);
+            _logger.LogTrace("Request: {Method} {RequestUri}", request.Method, request.RequestUri);
 
-            _logger.LogTrace("Request Body: {RequestBody}", requestBody);
+            if (request.Content != null)
+            {
+                await request.Content.LoadIntoBufferAsync(cancellationToken);
+                var requestBody = await request.Content.ReadAsStringAsync(cancellationToken);
+
+                _logger.LogTrace("Request Body: {RequestBody}", requestBody);
+            }
         }
 
         var response = await base.SendAsync(request, cancellationToken);
 
-        _logger.LogTrace("Response: {StatusCode}", response.StatusCode);
+        if (_logger.IsEnabled(LogLevel.Trace))
+        {
+            _logger.LogTrace("Response: {StatusCode}", response.StatusCode);
 
-        await response.Content.LoadIntoBufferAsync(cancellationToken);
-        var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+            await response.Content.LoadIntoBufferAsync(cancellationToken);
+            var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
 
-        _logger.LogTrace("Response Body: {ResponseBody}", responseBody);
+            _logger.LogTrace("Response Body: {ResponseBody}", responseBody);
+        }
 
         return response;
     }
