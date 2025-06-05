@@ -124,6 +124,14 @@ public sealed class GitSourceVersioningWorkspace(
         string authorEmail
     )
     {
+        // Check for unstaged changes before attempting rebase
+        if (HasUncommitedChanges())
+        {
+            logger.LogWarning("Unstaged changes exist in workdir, skipping rebase for branch {Branch}", worktree.WorktreeRepository.Head.FriendlyName);
+
+            return;
+        }
+
         var branch = worktree.WorktreeRepository.Head;
         var originalHead = branch.Tip;
 
@@ -184,7 +192,26 @@ public sealed class GitSourceVersioningWorkspace(
 
     private void ResetToOriginalHead(Repository repository, Commit originalHead, Branch branch)
     {
-        repository.Rebase.Abort();
+        try
+        {
+            // Only abort rebase if a rebase is in progress
+            var gitDir = repository.Info.Path;
+            var rebaseMerge = Path.Combine(gitDir, "rebase-merge");
+            var rebaseApply = Path.Combine(gitDir, "rebase-apply");
+
+            if (
+                Directory.Exists(rebaseMerge)
+                || Directory.Exists(rebaseApply)
+            )
+            {
+                repository.Rebase.Abort();
+            }
+        }
+        catch (NotFoundException)
+        {
+            // No rebase in progress, ignore
+        }
+
         repository.Reset(ResetMode.Hard, originalHead);
         Commands.Checkout(repository, branch);
     }
