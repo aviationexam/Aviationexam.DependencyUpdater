@@ -33,6 +33,7 @@ public static class HostBuilderFactory
             .AddDebug();
 
         //builder.Logging.AddFilter("Aviationexam.DependencyUpdater.Nuget.NugetCli", LogLevel.Trace);
+        builder.Logging.AddFilter("Aviationexam.DependencyUpdater.Repository.DevOps.RepositoryAzureDevOpsClient", LogLevel.Trace);
 
         builder.Services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
         builder.Services.AddCommon();
