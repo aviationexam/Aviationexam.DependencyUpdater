@@ -200,7 +200,6 @@ public class RepositoryAzureDevOpsClient(
     {
         var gitClient = await connection.GetClientAsync<GitHttpClient>(cancellationToken);
 
-
         var pullRequestIdInt = int.Parse(pullRequest.PullRequestId);
 
         // Abandon PR

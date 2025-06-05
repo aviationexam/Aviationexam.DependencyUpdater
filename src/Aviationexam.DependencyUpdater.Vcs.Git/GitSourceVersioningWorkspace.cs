@@ -79,7 +79,7 @@ public sealed class GitSourceVersioningWorkspace(
         ], new FetchOptions
         {
             CredentialsProvider = (_, _, _) => new DefaultCredentials(),
-        }, null);
+        }, logMessage: null);
 
         var upstreamBranch = submoduleRepository.Branches[$"{GitConstants.DefaultRemote}/{branch}"];
 
