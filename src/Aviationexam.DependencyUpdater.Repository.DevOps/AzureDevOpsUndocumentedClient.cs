@@ -92,7 +92,11 @@ public class AzureDevOpsUndocumentedClient(
 
         try
         {
-            using var azSideCarResponse = await httpClient.SendAsync(azSideCarRequest, cancellationToken);
+            using var azSideCarResponse = await httpClient.SendAsync(
+                azSideCarRequest,
+                timeout: TimeSpan.FromSeconds(5),
+                cancellationToken
+            );
 
             if (azSideCarResponse.StatusCode is not HttpStatusCode.OK)
             {
@@ -210,6 +214,7 @@ public class AzureDevOpsUndocumentedClient(
 
         using var hierarchyResponse = await httpClient.SendAsync(
             hierarchyRequest,
+            timeout: TimeSpan.FromSeconds(15),
             cancellationToken
         );
 
@@ -272,6 +277,7 @@ public class AzureDevOpsUndocumentedClient(
 
         using var manualUpstreamIngestionResponse = await httpClient.SendAsync(
             manualUpstreamIngestionRequest,
+            timeout: TimeSpan.FromSeconds(15),
             cancellationToken
         );
 
