@@ -13,12 +13,15 @@ namespace Aviationexam.DependencyUpdater;
 
 internal static class DefaultCommandHandler
 {
-    public static ICommandHandler GetHandler() => CommandHandler.Create<SourceConfiguration, DependabotConfigurationLoader, IEnvVariableProvider, NugetUpdater, CancellationToken>(
+    public static ICommandHandler GetHandler() => CommandHandler.Create<
+        SourceConfiguration, GitCredentialsConfiguration, DependabotConfigurationLoader, IEnvVariableProvider, NugetUpdater, CancellationToken
+    >(
         ExecuteWithBuilderAsync
     );
 
     private static async Task ExecuteWithBuilderAsync(
         SourceConfiguration sourceConfiguration,
+        GitCredentialsConfiguration gitCredentialsConfiguration,
         DependabotConfigurationLoader dependabotConfigurationLoader,
         IEnvVariableProvider envVariableProvider,
         NugetUpdater nugetUpdater,
@@ -83,6 +86,7 @@ internal static class DefaultCommandHandler
 
                 await nugetUpdater.ProcessUpdatesAsync(
                     repositoryConfig,
+                    gitCredentialsConfiguration,
                     gitMetadataConfig,
                     packageConfig,
                     authConfig,

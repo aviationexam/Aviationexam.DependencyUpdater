@@ -13,6 +13,21 @@ var directory = new Option<string>(
     IsRequired = true,
 };
 
+var gitUsernameArgument = new Option<string>(
+    "--git-username",
+    description: "The username used for authenticating with the remote Git repository."
+)
+{
+    IsRequired = false,
+};
+var gitPasswordArgument = new Option<string>(
+    "--git-password",
+    description: "The password or personal access token used for authenticating with the remote Git repository."
+)
+{
+    IsRequired = true,
+};
+
 var organization = new Option<string>(
     "--organization",
     description: "The name of the Azure DevOps organization (e.g., 'contoso')."
@@ -94,6 +109,8 @@ var azSideCarToken = new Option<string>(
 var rootCommand = new RootCommand("Dependency updater tool that processes dependency updates based on configuration files.")
 {
     directory,
+    gitUsernameArgument,
+    gitPasswordArgument,
     organization,
     project,
     repository,
@@ -111,6 +128,7 @@ return await new CommandLineBuilder(rootCommand)
     .UseHost(HostBuilderFactory.Create, (hostApplicationBuilder, modelBinder) =>
     {
         hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new SourceConfigurationBinder(directory));
+        hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new GitCredentialsConfigurationBinder(gitUsernameArgument, gitPasswordArgument));
         hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new DevOpsConfigurationBinder(organization, project, repository, pat, accountId));
         hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new DevOpsUndocumentedConfigurationBinder(nugetFeedId, serviceHost, accessTokenResourceId));
         hostApplicationBuilder.Services.AddOptionalBinder(modelBinder, _ => new AzCliSideCarConfigurationBinder(azSideCarAddress, azSideCarToken));

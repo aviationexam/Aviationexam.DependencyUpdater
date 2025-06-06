@@ -38,6 +38,7 @@ public sealed class NugetUpdater(
 {
     public async Task ProcessUpdatesAsync(
         RepositoryConfig repositoryConfig,
+        GitCredentialsConfiguration gitCredentialsConfiguration,
         GitMetadataConfig gitMetadataConfig,
         NugetPackageConfig packageConfig,
         NugetAuthConfig authConfig,
@@ -52,6 +53,7 @@ public sealed class NugetUpdater(
             sourceVersioning,
             repositoryConfig,
             authConfig,
+            gitCredentialsConfiguration,
             gitMetadataConfig,
             updater,
             cancellationToken
@@ -89,6 +91,7 @@ public sealed class NugetUpdater(
             sourceVersioning,
             repositoryConfig,
             authConfig,
+            gitCredentialsConfiguration,
             gitMetadataConfig,
             groupedPackagesToUpdate,
             currentPackageVersions,
@@ -108,6 +111,7 @@ public sealed class NugetUpdater(
         ISourceVersioning sourceVersioning,
         RepositoryConfig repositoryConfig,
         NugetAuthConfig authConfig,
+        GitCredentialsConfiguration gitCredentialsConfiguration,
         GitMetadataConfig gitMetadataConfig,
         string updater,
         CancellationToken cancellationToken
@@ -134,6 +138,7 @@ public sealed class NugetUpdater(
             var branchName = $"{GitConstants.UpdaterBranchPrefix}{updater}/submodule/{submodule}";
             using var temporaryDirectory = new TemporaryDirectoryProvider(create: false);
             using var gitWorkspace = sourceVersioning.CreateWorkspace(
+                gitCredentialsConfiguration,
                 temporaryDirectory.TemporaryDirectory,
                 sourceBranchName: repositoryConfig.SourceBranchName,
                 branchName: branchName,
@@ -273,6 +278,7 @@ public sealed class NugetUpdater(
         ISourceVersioning sourceVersioning,
         RepositoryConfig repositoryConfig,
         NugetAuthConfig authConfig,
+        GitCredentialsConfiguration gitCredentialsConfiguration,
         GitMetadataConfig gitMetadataConfig,
         Queue<(IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> NugetUpdateCandidates, GroupEntry GroupEntry)> groupedPackagesToUpdateQueue,
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
@@ -285,6 +291,7 @@ public sealed class NugetUpdater(
             var pullRequestId = await ProcessSinglePackageGroupAsync(
                 repositoryConfig,
                 authConfig,
+                gitCredentialsConfiguration,
                 gitMetadataConfig,
                 groupedPackagesToUpdate.GroupEntry,
                 groupedPackagesToUpdate.NugetUpdateCandidates,
@@ -304,6 +311,7 @@ public sealed class NugetUpdater(
     private async Task<string?> ProcessSinglePackageGroupAsync(
         RepositoryConfig repositoryConfig,
         NugetAuthConfig authConfig,
+        GitCredentialsConfiguration gitCredentialsConfiguration,
         GitMetadataConfig gitMetadataConfig,
         GroupEntry groupEntry,
         IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> nugetUpdateCandidates,
@@ -315,6 +323,7 @@ public sealed class NugetUpdater(
     {
         using var temporaryDirectory = new TemporaryDirectoryProvider(create: false);
         using var gitWorkspace = sourceVersioning.CreateWorkspace(
+            gitCredentialsConfiguration,
             temporaryDirectory.TemporaryDirectory,
             sourceBranchName: repositoryConfig.SourceBranchName,
             branchName: groupEntry.GetBranchName(updater),
