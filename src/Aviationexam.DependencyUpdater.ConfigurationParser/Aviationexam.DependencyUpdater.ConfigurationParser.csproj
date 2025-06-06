@@ -26,7 +26,7 @@
   </ItemGroup>
   
   <PropertyGroup>
-    <DependabotSchemaUrl>https://json.schemastore.org/dependabot-2.0.json</DependabotSchemaUrl>
+    <DependabotSchemaUrl>https://www.schemastore.org/dependabot-2.0.json</DependabotSchemaUrl>
     <DependabotSchemaFile>$(MSBuildProjectDirectory)/dependabot-2.0.json</DependabotSchemaFile>
   </PropertyGroup>
 
