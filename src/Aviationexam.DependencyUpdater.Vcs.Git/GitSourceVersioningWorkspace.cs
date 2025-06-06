@@ -231,7 +231,7 @@ public sealed class GitSourceVersioningWorkspace(
             pushRefSpec: $"+{canonicalName}:{canonicalName}",
             pushOptions: new PushOptions
             {
-                CredentialsProvider = (_, _, _) => new DefaultCredentials(),
+                CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
             }
         );
     }
