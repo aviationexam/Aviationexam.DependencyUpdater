@@ -175,13 +175,13 @@ public class AzureDevOpsUndocumentedClient(
             {
                 Properties = new Properties
                 {
-                    ProjectId = devOpsConfiguration.Project,
+                    ProjectId = devOpsUndocumentedConfiguration.NugetFeedProject,
                     FeedId = devOpsUndocumentedConfiguration.NugetFeedId,
                     Protocol = "NuGet",
                     PackageName = packageName,
                     SourcePage = new SourcePage
                     {
-                        Url = $"https://dev.azure.com/{devOpsConfiguration.Organization}/{devOpsConfiguration.Project}/_artifacts/feed/nuget-feed/NuGet/{packageName}/upstreams",
+                        Url = $"https://dev.azure.com/{devOpsConfiguration.Organization}/{devOpsUndocumentedConfiguration.NugetFeedProject}/_artifacts/feed/nuget-feed/NuGet/{packageName}/upstreams",
                         RouteId = "ms.azure-artifacts.artifacts-route",
                         RouteValues = new RouteValues
                         {
@@ -200,7 +200,7 @@ public class AzureDevOpsUndocumentedClient(
             AzureArtifactsJsonContext.Default.HierarchyQueryRequest
         );
 
-        var requestUri = new Uri($"https://pkgs.dev.azure.com/{devOpsConfiguration.Organization}/_apis/Contribution/HierarchyQuery/project/{devOpsConfiguration.Project}", UriKind.Absolute);
+        var requestUri = new Uri($"https://pkgs.dev.azure.com/{devOpsConfiguration.Organization}/_apis/Contribution/HierarchyQuery/project/{devOpsUndocumentedConfiguration.NugetFeedProject}", UriKind.Absolute);
 
         using var hierarchyRequestContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
