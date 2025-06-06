@@ -15,7 +15,8 @@ var directory = new Option<string>(
 
 var gitUsernameArgument = new Option<string>(
     "--git-username",
-    description: "The username used for authenticating with the remote Git repository."
+    description: "The username used for authenticating with the remote Git repository.",
+    getDefaultValue: () => string.Empty
 )
 {
     IsRequired = false,
