@@ -485,9 +485,13 @@ public sealed class NugetUpdater(
             gitMetadataConfig,
             cancellationToken
         );
-        gitWorkspace.Push();
 
-        if (commitMessage is not null)
+        var pushed = gitWorkspace.Push(sourceBranchName: repositoryConfig.SourceBranchName);
+
+        if (
+            pushed
+            && commitMessage is not null
+        )
         {
             return await CreateOrUpdatePullRequestAsync(
                 gitWorkspace,

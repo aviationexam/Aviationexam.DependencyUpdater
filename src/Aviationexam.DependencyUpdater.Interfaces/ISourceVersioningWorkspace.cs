@@ -31,5 +31,7 @@ public interface ISourceVersioningWorkspace : IDisposable
         string authorEmail
     );
 
-    void Push();
+    bool Push(
+        string? sourceBranchName
+    );
 }

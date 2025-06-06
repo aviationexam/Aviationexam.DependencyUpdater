@@ -218,11 +218,25 @@ public sealed class GitSourceVersioningWorkspace(
         Commands.Checkout(repository, branch);
     }
 
-    public void Push()
+    public bool Push(string? sourceBranchName)
     {
         var repository = worktree.WorktreeRepository;
 
         var canonicalName = repository.Head.CanonicalName;
+
+        var sourceBranch = worktree.WorktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{sourceBranchName}"];
+        var remotePushedBranch = worktree.WorktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{repository.Head.FriendlyName}"];
+        var pushedBranch = worktree.WorktreeRepository.Branches[repository.Head.FriendlyName];
+
+        if (
+            remotePushedBranch is null
+            && sourceBranch.Tip.Equals(pushedBranch.Tip)
+        )
+        {
+            logger.LogInformation("Branch {BranchName} is empty, skipping push", canonicalName);
+
+            return false;
+        }
 
         logger.LogInformation("Push {BranchName}", canonicalName);
 
@@ -234,5 +248,7 @@ public sealed class GitSourceVersioningWorkspace(
                 CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
             }
         );
+
+        return true;
     }
 }
