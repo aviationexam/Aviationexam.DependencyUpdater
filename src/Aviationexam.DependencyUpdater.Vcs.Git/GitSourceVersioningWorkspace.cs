@@ -1,5 +1,6 @@
 using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Vcs.Git.Extensions;
 using LibGit2Sharp;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,6 +10,7 @@ using System.Linq;
 namespace Aviationexam.DependencyUpdater.Vcs.Git;
 
 public sealed class GitSourceVersioningWorkspace(
+    GitCredentialsConfiguration gitCredentials,
     Repository rootRepository,
     Worktree worktree,
     TimeProvider timeProvider,
@@ -78,7 +80,7 @@ public sealed class GitSourceVersioningWorkspace(
             $"+{GitConstants.HeadsPrefix}{branch}:{GitConstants.RemoteRef(GitConstants.DefaultRemote)}{branch}",
         ], new FetchOptions
         {
-            CredentialsProvider = (_, _, _) => new DefaultCredentials(),
+            CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
         }, logMessage: null);
 
         var upstreamBranch = submoduleRepository.Branches[$"{GitConstants.DefaultRemote}/{branch}"];
@@ -142,8 +144,8 @@ public sealed class GitSourceVersioningWorkspace(
             $"+{GitConstants.HeadsPrefix}{sourceBranchName}:{GitConstants.RemoteRef(GitConstants.DefaultRemote)}{sourceBranchName}",
         ], new FetchOptions
         {
-            CredentialsProvider = (_, _, _) => new DefaultCredentials(),
-        }, null);
+            CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
+        }, logMessage: null);
 
         var upstreamBranch = worktree.WorktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{branch.FriendlyName}"];
 

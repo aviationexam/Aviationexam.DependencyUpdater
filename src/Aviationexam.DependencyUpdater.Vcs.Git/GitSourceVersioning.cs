@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Vcs.Git.Extensions;
 using LibGit2Sharp;
 using Microsoft.Extensions.Logging;
 using System;
@@ -60,6 +61,7 @@ public sealed class GitSourceVersioning(
     }
 
     public ISourceVersioningWorkspace CreateWorkspace(
+        GitCredentialsConfiguration gitCredentials,
         string targetDirectory,
         string? sourceBranchName,
         string branchName,
@@ -106,11 +108,16 @@ public sealed class GitSourceVersioning(
                 new SubmoduleUpdateOptions
                 {
                     Init = true,
+                    FetchOptions =
+                    {
+                        CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
+                    },
                 }
             );
         }
 
         return new GitSourceVersioningWorkspace(
+            gitCredentials,
             repository,
             worktree,
             timeProvider,

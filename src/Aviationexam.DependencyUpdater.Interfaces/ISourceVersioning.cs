@@ -10,6 +10,7 @@ public interface ISourceVersioning : IDisposable
     );
 
     ISourceVersioningWorkspace CreateWorkspace(
+        GitCredentialsConfiguration gitCredentials,
         string targetDirectory,
         string? sourceBranchName,
         string branchName,
