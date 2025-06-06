@@ -69,6 +69,14 @@ var accountId = new Option<string>(
     IsRequired = true,
 };
 
+var nugetFeedProject = new Option<string>(
+    "--nuget-project",
+    description: "The Azure DevOps project that contains the NuGet artifacts feed."
+)
+{
+    IsRequired = true,
+};
+
 var nugetFeedId = new Option<string>(
     "--nuget-feed-id",
     description: "The ID of the Azure Artifacts NuGet feed used for dependency resolution."
@@ -117,6 +125,7 @@ var rootCommand = new RootCommand("Dependency updater tool that processes depend
     repository,
     pat,
     accountId,
+    nugetFeedProject,
     nugetFeedId,
     serviceHost,
     accessTokenResourceId,
@@ -131,7 +140,7 @@ return await new CommandLineBuilder(rootCommand)
         hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new SourceConfigurationBinder(directory));
         hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new GitCredentialsConfigurationBinder(gitUsernameArgument, gitPasswordArgument));
         hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new DevOpsConfigurationBinder(organization, project, repository, pat, accountId));
-        hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new DevOpsUndocumentedConfigurationBinder(nugetFeedId, serviceHost, accessTokenResourceId));
+        hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new DevOpsUndocumentedConfigurationBinder(nugetFeedProject, nugetFeedId, serviceHost, accessTokenResourceId));
         hostApplicationBuilder.Services.AddOptionalBinder(modelBinder, _ => new AzCliSideCarConfigurationBinder(azSideCarAddress, azSideCarToken));
     })
     .UseDefaults()

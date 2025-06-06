@@ -252,7 +252,7 @@ public class AzureDevOpsUndocumentedClient(
         );
 
         var requestUri = new Uri(
-            $"https://pkgs.dev.azure.com/{devOpsConfiguration.Organization}/{devOpsConfiguration.Project}/_apis/packaging/feeds/{devOpsUndocumentedConfiguration.NugetFeedId}/NuGet/packages/{packageName}/versions/{packageVersion}/ManualUpstreamIngestion",
+            $"https://pkgs.dev.azure.com/{devOpsConfiguration.Organization}/{devOpsUndocumentedConfiguration.NugetFeedProject}/_apis/packaging/feeds/{devOpsUndocumentedConfiguration.NugetFeedId}/NuGet/packages/{packageName}/versions/{packageVersion}/ManualUpstreamIngestion",
             UriKind.Absolute
         );
 
