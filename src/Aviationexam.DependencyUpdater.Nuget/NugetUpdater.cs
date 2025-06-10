@@ -13,8 +13,7 @@ public sealed class NugetUpdater(
     PackageUpdater packageUpdater,
     SubmoduleUpdater submoduleUpdater,
     PullRequestManager pullRequestManager,
-    ISourceVersioningFactory sourceVersioningFactory,
-    GroupResolverFactory groupResolverFactory
+    ISourceVersioningFactory sourceVersioningFactory
 )
 {
     public async Task ProcessUpdatesAsync(
@@ -49,8 +48,6 @@ public sealed class NugetUpdater(
             packageConfig.FallbackRegistries
         );
 
-        var groupResolver = groupResolverFactory.Create(packageConfig.GroupEntries);
-
         // Analyze dependencies
         var dependencyAnalysisResult = await dependencyAnalyzer.AnalyzeDependenciesAsync(
             nugetUpdaterContext,
@@ -65,7 +62,7 @@ public sealed class NugetUpdater(
         var groupedPackagesToUpdate = packageUpdater.GroupPackagesForUpdate(
             dependencyAnalysisResult.DependenciesToUpdate,
             dependencyAnalysisResult.PackageFlags,
-            groupResolver
+            packageConfig.GroupEntries
         );
 
         // Process package updates and create pull requests

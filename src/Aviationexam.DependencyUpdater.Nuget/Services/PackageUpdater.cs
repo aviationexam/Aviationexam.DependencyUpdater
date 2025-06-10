@@ -17,15 +17,17 @@ public sealed class PackageUpdater(
     NugetVersionWriter nugetVersionWriter,
     NugetCli nugetCli,
     IRepositoryClient repositoryClient,
+    GroupResolverFactory groupResolverFactory,
     ILogger<PackageUpdater> logger
 )
 {
     public Queue<(IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> NugetUpdateCandidates, GroupEntry GroupEntry)> GroupPackagesForUpdate(
         IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<DependencyAnalyzer.PossiblePackageVersion>> dependencyToUpdate,
         IDictionary<Package, DependencyAnalyzer.EDependencyFlag> packageFlags,
-        GroupResolver groupResolver
+        IReadOnlyCollection<GroupEntry> groupEntries
     )
     {
+        var groupResolver = groupResolverFactory.Create(groupEntries);
         var packagesToUpdate = dependencyAnalyzer.FilterPackagesToUpdate(dependencyToUpdate, packageFlags)
             .Select(x => new
             {
