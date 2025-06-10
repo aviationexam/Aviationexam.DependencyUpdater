@@ -1,6 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Configurations;
+using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Factories;
 using Aviationexam.DependencyUpdater.Nuget.Grouping;
 using Aviationexam.DependencyUpdater.Nuget.Services;
@@ -14,6 +15,7 @@ public sealed class NugetUpdater(
     ISourceVersioningFactory sourceVersioningFactory,
     SubmoduleUpdater submoduleUpdater,
     NugetContextFactory contextFactory,
+    NugetVersionFetcherFactory nugetVersionFetcherFactory,
     DependencyAnalyzer dependencyAnalyzer,
     PackageGrouper packageGrouper,
     PackageUpdater packageUpdater,
@@ -49,7 +51,8 @@ public sealed class NugetUpdater(
         var currentPackageVersions = nugetUpdaterContext.GetCurrentPackageVersions();
         var sourceRepositories = nugetUpdaterContext.GetSourceRepositories(
             authConfig.NugetFeedAuthentications,
-            packageConfig.FallbackRegistries
+            packageConfig.FallbackRegistries,
+            nugetVersionFetcherFactory
         );
 
         // Analyze dependencies

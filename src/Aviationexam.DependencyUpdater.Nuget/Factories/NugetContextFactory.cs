@@ -4,7 +4,6 @@ using Aviationexam.DependencyUpdater.Nuget.Parsers;
 using Aviationexam.DependencyUpdater.Nuget.Services;
 using System.Collections.Generic;
 using System.Linq;
-using NugetUpdaterContext = Aviationexam.DependencyUpdater.Nuget.Services.NugetUpdaterContext;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Factories;
 
@@ -12,8 +11,7 @@ public sealed class NugetContextFactory(
     NugetFinder nugetFinder,
     NugetConfigParser nugetConfigParser,
     NugetDirectoryPackagesPropsParser nugetDirectoryPackagesPropsParser,
-    NugetCsprojParser nugetCsprojParser,
-    NugetVersionFetcherFactory nugetVersionFetcherFactory
+    NugetCsprojParser nugetCsprojParser
 )
 {
     public NugetUpdaterContext CreateContext(
@@ -36,8 +34,7 @@ public sealed class NugetContextFactory(
 
         return new NugetUpdaterContext(
             nugetConfigurations,
-            dependencies,
-            nugetVersionFetcherFactory
+            dependencies
         );
     }
 }
