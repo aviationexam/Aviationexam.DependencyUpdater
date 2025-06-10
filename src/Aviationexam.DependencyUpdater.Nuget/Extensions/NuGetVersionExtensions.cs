@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Nuget.Services;
 using NuGet.Versioning;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Extensions;

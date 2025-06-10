@@ -2,7 +2,9 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
+using NuGet.Packaging;
 using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -162,7 +164,7 @@ public sealed class DependencyAnalyzer(
         {
             if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
             {
-                using var nugetCache = new NuGet.Protocol.Core.Types.SourceCacheContext();
+                using var nugetCache = new SourceCacheContext();
 
                 nugetCache.MaxAge = cachingConfiguration.MaxCacheAge;
 
@@ -248,7 +250,7 @@ public sealed class DependencyAnalyzer(
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
         IDictionary<Package, EDependencyFlag> packageFlags,
         Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
-        NuGet.Packaging.PackageDependencyGroup compatiblePackageDependencyGroup,
+        PackageDependencyGroup compatiblePackageDependencyGroup,
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks
     )
     {
@@ -302,11 +304,11 @@ public sealed class DependencyAnalyzer(
             {
                 if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
                 {
-                    using var nugetCache = new NuGet.Protocol.Core.Types.SourceCacheContext();
+                    using var nugetCache = new SourceCacheContext();
 
                     nugetCache.MaxAge = cachingConfiguration.MaxCacheAge;
 
-                    var packageMetadataMap = new Dictionary<EPackageSource, NuGet.Protocol.Core.Types.IPackageSearchMetadata>();
+                    var packageMetadataMap = new Dictionary<EPackageSource, IPackageSearchMetadata>();
 
                     var defaultSourcePackageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
                         sourceRepository.SourceRepository,
@@ -377,7 +379,7 @@ public sealed class DependencyAnalyzer(
         dependenciesToRevisit.Push((package, [
             .. compatiblePackageDependencyGroups.Aggregate(
                 [],
-                (IEnumerable<Package> acc, NuGet.Packaging.PackageDependencyGroup compatiblePackageDependencyGroup) => acc.Concat(ProcessPackageDependencyGroup(
+                (IEnumerable<Package> acc, PackageDependencyGroup compatiblePackageDependencyGroup) => acc.Concat(ProcessPackageDependencyGroup(
                     ignoreResolver,
                     currentPackageVersions,
                     packageFlags,

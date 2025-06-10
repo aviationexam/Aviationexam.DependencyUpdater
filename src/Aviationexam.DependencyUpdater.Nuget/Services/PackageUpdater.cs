@@ -1,5 +1,6 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Nuget.Configurations;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Writers;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using NuGet.Protocol;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -266,7 +268,7 @@ public sealed class PackageUpdater(
         var workingDirectory = gitWorkspace.GetWorkspaceDirectory();
         if (subdirectoryPath is not null)
         {
-            workingDirectory = System.IO.Path.Join(workingDirectory, subdirectoryPath);
+            workingDirectory = Path.Join(workingDirectory, subdirectoryPath);
         }
 
         var restored = await nugetCli.Restore(

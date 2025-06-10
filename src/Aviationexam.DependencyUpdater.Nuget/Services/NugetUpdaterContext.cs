@@ -1,5 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Nuget.Configurations;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
+using Aviationexam.DependencyUpdater.Nuget.Factories;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -31,5 +33,5 @@ public sealed class NugetUpdaterContext(
         IReadOnlyDictionary<string, string> fallbackRegistries
     ) => AsRecord().GetSourceRepositories(nugetFeedAuthentications, fallbackRegistries, nugetVersionFetcherFactory);
 
-    private Nuget.NugetUpdaterContext AsRecord() => new(NugetConfigurations, Dependencies);
+    private Models.NugetUpdaterContext AsRecord() => new(NugetConfigurations, Dependencies);
 }

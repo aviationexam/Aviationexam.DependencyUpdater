@@ -1,3 +1,5 @@
+using Aviationexam.DependencyUpdater.Nuget.Models;
+
 namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 
 public static class NugetPackageSourceMapExtensions
