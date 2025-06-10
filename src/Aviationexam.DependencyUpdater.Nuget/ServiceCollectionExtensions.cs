@@ -16,6 +16,7 @@ public static class ServiceCollectionExtensions
         .AddScoped<NugetUpdater>()
         .AddScoped<DependencyAnalyzer>()
         .AddScoped<NugetContextFactory>()
+        .AddScoped<PackageFilterer>()
         .AddScoped<PackageUpdater>()
         .AddScoped<PackageGrouper>()
         .AddScoped<PullRequestManager>()

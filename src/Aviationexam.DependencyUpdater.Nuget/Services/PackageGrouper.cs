@@ -7,7 +7,7 @@ using System.Linq;
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
 public sealed class PackageGrouper(
-    DependencyAnalyzer dependencyAnalyzer,
+    PackageFilterer packageFilterer,
     GroupResolverFactory groupResolverFactory
 )
 {
@@ -17,7 +17,7 @@ public sealed class PackageGrouper(
     )
     {
         var groupResolver = groupResolverFactory.Create(groupEntries);
-        var packagesToUpdate = dependencyAnalyzer.FilterPackagesToUpdate(dependencyAnalysisResult)
+        var packagesToUpdate = packageFilterer.FilterPackagesToUpdate(dependencyAnalysisResult)
             .Select(x => new
             {
                 NugetUpdateCandidate = new NugetUpdateCandidate<PackageSearchMetadataRegistration>(
