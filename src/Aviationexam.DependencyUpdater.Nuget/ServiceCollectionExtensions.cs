@@ -1,3 +1,4 @@
+using Aviationexam.DependencyUpdater.Nuget.Services;
 using Microsoft.Extensions.DependencyInjection;
 using NuGet.Protocol.Core.Types;
 
@@ -13,6 +14,11 @@ public static class ServiceCollectionExtensions
         .AddScoped<NugetCsprojParser>()
         .AddScoped<NugetDirectoryPackagesPropsParser>()
         .AddScoped<NugetUpdater>()
+        .AddScoped<DependencyAnalyzer>()
+        .AddScoped<NugetContextFactory>()
+        .AddScoped<PackageUpdater>()
+        .AddScoped<PullRequestManager>()
+        .AddScoped<SubmoduleUpdater>()
         .AddSingleton<Repository.RepositoryFactory>(_ => Repository.Factory)
         .AddScoped<NuGet.Common.ILogger, NuGetLoggerAdapter>()
         .AddScoped<NugetVersionFetcherFactory>()
