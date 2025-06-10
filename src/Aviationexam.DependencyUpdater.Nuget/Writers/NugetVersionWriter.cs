@@ -1,6 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
+using Aviationexam.DependencyUpdater.Nuget.Models;
 using NuGet.Protocol;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Aviationexam.DependencyUpdater.Nuget;
+namespace Aviationexam.DependencyUpdater.Nuget.Writers;
 
 public sealed class NugetVersionWriter(
     NugetDirectoryPackagesPropsVersionWriter directoryPackagesPropsVersionWriter,
