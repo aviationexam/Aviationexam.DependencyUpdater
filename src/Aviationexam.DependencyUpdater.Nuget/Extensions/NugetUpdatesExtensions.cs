@@ -1,3 +1,4 @@
+using Aviationexam.DependencyUpdater.Nuget.Models;
 using NuGet.Protocol;
 using System.Collections.Generic;
 using System.Text;

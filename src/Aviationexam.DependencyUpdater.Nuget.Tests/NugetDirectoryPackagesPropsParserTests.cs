@@ -1,5 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Nuget.Models;
+using Aviationexam.DependencyUpdater.Nuget.Parsers;
 using Aviationexam.DependencyUpdater.TestsInfrastructure;
 using Microsoft.Extensions.Logging;
 using NSubstitute;

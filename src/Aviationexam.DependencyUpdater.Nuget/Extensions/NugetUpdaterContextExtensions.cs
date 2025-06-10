@@ -1,4 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Nuget.Configurations;
+using Aviationexam.DependencyUpdater.Nuget.Factories;
+using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
