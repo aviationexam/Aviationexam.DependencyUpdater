@@ -1,10 +1,11 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
+using Aviationexam.DependencyUpdater.Nuget.Services;
 using NuGet.Protocol;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Aviationexam.DependencyUpdater.Nuget.Services;
+namespace Aviationexam.DependencyUpdater.Nuget.Filtering;
 
 public sealed class PackageFilterer
 {

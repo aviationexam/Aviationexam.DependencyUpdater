@@ -1,5 +1,6 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Nuget.Grouping;
 using Aviationexam.DependencyUpdater.Nuget.Services;
 using System.Linq;
 using System.Threading;
