@@ -13,56 +13,12 @@ using System.Threading.Tasks;
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
 public sealed class PackageUpdater(
-    DependencyAnalyzer dependencyAnalyzer,
     NugetVersionWriter nugetVersionWriter,
     NugetCli nugetCli,
     IRepositoryClient repositoryClient,
-    GroupResolverFactory groupResolverFactory,
     ILogger<PackageUpdater> logger
 )
 {
-    public Queue<(IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> NugetUpdateCandidates, GroupEntry GroupEntry)> GroupPackagesForUpdate(
-        IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<DependencyAnalyzer.PossiblePackageVersion>> dependencyToUpdate,
-        IDictionary<Package, DependencyAnalyzer.EDependencyFlag> packageFlags,
-        IReadOnlyCollection<GroupEntry> groupEntries
-    )
-    {
-        var groupResolver = groupResolverFactory.Create(groupEntries);
-        var packagesToUpdate = dependencyAnalyzer.FilterPackagesToUpdate(dependencyToUpdate, packageFlags)
-            .Select(x => new
-            {
-                NugetUpdateCandidate = new NugetUpdateCandidate<PackageSearchMetadataRegistration>(
-                    x.Key,
-                    x.Value
-                ),
-                GroupEntry = groupResolver.ResolveGroup(x.Key.NugetPackage.GetPackageName()),
-            })
-            .GroupBy(x => x.GroupEntry, x => x.NugetUpdateCandidate);
-
-        var groupedPackagesToUpdateQueue = new Queue<(IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> NugetUpdateCandidates, GroupEntry GroupEntry)>();
-
-        foreach (var grouping in packagesToUpdate)
-        {
-            var groupEntry = grouping.Key;
-            if (groupEntry == groupResolver.Empty)
-            {
-                foreach (var nugetUpdateCandidate in grouping)
-                {
-                    groupedPackagesToUpdateQueue.Enqueue((
-                        [nugetUpdateCandidate],
-                        new GroupEntry($"{nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName()}/{nugetUpdateCandidate.PackageVersion.GetSerializedVersion()}", [])
-                    ));
-                }
-            }
-            else
-            {
-                groupedPackagesToUpdateQueue.Enqueue((grouping.ToList(), groupEntry));
-            }
-        }
-
-        return groupedPackagesToUpdateQueue;
-    }
-
     public async IAsyncEnumerable<string> ProcessPackageUpdatesAsync(
         ISourceVersioning sourceVersioning,
         RepositoryConfig repositoryConfig,

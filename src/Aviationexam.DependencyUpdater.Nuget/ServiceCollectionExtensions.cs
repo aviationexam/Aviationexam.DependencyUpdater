@@ -17,6 +17,7 @@ public static class ServiceCollectionExtensions
         .AddScoped<DependencyAnalyzer>()
         .AddScoped<NugetContextFactory>()
         .AddScoped<PackageUpdater>()
+        .AddScoped<PackageGrouper>()
         .AddScoped<PullRequestManager>()
         .AddScoped<SubmoduleUpdater>()
         .AddSingleton<Repository.RepositoryFactory>(_ => Repository.Factory)

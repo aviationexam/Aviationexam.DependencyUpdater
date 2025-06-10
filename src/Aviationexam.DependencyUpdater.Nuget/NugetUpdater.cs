@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 namespace Aviationexam.DependencyUpdater.Nuget;
 
 public sealed class NugetUpdater(
+    ISourceVersioningFactory sourceVersioningFactory,
+    SubmoduleUpdater submoduleUpdater,
     NugetContextFactory contextFactory,
     DependencyAnalyzer dependencyAnalyzer,
+    PackageGrouper packageGrouper,
     PackageUpdater packageUpdater,
-    SubmoduleUpdater submoduleUpdater,
-    PullRequestManager pullRequestManager,
-    ISourceVersioningFactory sourceVersioningFactory
+    PullRequestManager pullRequestManager
 )
 {
     public async Task ProcessUpdatesAsync(
@@ -59,9 +60,8 @@ public sealed class NugetUpdater(
         );
 
         // Group packages for updates
-        var groupedPackagesToUpdate = packageUpdater.GroupPackagesForUpdate(
-            dependencyAnalysisResult.DependenciesToUpdate,
-            dependencyAnalysisResult.PackageFlags,
+        var groupedPackagesToUpdate = packageGrouper.GroupPackagesForUpdate(
+            dependencyAnalysisResult,
             packageConfig.GroupEntries
         );
 

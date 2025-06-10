@@ -20,23 +20,6 @@ public sealed class DependencyAnalyzer(
     ILogger<DependencyAnalyzer> logger
 )
 {
-    public record DependencyAnalysisResult(
-        IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>> DependenciesToUpdate,
-        IDictionary<Package, EDependencyFlag> PackageFlags
-    );
-
-    public record PossiblePackageVersion(
-        PackageVersion<PackageSearchMetadataRegistration> PackageVersion,
-        IReadOnlyCollection<NuGet.Packaging.PackageDependencyGroup> CompatiblePackageDependencyGroups
-    );
-
-    public enum EDependencyFlag
-    {
-        Unknown,
-        ContainsIgnoredDependency,
-        Valid,
-    }
-
     public async Task<DependencyAnalysisResult> AnalyzeDependenciesAsync(
         NugetUpdaterContext nugetUpdaterContext,
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
@@ -426,11 +409,10 @@ public sealed class DependencyAnalyzer(
     }
 
     public IEnumerable<KeyValuePair<NugetDependency, PackageVersion<PackageSearchMetadataRegistration>>> FilterPackagesToUpdate(
-        IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>> dependencyToUpdate,
-        IDictionary<Package, EDependencyFlag> packageFlags
+        DependencyAnalysisResult dependencyAnalysisResult
     )
     {
-        foreach (var (dependency, possiblePackageVersions) in dependencyToUpdate)
+        foreach (var (dependency, possiblePackageVersions) in dependencyAnalysisResult.DependenciesToUpdate)
         {
             var newPossiblePackageVersions = possiblePackageVersions
                 .Select(possiblePackageVersion => possiblePackageVersion with
@@ -440,7 +422,7 @@ public sealed class DependencyAnalyzer(
                         .. possiblePackageVersion
                             .CompatiblePackageDependencyGroups
                             .Where(group => group.Packages.All(package =>
-                                packageFlags.TryGetValue(
+                                dependencyAnalysisResult.PackageFlags.TryGetValue(
                                     new Package(package.Id, package.VersionRange.MinVersion!.MapToPackageVersion()),
                                     out var flag
                                 ) && flag is EDependencyFlag.Valid
