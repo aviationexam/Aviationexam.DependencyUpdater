@@ -14,8 +14,7 @@ public sealed class NugetUpdater(
     SubmoduleUpdater submoduleUpdater,
     PullRequestManager pullRequestManager,
     ISourceVersioningFactory sourceVersioningFactory,
-    GroupResolverFactory groupResolverFactory,
-    IgnoreResolverFactory ignoreResolverFactory
+    GroupResolverFactory groupResolverFactory
 )
 {
     public async Task ProcessUpdatesAsync(
@@ -49,14 +48,14 @@ public sealed class NugetUpdater(
             authConfig.NugetFeedAuthentications,
             packageConfig.FallbackRegistries
         );
-        var ignoreResolver = ignoreResolverFactory.Create(packageConfig.IgnoreEntries);
+
         var groupResolver = groupResolverFactory.Create(packageConfig.GroupEntries);
 
         // Analyze dependencies
         var dependencyAnalysisResult = await dependencyAnalyzer.AnalyzeDependenciesAsync(
             nugetUpdaterContext,
             sourceRepositories,
-            ignoreResolver,
+            packageConfig.IgnoreEntries,
             currentPackageVersions,
             cachingConfiguration,
             cancellationToken

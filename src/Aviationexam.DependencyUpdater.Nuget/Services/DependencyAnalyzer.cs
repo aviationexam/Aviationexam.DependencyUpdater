@@ -16,6 +16,7 @@ public sealed class DependencyAnalyzer(
     FutureVersionResolver futureVersionResolver,
     TargetFrameworksResolver targetFrameworksResolver,
     IgnoredDependenciesResolver ignoredDependenciesResolver,
+    IgnoreResolverFactory ignoreResolverFactory,
     ILogger<DependencyAnalyzer> logger
 )
 {
@@ -39,12 +40,14 @@ public sealed class DependencyAnalyzer(
     public async Task<DependencyAnalysisResult> AnalyzeDependenciesAsync(
         NugetUpdaterContext nugetUpdaterContext,
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
-        IgnoreResolver ignoreResolver,
+        IReadOnlyCollection<IgnoreEntry> ignoreEntries,
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
         CachingConfiguration cachingConfiguration,
         CancellationToken cancellationToken
     )
     {
+        var ignoreResolver = ignoreResolverFactory.Create(ignoreEntries);
+
         // Resolve possible package versions
         var possiblePackageVersions = await ResolvePossiblePackageVersionsAsync(
             nugetUpdaterContext,
