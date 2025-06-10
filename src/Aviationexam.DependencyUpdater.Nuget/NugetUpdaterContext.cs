@@ -1,3 +1,4 @@
+using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
 
 namespace Aviationexam.DependencyUpdater.Nuget;

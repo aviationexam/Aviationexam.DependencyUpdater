@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;

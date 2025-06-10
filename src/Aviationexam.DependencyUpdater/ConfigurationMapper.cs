@@ -2,6 +2,7 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.ConfigurationParser;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget;
+using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
 using System.Linq;
 

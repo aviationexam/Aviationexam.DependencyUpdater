@@ -1,4 +1,6 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Nuget.Models;
+using Aviationexam.DependencyUpdater.Nuget.Parsers;
 using System.Collections.Generic;
 using System.Linq;
 
