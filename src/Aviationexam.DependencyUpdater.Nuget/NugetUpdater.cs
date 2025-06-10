@@ -42,6 +42,7 @@ public sealed class NugetUpdater(
         GitMetadataConfig gitMetadataConfig,
         NugetPackageConfig packageConfig,
         NugetAuthConfig authConfig,
+        CachingConfiguration cachingConfiguration,
         CancellationToken cancellationToken
     )
     {
@@ -76,6 +77,7 @@ public sealed class NugetUpdater(
             sourceRepositories,
             ignoreResolver,
             currentPackageVersions,
+            cachingConfiguration,
             cancellationToken
         );
 
@@ -185,6 +187,7 @@ public sealed class NugetUpdater(
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
         IgnoreResolver ignoreResolver,
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        CachingConfiguration cachingConfiguration,
         CancellationToken cancellationToken
     )
     {
@@ -193,6 +196,7 @@ public sealed class NugetUpdater(
             nugetUpdaterContext,
             sourceRepositories,
             ignoreResolver,
+            cachingConfiguration,
             cancellationToken
         );
 
@@ -224,6 +228,7 @@ public sealed class NugetUpdater(
             sourceRepositories,
             nugetUpdaterContext,
             dependenciesToRevisit,
+            cachingConfiguration,
             cancellationToken
         );
 
@@ -674,6 +679,7 @@ public sealed class NugetUpdater(
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
         NugetUpdaterContext context,
         Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit,
+        CachingConfiguration cachingConfiguration,
         CancellationToken cancellationToken
     )
     {
@@ -688,6 +694,8 @@ public sealed class NugetUpdater(
                 if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
                 {
                     using var nugetCache = new SourceCacheContext();
+
+                    nugetCache.MaxAge = cachingConfiguration.MaxCacheAge;
 
                     var packageMetadataMap = new Dictionary<EPackageSource, IPackageSearchMetadata>();
 
@@ -882,6 +890,7 @@ public sealed class NugetUpdater(
         NugetUpdaterContext nugetUpdaterContext,
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
         IgnoreResolver ignoreResolver,
+        CachingConfiguration cachingConfiguration,
         CancellationToken cancellationToken
     )
     {
@@ -908,6 +917,7 @@ public sealed class NugetUpdater(
                     dependency,
                     sources,
                     sourceRepositories,
+                    cachingConfiguration,
                     token
                 );
 
@@ -948,6 +958,7 @@ public sealed class NugetUpdater(
         NugetDependency dependency,
         IReadOnlyCollection<NugetSource> sources,
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
+        CachingConfiguration cachingConfiguration,
         CancellationToken cancellationToken
     )
     {
@@ -957,6 +968,8 @@ public sealed class NugetUpdater(
             if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
             {
                 using var nugetCache = new SourceCacheContext();
+
+                nugetCache.MaxAge = cachingConfiguration.MaxCacheAge;
 
                 var rawPackageVersions = await nugetVersionFetcher.FetchPackageVersionsAsync(
                     sourceRepository.SourceRepository,

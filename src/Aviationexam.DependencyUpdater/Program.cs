@@ -1,4 +1,6 @@
 using Aviationexam.DependencyUpdater;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
@@ -115,6 +117,15 @@ var azSideCarToken = new Option<string>(
     IsRequired = false,
 };
 
+var resetCache = new Option<bool>(
+    "--reset-cache",
+    description: "Clears the internal dependency cache before processing updates.",
+    getDefaultValue: () => false
+)
+{
+    IsRequired = false,
+};
+
 var rootCommand = new RootCommand("Dependency updater tool that processes dependency updates based on configuration files.")
 {
     directory,
@@ -131,6 +142,7 @@ var rootCommand = new RootCommand("Dependency updater tool that processes depend
     accessTokenResourceId,
     azSideCarAddress,
     azSideCarToken,
+    resetCache,
 };
 rootCommand.Handler = DefaultCommandHandler.GetHandler();
 
@@ -142,6 +154,10 @@ return await new CommandLineBuilder(rootCommand)
         hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new DevOpsConfigurationBinder(organization, project, repository, pat, accountId));
         hostApplicationBuilder.Services.AddBinder(modelBinder, _ => new DevOpsUndocumentedConfigurationBinder(nugetFeedProject, nugetFeedId, serviceHost, accessTokenResourceId));
         hostApplicationBuilder.Services.AddOptionalBinder(modelBinder, _ => new AzCliSideCarConfigurationBinder(azSideCarAddress, azSideCarToken));
+        hostApplicationBuilder.Services.AddBinder(modelBinder, x => new CachingConfigurationBinder(
+            x.GetRequiredService<TimeProvider>(),
+            resetCache
+        ));
     })
     .UseDefaults()
     .Build()

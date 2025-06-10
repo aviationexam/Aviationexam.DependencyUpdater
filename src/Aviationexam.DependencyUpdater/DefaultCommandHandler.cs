@@ -14,7 +14,7 @@ namespace Aviationexam.DependencyUpdater;
 internal static class DefaultCommandHandler
 {
     public static ICommandHandler GetHandler() => CommandHandler.Create<
-        SourceConfiguration, GitCredentialsConfiguration, DependabotConfigurationLoader, IEnvVariableProvider, NugetUpdater, CancellationToken
+        SourceConfiguration, GitCredentialsConfiguration, DependabotConfigurationLoader, IEnvVariableProvider, NugetUpdater, CachingConfiguration, CancellationToken
     >(
         ExecuteWithBuilderAsync
     );
@@ -25,6 +25,7 @@ internal static class DefaultCommandHandler
         DependabotConfigurationLoader dependabotConfigurationLoader,
         IEnvVariableProvider envVariableProvider,
         NugetUpdater nugetUpdater,
+        CachingConfiguration cachingConfiguration,
         CancellationToken cancellationToken
     )
     {
@@ -90,6 +91,7 @@ internal static class DefaultCommandHandler
                     gitMetadataConfig,
                     packageConfig,
                     authConfig,
+                    cachingConfiguration,
                     cancellationToken
                 );
             }
