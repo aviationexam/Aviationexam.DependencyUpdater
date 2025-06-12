@@ -1,5 +1,4 @@
 using Aviationexam.DependencyUpdater.Nuget.Models;
-using NuGet.Protocol;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,7 +8,7 @@ public static class NugetUpdatesExtensions
 {
     public static string? GetCommitMessage<T>(
         this T updatedPackages
-    ) where T : IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>>
+    ) where T : IReadOnlyCollection<NugetUpdateCandidate>
     {
         var stringBuilder = new StringBuilder();
 
@@ -19,7 +18,7 @@ public static class NugetUpdatesExtensions
         foreach (var updatedPackage in updatedPackages)
         {
             stringBuilder.AppendLine(
-                $"- Update {updatedPackage.NugetDependency.NugetPackage.GetPackageName()} from {updatedPackage.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion()} to {updatedPackage.PackageVersion.GetSerializedVersion()}"
+                $"- Update {updatedPackage.NugetDependency.NugetPackage.GetPackageName()} from {updatedPackage.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion()} to {updatedPackage.PossiblePackageVersion.PackageVersion.GetSerializedVersion()}"
             );
         }
 

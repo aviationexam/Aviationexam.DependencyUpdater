@@ -5,7 +5,6 @@ using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Writers;
 using Microsoft.Extensions.Logging;
-using NuGet.Protocol;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,7 +28,7 @@ public sealed class PackageUpdater(
         NugetAuthConfig authConfig,
         GitCredentialsConfiguration gitCredentialsConfiguration,
         GitMetadataConfig gitMetadataConfig,
-        Queue<(IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> NugetUpdateCandidates, GroupEntry GroupEntry)> groupedPackagesToUpdateQueue,
+        Queue<(IReadOnlyCollection<NugetUpdateCandidate> NugetUpdateCandidates, GroupEntry GroupEntry)> groupedPackagesToUpdateQueue,
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
         string updater,
         [EnumeratorCancellation] CancellationToken cancellationToken
@@ -63,7 +62,7 @@ public sealed class PackageUpdater(
         GitCredentialsConfiguration gitCredentialsConfiguration,
         GitMetadataConfig gitMetadataConfig,
         GroupEntry groupEntry,
-        IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> nugetUpdateCandidates,
+        IReadOnlyCollection<NugetUpdateCandidate> nugetUpdateCandidates,
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
         ISourceVersioning sourceVersioning,
         string updater,
@@ -112,14 +111,14 @@ public sealed class PackageUpdater(
         );
     }
 
-    private async IAsyncEnumerable<NugetUpdateCandidate<PackageSearchMetadataRegistration>> UpdatePackageVersionsAsync(
+    private async IAsyncEnumerable<NugetUpdateCandidate> UpdatePackageVersionsAsync(
         ISourceVersioningWorkspace gitWorkspace,
-        IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> packagesToUpdate,
+        IReadOnlyCollection<NugetUpdateCandidate> packagesToUpdate,
         Dictionary<string, PackageVersion> groupPackageVersions,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
-        var packagesToUpdateQueue = new Queue<(NugetUpdateCandidate<PackageSearchMetadataRegistration> NugetUpdateCandidate, int Epoch)>(
+        var packagesToUpdateQueue = new Queue<(NugetUpdateCandidate NugetUpdateCandidate, int Epoch)>(
             packagesToUpdate.Select(x => (x, 0))
         );
         var epoch = 1;
@@ -157,13 +156,13 @@ public sealed class PackageUpdater(
     }
 
     private void LogVersionConflict(
-        NugetUpdateCandidate<PackageSearchMetadataRegistration> nugetUpdateCandidate,
+        NugetUpdateCandidate nugetUpdateCandidate,
         Dictionary<string, PackageVersion> groupPackageVersions
     )
     {
         if (
             !nugetVersionWriter.IsCompatibleWithCurrentVersions(
-                nugetUpdateCandidate.PackageVersion,
+                nugetUpdateCandidate.PossiblePackageVersion,
                 groupPackageVersions,
                 out var conflictingPackageVersion
             )
@@ -172,7 +171,7 @@ public sealed class PackageUpdater(
             logger.LogError(
                 "Cannot update '{PackageName}' to version '{Version}': it depends on '{ConflictingPackageName}' version '{ConflictingPackageVersionRequired}', but the current solution uses version '{ConflictingPackageVersionCurrent}'",
                 nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
-                nugetUpdateCandidate.PackageVersion.GetSerializedVersion(),
+                nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion(),
                 conflictingPackageVersion.Name,
                 conflictingPackageVersion.Version.GetSerializedVersion(),
                 groupPackageVersions[conflictingPackageVersion.Name].GetSerializedVersion()
@@ -182,7 +181,7 @@ public sealed class PackageUpdater(
         {
             logger.LogError(
                 "Cannot set version '{Version}' for package '{PackageName}' due to conflicting version constraints from other packages",
-                nugetUpdateCandidate.PackageVersion.GetSerializedVersion(),
+                nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion(),
                 nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName()
             );
         }

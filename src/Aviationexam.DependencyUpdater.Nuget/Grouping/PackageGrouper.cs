@@ -2,7 +2,6 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Filtering;
 using Aviationexam.DependencyUpdater.Nuget.Models;
-using NuGet.Protocol;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,7 +12,7 @@ public sealed class PackageGrouper(
     GroupResolverFactory groupResolverFactory
 )
 {
-    public Queue<(IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> NugetUpdateCandidates, GroupEntry GroupEntry)> GroupPackagesForUpdate(
+    public Queue<(IReadOnlyCollection<NugetUpdateCandidate> NugetUpdateCandidates, GroupEntry GroupEntry)> GroupPackagesForUpdate(
         DependencyAnalysisResult dependencyAnalysisResult,
         IReadOnlyCollection<GroupEntry> groupEntries
     )
@@ -22,15 +21,12 @@ public sealed class PackageGrouper(
         var packagesToUpdate = packageFilterer.FilterPackagesToUpdate(dependencyAnalysisResult)
             .Select(x => new
             {
-                NugetUpdateCandidate = new NugetUpdateCandidate<PackageSearchMetadataRegistration>(
-                    x.Key,
-                    x.Value
-                ),
-                GroupEntry = groupResolver.ResolveGroup(x.Key.NugetPackage.GetPackageName()),
+                NugetUpdateCandidate = x,
+                GroupEntry = groupResolver.ResolveGroup(x.NugetDependency.NugetPackage.GetPackageName()),
             })
             .GroupBy(x => x.GroupEntry, x => x.NugetUpdateCandidate);
 
-        var groupedPackagesToUpdateQueue = new Queue<(IReadOnlyCollection<NugetUpdateCandidate<PackageSearchMetadataRegistration>> NugetUpdateCandidates, GroupEntry GroupEntry)>();
+        var groupedPackagesToUpdateQueue = new Queue<(IReadOnlyCollection<NugetUpdateCandidate> NugetUpdateCandidates, GroupEntry GroupEntry)>();
 
         foreach (var grouping in packagesToUpdate)
         {
@@ -41,7 +37,7 @@ public sealed class PackageGrouper(
                 {
                     groupedPackagesToUpdateQueue.Enqueue((
                         [nugetUpdateCandidate],
-                        new GroupEntry($"{nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName()}/{nugetUpdateCandidate.PackageVersion.GetSerializedVersion()}", [])
+                        new GroupEntry($"{nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName()}/{nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion()}", [])
                     ));
                 }
             }

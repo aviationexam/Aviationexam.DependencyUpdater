@@ -1,8 +1,6 @@
-using Aviationexam.DependencyUpdater.Common;
-
 namespace Aviationexam.DependencyUpdater.Nuget.Models;
 
-public record NugetUpdateCandidate<TOriginalReference>(
+public record NugetUpdateCandidate(
     NugetDependency NugetDependency,
-    PackageVersion<TOriginalReference> PackageVersion
+    PossiblePackageVersion PossiblePackageVersion
 );

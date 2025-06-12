@@ -2,7 +2,6 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
-using NuGet.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -17,14 +16,14 @@ public sealed class NugetVersionWriter(
     IRepositoryClient repositoryClient
 )
 {
-    public async Task<ESetVersion> TrySetVersion<T>(
-        NugetUpdateCandidate<T> nugetUpdateCandidate,
+    public async Task<ESetVersion> TrySetVersion(
+        NugetUpdateCandidate nugetUpdateCandidate,
         ISourceVersioningWorkspace gitWorkspace,
         IDictionary<string, PackageVersion> groupPackageVersions,
         CancellationToken cancellationToken
     )
     {
-        if (!IsCompatibleWithCurrentVersions(nugetUpdateCandidate.PackageVersion, groupPackageVersions, out _))
+        if (!IsCompatibleWithCurrentVersions(nugetUpdateCandidate.PossiblePackageVersion, groupPackageVersions, out _))
         {
             return ESetVersion.VersionNotSet;
         }
@@ -40,7 +39,7 @@ public sealed class NugetVersionWriter(
 
         await repositoryClient.EnsurePackageVersionIsAvailableAsync(
             nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
-            nugetUpdateCandidate.PackageVersion.GetSerializedVersion(),
+            nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion(),
             cancellationToken
         );
 
@@ -53,43 +52,35 @@ public sealed class NugetVersionWriter(
         };
     }
 
-    public bool IsCompatibleWithCurrentVersions<T>(
-        PackageVersion<T> packageVersion,
+    public bool IsCompatibleWithCurrentVersions(
+        PossiblePackageVersion possiblePackageVersion,
         IDictionary<string, PackageVersion> groupPackageVersions,
         [NotNullWhen(false)] out Package? conflictingPackageVersion
     )
     {
-        if (packageVersion is PackageVersion<PackageSearchMetadataRegistration> packageSearchMetadataRegistration)
+        foreach (var dependencySet in possiblePackageVersion.CompatiblePackageDependencyGroups)
         {
-            foreach (var (_, originalReference) in packageSearchMetadataRegistration.OriginalReference)
+            foreach (var dependencyPackage in dependencySet.Packages)
             {
-                foreach (var dependencySet in originalReference.DependencySets)
+                if (groupPackageVersions.TryGetValue(dependencyPackage.Id, out var dependencyCurrentVersion))
                 {
-                    foreach (var dependencyPackage in dependencySet.Packages)
+                    if (
+                        dependencyPackage.VersionRange.MinVersion is { } dependencyPackageMinVersion
+                        && dependencyPackageMinVersion.MapToPackageVersion() is { } dependencyPackageVersion
+                        && dependencyPackageVersion > dependencyCurrentVersion
+                    )
                     {
-                        if (groupPackageVersions.TryGetValue(dependencyPackage.Id, out var dependencyCurrentVersion))
-                        {
-                            if (
-                                dependencyPackage.VersionRange.MinVersion is { } dependencyPackageMinVersion
-                                && dependencyPackageMinVersion.MapToPackageVersion() is { } dependencyPackageVersion
-                                && dependencyPackageVersion > dependencyCurrentVersion
-                            )
-                            {
-                                conflictingPackageVersion = new Package(
-                                    dependencyPackage.Id,
-                                    dependencyPackageVersion
-                                );
-                                return false;
-                            }
-                        }
+                        conflictingPackageVersion = new Package(
+                            dependencyPackage.Id,
+                            dependencyPackageVersion
+                        );
+                        return false;
                     }
                 }
             }
-
-            conflictingPackageVersion = null;
-            return true;
         }
 
-        throw new ArgumentOutOfRangeException(nameof(packageVersion), packageVersion, null);
+        conflictingPackageVersion = null;
+        return true;
     }
 }

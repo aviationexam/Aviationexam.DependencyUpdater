@@ -1,7 +1,6 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
-using NuGet.Protocol;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,7 +8,7 @@ namespace Aviationexam.DependencyUpdater.Nuget.Filtering;
 
 public sealed class PackageFilterer
 {
-    public IEnumerable<KeyValuePair<NugetDependency, PackageVersion<PackageSearchMetadataRegistration>>> FilterPackagesToUpdate(
+    public IEnumerable<NugetUpdateCandidate> FilterPackagesToUpdate(
         DependencyAnalysisResult dependencyAnalysisResult
     )
     {
@@ -35,12 +34,12 @@ public sealed class PackageFilterer
 
             if (newPossiblePackageVersions.Count > 0)
             {
-                yield return KeyValuePair.Create(
+                var possiblePackageVersion = newPossiblePackageVersions
+                    .OrderByDescending(x => x.PackageVersion)
+                    .First();
+                yield return new NugetUpdateCandidate(
                     dependency,
-                    newPossiblePackageVersions
-                        .OrderByDescending(x => x.PackageVersion)
-                        .First()
-                        .PackageVersion
+                    possiblePackageVersion
                 );
             }
         }

@@ -98,7 +98,8 @@ public record PackageVersion<TOriginalReference> : PackageVersion
     public PackageVersion(
         PackageVersion packageVersion,
         IReadOnlyDictionary<EPackageSource, TOriginalReference> OriginalReference
-    ) : base(packageVersion.Version,
+    ) : base(
+        packageVersion.Version,
         packageVersion.IsPrerelease,
         packageVersion.ReleaseLabels,
         packageVersion.ReleaseLabelsComparer

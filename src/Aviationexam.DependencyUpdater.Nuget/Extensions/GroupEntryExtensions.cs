@@ -7,9 +7,9 @@ namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 
 public static class GroupEntryExtensions
 {
-    public static string GetTitle<T>(
+    public static string GetTitle(
         this GroupEntry groupEntry,
-        IReadOnlyCollection<NugetUpdateCandidate<T>> nugetUpdateCandidates
+        IReadOnlyCollection<NugetUpdateCandidate> nugetUpdateCandidates
     )
     {
         if (
@@ -19,7 +19,7 @@ public static class GroupEntryExtensions
         {
             var name = candidate.NugetDependency.NugetPackage.GetPackageName();
             var from = candidate.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
-            var to = candidate.PackageVersion.GetSerializedVersion();
+            var to = candidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
             return $"Bump {name} from {from} to {to}";
         }
 
