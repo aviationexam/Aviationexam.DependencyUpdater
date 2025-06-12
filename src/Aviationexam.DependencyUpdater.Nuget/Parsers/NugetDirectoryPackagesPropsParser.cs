@@ -17,6 +17,7 @@ public class NugetDirectoryPackagesPropsParser(
     public IEnumerable<NugetDependency> Parse(
         string repositoryPath,
         NugetFile nugetFile,
+        IReadOnlyDictionary<string, IReadOnlyCollection<NugetTargetFramework>> packagesTargetFrameworks,
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks
     )
     {
@@ -48,7 +49,9 @@ public class NugetDirectoryPackagesPropsParser(
                     x.Include!,
                     new NuGetVersion(x.Version!)
                 ),
-                targetFrameworks
+                packagesTargetFrameworks.TryGetValue(x.Include!, out var packageTargetFrameworks)
+                    ? packageTargetFrameworks.Union(targetFrameworks).ToList()
+                    : targetFrameworks
             ));
     }
 }

@@ -6,6 +6,7 @@ using Aviationexam.DependencyUpdater.TestsInfrastructure;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using Xunit;
 
@@ -64,7 +65,12 @@ public class NugetDirectoryPackagesPropsParserTests
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks = [new("net9.0")];
 
         var nugetFile = new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps);
-        var response = directoryPackagesPropsParser.Parse(temporaryDirectoryProvider.TemporaryDirectory, nugetFile, targetFrameworks);
+        var response = directoryPackagesPropsParser.Parse(
+            temporaryDirectoryProvider.TemporaryDirectory,
+            nugetFile,
+            ImmutableDictionary<string, IReadOnlyCollection<NugetTargetFramework>>.Empty,
+            targetFrameworks
+        );
 
         Assert.Equal([
             new NugetDependency(nugetFile, new NugetPackageVersion("Meziantou.Analyzer", "2.0.195"), targetFrameworks),
@@ -99,7 +105,12 @@ public class NugetDirectoryPackagesPropsParserTests
             logger
         );
 
-        var response = directoryPackagesPropsParser.Parse(directoryPath, new NugetFile("Directory.Packages.props", ENugetFileType.Csproj), []);
+        var response = directoryPackagesPropsParser.Parse(
+            directoryPath,
+            new NugetFile("Directory.Packages.props", ENugetFileType.Csproj),
+            ImmutableDictionary<string, IReadOnlyCollection<NugetTargetFramework>>.Empty,
+            []
+        );
 
         Assert.Empty(response);
     }

@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Parsers;
 using Aviationexam.DependencyUpdater.Nuget.Services;
@@ -23,13 +24,20 @@ public sealed class NugetContextFactory(
             .SelectMany(x => nugetConfigParser.Parse(repositoryConfig.RepositoryPath, x))
             .ToList();
 
+        var csprojDependencies = nugetFinder.GetAllCsprojFiles(repositoryConfig)
+            .SelectMany(x => nugetCsprojParser.Parse(repositoryConfig.RepositoryPath, x))
+            .ToList();
+
+        var packagesTargetFrameworks = csprojDependencies
+            .GroupBy(x => x.NugetPackage.GetPackageName())
+            .ToDictionary(
+                x => x.Key,
+                IReadOnlyCollection<NugetTargetFramework> (x) => x.SelectMany(y => y.TargetFrameworks).Distinct().ToList()
+            );
+
         var dependencies = nugetFinder.GetDirectoryPackagesPropsFiles(repositoryConfig)
-            .SelectMany(x => nugetDirectoryPackagesPropsParser.Parse(repositoryConfig.RepositoryPath, x, defaultTargetFrameworks))
-            .Concat(
-                nugetFinder.GetAllCsprojFiles(repositoryConfig)
-                    .SelectMany(x => nugetCsprojParser.Parse(repositoryConfig.RepositoryPath, x))
-                    .Where(x => x.NugetPackage is NugetPackageReference { VersionRange: not null })
-            )
+            .SelectMany(x => nugetDirectoryPackagesPropsParser.Parse(repositoryConfig.RepositoryPath, x, packagesTargetFrameworks, defaultTargetFrameworks))
+            .Concat(csprojDependencies.Where(x => x.NugetPackage is NugetPackageReference { VersionRange: not null }))
             .ToList();
 
         return new NugetUpdaterContext(
