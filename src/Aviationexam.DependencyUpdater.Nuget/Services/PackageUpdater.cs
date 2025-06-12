@@ -34,21 +34,24 @@ public sealed class PackageUpdater(
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
-        while (groupedPackagesToUpdateQueue.TryDequeue(out var groupedPackagesToUpdate))
-        {
-            var pullRequestId = await ProcessSinglePackageGroupAsync(
-                repositoryConfig,
-                authConfig,
-                gitCredentialsConfiguration,
-                gitMetadataConfig,
-                groupedPackagesToUpdate.GroupEntry,
-                groupedPackagesToUpdate.NugetUpdateCandidates,
-                currentPackageVersions,
-                sourceVersioning,
-                updater,
-                cancellationToken
-            );
+        // Process package groups in parallel
+        var tasks = groupedPackagesToUpdateQueue.Select(groupedPackagesToUpdate => ProcessSinglePackageGroupAsync(
+            repositoryConfig,
+            authConfig,
+            gitCredentialsConfiguration,
+            gitMetadataConfig,
+            groupedPackagesToUpdate.GroupEntry,
+            groupedPackagesToUpdate.NugetUpdateCandidates,
+            currentPackageVersions,
+            sourceVersioning,
+            updater,
+            cancellationToken
+        ));
 
+        // Wait for all tasks to complete and yield results
+        await foreach (var pullRequestIdTask in Task.WhenEach(tasks).WithCancellation(cancellationToken))
+        {
+            var pullRequestId = await pullRequestIdTask;
             if (pullRequestId is not null)
             {
                 yield return pullRequestId;
