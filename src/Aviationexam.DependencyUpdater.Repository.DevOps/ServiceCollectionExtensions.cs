@@ -8,6 +8,7 @@ using Polly;
 using Polly.Retry;
 using System;
 using System.Net.Http;
+using System.Threading;
 
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 
@@ -16,7 +17,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddRepositoryDevOps(
         this IServiceCollection services
     ) => services
-        .AddHttpClient<AzureDevOpsUndocumentedClient>()
+        .AddHttpClient<AzureDevOpsUndocumentedClient>(x => x.Timeout = Timeout.InfiniteTimeSpan)
         .AddHttpMessageHandler(static x => new LoggingHandler(x.GetRequiredService<ILogger<AzureDevOpsUndocumentedClient>>()))
         .Services
         .AddScoped<VssHttpMessageHandler>(static x => x.CreateVssHttpMessageHandler())
