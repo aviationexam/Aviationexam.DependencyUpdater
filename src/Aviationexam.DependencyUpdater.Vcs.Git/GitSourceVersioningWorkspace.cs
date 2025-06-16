@@ -81,12 +81,15 @@ public sealed class GitSourceVersioningWorkspace(
 
         var remote = submoduleRepository.Network.Remotes[GitConstants.DefaultRemote];
 
-        Commands.Fetch(submoduleRepository, remote.Name, [
-            $"+{GitConstants.HeadsPrefix}{branch}:{GitConstants.RemoteRef(GitConstants.DefaultRemote)}{branch}",
-        ], new FetchOptions
+        lock (gitRepositoryLock)
         {
-            CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
-        }, logMessage: null);
+            Commands.Fetch(submoduleRepository, remote.Name, [
+                $"+{GitConstants.HeadsPrefix}{branch}:{GitConstants.RemoteRef(GitConstants.DefaultRemote)}{branch}",
+            ], new FetchOptions
+            {
+                CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
+            }, logMessage: null);
+        }
 
         var upstreamBranch = submoduleRepository.Branches[$"{GitConstants.DefaultRemote}/{branch}"];
 
@@ -106,23 +109,26 @@ public sealed class GitSourceVersioningWorkspace(
     {
         var repo = worktree.WorktreeRepository;
 
-        // Stage all changes (modified, added, removed)
-        Commands.Stage(repo, "*");
-
-        // Check if there is anything to commit
-        if (!repo.RetrieveStatus().IsDirty)
+        lock (gitRepositoryLock)
         {
-            return;
+            // Stage all changes (modified, added, removed)
+            Commands.Stage(repo, "*");
+
+            // Check if there is anything to commit
+            if (!repo.RetrieveStatus().IsDirty)
+            {
+                return;
+            }
+
+            // Create the commit
+            var signature = new Signature(
+                name: authorName,
+                email: authorEmail,
+                timeProvider.GetUtcNow()
+            );
+
+            repo.Commit(message, signature, signature);
         }
-
-        // Create the commit
-        var signature = new Signature(
-            name: authorName,
-            email: authorEmail,
-            timeProvider.GetUtcNow()
-        );
-
-        repo.Commit(message, signature, signature);
     }
 
     public void TryPullRebase(
@@ -144,13 +150,16 @@ public sealed class GitSourceVersioningWorkspace(
 
         var remote = worktree.WorktreeRepository.Network.Remotes[GitConstants.DefaultRemote];
 
-        Commands.Fetch(worktree.WorktreeRepository, remote.Name, [
-            $"+{GitConstants.HeadsPrefix}{branch.FriendlyName}:{GitConstants.RemoteRef(GitConstants.DefaultRemote)}{branch.FriendlyName}",
-            $"+{GitConstants.HeadsPrefix}{sourceBranchName}:{GitConstants.RemoteRef(GitConstants.DefaultRemote)}{sourceBranchName}",
-        ], new FetchOptions
+        lock (gitRepositoryLock)
         {
-            CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
-        }, logMessage: null);
+            Commands.Fetch(worktree.WorktreeRepository, remote.Name, [
+                $"+{GitConstants.HeadsPrefix}{branch.FriendlyName}:{GitConstants.RemoteRef(GitConstants.DefaultRemote)}{branch.FriendlyName}",
+                $"+{GitConstants.HeadsPrefix}{sourceBranchName}:{GitConstants.RemoteRef(GitConstants.DefaultRemote)}{sourceBranchName}",
+            ], new FetchOptions
+            {
+                CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
+            }, logMessage: null);
+        }
 
         var upstreamBranch = worktree.WorktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{branch.FriendlyName}"];
 
@@ -168,32 +177,35 @@ public sealed class GitSourceVersioningWorkspace(
 
         logger.LogInformation("Rebasing {CurrentBranch} onto {SourceBranch}", branch.FriendlyName, sourceBranchName);
 
-        try
+        lock (gitRepositoryLock)
         {
-            var options = new RebaseOptions
+            try
             {
-                FileConflictStrategy = CheckoutFileConflictStrategy.Theirs,
-            };
+                var options = new RebaseOptions
+                {
+                    FileConflictStrategy = CheckoutFileConflictStrategy.Theirs,
+                };
 
-            // Create the commit
-            var identity = new Identity(
-                name: authorName,
-                email: authorEmail
-            );
+                // Create the commit
+                var identity = new Identity(
+                    name: authorName,
+                    email: authorEmail
+                );
 
-            var rebaseResult = worktree.WorktreeRepository.Rebase.Start(worktree.WorktreeRepository.Head, sourceBranch, sourceBranch, identity, options);
-            logger.LogInformation("Rebase status: {RebaseResult}", rebaseResult.Status);
+                var rebaseResult = worktree.WorktreeRepository.Rebase.Start(worktree.WorktreeRepository.Head, sourceBranch, sourceBranch, identity, options);
+                logger.LogInformation("Rebase status: {RebaseResult}", rebaseResult.Status);
 
-            if (rebaseResult.Status is RebaseStatus.Conflicts)
+                if (rebaseResult.Status is RebaseStatus.Conflicts)
+                {
+                    ResetToOriginalHead(worktree.WorktreeRepository, originalHead, branch);
+                }
+            }
+            catch (Exception exception)
             {
+                logger.LogWarning(exception, "Rebase failed — restoring HEAD and workspace");
+
                 ResetToOriginalHead(worktree.WorktreeRepository, originalHead, branch);
             }
-        }
-        catch (Exception exception)
-        {
-            logger.LogWarning(exception, "Rebase failed — restoring HEAD and workspace");
-
-            ResetToOriginalHead(worktree.WorktreeRepository, originalHead, branch);
         }
     }
 

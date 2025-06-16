@@ -40,7 +40,7 @@ public sealed class TemporaryDirectoryProvider : IDisposable
             }
             else
             {
-                _logger.LogError("Unable to delete temporary directory: {TemporaryDirectory}. It does not exists anymore.", TemporaryDirectory);
+                _logger.LogInformation("Unable to delete temporary directory: {TemporaryDirectory}. It does not exists anymore.", TemporaryDirectory);
             }
         }
         catch (Exception e)
