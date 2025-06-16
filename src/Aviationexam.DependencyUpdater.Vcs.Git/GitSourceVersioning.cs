@@ -125,8 +125,5 @@ public sealed class GitSourceVersioning(
 
     public IEnumerable<string> GetSubmodules() => repository.Submodules.Select(x => x.Name);
 
-    public void Dispose()
-    {
-        repository.Dispose();
-    }
+    public void Dispose() => repository.Dispose();
 }
