@@ -6,10 +6,12 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace Aviationexam.DependencyUpdater.Vcs.Git;
 
 public sealed class GitSourceVersioningWorkspace(
+    Lock gitRepositoryLock,
     GitCredentialsConfiguration gitCredentials,
     Repository rootRepository,
     Worktree worktree,
@@ -19,21 +21,24 @@ public sealed class GitSourceVersioningWorkspace(
 {
     public void Dispose()
     {
-        var worktreeName = worktree.Name;
-        var branchName = worktree.WorktreeRepository.Head.FriendlyName;
-
-        worktree.WorktreeRepository.Worktrees.Prune(worktree, ifLocked: false);
-
-        var existingBranch = rootRepository.Branches.SingleOrDefault(x => x.FriendlyName == branchName);
-        if (existingBranch is not null)
+        lock (gitRepositoryLock)
         {
-            rootRepository.Branches.Remove(existingBranch);
-        }
+            var worktreeName = worktree.Name;
+            var branchName = worktree.WorktreeRepository.Head.FriendlyName;
 
-        existingBranch = rootRepository.Branches.SingleOrDefault(x => x.FriendlyName == worktreeName);
-        if (existingBranch is not null)
-        {
-            rootRepository.Branches.Remove(existingBranch);
+            worktree.WorktreeRepository.Worktrees.Prune(worktree, ifLocked: false);
+
+            var existingBranch = rootRepository.Branches.SingleOrDefault(x => x.FriendlyName == branchName);
+            if (existingBranch is not null)
+            {
+                rootRepository.Branches.Remove(existingBranch);
+            }
+
+            existingBranch = rootRepository.Branches.SingleOrDefault(x => x.FriendlyName == worktreeName);
+            if (existingBranch is not null)
+            {
+                rootRepository.Branches.Remove(existingBranch);
+            }
         }
     }
 
