@@ -6,6 +6,7 @@ using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Writers;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,7 +23,7 @@ public sealed class PackageUpdater(
     ILogger<PackageUpdater> logger
 )
 {
-    public async IAsyncEnumerable<string> ProcessPackageUpdatesAsync(
+    public async Task<IReadOnlyCollection<string>> ProcessPackageUpdatesAsync(
         ISourceVersioning sourceVersioning,
         RepositoryConfig repositoryConfig,
         NugetAuthConfig authConfig,
@@ -32,33 +33,39 @@ public sealed class PackageUpdater(
         Queue<(IReadOnlyCollection<NugetUpdateCandidate> NugetUpdateCandidates, GroupEntry GroupEntry)> groupedPackagesToUpdateQueue,
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
         string updater,
-        [EnumeratorCancellation] CancellationToken cancellationToken
+        CancellationToken cancellationToken
     )
     {
-        // Process package groups in parallel
-        var tasks = groupedPackagesToUpdateQueue.Select(groupedPackagesToUpdate => ProcessSinglePackageGroupAsync(
-            repositoryConfig,
-            authConfig,
-            gitCredentialsConfiguration,
-            gitMetadataConfig,
-            executeRestore,
-            groupedPackagesToUpdate.GroupEntry,
-            groupedPackagesToUpdate.NugetUpdateCandidates,
-            currentPackageVersions,
-            sourceVersioning,
-            updater,
-            cancellationToken
-        ));
-
-        // Wait for all tasks to complete and yield results
-        await foreach (var pullRequestIdTask in Task.WhenEach(tasks).WithCancellation(cancellationToken))
+        var parallelOptions = new ParallelOptions
         {
-            var pullRequestId = await pullRequestIdTask;
+            MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount / 2),
+            CancellationToken = cancellationToken,
+        };
+
+        var pullRequestIds = new ConcurrentBag<string>();
+        await Parallel.ForEachAsync(groupedPackagesToUpdateQueue, parallelOptions, async (groupedPackagesToUpdate, token) =>
+        {
+            var pullRequestId = await ProcessSinglePackageGroupAsync(
+                repositoryConfig,
+                authConfig,
+                gitCredentialsConfiguration,
+                gitMetadataConfig,
+                executeRestore,
+                groupedPackagesToUpdate.GroupEntry,
+                groupedPackagesToUpdate.NugetUpdateCandidates,
+                currentPackageVersions,
+                sourceVersioning,
+                updater,
+                token
+            );
+
             if (pullRequestId is not null)
             {
-                yield return pullRequestId;
+                pullRequestIds.Add(pullRequestId);
             }
-        }
+        });
+
+        return pullRequestIds;
     }
 
     private async Task<string?> ProcessSinglePackageGroupAsync(

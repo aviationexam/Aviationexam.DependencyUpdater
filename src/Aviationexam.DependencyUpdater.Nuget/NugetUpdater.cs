@@ -86,7 +86,7 @@ public sealed class NugetUpdater(
             currentPackageVersions,
             updater,
             cancellationToken
-        ).ToListAsync(cancellationToken);
+        );
 
         knownPullRequests = knownPullRequests.Concat(updatedPullRequests);
 
