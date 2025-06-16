@@ -50,7 +50,7 @@ public sealed class NugetCsprojVersionWriter(
             Async = true,
             CloseOutput = false,
             ConformanceLevel = ConformanceLevel.Auto,
-            DoNotEscapeUriAttributes = false,
+            DoNotEscapeUriAttributes = true,
             Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
             Indent = false,
             NamespaceHandling = NamespaceHandling.Default,
