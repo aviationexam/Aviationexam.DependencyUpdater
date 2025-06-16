@@ -88,6 +88,7 @@ public sealed class NugetUpdater(
 
         // Clean up abandoned pull requests
         await pullRequestManager.CleanupAbandonedPullRequestsAsync(
+            sourceDirectory: repositoryConfig.SubdirectoryPath ?? string.Empty,
             updater,
             knownPullRequests.ToList(),
             cancellationToken

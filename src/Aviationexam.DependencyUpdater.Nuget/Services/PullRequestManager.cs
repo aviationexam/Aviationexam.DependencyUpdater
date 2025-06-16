@@ -13,6 +13,7 @@ public sealed class PullRequestManager(
 )
 {
     public async Task CleanupAbandonedPullRequestsAsync(
+        string sourceDirectory,
         string updater,
         IReadOnlyCollection<string> knownPullRequests,
         CancellationToken cancellationToken
@@ -23,7 +24,7 @@ public sealed class PullRequestManager(
             logger.LogTrace("Known pull requests {PullRequestsId}", string.Join(", ", knownPullRequests));
         }
 
-        foreach (var pullRequest in await repositoryClient.ListActivePullRequestsAsync(updater, cancellationToken))
+        foreach (var pullRequest in await repositoryClient.ListActivePullRequestsAsync(sourceDirectory, updater, cancellationToken))
         {
             if (
                 pullRequest.IsEmptyBranch

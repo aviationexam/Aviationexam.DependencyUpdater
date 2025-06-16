@@ -7,6 +7,7 @@ namespace Aviationexam.DependencyUpdater.Interfaces;
 public interface IRepositoryClient
 {
     Task<IEnumerable<PullRequest>> ListActivePullRequestsAsync(
+        string sourceDirectory,
         string updater,
         CancellationToken cancellationToken
     );
@@ -23,6 +24,7 @@ public interface IRepositoryClient
         string description,
         string? milestone,
         IReadOnlyCollection<string> reviewers,
+        string sourceDirectory,
         string updater,
         CancellationToken cancellationToken
     );

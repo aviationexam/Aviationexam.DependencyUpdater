@@ -24,6 +24,7 @@ public class RepositoryAzureDevOpsClient(
 ) : IRepositoryClient
 {
     public async Task<IEnumerable<PullRequest>> ListActivePullRequestsAsync(
+        string sourceDirectory,
         string updater,
         CancellationToken cancellationToken
     )
@@ -45,6 +46,7 @@ public class RepositoryAzureDevOpsClient(
                 pr.SourceRefName?.StartsWith($"{GitConstants.HeadsPrefix}{GitConstants.UpdaterBranchPrefix}{updater}/") == true
                 && pr.Labels?.Any(l => l.Name == PullRequestConstants.TagName) == true
                 && pr.Labels?.Any(l => l.Name == $"{PullRequestConstants.TagName}={updater}") == true
+                && pr.Labels?.Any(l => l.Name == $"{PullRequestConstants.SourceTagName}={updater}") == true
             )
             .Select(x => new PullRequest(
                 x.PullRequestId.ToString(),
@@ -92,6 +94,7 @@ public class RepositoryAzureDevOpsClient(
         string description,
         string? milestone,
         IReadOnlyCollection<string> reviewers,
+        string sourceDirectory,
         string updater,
         CancellationToken cancellationToken
     )
@@ -121,6 +124,7 @@ public class RepositoryAzureDevOpsClient(
             [
                 new WebApiTagDefinition { Name = PullRequestConstants.TagName },
                 new WebApiTagDefinition { Name = $"{PullRequestConstants.TagName}={updater}" },
+                new WebApiTagDefinition { Name = $"{PullRequestConstants.SourceTagName}={sourceDirectory}" },
             ],
         };
 
