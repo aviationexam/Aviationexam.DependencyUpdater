@@ -38,10 +38,14 @@ public sealed class TemporaryDirectoryProvider : IDisposable
 
                 Directory.Delete(TemporaryDirectory, recursive: true);
             }
+            else
+            {
+                _logger.LogError("Unable to delete temporary directory: {TemporaryDirectory}. It does not exists anymore.", TemporaryDirectory);
+            }
         }
-        catch
+        catch (Exception e)
         {
-            // Best-effort cleanup. Log if needed.
+            _logger.LogError(e, "Unable to delete temporary directory: {TemporaryDirectory}", TemporaryDirectory);
         }
     }
 }
