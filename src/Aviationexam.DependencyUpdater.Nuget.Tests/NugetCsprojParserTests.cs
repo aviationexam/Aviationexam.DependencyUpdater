@@ -4,6 +4,7 @@ using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Parsers;
 using Aviationexam.DependencyUpdater.TestsInfrastructure;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using System.IO;
 using Xunit;
@@ -15,7 +16,9 @@ public class NugetCsprojParserTests
     [Fact]
     public void ParseWorks()
     {
-        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider();
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
+            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+            );
 
         var fileSystem = Substitute.For<IFileSystem>();
         var logger = Substitute.For<ILogger<NugetCsprojParser>>();
@@ -96,7 +99,9 @@ public class NugetCsprojParserTests
     [Fact]
     public void ParseWorks_MultipleTargetFrameworks()
     {
-        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider();
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
+            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+            );
 
         var fileSystem = Substitute.For<IFileSystem>();
         var logger = Substitute.For<ILogger<NugetCsprojParser>>();

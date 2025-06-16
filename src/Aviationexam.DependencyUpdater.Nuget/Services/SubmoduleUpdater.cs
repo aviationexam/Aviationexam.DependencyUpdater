@@ -1,7 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
-using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Configurations;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,7 +13,8 @@ namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
 public sealed class SubmoduleUpdater(
     IRepositoryClient repositoryClient,
-    PackageUpdater packageUpdater
+    PackageUpdater packageUpdater,
+    ILogger<SubmoduleUpdater> logger
 )
 {
     public async Task<IEnumerable<string>> UpdateSubmodulesAsync(
@@ -47,7 +48,7 @@ public sealed class SubmoduleUpdater(
 
             var branchName = BranchNameGenerator.GetBranchNameForSubmodule(submodule, repositoryConfig, updater);
 
-            using var temporaryDirectory = new TemporaryDirectoryProvider(create: false);
+            using var temporaryDirectory = new TemporaryDirectoryProvider(logger, create: false);
             using var gitWorkspace = sourceVersioning.CreateWorkspace(
                 gitCredentialsConfiguration,
                 temporaryDirectory.TemporaryDirectory,

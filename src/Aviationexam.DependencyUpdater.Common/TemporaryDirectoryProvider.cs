@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
@@ -6,10 +7,16 @@ namespace Aviationexam.DependencyUpdater.Common;
 
 public sealed class TemporaryDirectoryProvider : IDisposable
 {
+    private readonly ILogger _logger;
+
     public string TemporaryDirectory { get; }
 
-    public TemporaryDirectoryProvider(bool create = true)
+    public TemporaryDirectoryProvider(
+        ILogger logger,
+        bool create = true
+    )
     {
+        _logger = logger;
         TemporaryDirectory = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         if (create)
         {
@@ -27,6 +34,8 @@ public sealed class TemporaryDirectoryProvider : IDisposable
         {
             if (Directory.Exists(TemporaryDirectory))
             {
+                _logger.LogTrace("Deleting temporary directory: {TemporaryDirectory}", TemporaryDirectory);
+
                 Directory.Delete(TemporaryDirectory, recursive: true);
             }
         }

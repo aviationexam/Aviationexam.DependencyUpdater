@@ -75,7 +75,7 @@ public sealed class PackageUpdater(
         CancellationToken cancellationToken
     )
     {
-        using var temporaryDirectory = new TemporaryDirectoryProvider(create: false);
+        using var temporaryDirectory = new TemporaryDirectoryProvider(logger, create: false);
         using var gitWorkspace = sourceVersioning.CreateWorkspace(
             gitCredentialsConfiguration,
             temporaryDirectory.TemporaryDirectory,
