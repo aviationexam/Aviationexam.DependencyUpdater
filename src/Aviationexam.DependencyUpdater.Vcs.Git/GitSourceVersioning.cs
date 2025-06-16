@@ -68,59 +68,68 @@ public sealed class GitSourceVersioning(
         string worktreeName
     )
     {
-        var existingWorktree = repository.Worktrees
-            .Where(x => x is not null)
-            .SingleOrDefault(x => x.Name == worktreeName);
-        if (existingWorktree is not null)
+        try
         {
-            repository.Worktrees.Prune(existingWorktree, ifLocked: false);
-        }
+            var existingWorktree = repository.Worktrees
+                .Where(x => x is not null)
+                .SingleOrDefault(x => x.Name == worktreeName);
+            if (existingWorktree is not null)
+            {
+                repository.Worktrees.Prune(existingWorktree, ifLocked: false);
+            }
 
-        var existingBranch = repository.Branches.SingleOrDefault(x => x.FriendlyName == branchName);
-        if (existingBranch is not null)
-        {
-            repository.Branches.Remove(existingBranch);
-        }
+            var existingBranch = repository.Branches.SingleOrDefault(x => x.FriendlyName == branchName);
+            if (existingBranch is not null)
+            {
+                repository.Branches.Remove(existingBranch);
+            }
 
-        existingBranch = repository.Branches.SingleOrDefault(x => x.FriendlyName == worktreeName);
-        if (existingBranch is not null)
-        {
-            repository.Branches.Remove(existingBranch);
-        }
+            existingBranch = repository.Branches.SingleOrDefault(x => x.FriendlyName == worktreeName);
+            if (existingBranch is not null)
+            {
+                repository.Branches.Remove(existingBranch);
+            }
 
-        var worktree = repository.Worktrees.Add(name: worktreeName, path: targetDirectory, isLocked: false);
-        worktree.WorktreeRepository.Branches.Rename(worktreeName, branchName);
+            var worktree = repository.Worktrees.Add(name: worktreeName, path: targetDirectory, isLocked: false);
+            worktree.WorktreeRepository.Branches.Rename(worktreeName, branchName);
 
-        if (
-            sourceBranchName is not null
-            && repository.Branches.Any(x => x.FriendlyName == sourceBranchName)
-        )
-        {
-            worktree.WorktreeRepository.Reset(ResetMode.Hard, repository.Branches[sourceBranchName].Tip);
-        }
+            if (
+                sourceBranchName is not null
+                && repository.Branches.Any(x => x.FriendlyName == sourceBranchName)
+            )
+            {
+                worktree.WorktreeRepository.Reset(ResetMode.Hard, repository.Branches[sourceBranchName].Tip);
+            }
 
-        foreach (var submodule in worktree.WorktreeRepository.Submodules)
-        {
-            worktree.WorktreeRepository.Submodules.Update(
-                submodule.Name,
-                new SubmoduleUpdateOptions
-                {
-                    Init = true,
-                    FetchOptions =
+            foreach (var submodule in worktree.WorktreeRepository.Submodules)
+            {
+                worktree.WorktreeRepository.Submodules.Update(
+                    submodule.Name,
+                    new SubmoduleUpdateOptions
                     {
-                        CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
-                    },
-                }
+                        Init = true,
+                        FetchOptions =
+                        {
+                            CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
+                        },
+                    }
+                );
+            }
+
+            return new GitSourceVersioningWorkspace(
+                gitCredentials,
+                repository,
+                worktree,
+                timeProvider,
+                logger
             );
         }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Failed to create Git worktree '{WorktreeName}' in '{TargetDirectory}'", worktreeName, targetDirectory);
 
-        return new GitSourceVersioningWorkspace(
-            gitCredentials,
-            repository,
-            worktree,
-            timeProvider,
-            logger
-        );
+            throw;
+        }
     }
 
     public IEnumerable<string> GetSubmodules() => repository.Submodules.Select(x => x.Name);
