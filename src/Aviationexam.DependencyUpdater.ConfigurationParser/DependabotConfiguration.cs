@@ -19,6 +19,7 @@ public readonly partial struct DependabotConfiguration
         public static ReadOnlySpan<byte> UpdateSubmodulesUtf8 => "update-submodules"u8;
         public static ReadOnlySpan<byte> PathUtf8 => "path"u8;
         public static ReadOnlySpan<byte> BranchUtf8 => "branch"u8;
+        public static ReadOnlySpan<byte> ExecuteRestoreUtf8 => "execute-restore"u8;
 
         public TargetFrameworkEntity? TargetFramework
         {
@@ -182,7 +183,7 @@ public readonly partial struct DependabotConfiguration
                     }
 
                     if (
-                        jsonElementBacking.TryGetProperty(UpdateSubmodulesUtf8, out JsonElement result)
+                        jsonElementBacking.TryGetProperty(UpdateSubmodulesUtf8, out var result)
                         && result.ValueKind is JsonValueKind.Array
                     )
                     {
@@ -195,13 +196,45 @@ public readonly partial struct DependabotConfiguration
 
                 if (backing.HasFlag(Backing.Object))
                 {
-                    if (objectBacking.TryGetValue(UpdateSubmodulesUtf8, out JsonAny _))
+                    if (objectBacking.TryGetValue(UpdateSubmodulesUtf8, out var _))
                     {
                         throw new NotImplementedException();
                     }
                 }
 
                 return [];
+            }
+        }
+
+        public bool ExecuteRestore
+        {
+            get
+            {
+                if (backing.HasFlag(Backing.JsonElement))
+                {
+                    if (jsonElementBacking.ValueKind is not JsonValueKind.Object)
+                    {
+                        return true;
+                    }
+
+                    if (
+                        jsonElementBacking.TryGetProperty(ExecuteRestoreUtf8, out var result)
+                        && result.ValueKind is JsonValueKind.False or JsonValueKind.True
+                    )
+                    {
+                        return result.ValueKind is JsonValueKind.True;
+                    }
+                }
+
+                if (backing.HasFlag(Backing.Object))
+                {
+                    if (objectBacking.TryGetValue(ExecuteRestoreUtf8, out var _))
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+
+                return true;
             }
         }
 

@@ -56,6 +56,7 @@ public class DependabotConfigurationParserTests
                       - nuget-feed
                     fallback-registries:
                       nuget-feed: nuget.org
+                    execute-restore: false
                     groups:
                       microsoft:
                         patterns:
@@ -118,6 +119,8 @@ public class DependabotConfigurationParserTests
         Assert.Equal("nuget-feed", registry.AsString.GetString());
         Assert.Equal("nuget-feed", fallbackRegistry.Key);
         Assert.Equal("nuget.org", fallbackRegistry.Value);
+
+        Assert.False(nugetUpdate.ExecuteRestore);
     }
 
     [Fact]
