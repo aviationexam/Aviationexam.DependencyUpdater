@@ -44,7 +44,7 @@ public class RepositoryAzureDevOpsClient(
 
         return pullRequests
             .Where(pr =>
-                pr.SourceRefName?.StartsWith(BranchNameGenerator.GetBranchNamePrefix(sourceDirectory, updater)) == true
+                pr.SourceRefName?.StartsWith($"{GitConstants.HeadsPrefix}{BranchNameGenerator.GetBranchNamePrefix(sourceDirectory, updater)}") == true
                 && pr.Labels?.Any(l => l.Name == PullRequestConstants.TagName) == true
                 && pr.Labels?.Any(l => l.Name == $"{PullRequestConstants.TagName}={updater}") == true
                 && pr.Labels?.Any(l => l.Name == $"{PullRequestConstants.SourceTagName}={updater}") == true
