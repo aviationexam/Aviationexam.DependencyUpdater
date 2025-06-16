@@ -68,8 +68,6 @@ public sealed class GitSourceVersioning(
         string worktreeName
     )
     {
-        RunGitWorktreePrune(repository.Info.WorkingDirectory);
-
         var existingWorktree = repository.Worktrees
             .Where(x => x is not null)
             .SingleOrDefault(x => x.Name == worktreeName);

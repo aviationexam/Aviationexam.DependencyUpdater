@@ -36,6 +36,8 @@ public sealed class NugetUpdater(
 
         using var sourceVersioning = sourceVersioningFactory.CreateSourceVersioning(repositoryConfig.RepositoryPath);
 
+        sourceVersioning.RunGitWorktreePrune(repositoryConfig.RepositoryPath);
+
         var knownPullRequests = await submoduleUpdater.UpdateSubmodulesAsync(
             sourceVersioning,
             repositoryConfig,
