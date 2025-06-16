@@ -77,7 +77,7 @@ public sealed class PackageUpdater(
             gitCredentialsConfiguration,
             temporaryDirectory.TemporaryDirectory,
             sourceBranchName: repositoryConfig.SourceBranchName,
-            branchName: groupEntry.GetBranchName(updater),
+            branchName: BranchNameGenerator.GetBranchName(groupEntry, repositoryConfig, updater),
             worktreeName: groupEntry.GroupName.Replace('/', '-')
         );
 

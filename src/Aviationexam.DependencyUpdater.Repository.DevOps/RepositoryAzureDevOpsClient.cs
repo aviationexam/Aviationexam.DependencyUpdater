@@ -1,3 +1,4 @@
+using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,7 +44,7 @@ public class RepositoryAzureDevOpsClient(
 
         return pullRequests
             .Where(pr =>
-                pr.SourceRefName?.StartsWith($"{GitConstants.HeadsPrefix}{GitConstants.UpdaterBranchPrefix}{updater}/") == true
+                pr.SourceRefName?.StartsWith(BranchNameGenerator.GetBranchNamePrefix(sourceDirectory, updater)) == true
                 && pr.Labels?.Any(l => l.Name == PullRequestConstants.TagName) == true
                 && pr.Labels?.Any(l => l.Name == $"{PullRequestConstants.TagName}={updater}") == true
                 && pr.Labels?.Any(l => l.Name == $"{PullRequestConstants.SourceTagName}={updater}") == true

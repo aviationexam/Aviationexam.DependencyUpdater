@@ -44,7 +44,8 @@ public sealed class SubmoduleUpdater(
                 return;
             }
 
-            var branchName = $"{GitConstants.UpdaterBranchPrefix}{updater}/submodule/{submodule}";
+            var branchName = BranchNameGenerator.GetBranchNameForSubmodule(submodule, repositoryConfig, updater);
+
             using var temporaryDirectory = new TemporaryDirectoryProvider(create: false);
             using var gitWorkspace = sourceVersioning.CreateWorkspace(
                 gitCredentialsConfiguration,
