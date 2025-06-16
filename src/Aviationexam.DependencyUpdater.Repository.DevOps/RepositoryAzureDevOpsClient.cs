@@ -47,7 +47,7 @@ public class RepositoryAzureDevOpsClient(
                 pr.SourceRefName?.StartsWith($"{GitConstants.HeadsPrefix}{BranchNameGenerator.GetBranchNamePrefix(sourceDirectory, updater)}") == true
                 && pr.Labels?.Any(l => l.Name == PullRequestConstants.TagName) == true
                 && pr.Labels?.Any(l => l.Name == $"{PullRequestConstants.TagName}={updater}") == true
-                && pr.Labels?.Any(l => l.Name == $"{PullRequestConstants.SourceTagName}={updater}") == true
+                && pr.Labels?.Any(l => l.Name == $"{PullRequestConstants.SourceTagName}={sourceDirectory}") == true
             )
             .Select(x => new PullRequest(
                 x.PullRequestId.ToString(),
