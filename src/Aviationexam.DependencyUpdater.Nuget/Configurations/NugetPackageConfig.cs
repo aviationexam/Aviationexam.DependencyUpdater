@@ -10,4 +10,6 @@ public class NugetPackageConfig : PackageConfig
     /// The target frameworks to update packages for.
     /// </summary>
     public required IReadOnlyCollection<NugetTargetFramework> TargetFrameworks { get; init; }
+
+    public required bool ExecuteRestore { get; init; }
 }

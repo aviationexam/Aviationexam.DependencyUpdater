@@ -22,6 +22,7 @@ public sealed class SubmoduleUpdater(
         NugetAuthConfig authConfig,
         GitCredentialsConfiguration gitCredentialsConfiguration,
         GitMetadataConfig gitMetadataConfig,
+        bool executeRestore,
         string updater,
         CancellationToken cancellationToken
     )
@@ -76,6 +77,7 @@ public sealed class SubmoduleUpdater(
                 repositoryConfig,
                 authConfig,
                 gitMetadataConfig,
+                executeRestore,
                 $"Bump submodule {submodule}",
                 updater,
                 token

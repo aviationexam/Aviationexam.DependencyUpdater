@@ -28,6 +28,7 @@ public sealed class PackageUpdater(
         NugetAuthConfig authConfig,
         GitCredentialsConfiguration gitCredentialsConfiguration,
         GitMetadataConfig gitMetadataConfig,
+        bool executeRestore,
         Queue<(IReadOnlyCollection<NugetUpdateCandidate> NugetUpdateCandidates, GroupEntry GroupEntry)> groupedPackagesToUpdateQueue,
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
         string updater,
@@ -40,6 +41,7 @@ public sealed class PackageUpdater(
             authConfig,
             gitCredentialsConfiguration,
             gitMetadataConfig,
+            executeRestore,
             groupedPackagesToUpdate.GroupEntry,
             groupedPackagesToUpdate.NugetUpdateCandidates,
             currentPackageVersions,
@@ -64,6 +66,7 @@ public sealed class PackageUpdater(
         NugetAuthConfig authConfig,
         GitCredentialsConfiguration gitCredentialsConfiguration,
         GitMetadataConfig gitMetadataConfig,
+        bool executeRestore,
         GroupEntry groupEntry,
         IReadOnlyCollection<NugetUpdateCandidate> nugetUpdateCandidates,
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
@@ -108,6 +111,7 @@ public sealed class PackageUpdater(
             repositoryConfig,
             authConfig,
             gitMetadataConfig,
+            executeRestore,
             groupEntry.GetTitle(nugetUpdateCandidates),
             updater,
             cancellationToken
@@ -197,6 +201,7 @@ public sealed class PackageUpdater(
         RepositoryConfig repositoryConfig,
         NugetAuthConfig authConfig,
         GitMetadataConfig gitMetadataConfig,
+        bool executeRestore,
         string title,
         string updater,
         CancellationToken cancellationToken
@@ -229,13 +234,16 @@ public sealed class PackageUpdater(
             );
         }
 
-        await RestoreNugetPackagesAsync(
-            gitWorkspace,
-            repositoryConfig.SubdirectoryPath,
-            authConfig,
-            gitMetadataConfig,
-            cancellationToken
-        );
+        if (executeRestore)
+        {
+            await RestoreNugetPackagesAsync(
+                gitWorkspace,
+                repositoryConfig.SubdirectoryPath,
+                authConfig,
+                gitMetadataConfig,
+                cancellationToken
+            );
+        }
 
         var pushed = gitWorkspace.Push(sourceBranchName: repositoryConfig.SourceBranchName);
 

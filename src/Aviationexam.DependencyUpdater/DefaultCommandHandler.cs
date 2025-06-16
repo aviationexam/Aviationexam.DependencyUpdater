@@ -73,6 +73,7 @@ internal static class DefaultCommandHandler
                     IgnoreEntries = [.. nugetUpdate.Ignore.MapToIgnoreEntry()],
                     GroupEntries = [.. nugetUpdate.Groups.MapToGroupEntry()],
                     FallbackRegistries = fallbackRegistries,
+                    ExecuteRestore = nugetUpdate.ExecuteRestore,
                 };
 
                 var authConfig = new NugetAuthConfig
