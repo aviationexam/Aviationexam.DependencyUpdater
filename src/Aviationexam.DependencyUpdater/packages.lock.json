@@ -1457,7 +1457,7 @@
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[9.0.6, )",
           "NuGet.ProjectModel": "[6.14.0, )",
-          "System.Linq.Async": "[6.0.1, )"
+          "System.Linq.Async": "[6.0.3, )"
         }
       },
       "aviationexam.dependencyupdater.repository.devops": {
@@ -1735,12 +1735,9 @@
       },
       "System.Linq.Async": {
         "type": "CentralTransitive",
-        "requested": "[6.0.1, )",
-        "resolved": "6.0.1",
-        "contentHash": "0YhHcaroWpQ9UCot3Pizah7ryAzQhNvobLMSxeDIGmnXfkQn8u5owvpOH0K6EVB+z9L7u6Cc4W17Br/+jyttEQ==",
-        "dependencies": {
-          "Microsoft.Bcl.AsyncInterfaces": "6.0.0"
-        }
+        "requested": "[6.0.3, )",
+        "resolved": "6.0.3",
+        "contentHash": "hSHiq2m1ky7zUQgTp+/2h1K3lABIQ+GltRixoclHPg/Sc1vnfeS6g/Uy5moOVZKrZJdQiFPFZd6OobBp3tZcFg=="
       },
       "System.Memory": {
         "type": "CentralTransitive",
