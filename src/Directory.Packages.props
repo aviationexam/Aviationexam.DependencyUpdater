@@ -50,8 +50,8 @@
     <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Corvus.Json.ExtendedTypes" Version="4.3.10" />
-    <PackageVersion Include="Corvus.Json.SourceGenerator" Version="4.3.10" />
+    <PackageVersion Include="Corvus.Json.ExtendedTypes" Version="4.3.11" />
+    <PackageVersion Include="Corvus.Json.SourceGenerator" Version="4.3.11" />
     <PackageVersion Include="Corvus.UriTemplates" Version="2.3.2" />
   </ItemGroup>
   <ItemGroup>
