@@ -21,7 +21,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" />
-    <PackageReference Include="Polly" />
+    <PackageReference Include="Polly.Core" />
     <PackageReference Include="Polly.Extensions" />
   </ItemGroup>
 
