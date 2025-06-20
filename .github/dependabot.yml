@@ -21,6 +21,10 @@ updates:
       corvus:
         patterns:
           - Corvus.Json.*
+      polly:
+        patterns:
+          - Polly.*
+          - Polly
 
   - package-ecosystem: "github-actions"
     directory: "/" # Location of package manifests

@@ -2,70 +2,43 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.CommandLine.Builder;
+using System.CommandLine;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Aviationexam.DependencyUpdater;
 
 public static class HostingExtensions
 {
-    private const string ConfigurationDirectiveName = "config";
-
-    public static CommandLineBuilder UseHost(
-        this CommandLineBuilder builder,
+    public static async Task<int> ExecuteCommandHandlerAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TService>(
+        this ParseResult parseResult,
         Func<string[], Action<IConfigurationBuilder>, HostApplicationBuilder> hostBuilderFactory,
-        Action<HostApplicationBuilder, ModelBinders>? configureHost = null
-    ) => builder.AddMiddleware(async (context, next) =>
+        Action<IServiceCollection, ParseResult> addConfigurations,
+        CancellationToken cancellationToken
+    ) where TService : class, ICommandHandler
     {
-        var argsRemaining = context.ParseResult.UnparsedTokens.ToArray();
+        var argsRemaining = parseResult.UnmatchedTokens.ToArray();
 
         var hostBuilder = hostBuilderFactory(
             argsRemaining,
-            config => config.AddCommandLineDirectives(context.ParseResult, ConfigurationDirectiveName)
+            _ => { }
         );
 
-        var modelBinders = new ModelBinders();
-        configureHost?.Invoke(hostBuilder, modelBinders);
+        addConfigurations(hostBuilder.Services, parseResult);
 
-        var uniqueServiceTypes = hostBuilder.Services.Select(x => x.ServiceType).ToList();
-
-        foreach (var ((modelType, modelBinderType), createModel) in modelBinders.Binders)
-        {
-            hostBuilder.Services.AddSingleton(modelType, serviceProvider =>
-            {
-                var binder = serviceProvider.GetRequiredService(modelBinderType);
-
-                return createModel(context, binder);
-            });
-
-            uniqueServiceTypes.Add(modelType);
-            uniqueServiceTypes.Remove(modelBinderType);
-        }
+        hostBuilder.Services.AddSingleton<TService>();
 
         using var host = hostBuilder.Build();
 
-        context.BindingContext.AddService<IServiceProvider>(
-            // ReSharper disable once AccessToDisposedClosure
-            _ => host.Services
-        );
-        context.BindingContext.AddService(
-            // ReSharper disable once AccessToDisposedClosure
-            _ => context.GetCancellationToken()
-        );
+        await host.StartAsync(cancellationToken);
 
-        foreach (var serviceType in uniqueServiceTypes)
-        {
-            context.BindingContext.AddService(
-                serviceType,
-                // ReSharper disable once AccessToDisposedClosure
-                _ => host.Services.GetRequiredService(serviceType)
-            );
-        }
+        var service = host.Services.GetRequiredService<TService>();
+        var exitCode = await service.ExecuteAsync(cancellationToken);
 
-        await host.StartAsync();
+        await host.StopAsync(cancellationToken);
 
-        await next(context);
-
-        await host.StopAsync();
-    });
+        return exitCode;
+    }
 }

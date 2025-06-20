@@ -4,29 +4,25 @@ using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget;
 using Aviationexam.DependencyUpdater.Nuget.Configurations;
-using System.CommandLine.Invocation;
-using System.CommandLine.NamingConventionBinder;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.CommandLine;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Aviationexam.DependencyUpdater;
 
-internal static class DefaultCommandHandler
+internal sealed class DefaultCommandHandler(
+    SourceConfiguration sourceConfiguration,
+    GitCredentialsConfiguration gitCredentialsConfiguration,
+    DependabotConfigurationLoader dependabotConfigurationLoader,
+    IEnvVariableProvider envVariableProvider,
+    NugetUpdater nugetUpdater,
+    CachingConfiguration cachingConfiguration
+) : ICommandHandler
 {
-    public static ICommandHandler GetHandler() => CommandHandler.Create<
-        SourceConfiguration, GitCredentialsConfiguration, DependabotConfigurationLoader, IEnvVariableProvider, NugetUpdater, CachingConfiguration, CancellationToken
-    >(
-        ExecuteWithBuilderAsync
-    );
-
-    private static async Task ExecuteWithBuilderAsync(
-        SourceConfiguration sourceConfiguration,
-        GitCredentialsConfiguration gitCredentialsConfiguration,
-        DependabotConfigurationLoader dependabotConfigurationLoader,
-        IEnvVariableProvider envVariableProvider,
-        NugetUpdater nugetUpdater,
-        CachingConfiguration cachingConfiguration,
+    public async Task<int> ExecuteAsync(
         CancellationToken cancellationToken
     )
     {
@@ -98,5 +94,15 @@ internal static class DefaultCommandHandler
                 );
             }
         }
+
+        return 0;
     }
+
+    public static Func<ParseResult, CancellationToken, Task<int>> GetHandler(
+        Action<IServiceCollection, ParseResult> addConfigurations
+    ) => (parseResult, cancellationToken) => parseResult.ExecuteCommandHandlerAsync<DefaultCommandHandler>(
+        HostBuilderFactory.Create,
+        addConfigurations,
+        cancellationToken
+    );
 }

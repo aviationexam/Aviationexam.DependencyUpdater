@@ -14,7 +14,10 @@ namespace Aviationexam.DependencyUpdater;
 
 public static class HostBuilderFactory
 {
-    public static HostApplicationBuilder Create(string[] args, Action<IConfigurationBuilder> configure)
+    public static HostApplicationBuilder Create(
+        string[] args,
+        Action<IConfigurationBuilder> configure
+    )
     {
         var configuration = new ConfigurationManager();
         configure(configuration);

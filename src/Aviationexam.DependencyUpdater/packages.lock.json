@@ -75,17 +75,17 @@
       },
       "System.CommandLine": {
         "type": "Direct",
-        "requested": "[2.0.0-beta4.22272.1, )",
-        "resolved": "2.0.0-beta4.22272.1",
-        "contentHash": "1uqED/q2H0kKoLJ4+hI2iPSBSEdTuhfCYADeJrAqERmiGQ2NNacYKRNEQ+gFbU4glgVyK8rxI+ZOe1onEtr/Pg=="
+        "requested": "[2.0.0-beta5.25306.1, )",
+        "resolved": "2.0.0-beta5.25306.1",
+        "contentHash": "ce0wuowuh13Cd7GXqLCq77/YWlxQMxrVCMIO/2/QUP6CdP/JWnlYSN/N3/55wwGsUwa9CvPuT8ddjgyypUr5ag=="
       },
       "System.CommandLine.NamingConventionBinder": {
         "type": "Direct",
-        "requested": "[2.0.0-beta4.22272.1, )",
-        "resolved": "2.0.0-beta4.22272.1",
-        "contentHash": "ux2eUA/syF+JtlpMDc/Lsd6PBIBuwjH3AvHnestoh5uD0WKT5b+wkQxDWVCqp9qgVjMBTLNhX19ZYFtenunt9A==",
+        "requested": "[2.0.0-beta5.25306.1, )",
+        "resolved": "2.0.0-beta5.25306.1",
+        "contentHash": "hEz+l/35lDcDuGg6wpTQNYwAQ6D4Nw5jFzGJu7C2sNFMkKgncGppjyH4jmWrdIuSi3GXOy4Jm+t5UwJAaxJdFQ==",
         "dependencies": {
-          "System.CommandLine": "2.0.0-beta4.22272.1"
+          "System.CommandLine": "2.0.0-beta5.25306.1"
         }
       },
       "Azure.Core": {
@@ -518,11 +518,6 @@
         "type": "Transitive",
         "resolved": "6.14.0",
         "contentHash": "4v4blkhCv8mpKtfx+z0G/X0daVCzdIaHSC51GkUspugi5JIMn2Bo8xm5PdZYF0U68gOBfz/+aPWMnpRd85Jbow=="
-      },
-      "Polly.Core": {
-        "type": "Transitive",
-        "resolved": "8.6.0",
-        "contentHash": "3CY5h0gITrx+Ei5JvzZpuYLj0yEJquLeGLT9to4isjR7CN017ePDe1Fyp5bwEytu473CbWYiYDGEeY4uE8Iujw=="
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
         "type": "Transitive",
@@ -1688,6 +1683,12 @@
         "dependencies": {
           "Polly.Core": "8.6.0"
         }
+      },
+      "Polly.Core": {
+        "type": "CentralTransitive",
+        "requested": "[8.6.0, )",
+        "resolved": "8.6.0",
+        "contentHash": "3CY5h0gITrx+Ei5JvzZpuYLj0yEJquLeGLT9to4isjR7CN017ePDe1Fyp5bwEytu473CbWYiYDGEeY4uE8Iujw=="
       },
       "Polly.Extensions": {
         "type": "CentralTransitive",
