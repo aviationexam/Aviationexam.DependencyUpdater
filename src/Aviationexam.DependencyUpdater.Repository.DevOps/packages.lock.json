@@ -96,24 +96,21 @@
           "System.ComponentModel.Annotations": "5.0.0"
         }
       },
-      "Polly": {
+      "Polly.Core": {
         "type": "Direct",
-        "requested": "[8.6.0, )",
-        "resolved": "8.6.0",
-        "contentHash": "Lj8xVTtETAEUB0z0/c75vanP2mhKnuPXtyJlDWGgvv7v5i+MQcNK3K8Zvl7VjCOO4Ko4cxUlQr9Hb76DsV/khA==",
-        "dependencies": {
-          "Polly.Core": "8.6.0"
-        }
+        "requested": "[8.6.1, )",
+        "resolved": "8.6.1",
+        "contentHash": "HvkxFqEGk0NiLHYBescE/AnVu6W+ZqE0S7JkdXhvnJ2P2zRh8OPMDrFIjXPiIWugWIoxVeBHt45a6Cr61+asXw=="
       },
       "Polly.Extensions": {
         "type": "Direct",
-        "requested": "[8.6.0, )",
-        "resolved": "8.6.0",
-        "contentHash": "omG49EMgfjXgiBLrwr5PYgGghYn2e12Pw5CMQ2Agax+rv6kCW/DHokd9WHe8t7I2elxPubNrhiDrxqOiQCwMrA==",
+        "requested": "[8.6.1, )",
+        "resolved": "8.6.1",
+        "contentHash": "KBwP3TU1z2OMnjfEu6z5/mt2CcjKtCAEgCy14UJemFn8+K9a7LEyjS8sJqTSqSmPm7DFTzhclYetdlrtVKKxPg==",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
           "Microsoft.Extensions.Options": "8.0.0",
-          "Polly.Core": "8.6.0"
+          "Polly.Core": "8.6.1"
         }
       },
       "Azure.Core": {
@@ -1256,12 +1253,6 @@
         "requested": "[13.0.3, )",
         "resolved": "13.0.3",
         "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
-      },
-      "Polly.Core": {
-        "type": "CentralTransitive",
-        "requested": "[8.6.0, )",
-        "resolved": "8.6.0",
-        "contentHash": "3CY5h0gITrx+Ei5JvzZpuYLj0yEJquLeGLT9to4isjR7CN017ePDe1Fyp5bwEytu473CbWYiYDGEeY4uE8Iujw=="
       },
       "System.Buffers": {
         "type": "CentralTransitive",

@@ -1468,8 +1468,8 @@
           "Microsoft.Extensions.Logging.Abstractions": "[9.0.6, )",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "[9.0.6, )",
           "Microsoft.TeamFoundationServer.Client": "[19.225.1, )",
-          "Polly": "[8.6.0, )",
-          "Polly.Extensions": "[8.6.0, )"
+          "Polly.Core": "[8.6.1, )",
+          "Polly.Extensions": "[8.6.1, )"
         }
       },
       "aviationexam.dependencyupdater.vcs.git": {
@@ -1675,30 +1675,21 @@
           "NuGet.DependencyResolver.Core": "6.14.0"
         }
       },
-      "Polly": {
-        "type": "CentralTransitive",
-        "requested": "[8.6.0, )",
-        "resolved": "8.6.0",
-        "contentHash": "Lj8xVTtETAEUB0z0/c75vanP2mhKnuPXtyJlDWGgvv7v5i+MQcNK3K8Zvl7VjCOO4Ko4cxUlQr9Hb76DsV/khA==",
-        "dependencies": {
-          "Polly.Core": "8.6.0"
-        }
-      },
       "Polly.Core": {
         "type": "CentralTransitive",
-        "requested": "[8.6.0, )",
-        "resolved": "8.6.0",
-        "contentHash": "3CY5h0gITrx+Ei5JvzZpuYLj0yEJquLeGLT9to4isjR7CN017ePDe1Fyp5bwEytu473CbWYiYDGEeY4uE8Iujw=="
+        "requested": "[8.6.1, )",
+        "resolved": "8.6.1",
+        "contentHash": "HvkxFqEGk0NiLHYBescE/AnVu6W+ZqE0S7JkdXhvnJ2P2zRh8OPMDrFIjXPiIWugWIoxVeBHt45a6Cr61+asXw=="
       },
       "Polly.Extensions": {
         "type": "CentralTransitive",
-        "requested": "[8.6.0, )",
-        "resolved": "8.6.0",
-        "contentHash": "omG49EMgfjXgiBLrwr5PYgGghYn2e12Pw5CMQ2Agax+rv6kCW/DHokd9WHe8t7I2elxPubNrhiDrxqOiQCwMrA==",
+        "requested": "[8.6.1, )",
+        "resolved": "8.6.1",
+        "contentHash": "KBwP3TU1z2OMnjfEu6z5/mt2CcjKtCAEgCy14UJemFn8+K9a7LEyjS8sJqTSqSmPm7DFTzhclYetdlrtVKKxPg==",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
           "Microsoft.Extensions.Options": "8.0.0",
-          "Polly.Core": "8.6.0"
+          "Polly.Core": "8.6.1"
         }
       },
       "System.Buffers": {
