@@ -10,7 +10,7 @@ public sealed class GitCredentialsConfigurationBinder(
 {
     public GitCredentialsConfiguration CreateValue(
         ParseResult parseResult
-        ) => new()
+    ) => new()
     {
         Username = parseResult.GetRequiredValue(usernameArgument),
         Password = parseResult.GetRequiredValue(passwordArgument),

@@ -12,10 +12,7 @@ namespace Aviationexam.DependencyUpdater;
 
 public static class HostingExtensions
 {
-    public static async Task<int> ExecuteCommandHandlerAsync<
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
-        TService
-    >(
+    public static async Task<int> ExecuteCommandHandlerAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TService>(
         this ParseResult parseResult,
         Func<string[], Action<IConfigurationBuilder>, HostApplicationBuilder> hostBuilderFactory,
         Action<IServiceCollection, ParseResult> addConfigurations,
