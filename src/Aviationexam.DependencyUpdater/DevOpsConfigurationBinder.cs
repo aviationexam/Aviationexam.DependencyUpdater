@@ -1,6 +1,5 @@
 using Aviationexam.DependencyUpdater.Repository.DevOps;
 using System.CommandLine;
-using System.CommandLine.Binding;
 
 namespace Aviationexam.DependencyUpdater;
 
@@ -10,14 +9,16 @@ public sealed class DevOpsConfigurationBinder(
     Option<string> repository,
     Option<string> pat,
     Option<string> accountId
-) : BinderBase<DevOpsConfiguration>
+) : IBinder<DevOpsConfiguration>
 {
-    protected override DevOpsConfiguration GetBoundValue(BindingContext bindingContext) => new()
+    public DevOpsConfiguration CreateValue(
+        ParseResult parseResult
+    ) => new()
     {
-        Organization = bindingContext.ParseResult.GetValueForOption(organization)!,
-        Project = bindingContext.ParseResult.GetValueForOption(project)!,
-        Repository = bindingContext.ParseResult.GetValueForOption(repository)!,
-        PersonalAccessToken = bindingContext.ParseResult.GetValueForOption(pat)!,
-        AccountId = bindingContext.ParseResult.GetValueForOption(accountId)!,
+        Organization = parseResult.GetRequiredValue(organization),
+        Project = parseResult.GetRequiredValue(project),
+        Repository = parseResult.GetRequiredValue(repository),
+        PersonalAccessToken = parseResult.GetRequiredValue(pat),
+        AccountId = parseResult.GetRequiredValue(accountId),
     };
 }

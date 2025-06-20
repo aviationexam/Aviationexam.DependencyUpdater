@@ -1,15 +1,16 @@
 using Aviationexam.DependencyUpdater.Common;
 using System.CommandLine;
-using System.CommandLine.Binding;
 
 namespace Aviationexam.DependencyUpdater;
 
 public sealed class SourceConfigurationBinder(
     Option<string> directoryArgument
-) : BinderBase<SourceConfiguration>
+) : IBinder<SourceConfiguration>
 {
-    protected override SourceConfiguration GetBoundValue(BindingContext bindingContext) => new()
+    public SourceConfiguration CreateValue(
+        ParseResult parseResult
+    ) => new()
     {
-        Directory = bindingContext.ParseResult.GetValueForOption(directoryArgument)!,
+        Directory = parseResult.GetRequiredValue(directoryArgument),
     };
 }

@@ -1,6 +1,5 @@
 using Aviationexam.DependencyUpdater.Repository.DevOps;
 using System.CommandLine;
-using System.CommandLine.Binding;
 
 namespace Aviationexam.DependencyUpdater;
 
@@ -9,15 +8,15 @@ public sealed class DevOpsUndocumentedConfigurationBinder(
     Option<string> nugetFeedId,
     Option<string> serviceHost,
     Option<string> accessTokenResourceId
-) : BinderBase<DevOpsUndocumentedConfiguration>
+) : IBinder<DevOpsUndocumentedConfiguration>
 {
-    protected override DevOpsUndocumentedConfiguration GetBoundValue(
-        BindingContext bindingContext
+    public DevOpsUndocumentedConfiguration CreateValue(
+        ParseResult parseResult
     ) => new()
     {
-        NugetFeedProject = bindingContext.ParseResult.GetValueForOption(nugetFeedProject)!,
-        NugetFeedId = bindingContext.ParseResult.GetValueForOption(nugetFeedId)!,
-        NugetServiceHost = bindingContext.ParseResult.GetValueForOption(serviceHost)!,
-        AccessTokenResourceId = bindingContext.ParseResult.GetValueForOption(accessTokenResourceId)!,
+        NugetFeedProject = parseResult.GetRequiredValue(nugetFeedProject),
+        NugetFeedId = parseResult.GetRequiredValue(nugetFeedId),
+        NugetServiceHost = parseResult.GetRequiredValue(serviceHost),
+        AccessTokenResourceId = parseResult.GetRequiredValue(accessTokenResourceId),
     };
 }

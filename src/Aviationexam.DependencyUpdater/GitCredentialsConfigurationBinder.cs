@@ -1,17 +1,18 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using System.CommandLine;
-using System.CommandLine.Binding;
 
 namespace Aviationexam.DependencyUpdater;
 
 public sealed class GitCredentialsConfigurationBinder(
     Option<string> usernameArgument,
     Option<string> passwordArgument
-) : BinderBase<GitCredentialsConfiguration>
+) : IBinder<GitCredentialsConfiguration>
 {
-    protected override GitCredentialsConfiguration GetBoundValue(BindingContext bindingContext) => new()
+    public GitCredentialsConfiguration CreateValue(
+        ParseResult parseResult
+        ) => new()
     {
-        Username = bindingContext.ParseResult.GetValueForOption(usernameArgument)!,
-        Password = bindingContext.ParseResult.GetValueForOption(passwordArgument)!,
+        Username = parseResult.GetRequiredValue(usernameArgument),
+        Password = parseResult.GetRequiredValue(passwordArgument),
     };
 }

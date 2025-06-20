@@ -1,20 +1,19 @@
 using Aviationexam.DependencyUpdater.Common;
 using System;
 using System.CommandLine;
-using System.CommandLine.Binding;
 
 namespace Aviationexam.DependencyUpdater;
 
 public sealed class CachingConfigurationBinder(
     TimeProvider timeProvider,
     Option<bool> resetCache
-) : BinderBase<CachingConfiguration>
+) : IBinder<CachingConfiguration>
 {
-    protected override CachingConfiguration GetBoundValue(
-        BindingContext bindingContext
+    public CachingConfiguration CreateValue(
+        ParseResult parseResult
     ) => new()
     {
-        MaxCacheAge = bindingContext.ParseResult.GetValueForOption(resetCache)
+        MaxCacheAge = parseResult.GetValue(resetCache)
             ? timeProvider.GetUtcNow()
             : null,
     };
