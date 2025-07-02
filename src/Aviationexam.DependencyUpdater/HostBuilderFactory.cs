@@ -19,6 +19,8 @@ public static class HostBuilderFactory
         Action<IConfigurationBuilder> configure
     )
     {
+        var isDebug = Environment.GetEnvironmentVariable("SYSTEM_DEBUG") == "true";
+
         var configuration = new ConfigurationManager();
         configure(configuration);
         HostApplicationBuilderSettings settings = new()
@@ -35,6 +37,11 @@ public static class HostBuilderFactory
             .AddConsole()
             .AddDebug();
 
+        if (isDebug)
+        {
+            builder.Logging.SetMinimumLevel(LogLevel.Trace);
+        }
+
         //builder.Logging.AddFilter("Aviationexam.DependencyUpdater.Nuget.NugetCli", LogLevel.Trace);
         builder.Logging.AddFilter("Aviationexam.DependencyUpdater.Nuget.NugetUpdater", LogLevel.Trace);
         builder.Logging.AddFilter("Aviationexam.DependencyUpdater.Repository.DevOps.RepositoryAzureDevOpsClient", LogLevel.Trace);
@@ -44,7 +51,7 @@ public static class HostBuilderFactory
         builder.Services.AddConfigurationParser();
         builder.Services.AddNuget();
         builder.Services.AddVcsGit();
-        builder.Services.AddRepositoryDevOps();
+        builder.Services.AddRepositoryDevOps(shouldRedactHeaderValue: !isDebug);
         builder.Services.AddDefaultImplementations();
 
         return builder;

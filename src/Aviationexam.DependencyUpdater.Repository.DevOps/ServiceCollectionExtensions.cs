@@ -1,5 +1,6 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.VisualStudio.Services.Common;
@@ -15,47 +16,59 @@ namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddRepositoryDevOps(
-        this IServiceCollection services
-    ) => services
-        .AddHttpClient<AzureDevOpsUndocumentedClient>(x => x.Timeout = Timeout.InfiniteTimeSpan)
-        .AddHttpMessageHandler(static x => new LoggingHandler(x.GetRequiredService<ILogger<AzureDevOpsUndocumentedClient>>()))
-        .Services
-        .AddScoped<VssHttpMessageHandler>(static x => x.CreateVssHttpMessageHandler())
-        .AddScoped<VssConnection>(static x =>
+        this IServiceCollection serviceCollection,
+        bool shouldRedactHeaderValue = true
+    )
+    {
+        var httpClientBuilder = serviceCollection
+            .AddHttpClient<AzureDevOpsUndocumentedClient>(x => x.Timeout = Timeout.InfiniteTimeSpan)
+            .AddDefaultLogger()
+            .AddHttpMessageHandler(static x => new LoggingHandler(x.GetRequiredService<ILogger<AzureDevOpsUndocumentedClient>>()));
+
+        if (shouldRedactHeaderValue is false)
         {
-            var devOpsConfiguration = x.GetRequiredService<DevOpsConfiguration>();
-            var vssHttpMessageHandler = x.GetRequiredService<VssHttpMessageHandler>();
+            serviceCollection
+                .Configure<HttpClientFactoryOptions>(httpClientBuilder.Name, x => x.ShouldRedactHeaderValue = _ => false);
+        }
 
-            return new VssConnection(
-                devOpsConfiguration.OrganizationEndpoint,
-                vssHttpMessageHandler,
-                []
-            );
-        })
-        .AddResiliencePipeline<string, GitPullRequest>(
-            $"{nameof(GitHttpClient.CreatePullRequestAsync)}-pipeline",
-            static (builder, context) => builder.AddRetry(new RetryStrategyOptions<GitPullRequest>
+        return serviceCollection
+            .AddScoped<VssHttpMessageHandler>(static x => x.CreateVssHttpMessageHandler())
+            .AddScoped<VssConnection>(static x =>
             {
-                MaxRetryAttempts = 3,
-                BackoffType = DelayBackoffType.Exponential,
-                Delay = TimeSpan.FromSeconds(3),
-                ShouldHandle = new PredicateBuilder<GitPullRequest>().Handle<VssServiceException>(),
-                OnRetry = args =>
+                var devOpsConfiguration = x.GetRequiredService<DevOpsConfiguration>();
+                var vssHttpMessageHandler = x.GetRequiredService<VssHttpMessageHandler>();
+
+                return new VssConnection(
+                    devOpsConfiguration.OrganizationEndpoint,
+                    vssHttpMessageHandler,
+                    []
+                );
+            })
+            .AddResiliencePipeline<string, GitPullRequest>(
+                $"{nameof(GitHttpClient.CreatePullRequestAsync)}-pipeline",
+                static (builder, context) => builder.AddRetry(new RetryStrategyOptions<GitPullRequest>
                 {
-                    var logger = context.ServiceProvider.GetRequiredService<ILogger<GitHttpClient>>();
+                    MaxRetryAttempts = 3,
+                    BackoffType = DelayBackoffType.Exponential,
+                    Delay = TimeSpan.FromSeconds(3),
+                    ShouldHandle = new PredicateBuilder<GitPullRequest>().Handle<VssServiceException>(),
+                    OnRetry = args =>
+                    {
+                        var logger = context.ServiceProvider.GetRequiredService<ILogger<GitHttpClient>>();
 
-                    logger.LogWarning(
-                        args.Outcome.Exception,
-                        "Error creating pull request (Attempt: {RetryCount}). Retrying in {RetryTimeSpan}...",
-                        args.AttemptNumber,
-                        args.RetryDelay
-                    );
+                        logger.LogWarning(
+                            args.Outcome.Exception,
+                            "Error creating pull request (Attempt: {RetryCount}). Retrying in {RetryTimeSpan}...",
+                            args.AttemptNumber,
+                            args.RetryDelay
+                        );
 
-                    return default;
-                },
-            }).AddTimeout(TimeSpan.FromSeconds(10))
-        )
-        .AddScoped<IRepositoryClient, RepositoryAzureDevOpsClient>();
+                        return default;
+                    },
+                }).AddTimeout(TimeSpan.FromSeconds(10))
+            )
+            .AddScoped<IRepositoryClient, RepositoryAzureDevOpsClient>();
+    }
 
     private static VssHttpMessageHandler CreateVssHttpMessageHandler(this IServiceProvider serviceProvider)
     {
