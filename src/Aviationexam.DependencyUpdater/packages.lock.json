@@ -114,8 +114,8 @@
       },
       "Corvus.Json.JsonReference": {
         "type": "Transitive",
-        "resolved": "4.3.10",
-        "contentHash": "4G9ky9eaqb815Ews9NqwoDPlorUDaAXDww3e1C7wKMGBAJ2m1QUMtq2z4ViM9dDqtz3/nwZtbJbTLVSzha9Amg==",
+        "resolved": "4.3.13",
+        "contentHash": "DcZ1hcGo+Rx2NvBeNZ7wxzjBaYM4jzZ60R+KO/4F6mQpmB16UBRBKzQSFjbX700m5oSJcLc74tnaAcSM3FiflQ==",
         "dependencies": {
           "Corvus.HighPerformance": "1.0.0",
           "System.Text.Json": "9.0.0"
@@ -1425,8 +1425,8 @@
         "type": "Project",
         "dependencies": {
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
-          "Corvus.Json.ExtendedTypes": "[4.3.10, )",
-          "Corvus.Json.SourceGenerator": "[4.3.10, )",
+          "Corvus.Json.ExtendedTypes": "[4.3.13, )",
+          "Corvus.Json.SourceGenerator": "[4.3.13, )",
           "Microsoft.Extensions.Logging.Abstractions": "[9.0.6, )",
           "Yaml2JsonNode": "[2.2.0, )",
           "YamlDotNet": "[16.3.0, )"
@@ -1495,11 +1495,11 @@
       },
       "Corvus.Json.ExtendedTypes": {
         "type": "CentralTransitive",
-        "requested": "[4.3.10, )",
-        "resolved": "4.3.10",
-        "contentHash": "1/nyJpsWn15/cK1Lr6kSJem9sg2nBIjxB01F8z+5OY4L8KzOnW5a8ezi3aMzwZoU8pRV4oSFZyZyGzcDeocAVQ==",
+        "requested": "[4.3.13, )",
+        "resolved": "4.3.13",
+        "contentHash": "64uC0PpQ2gaN+E5AQD5aFWWR6TdwoYF71AW6ypk+qu1MlsJOROi4MTr56DOD5zEB0wIAVQemkDBFR+uXBUJSxg==",
         "dependencies": {
-          "Corvus.Json.JsonReference": "4.3.10",
+          "Corvus.Json.JsonReference": "4.3.13",
           "Corvus.UriTemplates": "2.2.0",
           "NodaTime": "3.2.1",
           "System.Collections.Immutable": "9.0.0",
@@ -1508,9 +1508,9 @@
       },
       "Corvus.Json.SourceGenerator": {
         "type": "CentralTransitive",
-        "requested": "[4.3.10, )",
-        "resolved": "4.3.10",
-        "contentHash": "mp2KKwD7rsRHMkko6XTDjN997nZIake3xeMvNoyzbb3W7vp9XznIGlCjvt2aPSAsqXiwwaB8zyJRT8LeDLa9QA==",
+        "requested": "[4.3.13, )",
+        "resolved": "4.3.13",
+        "contentHash": "YplLq4dYeTBIxrj3X89Pz/ZeVzkUpFzvCNhRjk7i4Bw186J5/woJOjFIe5A/9Jm8P8UelnpWtBUJ8gZN1oLjtg==",
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp": "4.11.0"
         }
