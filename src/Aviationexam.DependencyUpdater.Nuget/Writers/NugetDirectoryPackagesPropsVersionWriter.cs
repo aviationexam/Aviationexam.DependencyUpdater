@@ -26,7 +26,7 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
     {
         var packageName = nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName();
 
-        await using var fileStream = fileSystem.FileOpen(fullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+        await using var fileStream = fileSystem.FileOpen(fullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 
         var doc = await XDocument.LoadAsync(fileStream, LoadOptions.PreserveWhitespace, cancellationToken);
 

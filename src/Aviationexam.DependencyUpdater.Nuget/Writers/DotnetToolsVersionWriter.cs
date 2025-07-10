@@ -2,15 +2,20 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Writers;
 
 public sealed class DotnetToolsVersionWriter(
-    IFileSystem fileSystem
+    IFileSystem fileSystem,
+    ILogger<DotnetToolsVersionWriter> logger
 )
 {
     public async Task<ESetVersion> TrySetVersionAsync(
@@ -22,7 +27,81 @@ public sealed class DotnetToolsVersionWriter(
     {
         var packageName = nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName();
 
-        await using var fileStream = fileSystem.FileOpen(fullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+        await using var fileStream = fileSystem.FileOpen(fullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+
+        var jsonNode = await JsonNode.ParseAsync(fileStream, new JsonNodeOptions
+        {
+            PropertyNameCaseInsensitive = false,
+        }, new JsonDocumentOptions
+        {
+            AllowTrailingCommas = true,
+            CommentHandling = JsonCommentHandling.Disallow,
+            MaxDepth = 10,
+        }, cancellationToken);
+
+        if (jsonNode is null)
+        {
+            logger.LogWarning("Unable to parse in dotnet-tools.json: {path}", fullPath);
+
+            return ESetVersion.VersionNotSet;
+        }
+
+        if (
+            !jsonNode.AsObject().TryGetPropertyValue("tools", out var tools)
+            || tools is null
+        )
+        {
+            logger.LogWarning("No tools found in dotnet-tools.json: {path}", fullPath);
+
+            return ESetVersion.VersionNotSet;
+        }
+
+        if (
+            tools.AsObject().TryGetPropertyValue(packageName, out var toolEntryNode)
+            && toolEntryNode?.AsObject() is { } toolEntryObject
+        )
+        {
+            toolEntryObject["version"] = nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
+
+            if (groupPackageVersions.ContainsKey(packageName))
+            {
+                groupPackageVersions[packageName] = nugetUpdateCandidate.PossiblePackageVersion.PackageVersion;
+            }
+
+            fileStream.Seek(0, SeekOrigin.Begin);
+
+            await using var writer = new Utf8JsonWriter(fileStream);
+            jsonNode.WriteTo(writer, new JsonSerializerOptions
+            {
+                AllowOutOfOrderMetadataProperties = false,
+                AllowTrailingCommas = false,
+                DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+                DictionaryKeyPolicy = null,
+                Encoder = null,
+                IgnoreReadOnlyFields = false,
+                IgnoreReadOnlyProperties = false,
+                IncludeFields = false,
+                MaxDepth = 10,
+                NewLine = "\n",
+                NumberHandling = JsonNumberHandling.Strict,
+                PreferredObjectCreationHandling = JsonObjectCreationHandling.Replace,
+                PropertyNameCaseInsensitive = false,
+                PropertyNamingPolicy = null,
+                ReadCommentHandling = JsonCommentHandling.Disallow,
+                ReferenceHandler = null,
+                RespectNullableAnnotations = true,
+                RespectRequiredConstructorParameters = true,
+                TypeInfoResolver = null,
+                UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement,
+                UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
+                WriteIndented = true,
+                IndentCharacter = ' ',
+                IndentSize = 2,
+            });
+            await writer.FlushAsync(cancellationToken);
+
+            return ESetVersion.VersionSet;
+        }
 
         return ESetVersion.VersionNotSet;
     }
