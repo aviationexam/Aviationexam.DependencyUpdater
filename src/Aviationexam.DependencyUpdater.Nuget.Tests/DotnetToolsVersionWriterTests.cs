@@ -99,15 +99,15 @@ public class DotnetToolsVersionWriterTests
             await reader.ReadToEndAsync(TestContext.Current.CancellationToken)
         );
     }
-/*
+
     [Fact]
-    public async Task TrySetVersionAsync_PackageNotFound_ReturnsVersionNotSet()
+    public async Task TrySetVersionFails_PackageNotFound_ReturnsVersionNotSet()
     {
-        // Arrange
         var fileSystem = Substitute.For<IFileSystem>();
         var logger = Substitute.For<ILogger<DotnetToolsVersionWriter>>();
 
-        var inputJson =
+        await using var fileStream = new MemoryStream(
+            // language=json
             """
             {
               "version": 1,
@@ -121,31 +121,31 @@ public class DotnetToolsVersionWriterTests
                 }
               }
             }
-            """;
+            """u8.ToArray()
+        );
 
-        using var fileStream = new MemoryStream();
-        using var writer = new StreamWriter(fileStream);
-        await writer.WriteAsync(inputJson);
-        await writer.FlushAsync();
-        fileStream.Position = 0;
+        await using var proxyFileStream = new StreamProxy(fileStream);
 
         fileSystem
             .FileOpen(
-                Arg.Any<string>(),
+                ".config/dotnet-tools.json",
                 FileMode.Open,
                 FileAccess.ReadWrite,
                 FileShare.None
             )
-            .Returns(fileStream);
+            .Returns(proxyFileStream);
 
         var versionWriter = new DotnetToolsVersionWriter(fileSystem, logger);
         var updateCandidate = new NugetUpdateCandidate(
             new NugetDependency(
                 new NugetFile(".config/dotnet-tools.json", ENugetFileType.DotnetTools),
                 new NugetPackageVersion("dotnet-ef", "9.0.0"),
-                new[] { new NugetTargetFramework("net9.0") }
+                [new NugetTargetFramework("net9.0")]
             ),
-            new PossiblePackageVersion(new PackageVersion("10.0.0"), null)
+            new PossiblePackageVersion(new PackageVersion<PackageSearchMetadataRegistration>(
+                new PackageVersion(new Version("10.0.0"), false, [], NugetReleaseLabelComparer.Instance),
+                new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
+            ), [])
         );
 
         // Act
@@ -153,43 +153,46 @@ public class DotnetToolsVersionWriterTests
             updateCandidate,
             ".config/dotnet-tools.json",
             new Dictionary<string, PackageVersion>(),
-            default
+            TestContext.Current.CancellationToken
         );
 
-        // Assert
+        Assert.True(proxyFileStream.WasDisposed);
         Assert.Equal(ESetVersion.VersionNotSet, result);
     }
 
     [Fact]
-    public async Task TrySetVersionAsync_InvalidJson_ReturnsVersionNotSet()
+    public async Task TrySetVersionFails_InvalidJson_ReturnsVersionNotSet()
     {
-        // Arrange
         var fileSystem = Substitute.For<IFileSystem>();
         var logger = Substitute.For<ILogger<DotnetToolsVersionWriter>>();
 
-        using var fileStream = new MemoryStream();
-        using var writer = new StreamWriter(fileStream);
-        await writer.WriteAsync("invalid json");
-        await writer.FlushAsync();
-        fileStream.Position = 0;
+        await using var fileStream = new MemoryStream(
+            // language=json
+            "invalid json"u8.ToArray()
+        );
+
+        await using var proxyFileStream = new StreamProxy(fileStream);
 
         fileSystem
             .FileOpen(
-                Arg.Any<string>(),
+                ".config/dotnet-tools.json",
                 FileMode.Open,
                 FileAccess.ReadWrite,
                 FileShare.None
             )
-            .Returns(fileStream);
+            .Returns(proxyFileStream);
 
         var versionWriter = new DotnetToolsVersionWriter(fileSystem, logger);
         var updateCandidate = new NugetUpdateCandidate(
             new NugetDependency(
                 new NugetFile(".config/dotnet-tools.json", ENugetFileType.DotnetTools),
                 new NugetPackageVersion("dotnet-ef", "9.0.0"),
-                new[] { new NugetTargetFramework("net9.0") }
+                [new NugetTargetFramework("net9.0")]
             ),
-            new PossiblePackageVersion(new PackageVersion("10.0.0"), null)
+            new PossiblePackageVersion(new PackageVersion<PackageSearchMetadataRegistration>(
+                new PackageVersion(new Version("10.0.0"), false, [], NugetReleaseLabelComparer.Instance),
+                new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
+            ), [])
         );
 
         // Act
@@ -197,11 +200,10 @@ public class DotnetToolsVersionWriterTests
             updateCandidate,
             ".config/dotnet-tools.json",
             new Dictionary<string, PackageVersion>(),
-            default
+            TestContext.Current.CancellationToken
         );
 
-        // Assert
+        Assert.True(proxyFileStream.WasDisposed);
         Assert.Equal(ESetVersion.VersionNotSet, result);
     }
-    */
 }

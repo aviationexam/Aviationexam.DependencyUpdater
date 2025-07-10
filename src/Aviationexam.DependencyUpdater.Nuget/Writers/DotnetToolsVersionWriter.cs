@@ -29,15 +29,25 @@ public sealed class DotnetToolsVersionWriter(
 
         await using var fileStream = fileSystem.FileOpen(fullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 
-        var jsonNode = await JsonNode.ParseAsync(fileStream, new JsonNodeOptions
+        JsonNode? jsonNode;
+        try
         {
-            PropertyNameCaseInsensitive = false,
-        }, new JsonDocumentOptions
+            jsonNode = await JsonNode.ParseAsync(fileStream, new JsonNodeOptions
+            {
+                PropertyNameCaseInsensitive = false,
+            }, new JsonDocumentOptions
+            {
+                AllowTrailingCommas = true,
+                CommentHandling = JsonCommentHandling.Disallow,
+                MaxDepth = 10,
+            }, cancellationToken);
+        }
+        catch (JsonException e)
         {
-            AllowTrailingCommas = true,
-            CommentHandling = JsonCommentHandling.Disallow,
-            MaxDepth = 10,
-        }, cancellationToken);
+            logger.LogError(e, "Unable to parse in dotnet-tools.json: {path}", fullPath);
+
+            return ESetVersion.VersionNotSet;
+        }
 
         if (jsonNode is null)
         {
