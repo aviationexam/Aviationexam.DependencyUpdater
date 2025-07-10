@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
         .AddScoped<NugetConfigParser>()
         .AddScoped<NugetCsprojParser>()
         .AddScoped<NugetDirectoryPackagesPropsParser>()
+        .AddScoped<DotnetToolsParser>()
         .AddScoped<NugetUpdater>()
         .AddScoped<DependencyAnalyzer>()
         .AddScoped<NugetContextFactory>()
@@ -36,5 +37,6 @@ public static class ServiceCollectionExtensions
         .AddScoped<NugetVersionWriter>()
         .AddScoped<NugetCsprojVersionWriter>()
         .AddScoped<NugetDirectoryPackagesPropsVersionWriter>()
+        .AddScoped<DotnetToolsVersionWriter>()
         .AddScoped<NugetCli>();
 }

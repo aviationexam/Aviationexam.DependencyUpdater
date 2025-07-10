@@ -13,6 +13,7 @@ namespace Aviationexam.DependencyUpdater.Nuget.Writers;
 public sealed class NugetVersionWriter(
     NugetDirectoryPackagesPropsVersionWriter directoryPackagesPropsVersionWriter,
     NugetCsprojVersionWriter csprojVersionWriter,
+    DotnetToolsVersionWriter dotnetToolsVersionWriter,
     IRepositoryClient repositoryClient
 )
 {
@@ -47,6 +48,7 @@ public sealed class NugetVersionWriter(
         {
             ENugetFileType.DirectoryPackagesProps => await directoryPackagesPropsVersionWriter.TrySetVersionAsync(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
             ENugetFileType.Csproj or ENugetFileType.Targets => await csprojVersionWriter.TrySetVersionAsync(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
+            ENugetFileType.DotnetTools => await dotnetToolsVersionWriter.TrySetVersionAsync(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
             // ENugetFileType.NugetConfig => false, // we should not update nuget.config
             _ => throw new ArgumentOutOfRangeException(nameof(nugetUpdateCandidate.NugetDependency.NugetFile.Type), nugetUpdateCandidate.NugetDependency.NugetFile.Type, null),
         };
