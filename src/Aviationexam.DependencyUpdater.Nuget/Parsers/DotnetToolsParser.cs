@@ -1,13 +1,10 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
-using NuGet.Versioning;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
-using System.Xml.Linq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Parsers;
 
@@ -21,15 +18,15 @@ public class DotnetToolsParser(
         NugetFile nugetFile
     )
     {
-        var csprojFilePath = nugetFile.GetFullPath(repositoryPath);
+        var dotnetToolFullPath = nugetFile.GetFullPath(repositoryPath);
 
-        if (!fileSystem.Exists(csprojFilePath))
+        if (!fileSystem.Exists(dotnetToolFullPath))
         {
-            logger.LogError("File not found: {path}", csprojFilePath);
+            logger.LogError("File not found: {path}", dotnetToolFullPath);
             yield break;
         }
 
-        using var stream = fileSystem.FileOpen(csprojFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        using var stream = fileSystem.FileOpen(dotnetToolFullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
         DotnetToolsManifest? manifest = null;
         try
@@ -41,7 +38,7 @@ public class DotnetToolsParser(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to parse dotnet-tools.json: {path}", csprojFilePath);
+            logger.LogError(ex, "Failed to parse dotnet-tools.json: {path}", dotnetToolFullPath);
         }
 
         if (manifest?.Tools is null)
