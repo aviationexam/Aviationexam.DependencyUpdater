@@ -113,4 +113,27 @@ public class NugetFinderTests
             new NugetFile("nuget.config", ENugetFileType.NugetConfig),
         ], response);
     }
+
+    [Fact]
+    public void GetDotnetToolsWorks()
+    {
+        var directoryPath = "/opt/asp.net/repository";
+
+        var fileSystem = Substitute.For<IFileSystem>();
+        fileSystem
+            .EnumerateFiles(directoryPath, "dotnet-tools.json", NugetFinder.EnumerateFilesOptions)
+            .Returns([$"{directoryPath}/.config/dotnet-tools.json"]);
+
+        var nugetFinder = new NugetFinder(fileSystem);
+
+        var response = nugetFinder.GetDotnetTools(new RepositoryConfig
+        {
+            RepositoryPath = directoryPath,
+            SubdirectoryPath = null,
+        });
+
+        Assert.Equal([
+            new NugetFile(".config/dotnet-tools.json", ENugetFileType.DotnetTools),
+        ], response);
+    }
 }

@@ -26,7 +26,8 @@ public sealed class NugetFinder(
         RepositoryConfig repositoryConfig
     ) => GetDirectoryPackagesPropsFiles(repositoryConfig)
         .Concat(GetAllCsprojFiles(repositoryConfig))
-        .Concat(GetNugetConfig(repositoryConfig));
+        .Concat(GetNugetConfig(repositoryConfig))
+        .Concat(GetDotnetTools(repositoryConfig));
 
     public IEnumerable<NugetFile> GetDirectoryPackagesPropsFiles(
         RepositoryConfig repositoryConfig
@@ -60,6 +61,20 @@ public sealed class NugetFinder(
             if (string.Equals(fileName, "nuget.config", StringComparison.OrdinalIgnoreCase))
             {
                 yield return new NugetFile(Path.GetRelativePath(repositoryConfig.RepositoryPath, file), ENugetFileType.NugetConfig);
+            }
+        }
+    }
+    public IEnumerable<NugetFile> GetDotnetTools(
+        RepositoryConfig repositoryConfig
+    )
+    {
+        foreach (var file in filesystem.EnumerateFiles(repositoryConfig.TargetDirectoryPath, "dotnet-tools.json", EnumerateFilesOptions))
+        {
+            var fileName = Path.GetFileName(file);
+
+            if (string.Equals(fileName, "dotnet-tools.json", StringComparison.OrdinalIgnoreCase))
+            {
+                yield return new NugetFile(Path.GetRelativePath(repositoryConfig.RepositoryPath, file), ENugetFileType.DotnetTools);
             }
         }
     }

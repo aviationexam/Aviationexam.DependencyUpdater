@@ -12,7 +12,8 @@ public sealed class NugetContextFactory(
     NugetFinder nugetFinder,
     NugetConfigParser nugetConfigParser,
     NugetDirectoryPackagesPropsParser nugetDirectoryPackagesPropsParser,
-    NugetCsprojParser nugetCsprojParser
+    NugetCsprojParser nugetCsprojParser,
+    DotnetToolsParser dotnetToolsParser
 )
 {
     public NugetUpdaterContext CreateContext(
@@ -28,6 +29,10 @@ public sealed class NugetContextFactory(
             .SelectMany(x => nugetCsprojParser.Parse(repositoryConfig.RepositoryPath, x))
             .ToList();
 
+        var dotnetToolsDependencies = nugetFinder.GetDotnetTools(repositoryConfig)
+            .SelectMany(x => dotnetToolsParser.Parse(repositoryConfig.RepositoryPath, x))
+            .ToList();
+
         var packagesTargetFrameworks = csprojDependencies
             .GroupBy(x => x.NugetPackage.GetPackageName())
             .ToDictionary(
@@ -38,6 +43,7 @@ public sealed class NugetContextFactory(
         var dependencies = nugetFinder.GetDirectoryPackagesPropsFiles(repositoryConfig)
             .SelectMany(x => nugetDirectoryPackagesPropsParser.Parse(repositoryConfig.RepositoryPath, x, packagesTargetFrameworks, defaultTargetFrameworks))
             .Concat(csprojDependencies.Where(x => x.NugetPackage is NugetPackageReference { VersionRange: not null }))
+            .Concat(dotnetToolsDependencies.Where(x => x.NugetPackage is NugetPackageReference { VersionRange: not null }))
             .ToList();
 
         return new NugetUpdaterContext(

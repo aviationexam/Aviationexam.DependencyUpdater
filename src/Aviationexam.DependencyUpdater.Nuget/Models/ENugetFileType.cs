@@ -6,4 +6,5 @@ public enum ENugetFileType
     DirectoryPackagesProps,
     Targets,
     NugetConfig,
+    DotnetTools,
 }
