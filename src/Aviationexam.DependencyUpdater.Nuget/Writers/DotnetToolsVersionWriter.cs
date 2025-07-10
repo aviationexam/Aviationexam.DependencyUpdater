@@ -68,9 +68,19 @@ public sealed class DotnetToolsVersionWriter(
                 groupPackageVersions[packageName] = nugetUpdateCandidate.PossiblePackageVersion.PackageVersion;
             }
 
+            fileStream.SetLength(0);
             fileStream.Seek(0, SeekOrigin.Begin);
 
-            await using var writer = new Utf8JsonWriter(fileStream);
+            await using var writer = new Utf8JsonWriter(fileStream, new JsonWriterOptions
+            {
+                Encoder = null,
+                Indented = true,
+                IndentCharacter = ' ',
+                IndentSize = 2,
+                NewLine = "\n",
+                MaxDepth = 10,
+                SkipValidation = false,
+            });
             jsonNode.WriteTo(writer, new JsonSerializerOptions
             {
                 AllowOutOfOrderMetadataProperties = false,
