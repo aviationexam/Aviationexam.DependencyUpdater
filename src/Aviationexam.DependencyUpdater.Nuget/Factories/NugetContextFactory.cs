@@ -30,7 +30,7 @@ public sealed class NugetContextFactory(
             .ToList();
 
         var dotnetToolsDependencies = nugetFinder.GetDotnetTools(repositoryConfig)
-            .SelectMany(x => dotnetToolsParser.Parse(repositoryConfig.RepositoryPath, x))
+            .SelectMany(x => dotnetToolsParser.Parse(repositoryConfig.RepositoryPath, x, defaultTargetFrameworks))
             .ToList();
 
         var packagesTargetFrameworks = csprojDependencies

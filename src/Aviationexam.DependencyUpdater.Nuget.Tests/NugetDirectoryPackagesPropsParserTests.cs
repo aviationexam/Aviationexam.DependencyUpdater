@@ -20,7 +20,7 @@ public class NugetDirectoryPackagesPropsParserTests
     {
         using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
             NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
-            );
+        );
 
         var fileSystem = Substitute.For<IFileSystem>();
         var logger = Substitute.For<ILogger<NugetDirectoryPackagesPropsParser>>();

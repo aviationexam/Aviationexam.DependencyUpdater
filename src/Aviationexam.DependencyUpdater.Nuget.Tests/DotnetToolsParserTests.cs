@@ -6,6 +6,7 @@ using Aviationexam.DependencyUpdater.TestsInfrastructure;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
+using System.Collections.Generic;
 using System.IO;
 using Xunit;
 
@@ -66,13 +67,15 @@ public class DotnetToolsParserTests
             logger
         );
 
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks = [new("net9.0")];
+
         var nugetFile = new NugetFile(".config/dotnet-tools.json", ENugetFileType.DotnetTools);
-        var response = csprojParser.Parse(temporaryDirectoryProvider.TemporaryDirectory, nugetFile);
+        var response = csprojParser.Parse(temporaryDirectoryProvider.TemporaryDirectory, nugetFile, targetFrameworks);
 
         Assert.Equal([
-            new NugetDependency(nugetFile, new NugetPackageVersion("dotnet-ef", "9.0.0"), []),
-            new NugetDependency(nugetFile, new NugetPackageVersion("dotnet-svcutil", "2.2.0-preview1.23462.5"), []),
-            new NugetDependency(nugetFile, new NugetPackageVersion("dotnet-xscgen", "2.1.1174"), []),
+            new NugetDependency(nugetFile, new NugetPackageVersion("dotnet-ef", "9.0.0"), targetFrameworks),
+            new NugetDependency(nugetFile, new NugetPackageVersion("dotnet-svcutil", "2.2.0-preview1.23462.5"), targetFrameworks),
+            new NugetDependency(nugetFile, new NugetPackageVersion("dotnet-xscgen", "2.1.1174"), targetFrameworks),
         ], response);
     }
 
@@ -93,7 +96,7 @@ public class DotnetToolsParserTests
             logger
         );
 
-        var response = csprojParser.Parse(directoryPath, new NugetFile(".config/dotnet-tools.json", ENugetFileType.Csproj));
+        var response = csprojParser.Parse(directoryPath, new NugetFile(".config/dotnet-tools.json", ENugetFileType.Csproj), []);
 
         Assert.Empty(response);
     }

@@ -15,7 +15,8 @@ public class DotnetToolsParser(
 {
     public IEnumerable<NugetDependency> Parse(
         string repositoryPath,
-        NugetFile nugetFile
+        NugetFile nugetFile,
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks
     )
     {
         var dotnetToolFullPath = nugetFile.GetFullPath(repositoryPath);
@@ -52,7 +53,7 @@ public class DotnetToolsParser(
             yield return new NugetDependency(
                 nugetFile,
                 package,
-                []
+                targetFrameworks
             );
         }
     }
