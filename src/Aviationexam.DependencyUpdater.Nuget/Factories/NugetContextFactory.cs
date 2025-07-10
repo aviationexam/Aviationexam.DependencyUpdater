@@ -43,7 +43,7 @@ public sealed class NugetContextFactory(
         var dependencies = nugetFinder.GetDirectoryPackagesPropsFiles(repositoryConfig)
             .SelectMany(x => nugetDirectoryPackagesPropsParser.Parse(repositoryConfig.RepositoryPath, x, packagesTargetFrameworks, defaultTargetFrameworks))
             .Concat(csprojDependencies.Where(x => x.NugetPackage is NugetPackageReference { VersionRange: not null }))
-            .Concat(dotnetToolsDependencies.Where(x => x.NugetPackage is NugetPackageReference { VersionRange: not null }))
+            .Concat(dotnetToolsDependencies)
             .ToList();
 
         return new NugetUpdaterContext(
