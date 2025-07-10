@@ -263,6 +263,16 @@ public sealed class DependencyAnalyzer(
 
             var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
 
+            if (
+                currentPackageVersions.TryGetValue(packageDependency.Id, out var currentVersion)
+                && currentVersion == dependentPackage.Version
+            )
+            {
+                packageFlags[dependentPackage] = EDependencyFlag.Valid;
+
+                continue;
+            }
+
             var isDependencyIgnored = ignoredDependenciesResolver.IsDependencyIgnored(
                 packageDependency,
                 ignoreResolver,
@@ -410,5 +420,4 @@ public sealed class DependencyAnalyzer(
                 : EDependencyFlag.Valid;
         }
     }
-
 }
