@@ -57,7 +57,7 @@ internal sealed class DefaultCommandHandler(
                 var gitMetadataConfig = new GitMetadataConfig
                 {
                     Milestone = nugetUpdate.Milestone.AsAny.AsString.GetString(),
-                    Reviewers = [.. nugetUpdate.Reviewers.Select(x => x.GetString()!)],
+                    Reviewers = nugetUpdate.Reviewers ?? [],
                     CommitAuthor = nugetUpdate.CommitAuthor ?? GitAuthorConstants.DefaultCommitAuthor,
                     CommitAuthorEmail = nugetUpdate.CommitAuthorEmail ?? GitAuthorConstants.DefaultCommitAuthorEmail,
                     UpdateSubmodules = [.. nugetUpdate.UpdateSubmodules.Select(x => x.MapToSubmoduleEntry())],
