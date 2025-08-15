@@ -70,7 +70,7 @@ public readonly partial struct DependabotConfiguration
                 }
 
                 if (
-                    jsonElementBacking.TryGetProperty(UpdateSubmodulesUtf8, out var result)
+                    jsonElementBacking.TryGetProperty(ReviewersUtf8, out var result)
                     && result.ValueKind is JsonValueKind.Array
                 )
                 {
@@ -79,7 +79,7 @@ public readonly partial struct DependabotConfiguration
 
                 if (backing.HasFlag(Backing.Object))
                 {
-                    if (objectBacking.TryGetValue(UpdateSubmodulesUtf8, out _))
+                    if (objectBacking.TryGetValue(ReviewersUtf8, out _))
                     {
                         throw new NotImplementedException();
                     }
