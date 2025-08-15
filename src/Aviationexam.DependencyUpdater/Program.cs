@@ -154,5 +154,4 @@ rootCommand.SetAction(DefaultCommandHandler.GetHandler((serviceCollection, parse
     ))
 ));
 
-return await new CommandLineConfiguration(rootCommand)
-    .InvokeAsync(args);
+return await rootCommand.Parse(args).InvokeAsync();
