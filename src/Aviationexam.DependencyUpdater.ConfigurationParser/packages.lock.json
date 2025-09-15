@@ -4,11 +4,11 @@
     "net9.0": {
       "Corvus.Json.ExtendedTypes": {
         "type": "Direct",
-        "requested": "[4.3.17, )",
-        "resolved": "4.3.17",
-        "contentHash": "7J9kFQDiXkl83r1Erg4+n5pQIEIwQ5E2r2QE7kbfFtEbYN82/WqfXNIDkOgzKFrsUu5/j6Sm8cKS8M311cznXA==",
+        "requested": "[4.3.18, )",
+        "resolved": "4.3.18",
+        "contentHash": "ASuUSF4dyL+J26dtmtDBTFlJSbrsoPKWyziBLlvcIHMAbc5CLZZte6U5DdBaniHH/wnrZTxkgfycoS0PzlBTnA==",
         "dependencies": {
-          "Corvus.Json.JsonReference": "4.3.17",
+          "Corvus.Json.JsonReference": "4.3.18",
           "Corvus.UriTemplates": "2.3.2",
           "NodaTime": "3.2.1",
           "System.Collections.Immutable": "9.0.0",
@@ -17,9 +17,9 @@
       },
       "Corvus.Json.SourceGenerator": {
         "type": "Direct",
-        "requested": "[4.3.17, )",
-        "resolved": "4.3.17",
-        "contentHash": "wzDC0cFQ6nsDlu+qgUsM8RcJpa/zdNd9rDYTdJIiNykOs73Gb3V5qjhBlrIZT1M5xvZj/uNv4CPY9oE8KpbW3Q==",
+        "requested": "[4.3.18, )",
+        "resolved": "4.3.18",
+        "contentHash": "PeohgP9DIdIwPfUg2R0Rx3d4oRocVN/1kO+kQu3reMUZqsN7aeNEKiSCP1htNJbxHBtHK+IChbU7M4ar6d2c1w==",
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp": "4.11.0"
         }
@@ -76,8 +76,8 @@
       },
       "Corvus.Json.JsonReference": {
         "type": "Transitive",
-        "resolved": "4.3.17",
-        "contentHash": "APFnYQbdduo/e3/wSruZqoCPoP94Xy3iiT60z2jDsovSeGtxCRS8YDBxrEVdz5xY4n25tN54xxQotfcIidPOiA==",
+        "resolved": "4.3.18",
+        "contentHash": "NiXE6A/CH+cERTdvAlOjhAcqSvBKNFRWTM4tHBWkIZECQ0CGIuK9cZIwYpltH2zFOY2Jx7tEF+A37bu0ROMueQ==",
         "dependencies": {
           "Corvus.HighPerformance": "1.0.2",
           "System.Text.Json": "9.0.0"
