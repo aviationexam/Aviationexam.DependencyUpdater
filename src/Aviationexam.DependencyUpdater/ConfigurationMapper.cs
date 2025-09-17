@@ -5,7 +5,7 @@ using Aviationexam.DependencyUpdater.Nuget.Configurations;
 using Aviationexam.DependencyUpdater.Nuget.Factories;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater;
 
