@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <Import Project="..\WarningConfiguration.targets" />
-  
+
   <PropertyGroup>
     <NoWarn>$(NoWarn);IL2026;IL3050</NoWarn>
   </PropertyGroup>
@@ -24,7 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.Interfaces\Aviationexam.DependencyUpdater.Interfaces.csproj" />
   </ItemGroup>
-  
+
   <PropertyGroup>
     <DependabotSchemaUrl>https://www.schemastore.org/dependabot-2.0.json</DependabotSchemaUrl>
     <DependabotSchemaFile>$(MSBuildProjectDirectory)/dependabot-2.0.json</DependabotSchemaFile>
@@ -38,6 +38,10 @@
     <Message Importance="High" Text="Downloading $(DependabotSchemaUrl) to the $(DependabotSchemaFile)" />
 
     <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(DependabotSchemaUrl) --output $(DependabotSchemaFile)" />
+  </Target>
+
+  <Target Name="CleanDependabotSchema" AfterTargets="Clean">
+    <Delete Files="$(DependabotSchemaFile)" TreatErrorsAsWarnings="true" />
   </Target>
 
 </Project>
