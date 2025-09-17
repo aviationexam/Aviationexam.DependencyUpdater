@@ -43,7 +43,7 @@ public static class ConfigurationMapper
         {
             yield return new IgnoreEntry(
                 ignoreEntity.DependencyName.GetString(),
-                [.. ignoreEntity.UpdateTypesValue.Select(x => x.GetString()!)]
+                [.. ignoreEntity.UpdateTypesValue.AsValueEnumerable().Select(x => x.GetString()!)]
             );
         }
     }
@@ -61,7 +61,7 @@ public static class ConfigurationMapper
         {
             yield return new GroupEntry(
                 groupEntity.Key.GetString(),
-                [.. groupEntity.Value.Patterns.Select(x => x.GetString()!)]
+                [.. groupEntity.Value.Patterns.AsValueEnumerable().Select(x => x.GetString()!)]
             );
         }
     }
