@@ -26,20 +26,23 @@ public sealed class GitSourceVersioningWorkspace(
         lock (gitRepositoryLock)
         {
             var worktreeName = worktree.Name;
-            var branchName = _worktreeRepository.Head.FriendlyName;
-
-            _worktreeRepository.Worktrees.Prune(worktree, ifLocked: false);
-
-            var existingBranch = rootRepository.Branches.AsValueEnumerable().SingleOrDefault(x => x.FriendlyName == branchName);
-            if (existingBranch is not null)
+            if (Directory.Exists(GetWorkspaceDirectory()))
             {
-                rootRepository.Branches.Remove(existingBranch);
-            }
+                var branchName = _worktreeRepository.Head.FriendlyName;
 
-            existingBranch = rootRepository.Branches.AsValueEnumerable().SingleOrDefault(x => x.FriendlyName == worktreeName);
-            if (existingBranch is not null)
-            {
-                rootRepository.Branches.Remove(existingBranch);
+                _worktreeRepository.Worktrees.Prune(worktree, ifLocked: false);
+
+                var existingBranch = rootRepository.Branches.AsValueEnumerable().SingleOrDefault(x => x.FriendlyName == branchName);
+                if (existingBranch is not null)
+                {
+                    rootRepository.Branches.Remove(existingBranch);
+                }
+
+                existingBranch = rootRepository.Branches.AsValueEnumerable().SingleOrDefault(x => x.FriendlyName == worktreeName);
+                if (existingBranch is not null)
+                {
+                    rootRepository.Branches.Remove(existingBranch);
+                }
             }
 
             _worktreeRepository.Dispose();
@@ -161,6 +164,12 @@ public sealed class GitSourceVersioningWorkspace(
         string authorEmail
     )
     {
+        if (GetWorkspaceDirectory() is { } dir && !Directory.Exists(dir))
+        {
+            logger.LogWarning("Workspace Directory {WorkspaceDirectory} does not exists", dir);
+            return;
+        }
+
         // Check for unstaged changes before attempting rebase
         if (HasUncommitedChanges())
         {
