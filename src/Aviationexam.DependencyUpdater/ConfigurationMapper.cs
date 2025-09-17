@@ -34,7 +34,7 @@ public static class ConfigurationMapper
         this DependabotConfiguration.Update.IgnoreArray ignoreArray
     )
     {
-        if (ignoreArray.ValueKind is not JsonValueKind.Array)
+        if (ignoreArray.ValueKind is not JsonValueKind.Array and not JsonValueKind.Object)
         {
             yield break;
         }
@@ -52,7 +52,7 @@ public static class ConfigurationMapper
         this DependabotConfiguration.Update.GroupsEntity groupsEntity
     )
     {
-        if (groupsEntity.ValueKind is not JsonValueKind.Array)
+        if (groupsEntity.ValueKind is not JsonValueKind.Array and not JsonValueKind.Object)
         {
             yield break;
         }
