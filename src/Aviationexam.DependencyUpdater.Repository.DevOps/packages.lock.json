@@ -1210,7 +1210,8 @@
           "Microsoft.Extensions.Configuration.Abstractions": "[9.0.9, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.9, )",
           "Microsoft.Extensions.Logging.Abstractions": "[9.0.9, )",
-          "Microsoft.Extensions.Options.ConfigurationExtensions": "[9.0.9, )"
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "[9.0.9, )",
+          "ZLinq": "[1.5.2, )"
         }
       },
       "aviationexam.dependencyupdater.constants": {
@@ -1323,6 +1324,12 @@
         "dependencies": {
           "System.Runtime": "4.3.1"
         }
+      },
+      "ZLinq": {
+        "type": "CentralTransitive",
+        "requested": "[1.5.2, )",
+        "resolved": "1.5.2",
+        "contentHash": "Zd/afYvmwHMzAWFhK9XAEW9BN4iqXswuWUNsaVFPy4INnxZe/HdbC/DTMUkxmeG+8vPc/8VFVWnCvEYQcRwwmw=="
       }
     },
     "net9.0/linux-x64": {
