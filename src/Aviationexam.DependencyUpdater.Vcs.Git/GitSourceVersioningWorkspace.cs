@@ -19,7 +19,7 @@ public sealed class GitSourceVersioningWorkspace(
     ILogger logger
 ) : ISourceVersioningWorkspace
 {
-    private readonly Repository _worktreeRepository = worktree.WorktreeRepository;
+    private Repository _worktreeRepository = worktree.WorktreeRepository;
 
     public void Dispose()
     {
@@ -46,9 +46,21 @@ public sealed class GitSourceVersioningWorkspace(
         }
     }
 
-    public string GetWorkspaceDirectory() => _worktreeRepository.Info.WorkingDirectory;
+    public string GetWorkspaceDirectory()
+    {
+        lock (gitRepositoryLock)
+        {
+            return _worktreeRepository.Info.WorkingDirectory;
+        }
+    }
 
-    public string GetBranchName() => _worktreeRepository.Head.FriendlyName;
+    public string GetBranchName()
+    {
+        lock (gitRepositoryLock)
+        {
+            return _worktreeRepository.Head.FriendlyName;
+        }
+    }
 
     public bool IsPathInsideRepository(
         string fullPath
@@ -61,13 +73,16 @@ public sealed class GitSourceVersioningWorkspace(
             return false;
         }
 
-        foreach (var submodule in _worktreeRepository.Submodules)
+        lock (gitRepositoryLock)
         {
-            var submodulePath = Path.Join(workingDirectory, submodule.Path);
-
-            if (fullPath.StartsWith(submodulePath))
+            foreach (var submodule in _worktreeRepository.Submodules)
             {
-                return false;
+                var submodulePath = Path.Join(workingDirectory, submodule.Path);
+
+                if (fullPath.StartsWith(submodulePath))
+                {
+                    return false;
+                }
             }
         }
 
@@ -79,31 +94,37 @@ public sealed class GitSourceVersioningWorkspace(
         string branch
     )
     {
-        var submoduleInstance = _worktreeRepository.Submodules[submodule];
-
-        using var submoduleRepository = new Repository(Path.Join(_worktreeRepository.Info.WorkingDirectory, submoduleInstance.Path));
-
-        var remote = submoduleRepository.Network.Remotes[GitConstants.DefaultRemote];
-
         lock (gitRepositoryLock)
         {
+            var submoduleInstance = _worktreeRepository.Submodules[submodule];
+
+            using var submoduleRepository = new Repository(Path.Join(_worktreeRepository.Info.WorkingDirectory, submoduleInstance.Path));
+
+            var remote = submoduleRepository.Network.Remotes[GitConstants.DefaultRemote];
+
             Commands.Fetch(submoduleRepository, remote.Name, [
                 $"+{GitConstants.HeadsPrefix}{branch}:{GitConstants.RemoteRef(GitConstants.DefaultRemote)}{branch}",
             ], new FetchOptions
             {
                 CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
             }, logMessage: null);
-        }
 
-        var upstreamBranch = submoduleRepository.Branches[$"{GitConstants.DefaultRemote}/{branch}"];
+            var upstreamBranch = submoduleRepository.Branches[$"{GitConstants.DefaultRemote}/{branch}"];
 
-        if (upstreamBranch is not null)
-        {
-            submoduleRepository.Reset(ResetMode.Hard, upstreamBranch.Tip);
+            if (upstreamBranch is not null)
+            {
+                submoduleRepository.Reset(ResetMode.Hard, upstreamBranch.Tip);
+            }
         }
     }
 
-    public bool HasUncommitedChanges() => _worktreeRepository.RetrieveStatus().IsDirty;
+    public bool HasUncommitedChanges()
+    {
+        lock (gitRepositoryLock)
+        {
+            return _worktreeRepository.RetrieveStatus().IsDirty;
+        }
+    }
 
     public void CommitChanges(
         string message,
@@ -130,6 +151,7 @@ public sealed class GitSourceVersioningWorkspace(
             );
 
             _worktreeRepository.Commit(message, signature, signature);
+            _worktreeRepository = worktree.WorktreeRepository;
         }
     }
 
@@ -142,18 +164,21 @@ public sealed class GitSourceVersioningWorkspace(
         // Check for unstaged changes before attempting rebase
         if (HasUncommitedChanges())
         {
-            logger.LogWarning("Unstaged changes exist in workdir, skipping rebase for branch {Branch}", _worktreeRepository.Head.FriendlyName);
+            lock (gitRepositoryLock)
+            {
+                logger.LogWarning("Unstaged changes exist in workdir, skipping rebase for branch {Branch}", _worktreeRepository.Head.FriendlyName);
+            }
 
             return;
         }
 
-        var branch = _worktreeRepository.Head;
-        var originalHead = branch.Tip;
-
-        var remote = _worktreeRepository.Network.Remotes[GitConstants.DefaultRemote];
-
         lock (gitRepositoryLock)
         {
+            var branch = _worktreeRepository.Head;
+            var originalHead = branch.Tip;
+
+            var remote = _worktreeRepository.Network.Remotes[GitConstants.DefaultRemote];
+
             Commands.Fetch(_worktreeRepository, remote.Name, [
                 $"+{GitConstants.HeadsPrefix}{branch.FriendlyName}:{GitConstants.RemoteRef(GitConstants.DefaultRemote)}{branch.FriendlyName}",
                 $"+{GitConstants.HeadsPrefix}{sourceBranchName}:{GitConstants.RemoteRef(GitConstants.DefaultRemote)}{sourceBranchName}",
@@ -161,26 +186,26 @@ public sealed class GitSourceVersioningWorkspace(
             {
                 CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
             }, logMessage: null);
-        }
 
-        var upstreamBranch = _worktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{branch.FriendlyName}"];
+            _worktreeRepository = worktree.WorktreeRepository;
 
-        if (upstreamBranch is not null)
-        {
-            _worktreeRepository.Reset(ResetMode.Hard, upstreamBranch.Tip);
-        }
+            var upstreamBranch = _worktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{branch.FriendlyName}"];
 
-        var sourceBranch = _worktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{sourceBranchName}"];
-        if (sourceBranch is null)
-        {
-            logger.LogWarning("Target branch {SourceBranchName} not found locally", sourceBranchName);
-            return; // remote branch doesn't exist
-        }
+            if (upstreamBranch is not null)
+            {
+                _worktreeRepository.Reset(ResetMode.Hard, upstreamBranch.Tip);
+                _worktreeRepository = worktree.WorktreeRepository;
+            }
 
-        logger.LogInformation("Rebasing {CurrentBranch} onto {SourceBranch}", branch.FriendlyName, sourceBranchName);
+            var sourceBranch = _worktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{sourceBranchName}"];
+            if (sourceBranch is null)
+            {
+                logger.LogWarning("Target branch {SourceBranchName} not found locally", sourceBranchName);
+                return; // remote branch doesn't exist
+            }
 
-        lock (gitRepositoryLock)
-        {
+            logger.LogInformation("Rebasing {CurrentBranch} onto {SourceBranch}", branch.FriendlyName, sourceBranchName);
+
             try
             {
                 var options = new RebaseOptions
@@ -201,12 +226,15 @@ public sealed class GitSourceVersioningWorkspace(
                 {
                     ResetToOriginalHead(_worktreeRepository, originalHead, branch);
                 }
+
+                _worktreeRepository = worktree.WorktreeRepository;
             }
             catch (Exception exception)
             {
                 logger.LogWarning(exception, "Rebase failed — restoring HEAD and workspace");
 
                 ResetToOriginalHead(_worktreeRepository, originalHead, branch);
+                _worktreeRepository = worktree.WorktreeRepository;
             }
         }
     }
@@ -239,32 +267,36 @@ public sealed class GitSourceVersioningWorkspace(
 
     public bool Push(string? sourceBranchName)
     {
-        var canonicalName = _worktreeRepository.Head.CanonicalName;
-
-        var sourceBranch = _worktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{sourceBranchName}"];
-        var remotePushedBranch = _worktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{_worktreeRepository.Head.FriendlyName}"];
-        var pushedBranch = _worktreeRepository.Branches[_worktreeRepository.Head.FriendlyName];
-
-        if (
-            remotePushedBranch is null
-            && sourceBranch.Tip.Equals(pushedBranch.Tip)
-        )
+        lock (gitRepositoryLock)
         {
-            logger.LogInformation("Branch {BranchName} is empty, skipping push", canonicalName);
+            var canonicalName = _worktreeRepository.Head.CanonicalName;
 
-            return false;
+            var sourceBranch = _worktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{sourceBranchName}"];
+            var remotePushedBranch = _worktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{_worktreeRepository.Head.FriendlyName}"];
+            var pushedBranch = _worktreeRepository.Branches[_worktreeRepository.Head.FriendlyName];
+
+            if (
+                remotePushedBranch is null
+                && sourceBranch.Tip.Equals(pushedBranch.Tip)
+            )
+            {
+                logger.LogInformation("Branch {BranchName} is empty, skipping push", canonicalName);
+
+                return false;
+            }
+
+            logger.LogInformation("Push {BranchName}", canonicalName);
+
+            _worktreeRepository.Network.Push(
+                remote: _worktreeRepository.Network.Remotes[GitConstants.DefaultRemote],
+                pushRefSpec: $"+{canonicalName}:{canonicalName}",
+                pushOptions: new PushOptions
+                {
+                    CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
+                }
+            );
         }
 
-        logger.LogInformation("Push {BranchName}", canonicalName);
-
-        _worktreeRepository.Network.Push(
-            remote: _worktreeRepository.Network.Remotes[GitConstants.DefaultRemote],
-            pushRefSpec: $"+{canonicalName}:{canonicalName}",
-            pushOptions: new PushOptions
-            {
-                CredentialsProvider = (_, _, _) => gitCredentials.ToGitCredentials(),
-            }
-        );
 
         return true;
     }
