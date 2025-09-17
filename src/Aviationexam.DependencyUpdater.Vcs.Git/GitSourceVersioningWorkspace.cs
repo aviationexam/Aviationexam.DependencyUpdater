@@ -5,8 +5,8 @@ using LibGit2Sharp;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Vcs.Git;
 
@@ -28,13 +28,13 @@ public sealed class GitSourceVersioningWorkspace(
 
             worktree.WorktreeRepository.Worktrees.Prune(worktree, ifLocked: false);
 
-            var existingBranch = rootRepository.Branches.SingleOrDefault(x => x.FriendlyName == branchName);
+            var existingBranch = rootRepository.Branches.AsValueEnumerable().SingleOrDefault(x => x.FriendlyName == branchName);
             if (existingBranch is not null)
             {
                 rootRepository.Branches.Remove(existingBranch);
             }
 
-            existingBranch = rootRepository.Branches.SingleOrDefault(x => x.FriendlyName == worktreeName);
+            existingBranch = rootRepository.Branches.AsValueEnumerable().SingleOrDefault(x => x.FriendlyName == worktreeName);
             if (existingBranch is not null)
             {
                 rootRepository.Branches.Remove(existingBranch);

@@ -5,7 +5,7 @@ using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Factories;
 
@@ -19,14 +19,14 @@ public sealed class NugetVersionFetcherFactory(
         IReadOnlyCollection<NugetFeedAuthentication> nugetFeedAuthentications
     )
     {
-        var nugetFeedAuthentication = nugetFeedAuthentications.SingleOrDefault(x => x.FeedUrl == nugetSource.Source);
+        var nugetFeedAuthentication = nugetFeedAuthentications.AsValueEnumerable().SingleOrDefault(x => x.FeedUrl == nugetSource.Source);
 
         var sourceRepository = CreateSourceRepository(nugetSource, nugetFeedAuthentication);
 
         var fallbackSourceRepository =
             nugetFeedAuthentication is { Key: { } registryKey }
             && fallbackRegistries.TryGetValue(registryKey, out var fallbackRegistryKey)
-            && nugetFeedAuthentications.SingleOrDefault(x => x.Key == fallbackRegistryKey) is { } nugetFallbackFeedAuthentication
+            && nugetFeedAuthentications.AsValueEnumerable().SingleOrDefault(x => x.Key == fallbackRegistryKey) is { } nugetFallbackFeedAuthentication
                 ? CreateSourceRepository(new NugetSource(
                     fallbackRegistryKey,
                     nugetFallbackFeedAuthentication.FeedUrl,

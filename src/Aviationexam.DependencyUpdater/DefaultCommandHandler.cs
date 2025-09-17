@@ -7,9 +7,9 @@ using Aviationexam.DependencyUpdater.Nuget.Configurations;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.CommandLine;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater;
 
@@ -44,7 +44,7 @@ internal sealed class DefaultCommandHandler(
 
             foreach (var nugetUpdate in nugetUpdates)
             {
-                var registries = nugetUpdate.Registries.Select(x => x.AsString.GetString()!).ToList();
+                var registries = nugetUpdate.Registries.AsValueEnumerable().Select(x => x.AsString.GetString()!).ToList();
                 var fallbackRegistries = nugetUpdate.FallbackRegistries;
 
                 var repositoryConfig = new RepositoryConfig
@@ -60,7 +60,7 @@ internal sealed class DefaultCommandHandler(
                     Reviewers = nugetUpdate.Reviewers ?? [],
                     CommitAuthor = nugetUpdate.CommitAuthor ?? GitAuthorConstants.DefaultCommitAuthor,
                     CommitAuthorEmail = nugetUpdate.CommitAuthorEmail ?? GitAuthorConstants.DefaultCommitAuthorEmail,
-                    UpdateSubmodules = [.. nugetUpdate.UpdateSubmodules.Select(x => x.MapToSubmoduleEntry())],
+                    UpdateSubmodules = [.. nugetUpdate.UpdateSubmodules.AsValueEnumerable().Select(x => x.MapToSubmoduleEntry())],
                 };
 
                 var packageConfig = new NugetPackageConfig
@@ -76,9 +76,9 @@ internal sealed class DefaultCommandHandler(
                 {
                     NugetFeedAuthentications =
                     [
-                        .. nugetFeedAuthentications.Where(x =>
+                        .. nugetFeedAuthentications.AsValueEnumerable().Where(x =>
                             registries.Contains(x.Key)
-                            || fallbackRegistries.Any(r => r.Value == x.Key)
+                            || fallbackRegistries.AsValueEnumerable().Any(r => r.Value == x.Key)
                         ),
                     ],
                 };

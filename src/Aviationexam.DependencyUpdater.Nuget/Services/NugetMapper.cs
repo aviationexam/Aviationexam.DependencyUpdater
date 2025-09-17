@@ -4,7 +4,7 @@ using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
@@ -13,6 +13,7 @@ public static class NugetMapper
     public static PackageVersion<PackageSearchMetadataRegistration>? MapToPackageVersion<T>(
         this IReadOnlyDictionary<EPackageSource, T> packageSearchMetadata
     ) where T : class, IPackageSearchMetadata => packageSearchMetadata
+        .AsValueEnumerable()
         .Select(x => x.Value.MapToPackageVersion())
         .FirstOrDefault()?
         .MapToPackageVersion(
@@ -24,11 +25,11 @@ public static class NugetMapper
         IReadOnlyDictionary<EPackageSource, T> packageSearchMetadata
     ) where T : class, IPackageSearchMetadata
     {
-        if (packageSearchMetadata.All(x => x.Value is PackageSearchMetadataRegistration))
+        if (packageSearchMetadata.AsValueEnumerable().All(x => x.Value is PackageSearchMetadataRegistration))
         {
             return PackageSearchMetadataRegistrationExtensions.MapToPackageVersion(
                 packageVersion,
-                packageSearchMetadata.ToDictionary(x => x.Key, x => (PackageSearchMetadataRegistration) (object) x.Value)
+                packageSearchMetadata.AsValueEnumerable().ToDictionary(x => x.Key, x => (PackageSearchMetadataRegistration) (object) x.Value)
             );
         }
 

@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Parsers;
 
@@ -32,9 +33,11 @@ public class NugetConfigParser(
         var doc = XDocument.Load(stream);
 
         var packageSourcesElement = doc.Descendants()
+            .AsValueEnumerable()
             .FirstOrDefault(e => e.Name.LocalName == "packageSources");
 
         var packageSourceMappingElement = doc.Descendants()
+            .AsValueEnumerable()
             .FirstOrDefault(e => e.Name.LocalName == "packageSourceMapping");
 
         if (packageSourcesElement is null)

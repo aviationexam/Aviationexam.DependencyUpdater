@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
@@ -40,7 +40,7 @@ public sealed class SubmoduleUpdater(
         // Process dependencies in parallel
         await Parallel.ForEachAsync(sourceVersioning.GetSubmodules(), parallelOptions, async (submodule, token) =>
         {
-            var submoduleEntry = gitMetadataConfig.UpdateSubmodules.SingleOrDefault(x => x.Path == submodule);
+            var submoduleEntry = gitMetadataConfig.UpdateSubmodules.AsValueEnumerable().SingleOrDefault(x => x.Path == submodule);
             if (submoduleEntry is null)
             {
                 return;

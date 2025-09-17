@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Models;
 
@@ -17,7 +17,7 @@ public sealed record NugetDependency(
 
         return NugetFile == other.NugetFile
                && NugetPackage.Equals(other.NugetPackage)
-               && TargetFrameworks.SequenceEqual(other.TargetFrameworks);
+               && TargetFrameworks.AsValueEnumerable().SequenceEqual(other.TargetFrameworks);
     }
 
     public override int GetHashCode()

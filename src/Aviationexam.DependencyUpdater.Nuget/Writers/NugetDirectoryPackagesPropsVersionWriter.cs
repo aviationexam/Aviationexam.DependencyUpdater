@@ -4,12 +4,12 @@ using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Writers;
 
@@ -32,6 +32,7 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
 
         var versionAttribute = doc
             .Descendants()
+            .AsValueEnumerable()
             .Where(e => e.Name.LocalName == "PackageVersion")
             .Where(e => e.Attribute("Include")?.Value == packageName)
             .Select(x => x.Attribute("Version"))

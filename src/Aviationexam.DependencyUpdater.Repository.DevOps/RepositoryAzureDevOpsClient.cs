@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ZLinq;
 using GitConstants = Aviationexam.DependencyUpdater.Constants.GitConstants;
 
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;
@@ -43,6 +44,7 @@ public class RepositoryAzureDevOpsClient(
         );
 
         return pullRequests
+            .AsValueEnumerable()
             .Where(pr =>
                 pr.SourceRefName?.StartsWith($"{GitConstants.HeadsPrefix}{BranchNameGenerator.GetBranchNamePrefix(sourceDirectory, updater)}") == true
                 && pr.Labels?.Any(l => l.Name == PullRequestConstants.TagName) == true
@@ -54,7 +56,8 @@ public class RepositoryAzureDevOpsClient(
                 x.SourceRefName[GitConstants.HeadsPrefix.Length..],
                 x.LastMergeSourceCommit.CommitId,
                 x.LastMergeSourceCommit.CommitId == x.LastMergeTargetCommit.CommitId
-            ));
+            ))
+            .ToList();
     }
 
     public async Task<string?> GetPullRequestForBranchAsync(
@@ -74,7 +77,7 @@ public class RepositoryAzureDevOpsClient(
             cancellationToken: cancellationToken
         );
 
-        var pullRequestId = pullRequests.FirstOrDefault()?.PullRequestId.ToString();
+        var pullRequestId = pullRequests.AsValueEnumerable().FirstOrDefault()?.PullRequestId.ToString();
 
         if (pullRequestId is not null)
         {
@@ -110,7 +113,7 @@ public class RepositoryAzureDevOpsClient(
             TargetRefName = targetBranchName is not null
                 ? $"{GitConstants.HeadsPrefix}{targetBranchName}"
                 : $"{GitConstants.HeadsPrefix}{PullRequestConstants.DefaultBranch}",
-            Reviewers = [.. reviewers.Select(u => new IdentityRefWithVote { Id = u })],
+            Reviewers = [.. reviewers.AsValueEnumerable().Select(u => new IdentityRefWithVote { Id = u })],
             WorkItemRefs = milestone is not null ? [new ResourceRef { Id = milestone }] : [],
             CompletionOptions = new GitPullRequestCompletionOptions
             {
@@ -252,7 +255,7 @@ public class RepositoryAzureDevOpsClient(
             return;
         }
 
-        var version = versions.SingleOrDefault(x => x.NormalizedVersion == packageVersion);
+        var version = versions.AsValueEnumerable().SingleOrDefault(x => x.NormalizedVersion == packageVersion);
 
         if (version?.IsLocal is false or null)
         {

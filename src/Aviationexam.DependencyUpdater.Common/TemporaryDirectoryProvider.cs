@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Common;
 
@@ -26,7 +26,7 @@ public sealed class TemporaryDirectoryProvider : IDisposable
 
     public string GetPath(
         params string[] subPaths
-    ) => Path.Join(new[] { TemporaryDirectory }.Concat(subPaths).ToArray());
+    ) => Path.Join(new[] { TemporaryDirectory }.AsValueEnumerable().Concat(subPaths).ToArray());
 
     public void Dispose()
     {

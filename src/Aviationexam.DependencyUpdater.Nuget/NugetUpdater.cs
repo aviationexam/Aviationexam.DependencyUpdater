@@ -5,9 +5,9 @@ using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Factories;
 using Aviationexam.DependencyUpdater.Nuget.Grouping;
 using Aviationexam.DependencyUpdater.Nuget.Services;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget;
 
@@ -88,13 +88,11 @@ public sealed class NugetUpdater(
             cancellationToken
         );
 
-        knownPullRequests = knownPullRequests.Concat(updatedPullRequests);
-
         // Clean up abandoned pull requests
         await pullRequestManager.CleanupAbandonedPullRequestsAsync(
             sourceDirectory: repositoryConfig.SubdirectoryPath ?? string.Empty,
             updater,
-            knownPullRequests.ToList(),
+            [.. knownPullRequests.AsValueEnumerable().Concat(updatedPullRequests)],
             cancellationToken
         );
     }

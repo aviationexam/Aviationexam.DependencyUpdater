@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Immutable;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Models;
 
@@ -19,7 +19,7 @@ public sealed record NugetSource(
         return Name == other.Name
                && Source == other.Source
                && Version == other.Version
-               && PackageMapping.SequenceEqual(other.PackageMapping);
+               && PackageMapping.AsValueEnumerable().SequenceEqual(other.PackageMapping);
     }
 
     public override int GetHashCode()

@@ -4,7 +4,7 @@ using Aviationexam.DependencyUpdater.Nuget.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
@@ -25,9 +25,11 @@ public sealed class NugetFinder(
     public IEnumerable<NugetFile> GetAllNugetFiles(
         RepositoryConfig repositoryConfig
     ) => GetDirectoryPackagesPropsFiles(repositoryConfig)
+        .AsValueEnumerable()
         .Concat(GetAllCsprojFiles(repositoryConfig))
         .Concat(GetNugetConfig(repositoryConfig))
-        .Concat(GetDotnetTools(repositoryConfig));
+        .Concat(GetDotnetTools(repositoryConfig))
+        .ToList();
 
     public IEnumerable<NugetFile> GetDirectoryPackagesPropsFiles(
         RepositoryConfig repositoryConfig

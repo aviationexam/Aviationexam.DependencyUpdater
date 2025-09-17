@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Common;
 
@@ -42,7 +42,7 @@ public record PackageVersion(
 
         return Version.Equals(other.Version)
                && IsPrerelease == other.IsPrerelease
-               && ReleaseLabels.SequenceEqual(other.ReleaseLabels);
+               && ReleaseLabels.AsValueEnumerable().SequenceEqual(other.ReleaseLabels);
     }
 
     public override int GetHashCode()

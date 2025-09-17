@@ -3,10 +3,10 @@ using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using ZLinq;
 using NugetJsonContext = Aviationexam.DependencyUpdater.Nuget.Models.NugetJsonContext;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
@@ -25,7 +25,7 @@ public class NugetCli(
         {
             EndpointCredentials =
             [
-                .. authConfig.NugetFeedAuthentications.Select(x => new VssNugetExternalFeedEndpointCredential
+                .. authConfig.NugetFeedAuthentications.AsValueEnumerable().Select(x => new VssNugetExternalFeedEndpointCredential
                 {
                     Endpoint = x.FeedUrl,
                     Username = x.Username!,

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Parsers;
 
@@ -34,7 +35,7 @@ public class NugetCsprojParser(
         using var stream = fileSystem.FileOpen(csprojFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         var doc = XDocument.Load(stream);
 
-        targetFrameworks ??= ParseTargetFrameworks(doc).Distinct().ToList();
+        targetFrameworks ??= ParseTargetFrameworks(doc).AsValueEnumerable().Distinct().ToList();
 
         foreach (var packageReference in doc.Descendants().Where(e => e.Name.LocalName == "PackageReference"))
         {
@@ -89,18 +90,18 @@ public class NugetCsprojParser(
 
     private IEnumerable<NugetTargetFramework> ParseTargetFrameworks(XDocument doc)
     {
-        var propertyGroups = doc.Descendants().Where(e => e.Name.LocalName == "PropertyGroup").ToList();
+        var propertyGroups = doc.Descendants().AsValueEnumerable().Where(e => e.Name.LocalName == "PropertyGroup").ToList();
 
         var foundTargetFrameworkElement = false;
         foreach (var propertyGroup in propertyGroups)
         {
-            var singleTargetFramework = propertyGroup.Elements().FirstOrDefault(e => e.Name.LocalName == "TargetFramework")?.Value;
+            var singleTargetFramework = propertyGroup.Elements().AsValueEnumerable().FirstOrDefault(e => e.Name.LocalName == "TargetFramework")?.Value;
             if (!string.IsNullOrWhiteSpace(singleTargetFramework))
             {
                 yield return new NugetTargetFramework(singleTargetFramework.Trim());
             }
 
-            var targetFrameworks = propertyGroup.Elements().FirstOrDefault(e => e.Name.LocalName == "TargetFrameworks")?.Value;
+            var targetFrameworks = propertyGroup.Elements().AsValueEnumerable().FirstOrDefault(e => e.Name.LocalName == "TargetFrameworks")?.Value;
             if (!string.IsNullOrWhiteSpace(targetFrameworks))
             {
                 foreach (var targetFramework in targetFrameworks.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
@@ -119,7 +120,7 @@ public class NugetCsprojParser(
         foreach (var propertyGroup in propertyGroups)
         {
             // Parse legacy .NET Framework format: <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-            var targetFrameworkVersion = propertyGroup.Elements().FirstOrDefault(e => e.Name.LocalName == "TargetFrameworkVersion")?.Value;
+            var targetFrameworkVersion = propertyGroup.Elements().AsValueEnumerable().FirstOrDefault(e => e.Name.LocalName == "TargetFrameworkVersion")?.Value;
             if (!string.IsNullOrWhiteSpace(targetFrameworkVersion) && targetFrameworkVersion.StartsWith('v'))
             {
                 // Map version to appropriate short TFM format (net461, net462, etc.)

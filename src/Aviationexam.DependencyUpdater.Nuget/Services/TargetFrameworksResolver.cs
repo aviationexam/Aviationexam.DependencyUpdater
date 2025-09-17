@@ -4,6 +4,7 @@ using NuGet.Packaging;
 using NuGet.Protocol;
 using System.Collections.Generic;
 using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
@@ -14,12 +15,12 @@ public sealed class TargetFrameworksResolver
         IReadOnlyCollection<NugetTargetFramework> dependencyTargetFrameworks
     )
     {
-        if (!packageSearchMetadataRegistration.DependencySets.Any())
+        if (!packageSearchMetadataRegistration.DependencySets.AsValueEnumerable().Any())
         {
-            return dependencyTargetFrameworks.Select(x => new PackageDependencyGroup(NuGetFramework.Parse(
+            return dependencyTargetFrameworks.AsValueEnumerable().Select(x => new PackageDependencyGroup(NuGetFramework.Parse(
                 x.TargetFramework,
                 DefaultFrameworkNameProvider.Instance
-            ), []));
+            ), [])).ToList();
         }
 
         var compatiblePackageDependencyGroups = packageSearchMetadataRegistration.DependencySets;

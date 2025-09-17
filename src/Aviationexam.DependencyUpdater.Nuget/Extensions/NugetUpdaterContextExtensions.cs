@@ -5,7 +5,7 @@ using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 
@@ -20,8 +20,9 @@ public static class NugetUpdaterContextExtensions
     )
     {
         var configurations = context.NugetConfigurations
+            .AsValueEnumerable()
             .SelectMany(x =>
-                x.PackageMapping.Select(p => (PackageMapping: p, NugetSource: x))
+                x.PackageMapping.AsValueEnumerable().Select(p => (PackageMapping: p, NugetSource: x))
             );
 
         var explicitMappings = new Dictionary<string, NugetSource>();
@@ -64,7 +65,7 @@ public static class NugetUpdaterContextExtensions
             yield break;
         }
 
-        var sortedWildcardMappings = wildcardMappings.OrderByDescending(x => x.Key.Length).ToList();
+        var sortedWildcardMappings = wildcardMappings.AsValueEnumerable().OrderByDescending(x => x.Key.Length).ToList();
 
         foreach (var dependency in context.Dependencies)
         {
@@ -104,8 +105,9 @@ public static class NugetUpdaterContextExtensions
     )
     {
         var configurations = context.NugetConfigurations
+            .AsValueEnumerable()
             .SelectMany(x =>
-                x.PackageMapping.Select(p => (PackageMapping: p, NugetSource: x))
+                x.PackageMapping.AsValueEnumerable().Select(p => (PackageMapping: p, NugetSource: x))
             );
 
         var explicitMappings = new Dictionary<string, NugetSource>();
@@ -144,7 +146,7 @@ public static class NugetUpdaterContextExtensions
             yield break;
         }
 
-        var sortedWildcardMappings = wildcardMappings.OrderByDescending(x => x.Key.Length).ToList();
+        var sortedWildcardMappings = wildcardMappings.AsValueEnumerable().OrderByDescending(x => x.Key.Length).ToList();
 
 
         if (explicitMappings.TryGetValue(packageName, out var explicitNugetSource))
@@ -169,11 +171,12 @@ public static class NugetUpdaterContextExtensions
     public static IReadOnlyDictionary<string, PackageVersion> GetCurrentPackageVersions(
         this NugetUpdaterContext context
     ) => context.Dependencies
+        .AsValueEnumerable()
         .Select(x => x.NugetPackage)
         .Select(x => (PackageName: x.GetPackageName(), Version: x.GetVersion()))
         .Where(x => x.Version is not null)
         .GroupBy(x => x.PackageName)
-        .ToDictionary(x => x.Key, x => x.OrderBy(y => y.Version).First().Version!);
+        .ToDictionary(x => x.Key, x => x.AsValueEnumerable().OrderBy(y => y.Version).First().Version!);
 
     public static IReadOnlyDictionary<NugetSource, NugetSourceRepository> GetSourceRepositories(
         this NugetUpdaterContext context,
@@ -181,8 +184,9 @@ public static class NugetUpdaterContextExtensions
         IReadOnlyDictionary<string, string> fallbackRegistries,
         NugetVersionFetcherFactory nugetVersionFetcherFactory
     ) => context.NugetConfigurations
+        .AsValueEnumerable()
         .GroupBy(x => x.Source)
-        .Select(x => x.First())
+        .Select(x => x.AsValueEnumerable().First())
         .ToDictionary(
             x => x,
             x => nugetVersionFetcherFactory.CreateSourceRepositories(x, fallbackRegistries, nugetFeedAuthentications)

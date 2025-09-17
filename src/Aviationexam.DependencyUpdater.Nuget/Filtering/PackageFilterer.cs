@@ -2,7 +2,7 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Filtering;
 
@@ -15,13 +15,15 @@ public sealed class PackageFilterer
         foreach (var (dependency, possiblePackageVersions) in dependencyAnalysisResult.DependenciesToUpdate)
         {
             var newPossiblePackageVersions = possiblePackageVersions
+                .AsValueEnumerable()
                 .Select(possiblePackageVersion => possiblePackageVersion with
                 {
                     CompatiblePackageDependencyGroups =
                     [
                         .. possiblePackageVersion
                             .CompatiblePackageDependencyGroups
-                            .Where(group => group.Packages.All(package =>
+                            .AsValueEnumerable()
+                            .Where(group => group.Packages.AsValueEnumerable().All(package =>
                                 dependencyAnalysisResult.PackageFlags.TryGetValue(
                                     new Package(package.Id, package.VersionRange.MinVersion!.MapToPackageVersion()),
                                     out var flag
@@ -35,8 +37,10 @@ public sealed class PackageFilterer
             if (newPossiblePackageVersions.Count > 0)
             {
                 var possiblePackageVersion = newPossiblePackageVersions
+                    .AsValueEnumerable()
                     .OrderByDescending(x => x.PackageVersion)
                     .First();
+
                 yield return new NugetUpdateCandidate(
                     dependency,
                     possiblePackageVersion

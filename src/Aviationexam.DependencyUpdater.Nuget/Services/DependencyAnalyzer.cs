@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
@@ -43,7 +44,7 @@ public sealed class DependencyAnalyzer(
             cancellationToken
         );
 
-        var dependencyToUpdate = possiblePackageVersions.ToDictionary(
+        var dependencyToUpdate = possiblePackageVersions.AsValueEnumerable().ToDictionary(
             x => x.Key,
             x => x.Value
         );
@@ -122,12 +123,13 @@ public sealed class DependencyAnalyzer(
                         versions,
                         ignoreResolver
                     )
+                    .AsValueEnumerable()
                     .Select(x => new PossiblePackageVersion(
                         x,
                         targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
                             GetPreferredPackageSearchMetadataRegistration(x.OriginalReference),
                             dependency.TargetFrameworks
-                        ).ToList()
+                        ).AsValueEnumerable().ToList()
                     ))
                     .Where(x => x.CompatiblePackageDependencyGroups.Count > 0)
                     .ToList();
@@ -148,7 +150,7 @@ public sealed class DependencyAnalyzer(
             }
         });
 
-        return results.OrderBy(r => r.Key.NugetPackage.GetPackageName());
+        return results.AsValueEnumerable().OrderBy(r => r.Key.NugetPackage.GetPackageName()).ToList();
     }
 
     private async Task<IReadOnlyCollection<PackageVersion<PackageSearchMetadataRegistration>>> FetchDependencyVersionsAsync(
@@ -160,7 +162,7 @@ public sealed class DependencyAnalyzer(
     )
     {
         var versions = new List<PackageVersion<PackageSearchMetadataRegistration>>();
-        var tasks = sources.Select<NugetSource, Task<IEnumerable<PackageVersion<PackageSearchMetadataRegistration>>>>(async nugetSource =>
+        var tasks = sources.Select(async Task<IEnumerable<PackageVersion<PackageSearchMetadataRegistration>>> (nugetSource) =>
         {
             if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
             {
@@ -189,10 +191,11 @@ public sealed class DependencyAnalyzer(
                 }
 
                 return packageVersions.GroupBy(x => x.PackageVersion)
-                    .Select(x => x.Key.MapToPackageVersion(x.ToDictionary(
+                    .Select(x => x.Key.MapToPackageVersion(x.AsValueEnumerable().ToDictionary(
                         d => d.PackageSource,
                         d => d.Metadata
-                    )));
+                    )))
+                    .ToList();
             }
 
             return [];
@@ -209,6 +212,7 @@ public sealed class DependencyAnalyzer(
     private TOriginalReference GetPreferredPackageSearchMetadataRegistration<TOriginalReference>(
         IReadOnlyDictionary<EPackageSource, TOriginalReference> originalReference
     ) => originalReference
+        .AsValueEnumerable()
         .OrderBy(x => x.Key switch
         {
             EPackageSource.Default => 0,
@@ -239,7 +243,7 @@ public sealed class DependencyAnalyzer(
                         dependenciesToCheck,
                         compatiblePackageDependencyGroup,
                         dependency.TargetFrameworks
-                    ).Count();
+                    ).AsValueEnumerable().Count();
                 }
             }
         }
@@ -387,7 +391,7 @@ public sealed class DependencyAnalyzer(
         );
 
         dependenciesToRevisit.Push((package, [
-            .. compatiblePackageDependencyGroups.Aggregate(
+            .. compatiblePackageDependencyGroups.AsValueEnumerable().Aggregate(
                 [],
                 (IEnumerable<Package> acc, PackageDependencyGroup compatiblePackageDependencyGroup) => acc.Concat(ProcessPackageDependencyGroup(
                     ignoreResolver,
@@ -410,7 +414,7 @@ public sealed class DependencyAnalyzer(
         {
             var (package, dependencies) = item;
 
-            var isIgnored = dependencies.Any(dependency =>
+            var isIgnored = dependencies.AsValueEnumerable().Any(dependency =>
                 packageFlags.TryGetValue(dependency, out var dependencyFlag)
                 && dependencyFlag is EDependencyFlag.ContainsIgnoredDependency
             );

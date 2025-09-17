@@ -1,7 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 
@@ -14,7 +14,7 @@ public static class GroupEntryExtensions
     {
         if (
             nugetUpdateCandidates.Count == 1
-            && nugetUpdateCandidates.Single() is { } candidate
+            && nugetUpdateCandidates.AsValueEnumerable().Single() is { } candidate
         )
         {
             var name = candidate.NugetDependency.NugetPackage.GetPackageName();

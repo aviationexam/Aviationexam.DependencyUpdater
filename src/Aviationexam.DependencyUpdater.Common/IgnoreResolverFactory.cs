@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Common;
 
@@ -12,8 +12,9 @@ public class IgnoreResolverFactory(
     public IgnoreResolver Create(IReadOnlyCollection<IgnoreEntry> ignoreEntries)
     {
         var ignoreRules = ignoreEntries
+            .AsValueEnumerable()
             .Where(x => x.DependencyName is not null)
-            .Select<IgnoreEntry, IIgnoreRule>(x =>
+            .Select(IIgnoreRule (x) =>
             {
                 if (x.DependencyName!.EndsWith('*'))
                 {

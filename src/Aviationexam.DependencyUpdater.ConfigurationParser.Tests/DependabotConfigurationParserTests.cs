@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using System.IO;
-using System.Linq;
 using Xunit;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.ConfigurationParser.Tests;
 
@@ -116,8 +116,8 @@ public class DependabotConfigurationParserTests
         Assert.Equal("https://api.nuget.org/v3/index.json", nugetOrgRegistry.Url);
         Assert.Equal("V3", nugetOrgRegistry.NugetFeedVersion.GetString());
 
-        var registry = nugetUpdate.Registries.Single();
-        var fallbackRegistry = nugetUpdate.FallbackRegistries.Single();
+        var registry = nugetUpdate.Registries.AsValueEnumerable().Single();
+        var fallbackRegistry = nugetUpdate.FallbackRegistries.AsValueEnumerable().Single();
 
         Assert.Equal("nuget-feed", registry.AsString.GetString());
         Assert.Equal("nuget-feed", fallbackRegistry.Key);

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
@@ -100,7 +101,7 @@ public sealed class PackageUpdater(
         var updatedPackages = await UpdatePackageVersionsAsync(
             gitWorkspace,
             nugetUpdateCandidates,
-            groupPackageVersions: currentPackageVersions.ToDictionary(),
+            groupPackageVersions: currentPackageVersions.AsValueEnumerable().ToDictionary(),
             cancellationToken
         ).ToListAsync(cancellationToken);
 
@@ -133,7 +134,7 @@ public sealed class PackageUpdater(
     )
     {
         var packagesToUpdateQueue = new Queue<(NugetUpdateCandidate NugetUpdateCandidate, int Epoch)>(
-            packagesToUpdate.Select(x => (x, 0))
+            packagesToUpdate.AsValueEnumerable().Select(x => (x, 0)).ToArray()
         );
         var epoch = 1;
 

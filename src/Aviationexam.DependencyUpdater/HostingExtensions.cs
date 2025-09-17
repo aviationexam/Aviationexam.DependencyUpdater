@@ -4,9 +4,9 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.CommandLine;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater;
 
@@ -19,7 +19,7 @@ public static class HostingExtensions
         CancellationToken cancellationToken
     ) where TService : class, ICommandHandler
     {
-        var argsRemaining = parseResult.UnmatchedTokens.ToArray();
+        var argsRemaining = parseResult.UnmatchedTokens.AsValueEnumerable().ToArray();
 
         var hostBuilder = hostBuilderFactory(
             argsRemaining,

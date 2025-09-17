@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Common;
 
@@ -14,16 +14,22 @@ public class FutureVersionResolver
     {
         if (version is not null)
         {
-            versions = versions
+            return versions
+                .AsValueEnumerable()
                 .Where(x => x.IsPrerelease == version.IsPrerelease || x.IsPrerelease is false)
                 .Where(x => x > version)
                 .Where(x => !ignoreResolver.IsIgnored(
                     dependencyName,
                     version,
                     x
-                ));
+                ))
+                .OrderDescending()
+                .ToList();
         }
 
-        return versions.OrderDescending();
+        return versions
+            .AsValueEnumerable()
+            .OrderDescending()
+            .ToList();
     }
 }

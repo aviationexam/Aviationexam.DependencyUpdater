@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Common;
 
@@ -9,7 +9,8 @@ public class GroupResolverFactory
     public GroupResolver Create(IReadOnlyCollection<GroupEntry> groupEntries)
     {
         var groupRules = groupEntries
-            .SelectMany(x => x.Patterns.Select<string, IGroupRule>(p =>
+            .AsValueEnumerable()
+            .SelectMany(x => x.Patterns.AsValueEnumerable().Select(IGroupRule (p) =>
             {
                 if (p.EndsWith('*'))
                 {

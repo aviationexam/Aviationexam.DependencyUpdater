@@ -3,7 +3,7 @@ using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Filtering;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
-using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Grouping;
 
@@ -19,6 +19,7 @@ public sealed class PackageGrouper(
     {
         var groupResolver = groupResolverFactory.Create(groupEntries);
         var packagesToUpdate = packageFilterer.FilterPackagesToUpdate(dependencyAnalysisResult)
+            .AsValueEnumerable()
             .Select(x => new
             {
                 NugetUpdateCandidate = x,
@@ -43,7 +44,7 @@ public sealed class PackageGrouper(
             }
             else
             {
-                groupedPackagesToUpdateQueue.Enqueue((grouping.ToList(), groupEntry));
+                groupedPackagesToUpdateQueue.Enqueue((grouping.AsValueEnumerable().ToList(), groupEntry));
             }
         }
 

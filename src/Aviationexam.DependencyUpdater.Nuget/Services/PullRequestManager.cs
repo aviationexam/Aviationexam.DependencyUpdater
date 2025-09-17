@@ -1,9 +1,9 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
@@ -28,7 +28,7 @@ public sealed class PullRequestManager(
         {
             if (
                 pullRequest.IsEmptyBranch
-                || !knownPullRequests.Contains(pullRequest.PullRequestId)
+                || !knownPullRequests.AsValueEnumerable().Contains(pullRequest.PullRequestId)
             )
             {
                 logger.LogDebug("Abandoning pull request {PullRequestId}", pullRequest.PullRequestId);

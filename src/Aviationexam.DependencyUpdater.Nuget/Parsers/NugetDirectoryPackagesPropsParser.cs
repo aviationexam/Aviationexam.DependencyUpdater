@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using NuGet.Versioning;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Parsers;
 
@@ -36,6 +36,7 @@ public class NugetDirectoryPackagesPropsParser(
 
         return doc
             .Descendants()
+            .AsValueEnumerable()
             .Where(e => e.Name.LocalName == "PackageVersion")
             .Select(x => new
             {
@@ -50,8 +51,9 @@ public class NugetDirectoryPackagesPropsParser(
                     new NuGetVersion(x.Version!)
                 ),
                 packagesTargetFrameworks.TryGetValue(x.Include!, out var packageTargetFrameworks)
-                    ? packageTargetFrameworks.Union(targetFrameworks).ToList()
+                    ? packageTargetFrameworks.AsValueEnumerable().Union(targetFrameworks).ToList()
                     : targetFrameworks
-            ));
+            ))
+            .ToList();
     }
 }

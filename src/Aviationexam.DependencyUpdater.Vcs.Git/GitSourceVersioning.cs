@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Vcs.Git;
 
@@ -76,6 +76,7 @@ public sealed class GitSourceVersioning(
             try
             {
                 var existingWorktree = repository.Worktrees
+                    .AsValueEnumerable()
                     .Where(x => x is not null)
                     .SingleOrDefault(x => x.Name == worktreeName);
                 if (existingWorktree is not null)
@@ -83,13 +84,13 @@ public sealed class GitSourceVersioning(
                     repository.Worktrees.Prune(existingWorktree, ifLocked: false);
                 }
 
-                var existingBranch = repository.Branches.SingleOrDefault(x => x.FriendlyName == branchName);
+                var existingBranch = repository.Branches.AsValueEnumerable().SingleOrDefault(x => x.FriendlyName == branchName);
                 if (existingBranch is not null)
                 {
                     repository.Branches.Remove(existingBranch);
                 }
 
-                existingBranch = repository.Branches.SingleOrDefault(x => x.FriendlyName == worktreeName);
+                existingBranch = repository.Branches.AsValueEnumerable().SingleOrDefault(x => x.FriendlyName == worktreeName);
                 if (existingBranch is not null)
                 {
                     repository.Branches.Remove(existingBranch);
@@ -100,7 +101,7 @@ public sealed class GitSourceVersioning(
 
                 if (
                     sourceBranchName is not null
-                    && repository.Branches.Any(x => x.FriendlyName == sourceBranchName)
+                    && repository.Branches.AsValueEnumerable().Any(x => x.FriendlyName == sourceBranchName)
                 )
                 {
                     worktree.WorktreeRepository.Reset(ResetMode.Hard, repository.Branches[sourceBranchName].Tip);
@@ -139,7 +140,7 @@ public sealed class GitSourceVersioning(
         }
     }
 
-    public IEnumerable<string> GetSubmodules() => repository.Submodules.Select(x => x.Name);
+    public IEnumerable<string> GetSubmodules() => repository.Submodules.AsValueEnumerable().Select(x => x.Name).ToList();
 
     public void Dispose() => repository.Dispose();
 }
