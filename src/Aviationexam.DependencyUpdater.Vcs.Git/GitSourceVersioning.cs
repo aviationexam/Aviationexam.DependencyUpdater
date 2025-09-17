@@ -97,19 +97,20 @@ public sealed class GitSourceVersioning(
                 }
 
                 var worktree = repository.Worktrees.Add(name: worktreeName, path: targetDirectory, isLocked: false);
-                worktree.WorktreeRepository.Branches.Rename(worktreeName, branchName);
+                var worktreeRepository = worktree.WorktreeRepository;
+                worktreeRepository.Branches.Rename(worktreeName, branchName);
 
                 if (
                     sourceBranchName is not null
                     && repository.Branches.AsValueEnumerable().Any(x => x.FriendlyName == sourceBranchName)
                 )
                 {
-                    worktree.WorktreeRepository.Reset(ResetMode.Hard, repository.Branches[sourceBranchName].Tip);
+                    worktreeRepository.Reset(ResetMode.Hard, repository.Branches[sourceBranchName].Tip);
                 }
 
-                foreach (var submodule in worktree.WorktreeRepository.Submodules)
+                foreach (var submodule in worktreeRepository.Submodules)
                 {
-                    worktree.WorktreeRepository.Submodules.Update(
+                    worktreeRepository.Submodules.Update(
                         submodule.Name,
                         new SubmoduleUpdateOptions
                         {
