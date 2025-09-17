@@ -37,14 +37,8 @@ public sealed class PackageUpdater(
         CancellationToken cancellationToken
     )
     {
-        var parallelOptions = new ParallelOptions
-        {
-            MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount / 2),
-            CancellationToken = cancellationToken,
-        };
-
         var pullRequestIds = new ConcurrentBag<string>();
-        await Parallel.ForEachAsync(groupedPackagesToUpdateQueue, parallelOptions, async (groupedPackagesToUpdate, token) =>
+        foreach (var groupedPackagesToUpdate in groupedPackagesToUpdateQueue)
         {
             var pullRequestId = await ProcessSinglePackageGroupAsync(
                 repositoryConfig,
@@ -57,14 +51,14 @@ public sealed class PackageUpdater(
                 currentPackageVersions,
                 sourceVersioning,
                 updater,
-                token
+                cancellationToken
             );
 
             if (pullRequestId is not null)
             {
                 pullRequestIds.Add(pullRequestId);
             }
-        });
+        }
 
         return pullRequestIds;
     }
