@@ -5,6 +5,7 @@ using Aviationexam.DependencyUpdater.Nuget.Configurations;
 using Aviationexam.DependencyUpdater.Nuget.Factories;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
+using System.Text.Json;
 using ZLinq;
 
 namespace Aviationexam.DependencyUpdater;
@@ -33,6 +34,11 @@ public static class ConfigurationMapper
         this DependabotConfiguration.Update.IgnoreArray ignoreArray
     )
     {
+        if (ignoreArray.ValueKind is not JsonValueKind.Array)
+        {
+            yield break;
+        }
+
         foreach (var ignoreEntity in ignoreArray)
         {
             yield return new IgnoreEntry(
@@ -46,6 +52,11 @@ public static class ConfigurationMapper
         this DependabotConfiguration.Update.GroupsEntity groupsEntity
     )
     {
+        if (groupsEntity.ValueKind is not JsonValueKind.Array)
+        {
+            yield break;
+        }
+
         foreach (var groupEntity in groupsEntity)
         {
             yield return new GroupEntry(
