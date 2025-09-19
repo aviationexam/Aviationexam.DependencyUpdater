@@ -70,6 +70,7 @@ internal sealed class DefaultCommandHandler(
                     GroupEntries = [.. nugetUpdate.Groups.MapToGroupEntry()],
                     FallbackRegistries = fallbackRegistries,
                     ExecuteRestore = nugetUpdate.ExecuteRestore,
+                    RestoreDirectory = nugetUpdate.RestoreDirectory ?? nugetUpdate.DirectoryValue.GetString(),
                 };
 
                 var authConfig = new NugetAuthConfig

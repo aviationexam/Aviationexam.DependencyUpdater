@@ -20,6 +20,7 @@ public readonly partial struct DependabotConfiguration
         public static ReadOnlySpan<byte> PathUtf8 => "path"u8;
         public static ReadOnlySpan<byte> BranchUtf8 => "branch"u8;
         public static ReadOnlySpan<byte> ExecuteRestoreUtf8 => "execute-restore"u8;
+        public static ReadOnlySpan<byte> RestoreDirectoryUtf8 => "restore-directory"u8;
         public static ReadOnlySpan<byte> ReviewersUtf8 => "reviewers"u8;
 
         public TargetFrameworkEntity? TargetFramework
@@ -265,6 +266,38 @@ public readonly partial struct DependabotConfiguration
                 }
 
                 return true;
+            }
+        }
+
+        public string? RestoreDirectory
+        {
+            get
+            {
+                if (backing.HasFlag(Backing.JsonElement))
+                {
+                    if (jsonElementBacking.ValueKind is not JsonValueKind.Object)
+                    {
+                        return null;
+                    }
+
+                    if (
+                        jsonElementBacking.TryGetProperty(RestoreDirectoryUtf8, out var result)
+                        && result.ValueKind is JsonValueKind.String
+                    )
+                    {
+                        return result.GetString();
+                    }
+                }
+
+                if (backing.HasFlag(Backing.Object))
+                {
+                    if (objectBacking.TryGetValue(RestoreDirectoryUtf8, out var _))
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+
+                return null;
             }
         }
 

@@ -31,6 +31,7 @@ public sealed class PackageUpdater(
         GitCredentialsConfiguration gitCredentialsConfiguration,
         GitMetadataConfig gitMetadataConfig,
         bool executeRestore,
+        string? restoreDirectory,
         Queue<(IReadOnlyCollection<NugetUpdateCandidate> NugetUpdateCandidates, GroupEntry GroupEntry)> groupedPackagesToUpdateQueue,
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
         string updater,
@@ -46,6 +47,7 @@ public sealed class PackageUpdater(
                 gitCredentialsConfiguration,
                 gitMetadataConfig,
                 executeRestore,
+                restoreDirectory,
                 groupedPackagesToUpdate.GroupEntry,
                 groupedPackagesToUpdate.NugetUpdateCandidates,
                 currentPackageVersions,
@@ -69,6 +71,7 @@ public sealed class PackageUpdater(
         GitCredentialsConfiguration gitCredentialsConfiguration,
         GitMetadataConfig gitMetadataConfig,
         bool executeRestore,
+        string? restoreDirectory,
         GroupEntry groupEntry,
         IReadOnlyCollection<NugetUpdateCandidate> nugetUpdateCandidates,
         IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
@@ -114,6 +117,7 @@ public sealed class PackageUpdater(
             authConfig,
             gitMetadataConfig,
             executeRestore,
+            restoreDirectory,
             groupEntry.GetTitle(nugetUpdateCandidates),
             updater,
             cancellationToken
@@ -204,6 +208,7 @@ public sealed class PackageUpdater(
         NugetAuthConfig authConfig,
         GitMetadataConfig gitMetadataConfig,
         bool executeRestore,
+        string? restoreDirectory,
         string title,
         string updater,
         CancellationToken cancellationToken
@@ -240,7 +245,7 @@ public sealed class PackageUpdater(
         {
             await RestoreNugetPackagesAsync(
                 gitWorkspace,
-                repositoryConfig.SubdirectoryPath,
+                restoreDirectory,
                 authConfig,
                 gitMetadataConfig,
                 cancellationToken
@@ -271,16 +276,16 @@ public sealed class PackageUpdater(
 
     private async Task RestoreNugetPackagesAsync(
         ISourceVersioningWorkspace gitWorkspace,
-        string? subdirectoryPath,
+        string? restoreDirectory,
         NugetAuthConfig authConfig,
         GitMetadataConfig gitMetadataConfig,
         CancellationToken cancellationToken
     )
     {
         var workingDirectory = gitWorkspace.GetWorkspaceDirectory();
-        if (subdirectoryPath is not null)
+        if (restoreDirectory is not null)
         {
-            workingDirectory = Path.Join(workingDirectory, subdirectoryPath);
+            workingDirectory = Path.Join(workingDirectory, restoreDirectory);
         }
 
         var restored = await nugetCli.Restore(

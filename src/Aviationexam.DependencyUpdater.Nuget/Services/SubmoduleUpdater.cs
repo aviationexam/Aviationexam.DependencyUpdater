@@ -24,6 +24,7 @@ public sealed class SubmoduleUpdater(
         GitCredentialsConfiguration gitCredentialsConfiguration,
         GitMetadataConfig gitMetadataConfig,
         bool executeRestore,
+        string? restoreDirectory,
         string updater,
         CancellationToken cancellationToken
     )
@@ -79,6 +80,7 @@ public sealed class SubmoduleUpdater(
                 authConfig,
                 gitMetadataConfig,
                 executeRestore,
+                restoreDirectory,
                 $"Bump submodule {submodule}",
                 updater,
                 token

@@ -45,6 +45,7 @@ public sealed class NugetUpdater(
             gitCredentialsConfiguration,
             gitMetadataConfig,
             packageConfig.ExecuteRestore,
+            packageConfig.RestoreDirectory,
             updater,
             cancellationToken
         );
@@ -82,6 +83,7 @@ public sealed class NugetUpdater(
             gitCredentialsConfiguration,
             gitMetadataConfig,
             packageConfig.ExecuteRestore,
+            packageConfig.RestoreDirectory,
             groupedPackagesToUpdate,
             currentPackageVersions,
             updater,

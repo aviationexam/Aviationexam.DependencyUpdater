@@ -12,4 +12,6 @@ public class NugetPackageConfig : PackageConfig
     public required IReadOnlyCollection<NugetTargetFramework> TargetFrameworks { get; init; }
 
     public required bool ExecuteRestore { get; init; }
+
+    public required string? RestoreDirectory { get; init; }
 }

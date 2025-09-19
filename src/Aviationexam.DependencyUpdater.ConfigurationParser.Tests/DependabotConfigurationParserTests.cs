@@ -60,6 +60,7 @@ public class DependabotConfigurationParserTests
                     fallback-registries:
                       nuget-feed: nuget.org
                     execute-restore: false
+                    restore-directory: another-dir
                     groups:
                       microsoft:
                         patterns:
@@ -124,6 +125,7 @@ public class DependabotConfigurationParserTests
         Assert.Equal("nuget.org", fallbackRegistry.Value);
 
         Assert.False(nugetUpdate.ExecuteRestore);
+        Assert.Equal("another-dir", nugetUpdate.RestoreDirectory);
     }
 
     [Fact]
