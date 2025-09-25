@@ -4,11 +4,11 @@
     "net9.0": {
       "Corvus.Json.ExtendedTypes": {
         "type": "Direct",
-        "requested": "[4.3.18, )",
-        "resolved": "4.3.18",
-        "contentHash": "ASuUSF4dyL+J26dtmtDBTFlJSbrsoPKWyziBLlvcIHMAbc5CLZZte6U5DdBaniHH/wnrZTxkgfycoS0PzlBTnA==",
+        "requested": "[4.3.19, )",
+        "resolved": "4.3.19",
+        "contentHash": "pTowWHQHDi/GJq0Rn4P1kKvDz7hP09GLh/jeGmFQeYqw36fJ5BcGtput1k6nnCLrEIwtrRLYWRW0fjVuz0nldw==",
         "dependencies": {
-          "Corvus.Json.JsonReference": "4.3.18",
+          "Corvus.Json.JsonReference": "4.3.19",
           "Corvus.UriTemplates": "2.3.2",
           "NodaTime": "3.2.1",
           "System.Collections.Immutable": "9.0.0",
@@ -17,9 +17,9 @@
       },
       "Corvus.Json.SourceGenerator": {
         "type": "Direct",
-        "requested": "[4.3.18, )",
-        "resolved": "4.3.18",
-        "contentHash": "PeohgP9DIdIwPfUg2R0Rx3d4oRocVN/1kO+kQu3reMUZqsN7aeNEKiSCP1htNJbxHBtHK+IChbU7M4ar6d2c1w==",
+        "requested": "[4.3.19, )",
+        "resolved": "4.3.19",
+        "contentHash": "6zZmJoqszkmTtWc/1drv0e+3944AhOsqWc3e9BlEb0VxPU67XHJSfFz8jYbYkyPgv/ZTnd3pr7cGu7hfM8z0ZA==",
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp": "4.11.0"
         }
@@ -41,9 +41,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[9.0.9, )",
-        "resolved": "9.0.9",
-        "contentHash": "cHi1os/s6aobEgNkbOh/jW+ru//rHuedvj4PmTh2mMY7et/mJjqphBeXeKCesDvMd0+E2JyX9EPZZC4VRKslXg=="
+        "requested": "[9.0.7, )",
+        "resolved": "9.0.7",
+        "contentHash": "SZ1brSGoLnhLbE8QUZrtN6YwzN2gDT1wbx9qDBEfFFJcstiDTjJ6ygNuTPBV/K7SjGfx2YNbcJi5+ygbPOZpDg=="
       },
       "Yaml2JsonNode": {
         "type": "Direct",
@@ -76,8 +76,8 @@
       },
       "Corvus.Json.JsonReference": {
         "type": "Transitive",
-        "resolved": "4.3.18",
-        "contentHash": "NiXE6A/CH+cERTdvAlOjhAcqSvBKNFRWTM4tHBWkIZECQ0CGIuK9cZIwYpltH2zFOY2Jx7tEF+A37bu0ROMueQ==",
+        "resolved": "4.3.19",
+        "contentHash": "kJrSzBhxaneYN88f0XHqNRtIPP094oNU7T+R0EiRSEBizmgwnk8Tzz1ENRaQvGf/xcUAh1JF6F905hMUp1dJXg==",
         "dependencies": {
           "Corvus.HighPerformance": "1.0.2",
           "System.Text.Json": "9.0.0"
