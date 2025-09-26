@@ -51,8 +51,8 @@
     <PackageVersion Include="ZLinq" Version="1.5.2" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Corvus.Json.ExtendedTypes" Version="4.3.18" />
-    <PackageVersion Include="Corvus.Json.SourceGenerator" Version="4.3.18" />
+    <PackageVersion Include="Corvus.Json.ExtendedTypes" Version="4.3.19" />
+    <PackageVersion Include="Corvus.Json.SourceGenerator" Version="4.3.19" />
     <PackageVersion Include="Corvus.UriTemplates" Version="2.3.2" />
   </ItemGroup>
   <ItemGroup>
