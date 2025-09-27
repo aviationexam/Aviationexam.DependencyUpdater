@@ -21,9 +21,9 @@
       },
       "Microsoft.DotNet.ILCompiler": {
         "type": "Direct",
-        "requested": "[9.0.9, )",
-        "resolved": "9.0.9",
-        "contentHash": "jbi92xl2xcwGfdD/XSgOtOtQM5Ra3uXsiFuEyLnqwpHXeWHAutabi/LDu9VQbcuCqmvwOhrA3iFcvTIuFFQ0AQ=="
+        "requested": "[9.0.7, )",
+        "resolved": "9.0.7",
+        "contentHash": "FpvJ2rCpj2CB/4hZt0cmB3hCPMNZV2vrisQis3hR9itTEjLzeggi0AShrgJIZ5+3Y7433K7ESSsJ6+8T+nE2nQ=="
       },
       "Microsoft.Extensions.Configuration.Abstractions": {
         "type": "Direct",
@@ -78,9 +78,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[9.0.9, )",
-        "resolved": "9.0.9",
-        "contentHash": "cHi1os/s6aobEgNkbOh/jW+ru//rHuedvj4PmTh2mMY7et/mJjqphBeXeKCesDvMd0+E2JyX9EPZZC4VRKslXg=="
+        "requested": "[9.0.7, )",
+        "resolved": "9.0.7",
+        "contentHash": "SZ1brSGoLnhLbE8QUZrtN6YwzN2gDT1wbx9qDBEfFFJcstiDTjJ6ygNuTPBV/K7SjGfx2YNbcJi5+ygbPOZpDg=="
       },
       "Microsoft.TeamFoundationServer.Client": {
         "type": "Direct",
@@ -97,19 +97,19 @@
       },
       "Polly.Core": {
         "type": "Direct",
-        "requested": "[8.6.3, )",
-        "resolved": "8.6.3",
-        "contentHash": "xRlcE+1FidqIfZ7zxBT6klSblJ/7MAJq1x5yvYoLnwNhs8Xc2gp3Srf8wHG2NpFxVBqrldc3svhkMPJjSzTmzw=="
+        "requested": "[8.6.4, )",
+        "resolved": "8.6.4",
+        "contentHash": "4AWqYnQ2TME0E+Mzovt1Uu+VyvpR84ymUldMcPw7Mbj799Phaag14CKrMtlJGx5jsvYP+S3oR1QmysgmXoD5cw=="
       },
       "Polly.Extensions": {
         "type": "Direct",
-        "requested": "[8.6.3, )",
-        "resolved": "8.6.3",
-        "contentHash": "eBUOAYcByI5oqZgq8+5XoVG+l5pWq6V2Iis32QMjQGoevFImovRgpgRALmLQOcLa3NIahzjqVHo3sYC8ND1Deg==",
+        "requested": "[8.6.4, )",
+        "resolved": "8.6.4",
+        "contentHash": "mosKFAGlCD/VfJBWKamWrLYHr1D0o8XrUKZ4I0AUxvUHsY+Nq1y5g75sa5JB7dIyOC+Vdf0xXxYSuLU+uljfjw==",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
           "Microsoft.Extensions.Options": "8.0.0",
-          "Polly.Core": "8.6.3"
+          "Polly.Core": "8.6.4"
         }
       },
       "Microsoft.AspNet.WebApi.Client": {
@@ -1335,11 +1335,11 @@
     "net9.0/linux-x64": {
       "Microsoft.DotNet.ILCompiler": {
         "type": "Direct",
-        "requested": "[9.0.9, )",
-        "resolved": "9.0.9",
-        "contentHash": "jbi92xl2xcwGfdD/XSgOtOtQM5Ra3uXsiFuEyLnqwpHXeWHAutabi/LDu9VQbcuCqmvwOhrA3iFcvTIuFFQ0AQ==",
+        "requested": "[9.0.7, )",
+        "resolved": "9.0.7",
+        "contentHash": "FpvJ2rCpj2CB/4hZt0cmB3hCPMNZV2vrisQis3hR9itTEjLzeggi0AShrgJIZ5+3Y7433K7ESSsJ6+8T+nE2nQ==",
         "dependencies": {
-          "runtime.linux-x64.Microsoft.DotNet.ILCompiler": "9.0.9"
+          "runtime.linux-x64.Microsoft.DotNet.ILCompiler": "9.0.7"
         }
       },
       "Microsoft.Win32.SystemEvents": {
@@ -1364,8 +1364,8 @@
       },
       "runtime.linux-x64.Microsoft.DotNet.ILCompiler": {
         "type": "Transitive",
-        "resolved": "9.0.9",
-        "contentHash": "ovcJptt7TEYAFZtJhgUiyw4tOZhOmCXgF7pOym9XqKGbVp96VbmE2qWbJ/yGGBK72J6rWgr/mNKhLCDtq4K4kQ=="
+        "resolved": "9.0.7",
+        "contentHash": "TQ7HgrzdeBgLN5dah6AGT8AuMxOM2e4z6oPXN3dr9I3p2GywnG2IUg9dHJr7M1bz0myeguWf8x3b54wngIWK7w=="
       },
       "runtime.opensuse.13.2-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
         "type": "Transitive",
@@ -1652,11 +1652,11 @@
     "net9.0/win-x64": {
       "Microsoft.DotNet.ILCompiler": {
         "type": "Direct",
-        "requested": "[9.0.9, )",
-        "resolved": "9.0.9",
-        "contentHash": "jbi92xl2xcwGfdD/XSgOtOtQM5Ra3uXsiFuEyLnqwpHXeWHAutabi/LDu9VQbcuCqmvwOhrA3iFcvTIuFFQ0AQ==",
+        "requested": "[9.0.7, )",
+        "resolved": "9.0.7",
+        "contentHash": "FpvJ2rCpj2CB/4hZt0cmB3hCPMNZV2vrisQis3hR9itTEjLzeggi0AShrgJIZ5+3Y7433K7ESSsJ6+8T+nE2nQ==",
         "dependencies": {
-          "runtime.win-x64.Microsoft.DotNet.ILCompiler": "9.0.9"
+          "runtime.win-x64.Microsoft.DotNet.ILCompiler": "9.0.7"
         }
       },
       "Microsoft.Win32.SystemEvents": {
@@ -1726,8 +1726,8 @@
       },
       "runtime.win-x64.Microsoft.DotNet.ILCompiler": {
         "type": "Transitive",
-        "resolved": "9.0.9",
-        "contentHash": "pNUVVZBgAw6mG4VQzHxzZmGyKMBD+VLi3kSPCvm8OoOtlIzRnh5bt36wfa5s0iHzFCp3v+ySAyH02Ns9RmNXNA=="
+        "resolved": "9.0.7",
+        "contentHash": "nftDR4604AcQawEWSfb7pcZWoNfaB+vnKQL3P2LUfzRoA8S6K+YObgotgJVNopMBMXLxQN0VSKGEdRa+WFlN/g=="
       },
       "runtime.win-x64.runtime.native.System.Data.SqlClient.sni": {
         "type": "Transitive",
