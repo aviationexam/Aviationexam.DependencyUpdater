@@ -56,15 +56,15 @@
       },
       "Microsoft.Extensions.Logging.Console": {
         "type": "Direct",
-        "requested": "[9.0.9, )",
-        "resolved": "9.0.9",
-        "contentHash": "x3+W7IfW9Tg3sV+sU9N1039M4CqklaAecwhz9qNtjOCBdmg7h96JaL+NAvhYgZgweVJTJaxAvuO8I+ZZehE7Pg==",
+        "requested": "[9.0.10, )",
+        "resolved": "9.0.10",
+        "contentHash": "ponA8k4E4S0LlQ8J4ce4Yp1NND8rxww0lbADK9yL3omRpnnawiENb7W/CTgZUIZVJxKcmIwhm1IbUCRk6RLocQ==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.9",
-          "Microsoft.Extensions.Logging": "9.0.9",
-          "Microsoft.Extensions.Logging.Abstractions": "9.0.9",
-          "Microsoft.Extensions.Logging.Configuration": "9.0.9",
-          "Microsoft.Extensions.Options": "9.0.9"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.10",
+          "Microsoft.Extensions.Logging": "9.0.10",
+          "Microsoft.Extensions.Logging.Abstractions": "9.0.10",
+          "Microsoft.Extensions.Logging.Configuration": "9.0.10",
+          "Microsoft.Extensions.Options": "9.0.10"
         }
       },
       "Microsoft.NET.ILLink.Tasks": {
@@ -265,17 +265,17 @@
       },
       "Microsoft.Extensions.Logging.Configuration": {
         "type": "Transitive",
-        "resolved": "9.0.9",
-        "contentHash": "Abuo+S0Sg+Ke6vzSh5Ell+lwJJM+CEIqg1ImtWnnqF6a/ibJkQnmFJi4/ekEw/0uAcdFKJXtGV7w6cFN0nyXeg==",
+        "resolved": "9.0.10",
+        "contentHash": "qwTRpxrmLOXZrbgQHRZ9wS2AtVa/61DFIYk8k1rBCCgA5qW0MBxxQC4BjkaI0wSoHHOv/IUXBeFNK+Y59qe/Ug==",
         "dependencies": {
-          "Microsoft.Extensions.Configuration": "9.0.9",
-          "Microsoft.Extensions.Configuration.Abstractions": "9.0.9",
-          "Microsoft.Extensions.Configuration.Binder": "9.0.9",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.9",
-          "Microsoft.Extensions.Logging": "9.0.9",
-          "Microsoft.Extensions.Logging.Abstractions": "9.0.9",
-          "Microsoft.Extensions.Options": "9.0.9",
-          "Microsoft.Extensions.Options.ConfigurationExtensions": "9.0.9"
+          "Microsoft.Extensions.Configuration": "9.0.10",
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.10",
+          "Microsoft.Extensions.Configuration.Binder": "9.0.10",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.10",
+          "Microsoft.Extensions.Logging": "9.0.10",
+          "Microsoft.Extensions.Logging.Abstractions": "9.0.10",
+          "Microsoft.Extensions.Options": "9.0.10",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "9.0.10"
         }
       },
       "Microsoft.Extensions.Logging.Debug": {
