@@ -4,9 +4,9 @@
     "net9.0": {
       "Meziantou.Analyzer": {
         "type": "Direct",
-        "requested": "[2.0.235, )",
-        "resolved": "2.0.235",
-        "contentHash": "2dFxtrrGu/YOHVroZpzxUXgjLupZGm4UKukXxCMJNZtpF//Gtwbk5CqO+s39F3R4tjuyc+S3yulbIZNXbA09NQ=="
+        "requested": "[2.0.238, )",
+        "resolved": "2.0.238",
+        "contentHash": "ODHZOmnzXFe8GJBLlvGI63gGeoshBgTnhsBm3U4mZjUuD7dPByADwwE06Ic/gXTCBA03uqW76lChWkYslKUXFg=="
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
@@ -270,7 +270,7 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.10, )",
           "Microsoft.Extensions.Logging.Abstractions": "[9.0.10, )",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "[9.0.10, )",
-          "ZLinq": "[1.5.2, )"
+          "ZLinq": "[1.5.3, )"
         }
       },
       "aviationexam.dependencyupdater.constants": {
@@ -403,9 +403,9 @@
       },
       "ZLinq": {
         "type": "CentralTransitive",
-        "requested": "[1.5.2, )",
-        "resolved": "1.5.2",
-        "contentHash": "Zd/afYvmwHMzAWFhK9XAEW9BN4iqXswuWUNsaVFPy4INnxZe/HdbC/DTMUkxmeG+8vPc/8VFVWnCvEYQcRwwmw=="
+        "requested": "[1.5.3, )",
+        "resolved": "1.5.3",
+        "contentHash": "tY/n1/qup0fmX1JqubxD9IoD0gOCU9sJqYujiPbeEJFYzAhGLvxUtayXl8LhocnOBw9PewPqWb0QtMnQUfM/0A=="
       }
     },
     "net9.0/linux-x64": {
