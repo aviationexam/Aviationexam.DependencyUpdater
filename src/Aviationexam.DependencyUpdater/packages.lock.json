@@ -79,15 +79,6 @@
         "resolved": "2.0.0",
         "contentHash": "Bjklzc5NoxqAGFi7BcGlY2TWAdB06Bq3a5sfRr3ubMRU80Mf98eyq3Y2UgR6xRV0TLznZmfe5T7mUjOunRNcdA=="
       },
-      "System.CommandLine.NamingConventionBinder": {
-        "type": "Direct",
-        "requested": "[2.0.0-beta5.25306.1, )",
-        "resolved": "2.0.0-beta5.25306.1",
-        "contentHash": "hEz+l/35lDcDuGg6wpTQNYwAQ6D4Nw5jFzGJu7C2sNFMkKgncGppjyH4jmWrdIuSi3GXOy4Jm+t5UwJAaxJdFQ==",
-        "dependencies": {
-          "System.CommandLine": "2.0.0-beta5.25306.1"
-        }
-      },
       "ZLinq": {
         "type": "Direct",
         "requested": "[1.5.3, )",
