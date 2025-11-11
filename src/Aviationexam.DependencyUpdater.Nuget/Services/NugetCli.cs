@@ -72,9 +72,8 @@ public class NugetCli(
         // Optional: read logs to console/log
         _ = Task.Run([SuppressMessage("ReSharper", "AccessToDisposedClosure")] async () =>
         {
-            while (!process.StandardOutput.EndOfStream)
+            while (await process.StandardOutput.ReadLineAsync(cancellationToken) is {} line)
             {
-                var line = await process.StandardOutput.ReadLineAsync(cancellationToken);
                 if (!string.IsNullOrWhiteSpace(line))
                 {
                     logger.LogTrace("[restore] {Line}", line);
@@ -84,9 +83,8 @@ public class NugetCli(
 
         _ = Task.Run([SuppressMessage("ReSharper", "AccessToDisposedClosure")] async () =>
         {
-            while (!process.StandardError.EndOfStream)
+            while (await process.StandardOutput.ReadLineAsync(cancellationToken) is {} line)
             {
-                var line = await process.StandardError.ReadLineAsync(cancellationToken);
                 if (!string.IsNullOrWhiteSpace(line))
                 {
                     logger.LogError("[restore] {Line}", line);
