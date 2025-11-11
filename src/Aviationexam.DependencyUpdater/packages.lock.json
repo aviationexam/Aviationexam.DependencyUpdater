@@ -479,8 +479,8 @@
       },
       "System.ClientModel": {
         "type": "Transitive",
-        "resolved": "1.7.0",
-        "contentHash": "NKKA3/O6B7PxmtIzOifExHdfoWthy3AD4EZ1JfzcZU8yGZTbYrK1qvXsHUL/1yQKKqWSKgIR1Ih/yf2gOaHc4w==",
+        "resolved": "1.8.0",
+        "contentHash": "AqRzhn0v29GGGLj/Z6gKq4lGNtvPHT4nHdG5PDJh9IfVjv/nYUVmX11hwwws1vDFeIAzrvmn0dPu8IjLtu6fAw==",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "8.0.3",
           "System.Memory.Data": "8.0.1"
@@ -576,8 +576,7 @@
           "Aviationexam.DependencyUpdater.Common": "[1.0.0, )",
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.0, )",
-          "NuGet.ProjectModel": "[6.14.0, )",
-          "System.Linq.Async": "[6.0.3, )"
+          "NuGet.ProjectModel": "[6.14.0, )"
         }
       },
       "aviationexam.dependencyupdater.repository.devops": {
@@ -609,12 +608,12 @@
       },
       "Azure.Core": {
         "type": "CentralTransitive",
-        "requested": "[1.49.0, )",
-        "resolved": "1.49.0",
-        "contentHash": "wmY5VEEVTBJN+8KVB6qSVZYDCMpHs1UXooOijx/NH7OsMtK92NlxhPBpPyh4cR+07R/zyDGvA5+Fss4TpwlO+g==",
+        "requested": "[1.50.0, )",
+        "resolved": "1.50.0",
+        "contentHash": "GBNKZEhdIbTXxedvD3R7I/yDVFX9jJJEz02kCziFSJxspSQ5RMHc3GktulJ1s7+ffXaXD7kMgrtdQTaggyInLw==",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "8.0.0",
-          "System.ClientModel": "1.7.0",
+          "System.ClientModel": "1.8.0",
           "System.Memory.Data": "8.0.1"
         }
       },
@@ -668,9 +667,9 @@
       },
       "Microsoft.Bcl.AsyncInterfaces": {
         "type": "CentralTransitive",
-        "requested": "[9.0.5, )",
-        "resolved": "9.0.5",
-        "contentHash": "eNQDjbtFj8kOLxbckCbn2JXTsnzK8+xkA4jg7NULO9jhIvlOSngC9BFzmiqVPpw1INQaP1pQ3YteY2XhfWNjtQ=="
+        "requested": "[10.0.0, )",
+        "resolved": "10.0.0",
+        "contentHash": "vFuwSLj9QJBbNR0NeNO4YVASUbokxs+i/xbuu8B+Fs4FAZg5QaFa6eGrMaRqTzzNI5tAb97T7BhSxtLckFyiRA=="
       },
       "Microsoft.Extensions.Configuration.Abstractions": {
         "type": "CentralTransitive",
@@ -800,12 +799,6 @@
         "requested": "[10.0.0, )",
         "resolved": "10.0.0",
         "contentHash": "uaFRda9NjtbJRkdx311eXlAA3n2em7223c1A8d1VWyl+4FL9vkG7y2lpPfBU9HYdj/9KgdRNdn1vFK8ZYCYT/A=="
-      },
-      "System.Linq.Async": {
-        "type": "CentralTransitive",
-        "requested": "[6.0.3, )",
-        "resolved": "6.0.3",
-        "contentHash": "hSHiq2m1ky7zUQgTp+/2h1K3lABIQ+GltRixoclHPg/Sc1vnfeS6g/Uy5moOVZKrZJdQiFPFZd6OobBp3tZcFg=="
       },
       "System.Security.Cryptography.Pkcs": {
         "type": "CentralTransitive",
