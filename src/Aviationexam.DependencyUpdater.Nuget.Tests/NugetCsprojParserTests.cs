@@ -38,7 +38,7 @@ public class NugetCsprojParserTests
                 <Project Sdk="Microsoft.NET.Sdk">
 
                   <PropertyGroup>
-                    <TargetFramework>net9.0</TargetFramework>
+                    <TargetFramework>net10.0</TargetFramework>
                   </PropertyGroup>
 
                   <Import Project="..\WarningConfiguration.targets" />
