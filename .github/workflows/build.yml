@@ -31,7 +31,7 @@ jobs:
       - name: Build
         run: dotnet build --no-restore --nologo --configuration Release
       - name: Test
-        run: dotnet test --nologo --no-build --configuration Release --results-directory TestResults --report-trx
+        run: dotnet test --no-build --configuration Release --results-directory TestResults --report-trx
 
       - name: 📄 Publish test results
         uses: dorny/test-reporter@v2.1.1
