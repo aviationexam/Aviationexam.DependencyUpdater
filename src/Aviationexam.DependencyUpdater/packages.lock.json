@@ -4,9 +4,9 @@
     "net10.0": {
       "Meziantou.Analyzer": {
         "type": "Direct",
-        "requested": "[2.0.256, )",
-        "resolved": "2.0.256",
-        "contentHash": "G1X+rRfimtT/icOaFM/AeJk6Z2pc4N5dpPHXFAK/cmpFVi7I1a7QFe05mlN9nofER007pu+QYgN6o+heGIF+Vg=="
+        "requested": "[2.0.257, )",
+        "resolved": "2.0.257",
+        "contentHash": "HADbzZ4rto3boQpWyXIFFc9bxDPviscCXiSQWOTICKD1OJ4gwa9aMfANoQngOk/2en3I9YAHwQ0WXxVMzCTJ+A=="
       },
       "Microsoft.DotNet.ILCompiler": {
         "type": "Direct",
@@ -583,8 +583,8 @@
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.0, )",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "[10.0.0, )",
           "Microsoft.TeamFoundationServer.Client": "[19.225.1, )",
-          "Polly.Core": "[8.6.4, )",
-          "Polly.Extensions": "[8.6.4, )"
+          "Polly.Core": "[8.6.5, )",
+          "Polly.Extensions": "[8.6.5, )"
         }
       },
       "aviationexam.dependencyupdater.vcs.git": {
@@ -761,19 +761,19 @@
       },
       "Polly.Core": {
         "type": "CentralTransitive",
-        "requested": "[8.6.4, )",
-        "resolved": "8.6.4",
-        "contentHash": "4AWqYnQ2TME0E+Mzovt1Uu+VyvpR84ymUldMcPw7Mbj799Phaag14CKrMtlJGx5jsvYP+S3oR1QmysgmXoD5cw=="
+        "requested": "[8.6.5, )",
+        "resolved": "8.6.5",
+        "contentHash": "t+sUVrIwvo7UmsgHGgOG9F0GDZSRIm47u2ylH17Gvcv1q5hNEwgD5GoBlFyc0kh/pebmPyrAgvGsR/65ZBaXlg=="
       },
       "Polly.Extensions": {
         "type": "CentralTransitive",
-        "requested": "[8.6.4, )",
-        "resolved": "8.6.4",
-        "contentHash": "mosKFAGlCD/VfJBWKamWrLYHr1D0o8XrUKZ4I0AUxvUHsY+Nq1y5g75sa5JB7dIyOC+Vdf0xXxYSuLU+uljfjw==",
+        "requested": "[8.6.5, )",
+        "resolved": "8.6.5",
+        "contentHash": "Ui+qN9zCgcy0/YEthA0wVm1mrDQe7+ud82Vz5wedbk22t17t6G+6nm/Q3GYxyCyTl5UFVoO2MbfmDv7a0K6Zww==",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
           "Microsoft.Extensions.Options": "8.0.0",
-          "Polly.Core": "8.6.4"
+          "Polly.Core": "8.6.5"
         }
       },
       "System.Data.SqlClient": {
