@@ -42,11 +42,11 @@
       },
       "Yaml2JsonNode": {
         "type": "Direct",
-        "requested": "[2.2.0, )",
-        "resolved": "2.2.0",
-        "contentHash": "+UgsHozdFoFSUlQsff+HmIDl35bnDk28ntcb/XD6uaZ9AMwUxWhjA5Wg8JMmOyKbSoGDJfabini61yKheFpOBg==",
+        "requested": "[2.4.0, )",
+        "resolved": "2.4.0",
+        "contentHash": "Cpnsf6C0VCH3dzV5vDPORX6kg3r7ySnSirWdcZgNQ5K6cGq0KTSag3aywNAEKeWcvFDhzjUDgRK0R2pfcgO0TA==",
         "dependencies": {
-          "YamlDotNet": "16.2.0"
+          "YamlDotNet": "16.3.0"
         }
       },
       "YamlDotNet": {
