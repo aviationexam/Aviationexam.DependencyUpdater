@@ -20,7 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.Common\Aviationexam.DependencyUpdater.Common.csproj" />
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.Interfaces\Aviationexam.DependencyUpdater.Interfaces.csproj" />
-    <ProjectReference Include="..\Aviationexam.DependencyUpdater.Repository.Abstractions\Aviationexam.DependencyUpdater.Repository.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
