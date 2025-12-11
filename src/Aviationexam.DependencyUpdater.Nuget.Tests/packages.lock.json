@@ -288,15 +288,8 @@
         "dependencies": {
           "Aviationexam.DependencyUpdater.Common": "[1.0.0, )",
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
-          "Aviationexam.DependencyUpdater.Repository.Abstractions": "[1.0.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.1, )",
           "NuGet.ProjectModel": "[6.14.0, )"
-        }
-      },
-      "aviationexam.dependencyupdater.repository.abstractions": {
-        "type": "Project",
-        "dependencies": {
-          "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )"
         }
       },
       "aviationexam.dependencyupdater.testsinfrastructure": {

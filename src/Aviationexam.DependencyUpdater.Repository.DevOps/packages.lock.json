@@ -355,12 +355,6 @@
       "aviationexam.dependencyupdater.interfaces": {
         "type": "Project"
       },
-      "aviationexam.dependencyupdater.repository.abstractions": {
-        "type": "Project",
-        "dependencies": {
-          "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )"
-        }
-      },
       "Azure.Core": {
         "type": "CentralTransitive",
         "requested": "[1.50.0, )",

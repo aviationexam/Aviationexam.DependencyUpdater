@@ -147,12 +147,6 @@
       "aviationexam.dependencyupdater.interfaces": {
         "type": "Project"
       },
-      "aviationexam.dependencyupdater.repository.abstractions": {
-        "type": "Project",
-        "dependencies": {
-          "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )"
-        }
-      },
       "Microsoft.Extensions.Configuration.Abstractions": {
         "type": "CentralTransitive",
         "requested": "[10.0.1, )",
