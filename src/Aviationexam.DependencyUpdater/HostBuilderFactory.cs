@@ -51,7 +51,7 @@ public static class HostBuilderFactory
         builder.Services.AddConfigurationParser();
         builder.Services.AddNuget();
         builder.Services.AddVcsGit();
-        builder.Services.AddRepositoryDevOps(shouldRedactHeaderValue: !isDebug);
+        builder.Services.AddRepositoryPlatform(shouldRedactHeaderValue: !isDebug);
         builder.Services.AddDefaultImplementations();
 
         return builder;
