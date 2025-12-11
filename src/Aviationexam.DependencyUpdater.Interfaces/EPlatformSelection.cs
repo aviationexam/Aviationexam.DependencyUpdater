@@ -1,4 +1,4 @@
-namespace Aviationexam.DependencyUpdater;
+namespace Aviationexam.DependencyUpdater.Interfaces;
 
 public enum EPlatformSelection
 {
