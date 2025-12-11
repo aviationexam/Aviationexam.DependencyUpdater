@@ -28,6 +28,7 @@
   <Project Path="src\Aviationexam.DependencyUpdater.Nuget.Tests\Aviationexam.DependencyUpdater.Nuget.Tests.csproj" />
   <Project Path="src\Aviationexam.DependencyUpdater.Nuget\Aviationexam.DependencyUpdater.Nuget.csproj" />
   <Project Path="src\Aviationexam.DependencyUpdater.Repository.DevOps\Aviationexam.DependencyUpdater.Repository.DevOps.csproj" />
+  <Project Path="src\Aviationexam.DependencyUpdater.Repository.GitHub\Aviationexam.DependencyUpdater.Repository.GitHub.csproj" />
   <Project Path="src\Aviationexam.DependencyUpdater.TestsInfrastructure\Aviationexam.DependencyUpdater.TestsInfrastructure.csproj" />
   <Project Path="src\Aviationexam.DependencyUpdater.Vcs.Git\Aviationexam.DependencyUpdater.Vcs.Git.csproj" />
   <Project Path="src\Aviationexam.DependencyUpdater\Aviationexam.DependencyUpdater.csproj" />
