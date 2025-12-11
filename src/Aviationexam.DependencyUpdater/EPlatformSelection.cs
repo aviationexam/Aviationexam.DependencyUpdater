@@ -1,7 +1,7 @@
 namespace Aviationexam.DependencyUpdater;
 
-public enum PlatformSelection
+public enum EPlatformSelection
 {
     AzureDevOps,
-    GitHub
+    GitHub,
 }

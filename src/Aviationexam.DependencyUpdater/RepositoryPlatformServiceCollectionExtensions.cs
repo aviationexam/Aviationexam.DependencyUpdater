@@ -20,13 +20,13 @@ public static class RepositoryPlatformServiceCollectionExtensions
         // Register IRepositoryClient factory
         services.AddScoped<IRepositoryClient>(serviceProvider =>
         {
-            var platform = serviceProvider.GetRequiredService<PlatformSelection>();
+            var platform = serviceProvider.GetRequiredService<EPlatformSelection>();
 
             return platform switch
             {
-                PlatformSelection.AzureDevOps =>
+                EPlatformSelection.AzureDevOps =>
                     serviceProvider.GetRequiredService<RepositoryAzureDevOpsClient>(),
-                PlatformSelection.GitHub =>
+                EPlatformSelection.GitHub =>
                     throw new NotImplementedException("GitHub support not yet implemented"),
                 _ => throw new InvalidOperationException($"Unsupported platform: {platform}")
             };
@@ -35,15 +35,15 @@ public static class RepositoryPlatformServiceCollectionExtensions
         // Register Optional<IPackageFeedClient> factory
         services.AddScoped(serviceProvider =>
         {
-            var platform = serviceProvider.GetRequiredService<PlatformSelection>();
+            var platform = serviceProvider.GetRequiredService<EPlatformSelection>();
 
             return platform switch
             {
-                PlatformSelection.AzureDevOps =>
+                EPlatformSelection.AzureDevOps =>
                     new Optional<IPackageFeedClient>(
                         serviceProvider.GetRequiredService<AzureArtifactsPackageFeedClient>()
                     ),
-                PlatformSelection.GitHub =>
+                EPlatformSelection.GitHub =>
                     new Optional<IPackageFeedClient>(null),
                 _ => new Optional<IPackageFeedClient>(null)
             };

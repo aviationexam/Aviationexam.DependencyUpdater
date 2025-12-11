@@ -159,12 +159,12 @@ rootCommand.SetAction(DefaultCommandHandler.GetHandler((serviceCollection, parse
     var platformValue = parseResult.GetRequiredValue(platform);
     var platformSelection = platformValue.ToLowerInvariant() switch
     {
-        "azure-devops" => PlatformSelection.AzureDevOps,
-        "github" => PlatformSelection.GitHub,
+        "azure-devops" => EPlatformSelection.AzureDevOps,
+        "github" => EPlatformSelection.GitHub,
         _ => throw new ArgumentException($"Unknown platform: {platformValue}. Valid values are: azure-devops, github")
     };
 
-    serviceCollection.AddSingleton(typeof(PlatformSelection), _ => platformSelection);
+    serviceCollection.AddSingleton(typeof(EPlatformSelection), _ => platformSelection);
 
     serviceCollection
         .AddBinder(parseResult, new SourceConfigurationBinder(directory))
