@@ -1,4 +1,3 @@
-using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Interfaces.Repository;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;

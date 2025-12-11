@@ -11,14 +11,10 @@ public static class RepositoryPlatformServiceCollectionExtensions
     public static IServiceCollection AddRepositoryPlatform(
         this IServiceCollection services,
         bool shouldRedactHeaderValue = true
-    )
-    {
-        // Register platform-specific implementations
-        services.AddRepositoryDevOps(shouldRedactHeaderValue);
+    ) => services
+        .AddRepositoryDevOps(shouldRedactHeaderValue)
         // Future: services.AddRepositoryGitHub(shouldRedactHeaderValue);
-
-        // Register IRepositoryClient factory
-        services.AddScoped<IRepositoryClient>(serviceProvider =>
+        .AddScoped<IRepositoryClient>(serviceProvider =>
         {
             var platform = serviceProvider.GetRequiredService<EPlatformSelection>();
 
@@ -28,27 +24,20 @@ public static class RepositoryPlatformServiceCollectionExtensions
                     serviceProvider.GetRequiredService<RepositoryAzureDevOpsClient>(),
                 EPlatformSelection.GitHub =>
                     throw new NotImplementedException("GitHub support not yet implemented"),
-                _ => throw new InvalidOperationException($"Unsupported platform: {platform}")
+                _ => throw new ArgumentOutOfRangeException(nameof(platform), platform, null),
             };
-        });
-
-        // Register Optional<IPackageFeedClient> factory
-        services.AddScoped(serviceProvider =>
+        })
+        .AddScoped(serviceProvider =>
         {
             var platform = serviceProvider.GetRequiredService<EPlatformSelection>();
 
             return platform switch
             {
-                EPlatformSelection.AzureDevOps =>
-                    new Optional<IPackageFeedClient>(
-                        serviceProvider.GetRequiredService<AzureArtifactsPackageFeedClient>()
-                    ),
-                EPlatformSelection.GitHub =>
-                    new Optional<IPackageFeedClient>(null),
-                _ => new Optional<IPackageFeedClient>(null)
+                EPlatformSelection.AzureDevOps => new Optional<IPackageFeedClient>(
+                    serviceProvider.GetRequiredService<AzureArtifactsPackageFeedClient>()
+                ),
+                EPlatformSelection.GitHub => new Optional<IPackageFeedClient>(null),
+                _ => throw new ArgumentOutOfRangeException(nameof(platform), platform, null),
             };
         });
-
-        return services;
-    }
 }

@@ -2,7 +2,6 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.ConfigurationParser;
 using Aviationexam.DependencyUpdater.DefaultImplementations;
 using Aviationexam.DependencyUpdater.Nuget;
-using Aviationexam.DependencyUpdater.Repository.DevOps;
 using Aviationexam.DependencyUpdater.Vcs.Git;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
