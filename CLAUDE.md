@@ -40,7 +40,7 @@ The main project `Aviationexam.DependencyUpdater` is the CLI entry point. Run wi
 dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- \
   --directory "/path/to/repo" \
   --git-password "<token>" \
-  --platform azure-devops \
+  --platform AzureDevOps \
   --azure-organization "<org>" \
   --azure-project "<project-id>" \
   --azure-repository "<repo-id>" \
@@ -57,7 +57,7 @@ dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyU
 dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- \
   --directory "/path/to/repo" \
   --git-password "<token>" \
-  --platform github \
+  --platform GitHub \
   --github-owner "<owner>" \
   --github-repository "<repo>" \
   --github-token "<token>"
@@ -96,7 +96,7 @@ The application uses Microsoft.Extensions.DependencyInjection throughout. Servic
 ### Configuration Binding
 Command-line arguments are bound to configuration objects using custom binders (e.g., `SourceConfigurationBinder`, `AzureDevOpsConfigurationBinder`) in Program.cs. The `ServiceCollectionExtensions` class uses C# 13's extension block syntax to provide fluent binder registration methods.
 
-Platform selection uses `Option<EPlatformSelection>` with a CustomParser to convert string values ("azure-devops", "github") to the enum, combined with `.AcceptOnlyFromAmong()` for validation. All CLI options explicitly define `Arity = ArgumentArity.ExactlyOne` for clear argument expectations.
+Platform selection uses `Option<EPlatformSelection>` which leverages System.CommandLine's automatic enum parsing. Users specify platform values as enum names (e.g., `--platform AzureDevOps` or `--platform GitHub`). All CLI options explicitly define `Arity = ArgumentArity.ExactlyOne` for clear argument expectations.
 
 ### VCS Abstraction
 Git operations are abstracted through `ISourceVersioningFactory` and `ISourceVersioningWorkspace` interfaces, with implementations in the Vcs.Git project.
@@ -114,10 +114,10 @@ Git operations are abstracted through `ISourceVersioningFactory` and `ISourceVer
 The tool supports multiple repository platforms through a clean abstraction layer:
 
 **Platform Selection:**
-- Required `--platform` CLI argument to select between `azure-devops` or `github`
+- Required `--platform` CLI argument accepts enum values: `AzureDevOps` or `GitHub`
 - Platform-specific configuration arguments (prefixed with `--azure-*` or `--github-*`)
-- Platform selection enum: `EPlatformSelection` (AzureDevOps, GitHub)
-- CustomParser in Program.cs converts string values to enum with validation
+- Platform selection enum: `EPlatformSelection` with members `AzureDevOps`, `GitHub`
+- System.CommandLine automatically parses enum values from command line
 
 **Core Abstractions** (in `Aviationexam.DependencyUpdater.Interfaces.Repository`):
 - `IRepositoryClient` - Platform-agnostic interface for pull request operations
@@ -205,7 +205,8 @@ To add support for a new platform (e.g., GitHub):
 1. **Add to Enum**: Add new value to `EPlatformSelection` enum (e.g., `GitHub`)
 2. **Create Platform Project**: Create `Aviationexam.DependencyUpdater.Repository.<Platform>` project
 3. **Implement Configuration**: Create configuration class implementing `IRepositoryPlatformConfiguration`
-   - Override `Platform` property to return the correct enum value
+   - Implement `Platform` property to return the correct enum value (e.g., `EPlatformSelection.GitHub`)
+   - Use `Azure` prefix for Azure-specific configs, appropriate prefix for other platforms
 4. **Implement Clients**:
    - Implement `IRepositoryClient` for PR operations
    - Optionally implement `IPackageFeedClient` if the platform has package feed features
@@ -216,7 +217,6 @@ To add support for a new platform (e.g., GitHub):
    ```
 6. **Create CLI Arguments**: Add platform-specific options to Program.cs (e.g., `--github-*`)
 7. **Create Configuration Binder**: Create binder to map CLI arguments to configuration object
-8. **Update CustomParser**: Add new platform to the platform option's CustomParser and AcceptOnlyFromAmong list
-9. **Wire Up in Program.cs**: Add platform-specific service registration call in service collection setup
+8. **Wire Up in Program.cs**: Add platform-specific service registration call in service collection setup
 
-The keyed services pattern automatically resolves the correct implementation at runtime based on the configuration's `Platform` property.
+The keyed services pattern automatically resolves the correct implementation at runtime based on the configuration's `Platform` property. System.CommandLine handles enum parsing automatically - no custom parser needed.

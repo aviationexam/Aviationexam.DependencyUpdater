@@ -47,7 +47,7 @@ dotnet dependency-updater \
   --directory "/path/to/repo" \
   --git-username "<git-username>" \
   --git-password "<git-password-or-token>" \
-  --platform azure-devops \
+  --platform AzureDevOps \
   --azure-organization "<azure-devops-org>" \
   --azure-project <project-id> \
   --azure-repository <repository-id> \
@@ -71,7 +71,7 @@ dotnet dependency-updater \
   --directory "/path/to/repo" \
   --git-username "<git-username>" \
   --git-password "<git-password-or-token>" \
-  --platform github \
+  --platform GitHub \
   --github-owner "<owner>" \
   --github-repository "<repo>" \
   --github-token "<github-token>"
@@ -86,12 +86,12 @@ dotnet dependency-updater \
 | --directory    |    Y     |   cwd   | Path to the local Git repository                                |
 | --git-username |    N     |   ''    | Username for remote Git authentication                          |
 | --git-password |    Y     |         | Password or personal access token for remote Git authentication |
-| --platform     |    Y     |         | Repository platform: `azure-devops` or `github`                 |
+| --platform     |    Y     |         | Repository platform: `AzureDevOps` or `GitHub`                  |
 | --reset-cache  |    N     |  false  | Clears the internal dependency cache before processing updates  |
 
 ### Azure DevOps Arguments
 
-Required when `--platform azure-devops`:
+Required when `--platform AzureDevOps`:
 
 | Argument                          | Required | Description                                                                                |
 |-----------------------------------|:--------:|--------------------------------------------------------------------------------------------|
@@ -109,7 +109,7 @@ Required when `--platform azure-devops`:
 
 ### GitHub Arguments
 
-Required when `--platform github` (not yet implemented):
+Required when `--platform GitHub` (not yet implemented):
 
 | Argument           | Required | Description                             |
 |--------------------|:--------:|-----------------------------------------|
