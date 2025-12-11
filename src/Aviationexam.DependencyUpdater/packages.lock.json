@@ -587,6 +587,22 @@
           "Polly.Extensions": "[8.6.5, )"
         }
       },
+      "aviationexam.dependencyupdater.repository.github": {
+        "type": "Project",
+        "dependencies": {
+          "Aviationexam.DependencyUpdater.Common": "[1.0.0, )",
+          "Aviationexam.DependencyUpdater.Constants": "[1.0.0, )",
+          "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
+          "Microsoft.Extensions.Configuration.Abstractions": "[10.0.1, )",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.1, )",
+          "Microsoft.Extensions.Http": "[10.0.1, )",
+          "Microsoft.Extensions.Logging.Abstractions": "[10.0.1, )",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "[10.0.1, )",
+          "Octokit": "[13.0.1, )",
+          "Polly.Core": "[8.6.5, )",
+          "Polly.Extensions": "[8.6.5, )"
+        }
+      },
       "aviationexam.dependencyupdater.vcs.git": {
         "type": "Project",
         "dependencies": {
@@ -758,6 +774,12 @@
         "dependencies": {
           "NuGet.DependencyResolver.Core": "6.14.0"
         }
+      },
+      "Octokit": {
+        "type": "CentralTransitive",
+        "requested": "[13.0.1, )",
+        "resolved": "13.0.1",
+        "contentHash": "tjXTa2FXzbd3n17VWpi8UXe05EIJqHcWJW8C2kukftIve00duWiZL8x4i1vlZQ0zQ4RbRANbRc7J5K7Co/1spQ=="
       },
       "Polly.Core": {
         "type": "CentralTransitive",
