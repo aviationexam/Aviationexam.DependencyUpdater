@@ -1,6 +1,6 @@
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 
-public sealed class DevOpsUndocumentedConfiguration
+public sealed class AzureDevOpsUndocumentedConfiguration
 {
     public required string NugetFeedProject { get; set; }
 

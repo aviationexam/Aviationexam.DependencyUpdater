@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Aviationexam.DependencyUpdater.Interfaces;
+namespace Aviationexam.DependencyUpdater.Interfaces.Repository;
 
 public interface IRepositoryClient
 {
@@ -38,12 +38,6 @@ public interface IRepositoryClient
 
     Task AbandonPullRequestAsync(
         PullRequest pullRequest,
-        CancellationToken cancellationToken
-    );
-
-    Task EnsurePackageVersionIsAvailableAsync(
-        string getPackageName,
-        string getSerializedVersion,
         CancellationToken cancellationToken
     );
 }

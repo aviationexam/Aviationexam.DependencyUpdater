@@ -1,6 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Interfaces.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.Core.WebApi;
@@ -17,9 +18,8 @@ using GitConstants = Aviationexam.DependencyUpdater.Constants.GitConstants;
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 
 public class RepositoryAzureDevOpsClient(
-    DevOpsConfiguration devOpsConfiguration,
+    AzureDevOpsConfiguration devOpsConfiguration,
     VssConnection connection,
-    AzureDevOpsUndocumentedClient azureDevOpsUndocumentedClient,
     [FromKeyedServices($"{nameof(GitHttpClient.CreatePullRequestAsync)}-pipeline")]
     ResiliencePipeline<GitPullRequest> createPullRequestAsyncResiliencePipeline,
     ILogger<RepositoryAzureDevOpsClient> logger
@@ -237,33 +237,5 @@ public class RepositoryAzureDevOpsClient(
         );
 
         logger.LogTrace("Deleted remote branch {Branch}", pullRequest.BranchName);
-    }
-
-    public async Task EnsurePackageVersionIsAvailableAsync(
-        string packageName,
-        string packageVersion,
-        CancellationToken cancellationToken
-    )
-    {
-        var versions = await azureDevOpsUndocumentedClient.GetContributionHierarchyQueryAsync(
-            packageName,
-            cancellationToken
-        );
-
-        if (versions is null)
-        {
-            return;
-        }
-
-        var version = versions.AsValueEnumerable().SingleOrDefault(x => x.NormalizedVersion == packageVersion);
-
-        if (version?.IsLocal is false or null)
-        {
-            await azureDevOpsUndocumentedClient.ManualUpstreamIngestionAsync(
-                packageName,
-                packageVersion,
-                cancellationToken
-            );
-        }
     }
 }

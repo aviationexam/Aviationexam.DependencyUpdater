@@ -3,15 +3,15 @@ using System.CommandLine;
 
 namespace Aviationexam.DependencyUpdater;
 
-public sealed class DevOpsConfigurationBinder(
+public sealed class AzureDevOpsConfigurationBinder(
     Option<string> organization,
     Option<string> project,
     Option<string> repository,
     Option<string> pat,
     Option<string> accountId
-) : IBinder<DevOpsConfiguration>
+) : IBinder<AzureDevOpsConfiguration>
 {
-    public DevOpsConfiguration CreateValue(
+    public AzureDevOpsConfiguration CreateValue(
         ParseResult parseResult
     ) => new()
     {

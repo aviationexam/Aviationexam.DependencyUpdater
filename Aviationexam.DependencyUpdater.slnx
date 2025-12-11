@@ -1,9 +1,10 @@
-﻿<Solution>
+<Solution>
   <Folder Name="/Solution Items/">
     <File Path="GitVersion.yml" />
     <File Path="src\WarningConfiguration.targets" />
     <File Path="src\nuget.config" />
     <File Path="src\Directory.Packages.props" />
+    <File Path="README.md" />
     <File Path="src\Directory.Build.props" />
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
@@ -17,17 +18,17 @@
     <File Path=".github\workflows\pr-build.yml" />
     <File Path=".github\workflows\release.yml" />
   </Folder>
-  <Project Path="src\Aviationexam.DependencyUpdater.Common.Tests\Aviationexam.DependencyUpdater.Common.Tests.csproj" Type="Classic C#" />
-  <Project Path="src\Aviationexam.DependencyUpdater.Common\Aviationexam.DependencyUpdater.Common.csproj" Type="Classic C#" />
-  <Project Path="src\Aviationexam.DependencyUpdater.ConfigurationParser.Tests\Aviationexam.DependencyUpdater.ConfigurationParser.Tests.csproj" Type="Classic C#" />
-  <Project Path="src\Aviationexam.DependencyUpdater.ConfigurationParser\Aviationexam.DependencyUpdater.ConfigurationParser.csproj" Type="Classic C#" />
-  <Project Path="src\Aviationexam.DependencyUpdater.Constants\Aviationexam.DependencyUpdater.Constants.csproj" Type="Classic C#" />
-  <Project Path="src\Aviationexam.DependencyUpdater.DefaultImplementations\Aviationexam.DependencyUpdater.DefaultImplementations.csproj" Type="Classic C#" />
-  <Project Path="src\Aviationexam.DependencyUpdater.Interfaces\Aviationexam.DependencyUpdater.Interfaces.csproj" Type="Classic C#" />
-  <Project Path="src\Aviationexam.DependencyUpdater.Nuget.Tests\Aviationexam.DependencyUpdater.Nuget.Tests.csproj" Type="Classic C#" />
-  <Project Path="src\Aviationexam.DependencyUpdater.Nuget\Aviationexam.DependencyUpdater.Nuget.csproj" Type="Classic C#" />
-  <Project Path="src\Aviationexam.DependencyUpdater.Repository.DevOps\Aviationexam.DependencyUpdater.Repository.DevOps.csproj" Type="Classic C#" />
-  <Project Path="src\Aviationexam.DependencyUpdater.TestsInfrastructure\Aviationexam.DependencyUpdater.TestsInfrastructure.csproj" Type="Classic C#" />
-  <Project Path="src\Aviationexam.DependencyUpdater.Vcs.Git\Aviationexam.DependencyUpdater.Vcs.Git.csproj" Type="Classic C#" />
-  <Project Path="src\Aviationexam.DependencyUpdater\Aviationexam.DependencyUpdater.csproj" Type="Classic C#" />
+  <Project Path="src\Aviationexam.DependencyUpdater.Common.Tests\Aviationexam.DependencyUpdater.Common.Tests.csproj" />
+  <Project Path="src\Aviationexam.DependencyUpdater.Common\Aviationexam.DependencyUpdater.Common.csproj" />
+  <Project Path="src\Aviationexam.DependencyUpdater.ConfigurationParser.Tests\Aviationexam.DependencyUpdater.ConfigurationParser.Tests.csproj" />
+  <Project Path="src\Aviationexam.DependencyUpdater.ConfigurationParser\Aviationexam.DependencyUpdater.ConfigurationParser.csproj" />
+  <Project Path="src\Aviationexam.DependencyUpdater.Constants\Aviationexam.DependencyUpdater.Constants.csproj" />
+  <Project Path="src\Aviationexam.DependencyUpdater.DefaultImplementations\Aviationexam.DependencyUpdater.DefaultImplementations.csproj" />
+  <Project Path="src\Aviationexam.DependencyUpdater.Interfaces\Aviationexam.DependencyUpdater.Interfaces.csproj" />
+  <Project Path="src\Aviationexam.DependencyUpdater.Nuget.Tests\Aviationexam.DependencyUpdater.Nuget.Tests.csproj" />
+  <Project Path="src\Aviationexam.DependencyUpdater.Nuget\Aviationexam.DependencyUpdater.Nuget.csproj" />
+  <Project Path="src\Aviationexam.DependencyUpdater.Repository.DevOps\Aviationexam.DependencyUpdater.Repository.DevOps.csproj" />
+  <Project Path="src\Aviationexam.DependencyUpdater.TestsInfrastructure\Aviationexam.DependencyUpdater.TestsInfrastructure.csproj" />
+  <Project Path="src\Aviationexam.DependencyUpdater.Vcs.Git\Aviationexam.DependencyUpdater.Vcs.Git.csproj" />
+  <Project Path="src\Aviationexam.DependencyUpdater\Aviationexam.DependencyUpdater.csproj" />
 </Solution>

@@ -4,13 +4,15 @@
 
 # Aviationexam.DependencyUpdater
 
-A command-line tool for automating dependency updates in projects using Azure DevOps Git repositories and NuGet artifact feeds.
+A command-line tool for automating dependency updates in projects using Git repositories and NuGet feeds. Supports multiple repository platforms including Azure DevOps and GitHub.
 
 ## Features
 
-- Updates dependencies in a local Git repository based on configuration files
-- Supports Azure DevOps Git and NuGet feeds
+- Updates dependencies in a local Git repository based on Dependabot configuration files
+- Supports multiple repository platforms (Azure DevOps, GitHub)
+- Supports Azure DevOps Git and NuGet artifact feeds with upstream ingestion
 - Handles authentication for private repositories and feeds
+- Platform-agnostic package management for NuGet
 
 ## Installation
 
@@ -36,13 +38,16 @@ dotnet tool install --global Aviationexam.DependencyUpdater --prerelease --add-s
 
 ## Usage
 
-Run the tool from your terminal:
+### Azure DevOps
+
+Run the tool from your terminal using the `AzureDevOps` subcommand:
 
 ```sh
-dotnet dependency-updater \
+dotnet dependency-updater  \
   --directory "/path/to/repo" \
   --git-username "<git-username>" \
   --git-password "<git-password-or-token>" \
+  AzureDevOps \
   --organization "<azure-devops-org>" \
   --project <project-id> \
   --repository <repository-id> \
@@ -57,22 +62,58 @@ dotnet dependency-updater \
   --reset-cache
 ```
 
+### GitHub
+
+GitHub support is planned but not yet implemented. Once implemented, usage will be:
+
+```sh
+dotnet dependency-updater \
+  --directory "/path/to/repo" \
+  --git-username "<git-username>" \
+  --git-password "<git-password-or-token>" \
+  GitHub \
+  --owner "<owner>" \
+  --repository "<repo>" \
+  --token "<github-token>"
+```
+
 ## Arguments
 
-| Argument                   | Required | Default | Description                                                                                |
-|----------------------------|:--------:|:-------:|--------------------------------------------------------------------------------------------|
-| --directory                |    Y     |         | Path to the local Git repository                                                           |
-| --git-username             |    N     |         | Username for remote Git authentication                                                     |
-| --git-password             |    Y     |         | Password or personal access token for remote Git authentication                            |
-| --organization             |    Y     |         | Azure DevOps organization name                                                             |
-| --project                  |    Y     |         | Azure DevOps project containing the target repository                                      |
-| --repository               |    Y     |         | Name of the Azure DevOps Git repository                                                    |
-| --pat                      |    Y     |         | Azure DevOps personal access token                                                         |
-| --account-id               |    Y     |         | Azure DevOps user or service account ID                                                    |
-| --nuget-project            |    Y     |         | Azure DevOps project containing the NuGet artifacts feed                                   |
-| --nuget-feed-id            |    Y     |         | ID of the Azure Artifacts NuGet feed                                                       |
-| --nuget-service-host       |    Y     |         | Internal Azure DevOps service host identifier                                              |
-| --access-token-resource-id |    Y     |         | Azure AD resource ID for upstream ingestion (always: 499b84ac-1321-427f-aa17-267ca6975798) |
-| --az-side-car-address      |    N     |   ''    | URL for AZ sidecar service (optional)                                                      |
-| --az-side-car-token        |    N     |         | Token for AZ sidecar service (optional)                                                    |
-| --reset-cache              |    N     |  false  | Clears the internal dependency cache before processing updates                             |
+### Common Arguments
+
+Available for all platform subcommands:
+
+| Argument       | Required | Default | Description                                                     |
+|----------------|:--------:|:-------:|-----------------------------------------------------------------|
+| --directory    |    Y     |   cwd   | Path to the local Git repository                                |
+| --git-username |    N     |   ''    | Username for remote Git authentication                          |
+| --git-password |    Y     |         | Password or personal access token for remote Git authentication |
+| --reset-cache  |    N     |  false  | Clears the internal dependency cache before processing updates  |
+
+### Azure DevOps Arguments
+
+Required when using the `AzureDevOps` subcommand:
+
+| Argument                     | Required | Description                                                                                |
+|------------------------------|:--------:|--------------------------------------------------------------------------------------------|
+| --organization               |    Y     | Azure DevOps organization name                                                             |
+| --project                    |    Y     | Azure DevOps project containing the target repository                                      |
+| --repository                 |    Y     | Name of the Azure DevOps Git repository                                                    |
+| --pat                        |    Y     | Azure DevOps personal access token                                                         |
+| --account-id                 |    Y     | Azure DevOps user or service account ID                                                    |
+| --nuget-project              |    Y     | Azure DevOps project containing the NuGet artifacts feed                                   |
+| --nuget-feed-id              |    Y     | ID of the Azure Artifacts NuGet feed                                                       |
+| --nuget-service-host         |    Y     | Internal Azure DevOps service host identifier                                              |
+| --access-token-resource-id   |    Y     | Azure AD resource ID for upstream ingestion (always: 499b84ac-1321-427f-aa17-267ca6975798) |
+| --az-side-car-address        |    N     | URL for AZ sidecar service (optional)                                                      |
+| --az-side-car-token          |    N     | Token for AZ sidecar service (optional)                                                    |
+
+### GitHub Arguments
+
+Required when using the `GitHub` subcommand (not yet implemented):
+
+| Argument     | Required | Description                           |
+|--------------|:--------:|---------------------------------------|
+| --owner      |    Y     | GitHub repository owner (user or org) |
+| --repository |    Y     | GitHub repository name                |
+| --token      |    Y     | GitHub personal access token          |

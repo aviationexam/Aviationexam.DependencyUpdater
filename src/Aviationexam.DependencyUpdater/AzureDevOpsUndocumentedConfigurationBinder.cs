@@ -3,14 +3,14 @@ using System.CommandLine;
 
 namespace Aviationexam.DependencyUpdater;
 
-public sealed class DevOpsUndocumentedConfigurationBinder(
+public sealed class AzureDevOpsUndocumentedConfigurationBinder(
     Option<string> nugetFeedProject,
     Option<string> nugetFeedId,
     Option<string> serviceHost,
     Option<string> accessTokenResourceId
-) : IBinder<DevOpsUndocumentedConfiguration>
+) : IBinder<AzureDevOpsUndocumentedConfiguration>
 {
-    public DevOpsUndocumentedConfiguration CreateValue(
+    public AzureDevOpsUndocumentedConfiguration CreateValue(
         ParseResult parseResult
     ) => new()
     {
