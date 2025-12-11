@@ -34,6 +34,20 @@ public static class ServiceCollectionExtensions
                 .CreateValue(parseResult)
             );
 
+        public IServiceCollection BindCommonConfiguration(
+            ParseResult parseResult,
+            Option<string> directory,
+            Option<string> gitUsernameArgument,
+            Option<string> gitPasswordArgument,
+            Option<bool> resetCache
+        ) => services
+            .AddBinder(parseResult, new SourceConfigurationBinder(directory))
+            .AddBinder(parseResult, new GitCredentialsConfigurationBinder(gitUsernameArgument, gitPasswordArgument))
+            .AddBinder(parseResult, x => new CachingConfigurationBinder(
+                x.GetRequiredService<TimeProvider>(),
+                resetCache
+            ));
+
         public IServiceCollection AddRepositoryPlatform(
             bool shouldRedactHeaderValue = true
         ) => services
@@ -47,6 +61,5 @@ public static class ServiceCollectionExtensions
                     serviceProvider.GetRequiredService<IRepositoryPlatformConfiguration>().Platform
                 )
             ));
-
     }
 }
