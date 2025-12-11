@@ -10,7 +10,7 @@ using ZLinq;
 namespace Aviationexam.DependencyUpdater.Nuget.Factories;
 
 public sealed class NugetVersionFetcherFactory(
-    NuGet.Protocol.Core.Types.Repository.RepositoryFactory repositoryFactory
+    Repository.RepositoryFactory repositoryFactory
 )
 {
     public NugetSourceRepository CreateSourceRepositories(
