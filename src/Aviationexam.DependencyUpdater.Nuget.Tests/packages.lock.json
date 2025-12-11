@@ -306,9 +306,9 @@
       },
       "Microsoft.Bcl.AsyncInterfaces": {
         "type": "CentralTransitive",
-        "requested": "[10.0.0, )",
-        "resolved": "10.0.0",
-        "contentHash": "vFuwSLj9QJBbNR0NeNO4YVASUbokxs+i/xbuu8B+Fs4FAZg5QaFa6eGrMaRqTzzNI5tAb97T7BhSxtLckFyiRA=="
+        "requested": "[10.0.1, )",
+        "resolved": "10.0.1",
+        "contentHash": "E1HSLkPHXEO30JEij2pWbOuzz1Z5ND4a5l7IP1T2RgQuE0a0NzEIvtO64RNy3Otn6PFezbT80cfm3M/Cgt70PA=="
       },
       "Microsoft.Extensions.Configuration.Abstractions": {
         "type": "CentralTransitive",
@@ -364,21 +364,21 @@
       },
       "System.Diagnostics.EventLog": {
         "type": "CentralTransitive",
-        "requested": "[10.0.0, )",
-        "resolved": "10.0.0",
-        "contentHash": "uaFRda9NjtbJRkdx311eXlAA3n2em7223c1A8d1VWyl+4FL9vkG7y2lpPfBU9HYdj/9KgdRNdn1vFK8ZYCYT/A=="
+        "requested": "[10.0.1, )",
+        "resolved": "10.0.1",
+        "contentHash": "xfaHEHVDkMOOZR5S6ZGezD0+vekdH1Nx/9Ih8/rOqOGSOk1fxiN3u94bYkBW/wigj0Uw2Wt3vvRj9mtYdgwEjw=="
       },
       "System.Security.Cryptography.Pkcs": {
         "type": "CentralTransitive",
-        "requested": "[9.0.5, )",
-        "resolved": "9.0.5",
-        "contentHash": "7CmpoOp7auyc7fdVgZSUhR+QYMsF2XH+uKbjDYrvyTvehDlKuic+Hhv9RM+Wyf5xMnC28RrTGgzmo5fFt0Fmxg=="
+        "requested": "[9.0.11, )",
+        "resolved": "9.0.11",
+        "contentHash": "YS2YqtN6fFjlTDIQI+ucjbbrEvwMn796r+VLTQRr/5Oy6g+i+m7nIou83KnJCnAcKna2I+5eVJRks6SoHSpetQ=="
       },
       "System.Security.Cryptography.ProtectedData": {
         "type": "CentralTransitive",
-        "requested": "[9.0.5, )",
-        "resolved": "9.0.5",
-        "contentHash": "tgS+q4zR08qX4ZA/HPtpNXU2i1EDRBNhNtbTGFdSgYyWcKf5mUtlihbzKcYqArisG1b3x4dk/FIOiWxnHrSENw=="
+        "requested": "[9.0.11, )",
+        "resolved": "9.0.11",
+        "contentHash": "s8yUYuYYu+PAwvBdhLG1KyrGrk9gkYeuPxfAsXsTqqWyepwSyEw8hAaflW4nO98NG52YpYI1am2+9o+79h2RtQ=="
       },
       "ZLinq": {
         "type": "CentralTransitive",
@@ -406,15 +406,15 @@
       },
       "System.Diagnostics.EventLog": {
         "type": "CentralTransitive",
-        "requested": "[10.0.0, )",
-        "resolved": "10.0.0",
-        "contentHash": "uaFRda9NjtbJRkdx311eXlAA3n2em7223c1A8d1VWyl+4FL9vkG7y2lpPfBU9HYdj/9KgdRNdn1vFK8ZYCYT/A=="
+        "requested": "[10.0.1, )",
+        "resolved": "10.0.1",
+        "contentHash": "xfaHEHVDkMOOZR5S6ZGezD0+vekdH1Nx/9Ih8/rOqOGSOk1fxiN3u94bYkBW/wigj0Uw2Wt3vvRj9mtYdgwEjw=="
       },
       "System.Security.Cryptography.Pkcs": {
         "type": "CentralTransitive",
-        "requested": "[9.0.5, )",
-        "resolved": "9.0.5",
-        "contentHash": "7CmpoOp7auyc7fdVgZSUhR+QYMsF2XH+uKbjDYrvyTvehDlKuic+Hhv9RM+Wyf5xMnC28RrTGgzmo5fFt0Fmxg=="
+        "requested": "[9.0.11, )",
+        "resolved": "9.0.11",
+        "contentHash": "YS2YqtN6fFjlTDIQI+ucjbbrEvwMn796r+VLTQRr/5Oy6g+i+m7nIou83KnJCnAcKna2I+5eVJRks6SoHSpetQ=="
       }
     },
     "net10.0/win-x64": {
@@ -436,15 +436,15 @@
       },
       "System.Diagnostics.EventLog": {
         "type": "CentralTransitive",
-        "requested": "[10.0.0, )",
-        "resolved": "10.0.0",
-        "contentHash": "uaFRda9NjtbJRkdx311eXlAA3n2em7223c1A8d1VWyl+4FL9vkG7y2lpPfBU9HYdj/9KgdRNdn1vFK8ZYCYT/A=="
+        "requested": "[10.0.1, )",
+        "resolved": "10.0.1",
+        "contentHash": "xfaHEHVDkMOOZR5S6ZGezD0+vekdH1Nx/9Ih8/rOqOGSOk1fxiN3u94bYkBW/wigj0Uw2Wt3vvRj9mtYdgwEjw=="
       },
       "System.Security.Cryptography.Pkcs": {
         "type": "CentralTransitive",
-        "requested": "[9.0.5, )",
-        "resolved": "9.0.5",
-        "contentHash": "7CmpoOp7auyc7fdVgZSUhR+QYMsF2XH+uKbjDYrvyTvehDlKuic+Hhv9RM+Wyf5xMnC28RrTGgzmo5fFt0Fmxg=="
+        "requested": "[9.0.11, )",
+        "resolved": "9.0.11",
+        "contentHash": "YS2YqtN6fFjlTDIQI+ucjbbrEvwMn796r+VLTQRr/5Oy6g+i+m7nIou83KnJCnAcKna2I+5eVJRks6SoHSpetQ=="
       }
     }
   }

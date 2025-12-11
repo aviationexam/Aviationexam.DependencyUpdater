@@ -95,9 +95,9 @@
       },
       "Microsoft.Extensions.ObjectPool": {
         "type": "CentralTransitive",
-        "requested": "[10.0.0, )",
-        "resolved": "10.0.0",
-        "contentHash": "bpeCq0IYmVLACyEUMzFIOQX+zZUElG1t+nu1lSxthe7B+1oNYking7b91305+jNB6iwojp9fqTY9O+Nh7ULQxg=="
+        "requested": "[10.0.1, )",
+        "resolved": "10.0.1",
+        "contentHash": "HqAEbtoAhgvH53c54IV5e4vQ60PYvl7Z/WIHsbet+UGGE7n+7dwVNXw1mb9LZlWbsxnupCevvtgIne5P//ZKpQ=="
       },
       "NodaTime": {
         "type": "CentralTransitive",
