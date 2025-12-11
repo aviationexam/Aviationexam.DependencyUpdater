@@ -32,9 +32,9 @@ public static class ServiceCollectionExtensions
             {
                 var gitHubConfiguration = serviceProvider.GetRequiredService<GitHubConfiguration>();
 
-                var client = new GitHubClient(new ProductHeaderValue("AviationexamDependencyUpdater"))
+                var client = new GitHubClient(new ProductHeaderValue("Aviationexam.DependencyUpdater"))
                 {
-                    Credentials = new Credentials(gitHubConfiguration.Token)
+                    Credentials = new Credentials(gitHubConfiguration.Token),
                 };
 
                 return client;
@@ -53,18 +53,20 @@ public static class ServiceCollectionExtensions
                     {
                         var logger = context.ServiceProvider.GetRequiredService<ILogger<IGitHubClient>>();
 
-                        logger.LogWarning(
-                            args.Outcome.Exception,
-                            "Error creating pull request (Attempt: {RetryCount}). Retrying in {RetryTimeSpan}...",
-                            args.AttemptNumber,
-                            args.RetryDelay
-                        );
+                        if (logger.IsEnabled(LogLevel.Warning))
+                        {
+                            logger.LogWarning(
+                                args.Outcome.Exception,
+                                "Error creating pull request (Attempt: {RetryCount}). Retrying in {RetryTimeSpan}...",
+                                args.AttemptNumber,
+                                args.RetryDelay
+                            );
+                        }
 
                         return default;
                     },
                 }).AddTimeout(TimeSpan.FromSeconds(10))
             )
             .AddKeyedScoped<IRepositoryClient, RepositoryGitHubClient>(EPlatformSelection.GitHub);
-            // Note: No IPackageFeedClient registration - GitHub doesn't have this feature
     }
 }

@@ -1,12 +1,11 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Constants;
-using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Interfaces.Repository;
 using Microsoft.Extensions.Logging;
 using Octokit;
 using Polly;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using ZLinq;
@@ -24,7 +23,7 @@ public class RepositoryGitHubClient(
     private const string MainLabelColor = "0E8A16"; // Green
     private const string MetadataLabelColor = "FBCA04"; // Yellow
 
-    private Dictionary<string, bool>? _labelCache;
+    private ISet<string>? _labelCache;
 
     public async Task<IEnumerable<PullRequest>> ListActivePullRequestsAsync(
         string sourceDirectory,
@@ -48,15 +47,15 @@ public class RepositoryGitHubClient(
         {
             PullRequestConstants.TagName,
             $"{PullRequestConstants.TagName}={updater}",
-            $"{PullRequestConstants.SourceTagName}={sourceDirectory}"
+            $"{PullRequestConstants.SourceTagName}={sourceDirectory}",
         };
 
         return pullRequests
             .AsValueEnumerable()
             .Where(pr =>
                 pr.Head.Ref.StartsWith(branchPrefix)
-                && requiredLabels.All(requiredLabel =>
-                    pr.Labels.Any(label => label.Name == requiredLabel)
+                && requiredLabels.AsValueEnumerable().All(requiredLabel =>
+                    pr.Labels.AsValueEnumerable().Any(label => label.Name == requiredLabel)
                 )
             )
             .Select(pr => new PullRequest(
@@ -89,11 +88,17 @@ public class RepositoryGitHubClient(
 
         if (pullRequestNumber is not null)
         {
-            logger.LogTrace("Found existing pull request: {pullRequestId} for branch {BranchName}", pullRequestNumber, branchName);
+            if (logger.IsEnabled(LogLevel.Trace))
+            {
+                logger.LogTrace("Found existing pull request: {pullRequestId} for branch {BranchName}", pullRequestNumber, branchName);
+            }
         }
         else
         {
-            logger.LogTrace("No pull request found for branch {BranchName}", branchName);
+            if (logger.IsEnabled(LogLevel.Trace))
+            {
+                logger.LogTrace("No pull request found for branch {BranchName}", branchName);
+            }
         }
 
         return pullRequestNumber;
@@ -128,7 +133,7 @@ public class RepositoryGitHubClient(
         };
 
         var pullRequest = await createPullRequestAsyncResiliencePipeline.ExecuteAsync(
-            static async (context, state) => await state.gitHubClient.PullRequest.Create(
+            static async (_, state) => await state.gitHubClient.PullRequest.Create(
                 state.gitHubConfiguration.Owner,
                 state.gitHubConfiguration.Repository,
                 state.newPullRequest
@@ -137,7 +142,10 @@ public class RepositoryGitHubClient(
             new { gitHubClient, gitHubConfiguration, newPullRequest }
         );
 
-        logger.LogTrace("Created pull request {pullRequestId} for branch {BranchName}", pullRequest.Number, branchName);
+        if (logger.IsEnabled(LogLevel.Trace))
+        {
+            logger.LogTrace("Created pull request {pullRequestId} for branch {BranchName}", pullRequest.Number, branchName);
+        }
 
         // Apply labels
         await gitHubClient.Issue.Labels.AddToIssue(
@@ -151,8 +159,8 @@ public class RepositoryGitHubClient(
         if (reviewers.Count > 0)
         {
             var reviewersRequest = new PullRequestReviewRequest(
-                reviewers.ToList(),
-                new List<string>() // No team reviewers for now
+                [.. reviewers],
+                [] // No team reviewers for now
             );
 
             try
@@ -166,7 +174,10 @@ public class RepositoryGitHubClient(
             }
             catch (ApiException ex)
             {
-                logger.LogWarning(ex, "Failed to add reviewers to pull request {pullRequestId}", pullRequest.Number);
+                if (logger.IsEnabled(LogLevel.Warning))
+                {
+                    logger.LogWarning(ex, "Failed to add reviewers to pull request {pullRequestId}", pullRequest.Number);
+                }
             }
         }
 
@@ -190,14 +201,17 @@ public class RepositoryGitHubClient(
                         gitHubConfiguration.Repository
                     );
 
-                    var matchingMilestone = milestones.FirstOrDefault(m => m.Title == milestone);
+                    var matchingMilestone = milestones.AsValueEnumerable().FirstOrDefault(m => m.Title == milestone);
                     if (matchingMilestone is not null)
                     {
                         issueUpdate.Milestone = matchingMilestone.Number;
                     }
                     else
                     {
-                        logger.LogWarning("Milestone '{Milestone}' not found for pull request {pullRequestId}", milestone, pullRequest.Number);
+                        if (logger.IsEnabled(LogLevel.Warning))
+                        {
+                            logger.LogWarning("Milestone '{Milestone}' not found for pull request {pullRequestId}", milestone, pullRequest.Number);
+                        }
                     }
                 }
 
@@ -213,7 +227,10 @@ public class RepositoryGitHubClient(
             }
             catch (ApiException ex)
             {
-                logger.LogWarning(ex, "Failed to set milestone for pull request {pullRequestId}", pullRequest.Number);
+                if (logger.IsEnabled(LogLevel.Warning))
+                {
+                    logger.LogWarning(ex, "Failed to set milestone for pull request {pullRequestId}", pullRequest.Number);
+                }
             }
         }
 
@@ -242,7 +259,10 @@ public class RepositoryGitHubClient(
             pullRequestUpdate
         );
 
-        logger.LogTrace("Updated pull request {pullRequestId}", pullRequestId);
+        if (logger.IsEnabled(LogLevel.Trace))
+        {
+            logger.LogTrace("Updated pull request {pullRequestId}", pullRequestId);
+        }
     }
 
     public async Task AbandonPullRequestAsync(
@@ -265,7 +285,10 @@ public class RepositoryGitHubClient(
             pullRequestUpdate
         );
 
-        logger.LogTrace("Closed pull request {PullRequestId}", pullRequest.PullRequestId);
+        if (logger.IsEnabled(LogLevel.Trace))
+        {
+            logger.LogTrace("Closed pull request {PullRequestId}", pullRequest.PullRequestId);
+        }
 
         // Delete branch
         try
@@ -276,20 +299,30 @@ public class RepositoryGitHubClient(
                 $"heads/{pullRequest.BranchName}"
             );
 
-            logger.LogTrace("Deleted remote branch {Branch}", pullRequest.BranchName);
+            if (logger.IsEnabled(LogLevel.Trace))
+            {
+                logger.LogTrace("Deleted remote branch {Branch}", pullRequest.BranchName);
+            }
         }
         catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.UnprocessableEntity)
         {
-            logger.LogWarning("Cannot delete branch {Branch} - it may be protected or have outstanding reviews", pullRequest.BranchName);
+            if (logger.IsEnabled(LogLevel.Warning))
+            {
+                logger.LogWarning("Cannot delete branch {Branch} - it may be protected or have outstanding reviews", pullRequest.BranchName);
+            }
         }
         catch (ApiException ex)
         {
-            logger.LogWarning(ex, "Failed to delete remote branch {Branch}", pullRequest.BranchName);
+            if (logger.IsEnabled(LogLevel.Warning))
+            {
+                logger.LogWarning(ex, "Failed to delete remote branch {Branch}", pullRequest.BranchName);
+            }
         }
     }
 
     private async Task EnsureLabelsExistAsync(
         string[] labels,
+        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         CancellationToken cancellationToken
     )
     {
@@ -301,13 +334,13 @@ public class RepositoryGitHubClient(
                 gitHubConfiguration.Repository
             );
 
-            _labelCache = existingLabels.ToDictionary(l => l.Name, _ => true);
+            _labelCache = existingLabels.AsValueEnumerable().Select(l => l.Name).ToHashSet();
         }
 
         // Create missing labels
         foreach (var labelName in labels)
         {
-            if (!_labelCache.ContainsKey(labelName))
+            if (!_labelCache.Contains(labelName))
             {
                 try
                 {
@@ -323,12 +356,18 @@ public class RepositoryGitHubClient(
                         newLabel
                     );
 
-                    _labelCache[labelName] = true;
-                    logger.LogTrace("Created label: {LabelName}", labelName);
+                    _labelCache.Add(labelName);
+                    if (logger.IsEnabled(LogLevel.Trace))
+                    {
+                        logger.LogTrace("Created label: {LabelName}", labelName);
+                    }
                 }
                 catch (ApiException ex)
                 {
-                    logger.LogWarning(ex, "Failed to create label {LabelName}", labelName);
+                    if (logger.IsEnabled(LogLevel.Warning))
+                    {
+                        logger.LogWarning(ex, "Failed to create label {LabelName}", labelName);
+                    }
                 }
             }
         }
