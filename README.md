@@ -43,10 +43,11 @@ dotnet tool install --global Aviationexam.DependencyUpdater --prerelease --add-s
 Run the tool from your terminal using the `AzureDevOps` subcommand:
 
 ```sh
-dotnet dependency-updater AzureDevOps \
+dotnet dependency-updater  \
   --directory "/path/to/repo" \
   --git-username "<git-username>" \
   --git-password "<git-password-or-token>" \
+  AzureDevOps \
   --organization "<azure-devops-org>" \
   --project <project-id> \
   --repository <repository-id> \
@@ -66,13 +67,14 @@ dotnet dependency-updater AzureDevOps \
 GitHub support is planned but not yet implemented. Once implemented, usage will be:
 
 ```sh
-dotnet dependency-updater GitHub \
+dotnet dependency-updater \
   --directory "/path/to/repo" \
   --git-username "<git-username>" \
   --git-password "<git-password-or-token>" \
-  --github-owner "<owner>" \
-  --github-repository "<repo>" \
-  --github-token "<github-token>"
+  GitHub \
+  --owner "<owner>" \
+  --repository "<repo>" \
+  --token "<github-token>"
 ```
 
 ## Arguments
@@ -110,8 +112,8 @@ Required when using the `AzureDevOps` subcommand:
 
 Required when using the `GitHub` subcommand (not yet implemented):
 
-| Argument           | Required | Description                             |
-|--------------------|:--------:|-----------------------------------------|
-| --github-owner     |    Y     | GitHub repository owner (user or org)   |
-| --github-repository|    Y     | GitHub repository name                  |
-| --github-token     |    Y     | GitHub personal access token            |
+| Argument     | Required | Description                           |
+|--------------|:--------:|---------------------------------------|
+| --owner      |    Y     | GitHub repository owner (user or org) |
+| --repository |    Y     | GitHub repository name                |
+| --token      |    Y     | GitHub personal access token          |

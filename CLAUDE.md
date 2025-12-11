@@ -37,9 +37,10 @@ The main project `Aviationexam.DependencyUpdater` is the CLI entry point. Run us
 
 **Azure DevOps:**
 ```bash
-dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- AzureDevOps \
+dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- \
   --directory "/path/to/repo" \
   --git-password "<token>" \
+  AzureDevOps \
   --organization "<org>" \
   --project "<project-id>" \
   --repository "<repo-id>" \
@@ -53,12 +54,13 @@ dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyU
 
 **GitHub:** *(not yet implemented)*
 ```bash
-dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- GitHub \
+dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- \
   --directory "/path/to/repo" \
   --git-password "<token>" \
-  --github-owner "<owner>" \
-  --github-repository "<repo>" \
-  --github-token "<token>"
+  GitHub \
+  --owner "<owner>" \
+  --repository "<repo>" \
+  --token "<token>"
 ```
 
 ## Solution Structure
