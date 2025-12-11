@@ -183,15 +183,15 @@
       },
       "System.Security.Cryptography.Pkcs": {
         "type": "CentralTransitive",
-        "requested": "[9.0.5, )",
-        "resolved": "9.0.5",
-        "contentHash": "7CmpoOp7auyc7fdVgZSUhR+QYMsF2XH+uKbjDYrvyTvehDlKuic+Hhv9RM+Wyf5xMnC28RrTGgzmo5fFt0Fmxg=="
+        "requested": "[9.0.11, )",
+        "resolved": "9.0.11",
+        "contentHash": "YS2YqtN6fFjlTDIQI+ucjbbrEvwMn796r+VLTQRr/5Oy6g+i+m7nIou83KnJCnAcKna2I+5eVJRks6SoHSpetQ=="
       },
       "System.Security.Cryptography.ProtectedData": {
         "type": "CentralTransitive",
-        "requested": "[9.0.5, )",
-        "resolved": "9.0.5",
-        "contentHash": "tgS+q4zR08qX4ZA/HPtpNXU2i1EDRBNhNtbTGFdSgYyWcKf5mUtlihbzKcYqArisG1b3x4dk/FIOiWxnHrSENw=="
+        "requested": "[9.0.11, )",
+        "resolved": "9.0.11",
+        "contentHash": "s8yUYuYYu+PAwvBdhLG1KyrGrk9gkYeuPxfAsXsTqqWyepwSyEw8hAaflW4nO98NG52YpYI1am2+9o+79h2RtQ=="
       },
       "ZLinq": {
         "type": "CentralTransitive",
@@ -203,17 +203,17 @@
     "net10.0/linux-x64": {
       "System.Security.Cryptography.Pkcs": {
         "type": "CentralTransitive",
-        "requested": "[9.0.5, )",
-        "resolved": "9.0.5",
-        "contentHash": "7CmpoOp7auyc7fdVgZSUhR+QYMsF2XH+uKbjDYrvyTvehDlKuic+Hhv9RM+Wyf5xMnC28RrTGgzmo5fFt0Fmxg=="
+        "requested": "[9.0.11, )",
+        "resolved": "9.0.11",
+        "contentHash": "YS2YqtN6fFjlTDIQI+ucjbbrEvwMn796r+VLTQRr/5Oy6g+i+m7nIou83KnJCnAcKna2I+5eVJRks6SoHSpetQ=="
       }
     },
     "net10.0/win-x64": {
       "System.Security.Cryptography.Pkcs": {
         "type": "CentralTransitive",
-        "requested": "[9.0.5, )",
-        "resolved": "9.0.5",
-        "contentHash": "7CmpoOp7auyc7fdVgZSUhR+QYMsF2XH+uKbjDYrvyTvehDlKuic+Hhv9RM+Wyf5xMnC28RrTGgzmo5fFt0Fmxg=="
+        "requested": "[9.0.11, )",
+        "resolved": "9.0.11",
+        "contentHash": "YS2YqtN6fFjlTDIQI+ucjbbrEvwMn796r+VLTQRr/5Oy6g+i+m7nIou83KnJCnAcKna2I+5eVJRks6SoHSpetQ=="
       }
     }
   }
