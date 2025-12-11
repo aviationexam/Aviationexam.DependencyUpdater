@@ -1,4 +1,4 @@
-using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Repository.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
@@ -35,7 +35,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<VssHttpMessageHandler>(static x => x.CreateVssHttpMessageHandler())
             .AddScoped<VssConnection>(static x =>
             {
-                var devOpsConfiguration = x.GetRequiredService<DevOpsConfiguration>();
+                var devOpsConfiguration = x.GetRequiredService<AzureDevOpsConfiguration>();
                 var vssHttpMessageHandler = x.GetRequiredService<VssHttpMessageHandler>();
 
                 return new VssConnection(
@@ -67,12 +67,13 @@ public static class ServiceCollectionExtensions
                     },
                 }).AddTimeout(TimeSpan.FromSeconds(10))
             )
-            .AddScoped<IRepositoryClient, RepositoryAzureDevOpsClient>();
+            .AddScoped<RepositoryAzureDevOpsClient>()
+            .AddScoped<AzureArtifactsPackageFeedClient>();
     }
 
     private static VssHttpMessageHandler CreateVssHttpMessageHandler(this IServiceProvider serviceProvider)
     {
-        var devOpsConfiguration = serviceProvider.GetRequiredService<DevOpsConfiguration>();
+        var devOpsConfiguration = serviceProvider.GetRequiredService<AzureDevOpsConfiguration>();
         var logger = serviceProvider.GetRequiredService<ILogger<VssHttpMessageHandler>>();
 
         return new VssHttpMessageHandler(
