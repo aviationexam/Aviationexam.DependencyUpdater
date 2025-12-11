@@ -67,8 +67,8 @@ public static class ServiceCollectionExtensions
                     },
                 }).AddTimeout(TimeSpan.FromSeconds(10))
             )
-            .AddScoped<RepositoryAzureDevOpsClient>()
-            .AddScoped<AzureArtifactsPackageFeedClient>();
+            .AddScoped<IRepositoryClient, RepositoryAzureDevOpsClient>()
+            .AddScoped<IPackageFeedClient, AzureArtifactsPackageFeedClient>();
     }
 
     private static VssHttpMessageHandler CreateVssHttpMessageHandler(this IServiceProvider serviceProvider)
