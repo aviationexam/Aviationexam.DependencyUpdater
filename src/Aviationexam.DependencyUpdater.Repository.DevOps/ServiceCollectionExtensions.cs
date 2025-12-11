@@ -1,3 +1,4 @@
+using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Interfaces.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http;
@@ -67,8 +68,8 @@ public static class ServiceCollectionExtensions
                     },
                 }).AddTimeout(TimeSpan.FromSeconds(10))
             )
-            .AddScoped<IRepositoryClient, RepositoryAzureDevOpsClient>()
-            .AddScoped<IPackageFeedClient, AzureArtifactsPackageFeedClient>();
+            .AddKeyedScoped<IRepositoryClient, RepositoryAzureDevOpsClient>(EPlatformSelection.AzureDevOps)
+            .AddKeyedScoped<IPackageFeedClient, AzureArtifactsPackageFeedClient>(EPlatformSelection.AzureDevOps);
     }
 
     private static VssHttpMessageHandler CreateVssHttpMessageHandler(this IServiceProvider serviceProvider)
