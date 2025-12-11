@@ -40,16 +40,10 @@ var platform = new Option<EPlatformSelection>(
     "--platform"
 )
 {
-    Description = "The repository platform to use: azure-devops or github",
+    Description = "The repository platform to use: AzureDevOps or GitHub",
     Required = true,
     Arity = ArgumentArity.ExactlyOne,
-    CustomParser = static result => result.Tokens.Single().Value switch
-    {
-        "azure-devops" => EPlatformSelection.AzureDevOps,
-        "github" => EPlatformSelection.GitHub,
-        _ => throw new ArgumentException($"Unknown platform: {result.Tokens.Single().Value}. Valid values are: azure-devops, github")
-    },
-}.AcceptOnlyFromAmong("azure-devops", "github");
+};
 
 var azureOrganization = new Option<string>(
     "--azure-organization"
