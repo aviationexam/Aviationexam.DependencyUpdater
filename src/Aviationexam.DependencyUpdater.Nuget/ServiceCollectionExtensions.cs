@@ -28,7 +28,7 @@ public static class ServiceCollectionExtensions
         .AddScoped<PackageGrouper>()
         .AddScoped<PullRequestManager>()
         .AddScoped<SubmoduleUpdater>()
-        .AddSingleton<Repository.RepositoryFactory>(_ => Repository.Factory)
+        .AddSingleton<NuGet.Protocol.Core.Types.Repository.RepositoryFactory>(_ => NuGet.Protocol.Core.Types.Repository.Factory)
         .AddScoped<ILogger, NuGetLoggerAdapter>()
         .AddScoped<NugetVersionFetcherFactory>()
         .AddScoped<NugetVersionFetcher>()
