@@ -52,8 +52,12 @@ public class NugetConfigParser(
 
         if (packageSourceMappingElement is not null)
         {
-            foreach (var packageSourceElement in packageSourceMappingElement.Elements()
-                         .Where(e => e.Name.LocalName == "packageSource"))
+            foreach (
+                var packageSourceElement
+                in packageSourceMappingElement.Elements()
+                    .AsValueEnumerable()
+                    .Where(e => e.Name.LocalName == "packageSource")
+            )
             {
                 var sourceKey = packageSourceElement.Attribute("key")?.Value;
 
@@ -65,6 +69,7 @@ public class NugetConfigParser(
                 sourceMappings[sourceKey] =
                 [
                     .. packageSourceElement.Elements()
+                        .AsValueEnumerable()
                         .Where(e => e.Name.LocalName == "package")
                         .Select(x => x.Attribute("pattern")?.Value)
                         .Where(x => x is not null)
@@ -73,8 +78,11 @@ public class NugetConfigParser(
             }
         }
 
-        foreach (var addElement in packageSourcesElement.Elements()
-                     .Where(e => e.Name.LocalName == "add"))
+        foreach (
+            var addElement
+            in packageSourcesElement.Elements()
+                .Where(e => e.Name.LocalName == "add")
+        )
         {
             var name = addElement.Attribute("key")?.Value;
             var value = addElement.Attribute("value")?.Value;

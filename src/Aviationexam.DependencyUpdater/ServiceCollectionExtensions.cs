@@ -1,6 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces.Repository;
 using Aviationexam.DependencyUpdater.Repository.DevOps;
+using Aviationexam.DependencyUpdater.Repository.GitHub;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.CommandLine;
@@ -52,7 +53,7 @@ public static class ServiceCollectionExtensions
             bool shouldRedactHeaderValue = true
         ) => services
             .AddRepositoryDevOps(shouldRedactHeaderValue)
-            // Future: services.AddRepositoryGitHub(shouldRedactHeaderValue);
+            .AddRepositoryGitHub(shouldRedactHeaderValue)
             .AddScoped<IRepositoryClient>(serviceProvider => serviceProvider.GetRequiredKeyedService<IRepositoryClient>(
                 serviceProvider.GetRequiredService<IRepositoryPlatformConfiguration>().Platform
             ))

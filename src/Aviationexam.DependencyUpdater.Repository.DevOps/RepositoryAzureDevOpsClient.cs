@@ -9,7 +9,6 @@ using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.VisualStudio.Services.WebApi;
 using Polly;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ZLinq;
@@ -47,9 +46,11 @@ public class RepositoryAzureDevOpsClient(
             .AsValueEnumerable()
             .Where(pr =>
                 pr.SourceRefName?.StartsWith($"{GitConstants.HeadsPrefix}{BranchNameGenerator.GetBranchNamePrefix(sourceDirectory, updater)}") == true
-                && pr.Labels?.Any(l => l.Name == PullRequestConstants.TagName) == true
-                && pr.Labels?.Any(l => l.Name == $"{PullRequestConstants.TagName}={updater}") == true
-                && pr.Labels?.Any(l => l.Name == $"{PullRequestConstants.SourceTagName}={sourceDirectory}") == true
+                && pr.Labels != null
+                && pr.Labels.AsValueEnumerable() is var prLabels
+                && prLabels.Any(l => l.Name == PullRequestConstants.TagName)
+                && prLabels.Any(l => l.Name == $"{PullRequestConstants.TagName}={updater}")
+                && prLabels.Any(l => l.Name == $"{PullRequestConstants.SourceTagName}={sourceDirectory}")
             )
             .Select(x => new PullRequest(
                 x.PullRequestId.ToString(),

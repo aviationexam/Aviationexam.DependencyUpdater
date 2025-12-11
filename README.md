@@ -64,7 +64,7 @@ dotnet dependency-updater  \
 
 ### GitHub
 
-GitHub support is planned but not yet implemented. Once implemented, usage will be:
+Run the tool from your terminal using the `GitHub` subcommand:
 
 ```sh
 dotnet dependency-updater \
@@ -76,6 +76,9 @@ dotnet dependency-updater \
   --repository "<repo>" \
   --token "<github-token>"
 ```
+
+**Required GitHub PAT Scopes:**
+- `repo` - Full control of private repositories
 
 ## Arguments
 
@@ -110,10 +113,10 @@ Required when using the `AzureDevOps` subcommand:
 
 ### GitHub Arguments
 
-Required when using the `GitHub` subcommand (not yet implemented):
+Required when using the `GitHub` subcommand:
 
-| Argument     | Required | Description                           |
-|--------------|:--------:|---------------------------------------|
-| --owner      |    Y     | GitHub repository owner (user or org) |
-| --repository |    Y     | GitHub repository name                |
-| --token      |    Y     | GitHub personal access token          |
+| Argument     | Required | Description                                                 |
+|--------------|:--------:|-------------------------------------------------------------|
+| --owner      |    Y     | GitHub repository owner (organization or user account name) |
+| --repository |    Y     | GitHub repository name                                      |
+| --token      |    Y     | GitHub personal access token (requires `repo` scope)        |

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Aviationexam.DependencyUpdater is a .NET command-line tool for automating dependency updates in projects using Git repositories and NuGet feeds. It supports multiple repository platforms (currently Azure DevOps, with GitHub planned) and reads Dependabot-style configuration files to process updates accordingly.
+Aviationexam.DependencyUpdater is a .NET command-line tool for automating dependency updates in projects using Git repositories and NuGet feeds. It supports multiple repository platforms (Azure DevOps and GitHub) and reads Dependabot-style configuration files to process updates accordingly.
 
 ## Build Commands
 
@@ -52,7 +52,7 @@ dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyU
   --access-token-resource-id "499b84ac-1321-427f-aa17-267ca6975798"
 ```
 
-**GitHub:** *(not yet implemented)*
+**GitHub:**
 ```bash
 dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- \
   --directory "/path/to/repo" \
@@ -62,6 +62,9 @@ dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyU
   --repository "<repo>" \
   --token "<token>"
 ```
+
+**Required GitHub PAT Scopes:**
+- `repo` - Full control of private repositories
 
 ## Solution Structure
 
@@ -74,6 +77,7 @@ The solution uses a modular architecture with clear separation of concerns:
 - **Aviationexam.DependencyUpdater.Nuget** - NuGet-specific package resolution and version handling
 - **Aviationexam.DependencyUpdater.Vcs.Git** - Git operations using LibGit2Sharp (platform-agnostic)
 - **Aviationexam.DependencyUpdater.Repository.DevOps** - Azure DevOps implementation (pull requests, artifact feeds, upstream ingestion)
+- **Aviationexam.DependencyUpdater.Repository.GitHub** - GitHub implementation (pull requests, labels, reviewers, milestones)
 - **Aviationexam.DependencyUpdater.Interfaces** - Core interfaces and contracts including:
   - Repository abstractions (`IRepositoryClient`, `IPackageFeedClient`, `IRepositoryPlatformConfiguration`)
   - Package management interfaces
@@ -135,13 +139,13 @@ The tool supports multiple repository platforms through a clean abstraction laye
 **Core Abstractions** (in `Aviationexam.DependencyUpdater.Interfaces.Repository`):
 - `IRepositoryClient` - Platform-agnostic interface for pull request operations
   - List, get, create, update, and abandon pull requests
-  - Implemented by `RepositoryAzureDevOpsClient` (GitHub implementation pending)
+  - Implemented by `RepositoryAzureDevOpsClient` and `RepositoryGitHubClient`
 - `IPackageFeedClient` - Optional interface for platform-specific package feed operations
   - Azure Artifacts upstream ingestion for Azure DevOps (via `AzureArtifactsPackageFeedClient`)
   - Not used for GitHub (wrapped in `Optional<IPackageFeedClient>`)
 - `IRepositoryPlatformConfiguration` - Base interface for platform-specific configurations
   - Contains `EPlatformSelection Platform { get; }` property
-  - Implemented by `AzureDevOpsConfiguration` (GitHub configuration pending)
+  - Implemented by `AzureDevOpsConfiguration` and `GitHubConfiguration`
 
 **Architecture Layers:**
 1. **VCS Layer** (platform-agnostic) - Git operations via LibGit2Sharp
@@ -151,8 +155,13 @@ The tool supports multiple repository platforms through a clean abstraction laye
 **DI Registration (Keyed Services Pattern):**
 - Platform implementations registered as keyed services in each platform's `ServiceCollectionExtensions`
   ```csharp
+  // Azure DevOps
   .AddKeyedScoped<IRepositoryClient, RepositoryAzureDevOpsClient>(EPlatformSelection.AzureDevOps)
   .AddKeyedScoped<IPackageFeedClient, AzureArtifactsPackageFeedClient>(EPlatformSelection.AzureDevOps)
+
+  // GitHub
+  .AddKeyedScoped<IRepositoryClient, RepositoryGitHubClient>(EPlatformSelection.GitHub)
+  // No IPackageFeedClient for GitHub
   ```
 - Main `ServiceCollectionExtensions.AddRepositoryPlatform()` resolves services using keyed lookup:
   ```csharp
@@ -184,12 +193,26 @@ Key configuration features:
 - Ignore patterns for dependencies or version ranges
 - Directory-based configurations
 
-## Azure DevOps Integration
+## Platform-Specific Integrations
+
+### Azure DevOps
 
 The tool has undocumented Azure DevOps API integrations in `Repository.DevOps`:
 - `AzureDevOpsUndocumentedClient` - Handles upstream package ingestion for Azure Artifacts feeds
 - Supports authentication via PAT or optional AZ CLI sidecar service
 - Can fetch and ingest package versions from upstream sources (e.g., nuget.org) into private feeds
+
+### GitHub
+
+The tool uses Octokit.NET for GitHub API integration in `Repository.GitHub`:
+- `RepositoryGitHubClient` - Handles pull request operations with GitHub API
+- Automatic label creation and management for dependency PRs
+- Support for reviewers and milestones
+- Rate limiting handling with exponential backoff retry logic
+- Authentication via GitHub Personal Access Token
+
+**Known Limitations:**
+- No auto-merge support (GitHub GraphQL API needed, not available in Octokit REST API)
 
 ## Development Notes
 
@@ -214,7 +237,7 @@ Git operations are in `Vcs.Git` project using LibGit2Sharp. The `GitSourceVersio
 Extend `IPackageManager` interface and create implementation similar to the Nuget project structure. Register in DI container via `ServiceCollectionExtensions`.
 
 ### Adding new repository platforms
-To add support for a new platform (e.g., GitHub):
+To add support for a new platform (e.g., GitLab):
 1. **Add to Enum**: Add new value to `EPlatformSelection` enum (e.g., `GitHub`)
 2. **Create Platform Project**: Create `Aviationexam.DependencyUpdater.Repository.<Platform>` project
 3. **Implement Configuration**: Create configuration class implementing `IRepositoryPlatformConfiguration`
