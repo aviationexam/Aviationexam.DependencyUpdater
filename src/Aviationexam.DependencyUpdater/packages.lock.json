@@ -10,9 +10,9 @@
       },
       "Microsoft.DotNet.ILCompiler": {
         "type": "Direct",
-        "requested": "[10.0.0, )",
-        "resolved": "10.0.0",
-        "contentHash": "f9u8fMRROe2lS5MOOLutK6iSNTK9pC3kqd90FIn8Sk29fbZ0QDjZrBbwUkhouk/8dppC71SIEQaag0lGRTxvfA=="
+        "requested": "[10.0.1, )",
+        "resolved": "10.0.1",
+        "contentHash": "339VHcUMA2iDrkLGaqjSwn25S9lmus/+Iqg5Hz2LDPhsX5a5GbdQZ2f/f6HMz/uGGWtUGpsusqUvW5L3fx36VA=="
       },
       "Microsoft.Extensions.Configuration.EnvironmentVariables": {
         "type": "Direct",
@@ -69,9 +69,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[10.0.0, )",
-        "resolved": "10.0.0",
-        "contentHash": "kICGrGYEzCNI3wPzfEXcwNHgTvlvVn9yJDhSdRK+oZQy4jvYH529u7O0xf5ocQKzOMjfS07+3z9PKRIjrFMJDA=="
+        "requested": "[10.0.1, )",
+        "resolved": "10.0.1",
+        "contentHash": "ISahzLHsHY7vrwqr2p1YWZ+gsxoBRtH7gWRDK8fDUst9pp2He0GiesaqEfeX0V8QMCJM3eNEHGGpnIcPjFo2NQ=="
       },
       "System.CommandLine": {
         "type": "Direct",
@@ -97,8 +97,8 @@
       },
       "Corvus.Json.JsonReference": {
         "type": "Transitive",
-        "resolved": "4.3.21",
-        "contentHash": "hLfEhH+MvhWef5SN11w4EpF9oM04T7cDf7mzfkHm+CiajP/0xNqRwLNJ9aCCUTF8hrQZQkMM+6nFF34O5bW7Fg==",
+        "resolved": "4.4.1",
+        "contentHash": "gJf26/DFUxomX6qE3qxG6T4WM2H+2Uhdd2rke8umfJ5pdzYZhZnGwSs0JtJGLPWhdgpGiPhfMb0PX1x5NXvy2A==",
         "dependencies": {
           "Corvus.HighPerformance": "1.0.2"
         }
@@ -541,8 +541,8 @@
         "type": "Project",
         "dependencies": {
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
-          "Corvus.Json.ExtendedTypes": "[4.3.21, )",
-          "Corvus.Json.SourceGenerator": "[4.3.21, )",
+          "Corvus.Json.ExtendedTypes": "[4.4.1, )",
+          "Corvus.Json.SourceGenerator": "[4.4.1, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.1, )",
           "Yaml2JsonNode": "[2.4.0, )",
           "YamlDotNet": "[16.3.0, )"
@@ -621,20 +621,20 @@
       },
       "Corvus.Json.ExtendedTypes": {
         "type": "CentralTransitive",
-        "requested": "[4.3.21, )",
-        "resolved": "4.3.21",
-        "contentHash": "xy/8KSLtW5PN6MfDQnB6t7EFGjVR889c/fzkVG6BIbVM/fNWxm9gkDv+UOqecqGuFyGBxkHIH4O+QcPcfuIS7g==",
+        "requested": "[4.4.1, )",
+        "resolved": "4.4.1",
+        "contentHash": "3FooYuoeN0O305ZdA07KrE6dpJFMQ0C6m+HDlmcISsH5mr5cUS5IO6ganRrwR4+rolnk6mlJTmyYUw+IGsWNdw==",
         "dependencies": {
-          "Corvus.Json.JsonReference": "4.3.21",
+          "Corvus.Json.JsonReference": "4.4.1",
           "Corvus.UriTemplates": "2.3.2",
           "NodaTime": "3.2.1"
         }
       },
       "Corvus.Json.SourceGenerator": {
         "type": "CentralTransitive",
-        "requested": "[4.3.21, )",
-        "resolved": "4.3.21",
-        "contentHash": "VQdSl3M9mpS3UIQsMK49LB3MAn/4FObhSvT0xURH7wNtjZpEEMMGq1lnnyChfxVQrJzJiKS5f0EuBmV+C2u3Bw=="
+        "requested": "[4.4.1, )",
+        "resolved": "4.4.1",
+        "contentHash": "gs6t6KDZ5XW1sM0GubN5IcXaqfiXze62DVrbfUVTbOOU3M50wrRaxvHde5f96ShjQfQHPDXNu2UA9IrFbvjuaQ=="
       },
       "Corvus.UriTemplates": {
         "type": "CentralTransitive",
@@ -822,11 +822,11 @@
     "net10.0/linux-x64": {
       "Microsoft.DotNet.ILCompiler": {
         "type": "Direct",
-        "requested": "[10.0.0, )",
-        "resolved": "10.0.0",
-        "contentHash": "f9u8fMRROe2lS5MOOLutK6iSNTK9pC3kqd90FIn8Sk29fbZ0QDjZrBbwUkhouk/8dppC71SIEQaag0lGRTxvfA==",
+        "requested": "[10.0.1, )",
+        "resolved": "10.0.1",
+        "contentHash": "339VHcUMA2iDrkLGaqjSwn25S9lmus/+Iqg5Hz2LDPhsX5a5GbdQZ2f/f6HMz/uGGWtUGpsusqUvW5L3fx36VA==",
         "dependencies": {
-          "runtime.linux-x64.Microsoft.DotNet.ILCompiler": "10.0.0"
+          "runtime.linux-x64.Microsoft.DotNet.ILCompiler": "10.0.1"
         }
       },
       "LibGit2Sharp.NativeBinaries": {
@@ -841,8 +841,8 @@
       },
       "runtime.linux-x64.Microsoft.DotNet.ILCompiler": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "U8/8LXzurlGgIEmQLbk6mygKF/yJBN0P8ZxWkGHOAvOx0z7PUUE7a5kcKuGVfjKigD9wxJOli1cJIPW6r9/j3Q=="
+        "resolved": "10.0.1",
+        "contentHash": "xRR0gr4zvJQSIf8lXFXBjatDFI71GFofhMmySSAF22wtXdA1QYeiJGZAu9El7iuMehMFwFfMGm7ENZdGM7U/0A=="
       },
       "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni": {
         "type": "Transitive",
@@ -900,11 +900,11 @@
     "net10.0/win-x64": {
       "Microsoft.DotNet.ILCompiler": {
         "type": "Direct",
-        "requested": "[10.0.0, )",
-        "resolved": "10.0.0",
-        "contentHash": "f9u8fMRROe2lS5MOOLutK6iSNTK9pC3kqd90FIn8Sk29fbZ0QDjZrBbwUkhouk/8dppC71SIEQaag0lGRTxvfA==",
+        "requested": "[10.0.1, )",
+        "resolved": "10.0.1",
+        "contentHash": "339VHcUMA2iDrkLGaqjSwn25S9lmus/+Iqg5Hz2LDPhsX5a5GbdQZ2f/f6HMz/uGGWtUGpsusqUvW5L3fx36VA==",
         "dependencies": {
-          "runtime.win-x64.Microsoft.DotNet.ILCompiler": "10.0.0"
+          "runtime.win-x64.Microsoft.DotNet.ILCompiler": "10.0.1"
         }
       },
       "LibGit2Sharp.NativeBinaries": {
@@ -924,8 +924,8 @@
       },
       "runtime.win-x64.Microsoft.DotNet.ILCompiler": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "4wCbtNJ1Ee3o4vYbTrYRr+CMmLcHn9FhHB2lnsFybL0Ak/iw/ntSVcA9f42YIIhL8bR/wKdod0+yhb8oNyrG0w=="
+        "resolved": "10.0.1",
+        "contentHash": "AxmneLGqYEcPfRb5Zlpi8d5JWMUECxu/oT6qToVrihgdc20bb5N7XDgClx2I1glxWHU6W812ScBAfVv85bUE7g=="
       },
       "runtime.win-x64.runtime.native.System.Data.SqlClient.sni": {
         "type": "Transitive",
