@@ -29,13 +29,20 @@ var gitPasswordArgument = new Option<string>(
     Required = true,
 };
 
-var platform = new Option<string>(
+var platform = new Option<EPlatformSelection>(
     "--platform"
 )
 {
     Description = "The repository platform to use: azure-devops or github",
     Required = true,
-};
+    Arity = ArgumentArity.ExactlyOne,
+    CustomParser = static result => result.Tokens.Single().Value switch
+    {
+        "azure-devops" => EPlatformSelection.AzureDevOps,
+        "github" => EPlatformSelection.GitHub,
+        _ => throw new ArgumentException($"Unknown platform: {result.Tokens.Single().Value}. Valid values are: azure-devops, github")
+    },
+}.AcceptOnlyFromAmong("azure-devops", "github");
 
 var azureOrganization = new Option<string>(
     "--azure-organization"
@@ -155,27 +162,24 @@ var rootCommand = new RootCommand("Dependency updater tool that processes depend
 };
 rootCommand.SetAction(DefaultCommandHandler.GetHandler((serviceCollection, parseResult) =>
 {
-    // Parse and register PlatformSelection manually (enum can't use IBinder<T>)
     var platformValue = parseResult.GetRequiredValue(platform);
-    var platformSelection = platformValue.ToLowerInvariant() switch
-    {
-        "azure-devops" => EPlatformSelection.AzureDevOps,
-        "github" => EPlatformSelection.GitHub,
-        _ => throw new ArgumentException($"Unknown platform: {platformValue}. Valid values are: azure-devops, github")
-    };
-
-    serviceCollection.AddSingleton(typeof(EPlatformSelection), _ => platformSelection);
 
     serviceCollection
         .AddBinder(parseResult, new SourceConfigurationBinder(directory))
         .AddBinder(parseResult, new GitCredentialsConfigurationBinder(gitUsernameArgument, gitPasswordArgument))
-        .AddBinder(parseResult, new AzureDevOpsConfigurationBinder(azureOrganization, azureProject, azureRepository, azurePat, azureAccountId))
-        .AddBinder(parseResult, new AzureDevOpsUndocumentedConfigurationBinder(azureNugetFeedProject, azureNugetFeedId, azureServiceHost, azureAccessTokenResourceId))
-        .AddOptionalBinder(parseResult, new AzCliSideCarConfigurationBinder(azureAzSideCarAddress, azureAzSideCarToken))
         .AddBinder(parseResult, x => new CachingConfigurationBinder(
             x.GetRequiredService<TimeProvider>(),
             resetCache
         ));
+
+    if (platformValue is EPlatformSelection.AzureDevOps)
+    {
+        serviceCollection
+            .AddBinder(parseResult, new AzureDevOpsConfigurationBinder(azureOrganization, azureProject, azureRepository, azurePat, azureAccountId))
+            .AddSingleton<IRepositoryPlatformConfiguration>(x => x.GetRequiredService<AzureDevOpsConfiguration>())
+            .AddBinder(parseResult, new AzureDevOpsUndocumentedConfigurationBinder(azureNugetFeedProject, azureNugetFeedId, azureServiceHost, azureAccessTokenResourceId))
+            .AddOptionalBinder(parseResult, new AzCliSideCarConfigurationBinder(azureAzSideCarAddress, azureAzSideCarToken));
+    }
 }));
 
 return await rootCommand.Parse(args).InvokeAsync();
