@@ -8,9 +8,9 @@ public sealed class AzureDevOpsUndocumentedConfigurationBinder(
     Option<string> nugetFeedId,
     Option<string> serviceHost,
     Option<string> accessTokenResourceId
-) : IBinder<DevOpsUndocumentedConfiguration>
+) : IBinder<AzureDevOpsUndocumentedConfiguration>
 {
-    public DevOpsUndocumentedConfiguration CreateValue(
+    public AzureDevOpsUndocumentedConfiguration CreateValue(
         ParseResult parseResult
     ) => new()
     {

@@ -17,8 +17,8 @@ using System.Threading.Tasks;
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 
 public class AzureDevOpsUndocumentedClient(
-    DevOpsConfiguration devOpsConfiguration,
-    DevOpsUndocumentedConfiguration devOpsUndocumentedConfiguration,
+    AzureDevOpsConfiguration azureDevOpsConfiguration,
+    AzureDevOpsUndocumentedConfiguration azureDevOpsUndocumentedConfiguration,
     Optional<AzCliSideCarConfiguration> azCliSideCarConfiguration,
     HttpClient httpClient,
     TimeProvider timeProvider,
@@ -162,7 +162,7 @@ public class AzureDevOpsUndocumentedClient(
     )
     {
         var accessToken = await GetAccessTokenAsync(
-            devOpsUndocumentedConfiguration.AccessTokenResourceId,
+            azureDevOpsUndocumentedConfiguration.AccessTokenResourceId,
             cancellationToken
         );
 
@@ -175,13 +175,13 @@ public class AzureDevOpsUndocumentedClient(
             {
                 Properties = new Properties
                 {
-                    ProjectId = devOpsUndocumentedConfiguration.NugetFeedProject,
-                    FeedId = devOpsUndocumentedConfiguration.NugetFeedId,
+                    ProjectId = azureDevOpsUndocumentedConfiguration.NugetFeedProject,
+                    FeedId = azureDevOpsUndocumentedConfiguration.NugetFeedId,
                     Protocol = "NuGet",
                     PackageName = packageName,
                     SourcePage = new SourcePage
                     {
-                        Url = $"https://dev.azure.com/{devOpsConfiguration.Organization}/{devOpsUndocumentedConfiguration.NugetFeedProject}/_artifacts/feed/nuget-feed/NuGet/{packageName}/upstreams",
+                        Url = $"https://dev.azure.com/{azureDevOpsConfiguration.Organization}/{azureDevOpsUndocumentedConfiguration.NugetFeedProject}/_artifacts/feed/nuget-feed/NuGet/{packageName}/upstreams",
                         RouteId = "ms.azure-artifacts.artifacts-route",
                         RouteValues = new RouteValues
                         {
@@ -189,7 +189,7 @@ public class AzureDevOpsUndocumentedClient(
                             Wildcard = $"feed/nuget-feed/NuGet/{packageName}/upstreams",
                             Controller = "ContributedPage",
                             Action = "Execute",
-                            ServiceHost = devOpsUndocumentedConfiguration.NugetServiceHost,
+                            ServiceHost = azureDevOpsUndocumentedConfiguration.NugetServiceHost,
                         },
                     },
                 },
@@ -200,7 +200,7 @@ public class AzureDevOpsUndocumentedClient(
             AzureArtifactsJsonContext.Default.HierarchyQueryRequest
         );
 
-        var requestUri = new Uri($"https://pkgs.dev.azure.com/{devOpsConfiguration.Organization}/_apis/Contribution/HierarchyQuery/project/{devOpsUndocumentedConfiguration.NugetFeedProject}", UriKind.Absolute);
+        var requestUri = new Uri($"https://pkgs.dev.azure.com/{azureDevOpsConfiguration.Organization}/_apis/Contribution/HierarchyQuery/project/{azureDevOpsUndocumentedConfiguration.NugetFeedProject}", UriKind.Absolute);
 
         using var hierarchyRequestContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
@@ -247,12 +247,12 @@ public class AzureDevOpsUndocumentedClient(
     )
     {
         var accessToken = await GetAccessTokenAsync(
-            devOpsUndocumentedConfiguration.AccessTokenResourceId,
+            azureDevOpsUndocumentedConfiguration.AccessTokenResourceId,
             cancellationToken
         );
 
         var requestUri = new Uri(
-            $"https://pkgs.dev.azure.com/{devOpsConfiguration.Organization}/{devOpsUndocumentedConfiguration.NugetFeedProject}/_apis/packaging/feeds/{devOpsUndocumentedConfiguration.NugetFeedId}/NuGet/packages/{packageName}/versions/{packageVersion}/ManualUpstreamIngestion",
+            $"https://pkgs.dev.azure.com/{azureDevOpsConfiguration.Organization}/{azureDevOpsUndocumentedConfiguration.NugetFeedProject}/_apis/packaging/feeds/{azureDevOpsUndocumentedConfiguration.NugetFeedId}/NuGet/packages/{packageName}/versions/{packageVersion}/ManualUpstreamIngestion",
             UriKind.Absolute
         );
 
