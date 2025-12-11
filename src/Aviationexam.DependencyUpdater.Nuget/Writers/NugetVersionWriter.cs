@@ -15,7 +15,7 @@ public sealed class NugetVersionWriter(
     NugetDirectoryPackagesPropsVersionWriter directoryPackagesPropsVersionWriter,
     NugetCsprojVersionWriter csprojVersionWriter,
     DotnetToolsVersionWriter dotnetToolsVersionWriter,
-    Optional<IPackageFeedClient> packageFeedClient
+    Optional<IPackageFeedClient> optionalPackageFeedClient
 )
 {
     public async Task<ESetVersion> TrySetVersion(
@@ -39,9 +39,9 @@ public sealed class NugetVersionWriter(
             return ESetVersion.OutOfRepository;
         }
 
-        if (packageFeedClient.Value is not null)
+        if (optionalPackageFeedClient.Value is { } packageFeedClient)
         {
-            await packageFeedClient.Value.EnsurePackageVersionIsAvailableAsync(
+            await packageFeedClient.EnsurePackageVersionIsAvailableAsync(
                 nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
                 nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion(),
                 cancellationToken
