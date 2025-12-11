@@ -1,4 +1,6 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Interfaces.Repository;
+using Aviationexam.DependencyUpdater.Repository.DevOps;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.CommandLine;
@@ -31,5 +33,20 @@ public static class ServiceCollectionExtensions
             .AddSingleton<Optional<TValue>>(serviceProvider => implementationFactory(serviceProvider)
                 .CreateValue(parseResult)
             );
+
+        public IServiceCollection AddRepositoryPlatform(
+            bool shouldRedactHeaderValue = true
+        ) => services
+            .AddRepositoryDevOps(shouldRedactHeaderValue)
+            // Future: services.AddRepositoryGitHub(shouldRedactHeaderValue);
+            .AddScoped<IRepositoryClient>(serviceProvider => serviceProvider.GetRequiredKeyedService<IRepositoryClient>(
+                serviceProvider.GetRequiredService<IRepositoryPlatformConfiguration>().Platform
+            ))
+            .AddScoped<Optional<IPackageFeedClient>>(serviceProvider => new Optional<IPackageFeedClient>(
+                serviceProvider.GetKeyedService<IPackageFeedClient>(
+                    serviceProvider.GetRequiredService<IRepositoryPlatformConfiguration>().Platform
+                )
+            ));
+
     }
 }
