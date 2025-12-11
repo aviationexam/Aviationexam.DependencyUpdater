@@ -1,6 +1,5 @@
 using Aviationexam.DependencyUpdater;
 using Aviationexam.DependencyUpdater.Commands;
-using Microsoft.Extensions.DependencyInjection;
 using System.CommandLine;
 using System.IO;
 
