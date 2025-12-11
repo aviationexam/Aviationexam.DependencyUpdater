@@ -66,6 +66,7 @@ dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyU
 The solution uses a modular architecture with clear separation of concerns:
 
 - **Aviationexam.DependencyUpdater** - Main CLI application entry point with command-line argument parsing (System.CommandLine)
+  - **Commands/** - Platform-specific command classes (AzureDevOpsCommand, GitHubCommand) that encapsulate CLI options and service configuration
 - **Aviationexam.DependencyUpdater.ConfigurationParser** - Parses Dependabot v2 YAML configuration files and converts them to internal models
 - **Aviationexam.DependencyUpdater.Common** - Shared domain models and utilities (Package, IgnoreResolver, GroupResolver, etc.)
 - **Aviationexam.DependencyUpdater.Nuget** - NuGet-specific package resolution and version handling
@@ -95,6 +96,17 @@ The application uses Microsoft.Extensions.DependencyInjection throughout. Servic
 Command-line arguments are bound to configuration objects using custom binders (e.g., `SourceConfigurationBinder`, `AzureDevOpsConfigurationBinder`). The `ServiceCollectionExtensions` class uses C# 13's extension block syntax to provide fluent binder registration methods.
 
 Platform selection is handled via subcommands (`AzureDevOps` or `GitHub`), with each platform having its own Command class that encapsulates platform-specific options and configuration. Common configuration is shared across platforms via the `.BindCommonConfiguration()` extension method. All CLI options explicitly define `Arity = ArgumentArity.ExactlyOne` for clear argument expectations.
+
+### Command Pattern for Platform Selection
+Each repository platform is represented by a dedicated Command class inheriting from `System.CommandLine.Command`:
+- **Command Class Structure**: Each command (e.g., `AzureDevOpsCommand`) encapsulates all platform-specific CLI options as private fields
+- **Constructor Initialization**: Options are initialized and added to the command's `Options` collection via `Options.Add()`
+- **Service Configuration**: Each command implements a `ConfigureServices(IServiceCollection, ParseResult, ...)` method that:
+  - Calls `.BindCommonConfiguration()` for shared setup
+  - Registers platform-specific binders and configurations
+  - Wires up keyed services for that platform
+- **Program.cs Integration**: Commands are instantiated, configured with `SetAction()`, and added as subcommands to the root command
+- **Benefits**: Clear separation of platform concerns, simplified Program.cs (~70 lines vs ~200 lines), easier to add new platforms
 
 ### VCS Abstraction
 Git operations are abstracted through `ISourceVersioningFactory` and `ISourceVersioningWorkspace` interfaces, with implementations in the Vcs.Git project.
