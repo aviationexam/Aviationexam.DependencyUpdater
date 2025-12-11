@@ -94,7 +94,9 @@ The solution uses a modular architecture with clear separation of concerns:
 The application uses Microsoft.Extensions.DependencyInjection throughout. Service registration is organized via `ServiceCollectionExtensions` classes in each project.
 
 ### Configuration Binding
-Command-line arguments are bound to configuration objects using custom binders (e.g., `SourceConfigurationBinder`, `AzureDevOpsConfigurationBinder`) in Program.cs. Platform selection (`EPlatformSelection` enum) is parsed directly in Program.cs due to IBinder<T> constraints requiring reference types.
+Command-line arguments are bound to configuration objects using custom binders (e.g., `SourceConfigurationBinder`, `AzureDevOpsConfigurationBinder`) in Program.cs. The `ServiceCollectionExtensions` class uses C# 13's extension block syntax to provide fluent binder registration methods.
+
+Platform selection uses `Option<EPlatformSelection>` with a CustomParser to convert string values ("azure-devops", "github") to the enum, combined with `.AcceptOnlyFromAmong()` for validation. All CLI options explicitly define `Arity = ArgumentArity.ExactlyOne` for clear argument expectations.
 
 ### VCS Abstraction
 Git operations are abstracted through `ISourceVersioningFactory` and `ISourceVersioningWorkspace` interfaces, with implementations in the Vcs.Git project.
@@ -115,6 +117,7 @@ The tool supports multiple repository platforms through a clean abstraction laye
 - Required `--platform` CLI argument to select between `azure-devops` or `github`
 - Platform-specific configuration arguments (prefixed with `--azure-*` or `--github-*`)
 - Platform selection enum: `EPlatformSelection` (AzureDevOps, GitHub)
+- CustomParser in Program.cs converts string values to enum with validation
 
 **Core Abstractions** (in `Aviationexam.DependencyUpdater.Interfaces.Repository`):
 - `IRepositoryClient` - Platform-agnostic interface for pull request operations
@@ -124,6 +127,7 @@ The tool supports multiple repository platforms through a clean abstraction laye
   - Azure Artifacts upstream ingestion for Azure DevOps (via `AzureArtifactsPackageFeedClient`)
   - Not used for GitHub (wrapped in `Optional<IPackageFeedClient>`)
 - `IRepositoryPlatformConfiguration` - Base interface for platform-specific configurations
+  - Contains `EPlatformSelection Platform { get; }` property
   - Implemented by `AzureDevOpsConfiguration` (GitHub configuration pending)
 
 **Architecture Layers:**
@@ -131,16 +135,29 @@ The tool supports multiple repository platforms through a clean abstraction laye
 2. **Repository Platform Layer** - PR and feed operations specific to Azure DevOps or GitHub
 3. **Package Management Layer** (platform-agnostic) - NuGet package resolution
 
-**DI Registration:**
-- Platform implementations registered using factory pattern in `RepositoryPlatformServiceCollectionExtensions`
-- Runtime platform selection based on `EPlatformSelection` enum value
-- Conditional registration of `Optional<IPackageFeedClient>` based on platform capabilities
-- Azure DevOps registration via `AddRepositoryDevOps()` in `ServiceCollectionExtensions`
+**DI Registration (Keyed Services Pattern):**
+- Platform implementations registered as keyed services in each platform's `ServiceCollectionExtensions`
+  ```csharp
+  .AddKeyedScoped<IRepositoryClient, RepositoryAzureDevOpsClient>(EPlatformSelection.AzureDevOps)
+  .AddKeyedScoped<IPackageFeedClient, AzureArtifactsPackageFeedClient>(EPlatformSelection.AzureDevOps)
+  ```
+- Main `ServiceCollectionExtensions.AddRepositoryPlatform()` resolves services using keyed lookup:
+  ```csharp
+  .AddScoped<IRepositoryClient>(sp =>
+      sp.GetRequiredKeyedService<IRepositoryClient>(
+          sp.GetRequiredService<IRepositoryPlatformConfiguration>().Platform
+      ))
+  ```
+- Platform key comes from `IRepositoryPlatformConfiguration.Platform` property
+- Conditional registration of `Optional<IPackageFeedClient>` - returns null if platform doesn't support feeds
+- All platform-specific registrations consolidated in their respective projects
 
 **Key Implementation Details:**
-- Platform-specific binders (e.g., `AzureDevOpsConfigurationBinder`, `AzureDevOpsUndocumentedConfigurationBinder`) validate platform selection before binding
-- Factory pattern resolves `IRepositoryClient` and `Optional<IPackageFeedClient>` at runtime based on platform
-- Namespace organization: Repository abstractions in `Aviationexam.DependencyUpdater.Interfaces.Repository`
+- **Keyed Services**: Uses .NET's built-in keyed service registration instead of manual factory pattern
+- **Platform Resolution**: Platform is determined from configuration's `Platform` property at runtime
+- **Extension Block Syntax**: ServiceCollectionExtensions uses C# 13 extension blocks for fluent API
+- **Namespace Organization**: Repository abstractions in `Aviationexam.DependencyUpdater.Interfaces.Repository`
+- **Single Responsibility**: Each platform project registers its own implementations with the appropriate key
 
 ## Configuration File Format
 
@@ -167,6 +184,8 @@ The tool has undocumented Azure DevOps API integrations in `Repository.DevOps`:
 - **Blocked packages**: Build fails if `Devlooped.SponsorLink` is detected as a dependency
 - **NU1507 warning**: Suppressed globally (related to central package management)
 - **Analyzers**: Uses Meziantou.Analyzer for code quality
+- **C# Language Version**: Uses C# 13 features including extension block syntax in ServiceCollectionExtensions
+- **Target Frameworks**: Multi-targets .NET 9.0 and .NET 10.0
 
 ## Common Development Workflows
 
@@ -183,11 +202,21 @@ Extend `IPackageManager` interface and create implementation similar to the Nuge
 
 ### Adding new repository platforms
 To add support for a new platform (e.g., GitHub):
-1. Create new project `Aviationexam.DependencyUpdater.Repository.<Platform>`
-2. Implement `IRepositoryClient` for PR operations
-3. Optionally implement `IPackageFeedClient` if the platform has package feed features
-4. Create configuration class implementing `IRepositoryPlatformConfiguration`
-5. Add platform to `EPlatformSelection` enum
-6. Create configuration binder for platform-specific CLI arguments
-7. Update `RepositoryPlatformServiceCollectionExtensions` factory to include new platform
-8. Register platform services via `ServiceCollectionExtensions` in the platform project
+1. **Add to Enum**: Add new value to `EPlatformSelection` enum (e.g., `GitHub`)
+2. **Create Platform Project**: Create `Aviationexam.DependencyUpdater.Repository.<Platform>` project
+3. **Implement Configuration**: Create configuration class implementing `IRepositoryPlatformConfiguration`
+   - Override `Platform` property to return the correct enum value
+4. **Implement Clients**:
+   - Implement `IRepositoryClient` for PR operations
+   - Optionally implement `IPackageFeedClient` if the platform has package feed features
+5. **Register as Keyed Services**: In platform's `ServiceCollectionExtensions`:
+   ```csharp
+   .AddKeyedScoped<IRepositoryClient, RepositoryGitHubClient>(EPlatformSelection.GitHub)
+   .AddKeyedScoped<IPackageFeedClient, GitHubPackageFeedClient>(EPlatformSelection.GitHub) // if applicable
+   ```
+6. **Create CLI Arguments**: Add platform-specific options to Program.cs (e.g., `--github-*`)
+7. **Create Configuration Binder**: Create binder to map CLI arguments to configuration object
+8. **Update CustomParser**: Add new platform to the platform option's CustomParser and AcceptOnlyFromAmong list
+9. **Wire Up in Program.cs**: Add platform-specific service registration call in service collection setup
+
+The keyed services pattern automatically resolves the correct implementation at runtime based on the configuration's `Platform` property.
