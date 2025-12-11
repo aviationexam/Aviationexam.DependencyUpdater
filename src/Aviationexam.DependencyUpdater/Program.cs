@@ -170,25 +170,33 @@ var githubCommand = new Command(nameof(EPlatformSelection.GitHub), "Updates depe
 {
 };
 
-azureDevOpsCommand.SetAction(DefaultCommandHandler.GetHandler((serviceCollection, parseResult) => serviceCollection
+// Common configuration setup for all platforms
+static IServiceCollection AddCommonConfiguration(
+    IServiceCollection serviceCollection,
+    ParseResult parseResult,
+    Option<string> directory,
+    Option<string> gitUsernameArgument,
+    Option<string> gitPasswordArgument,
+    Option<bool> resetCache
+) => serviceCollection
     .AddBinder(parseResult, new SourceConfigurationBinder(directory))
     .AddBinder(parseResult, new GitCredentialsConfigurationBinder(gitUsernameArgument, gitPasswordArgument))
     .AddBinder(parseResult, x => new CachingConfigurationBinder(
         x.GetRequiredService<TimeProvider>(),
         resetCache
-    ))
-    .AddBinder(parseResult, new AzureDevOpsConfigurationBinder(azureOrganization, azureProject, azureRepository, azurePat, azureAccountId))
-    .AddSingleton<IRepositoryPlatformConfiguration>(x => x.GetRequiredService<AzureDevOpsConfiguration>())
-    .AddBinder(parseResult, new AzureDevOpsUndocumentedConfigurationBinder(azureNugetFeedProject, azureNugetFeedId, azureServiceHost, azureAccessTokenResourceId))
-    .AddOptionalBinder(parseResult, new AzCliSideCarConfigurationBinder(azureAzSideCarAddress, azureAzSideCarToken))
+    ));
+
+azureDevOpsCommand.SetAction(DefaultCommandHandler.GetHandler((serviceCollection, parseResult) =>
+    AddCommonConfiguration(serviceCollection, parseResult, directory, gitUsernameArgument, gitPasswordArgument, resetCache)
+        .AddBinder(parseResult, new AzureDevOpsConfigurationBinder(azureOrganization, azureProject, azureRepository, azurePat, azureAccountId))
+        .AddSingleton<IRepositoryPlatformConfiguration>(x => x.GetRequiredService<AzureDevOpsConfiguration>())
+        .AddBinder(parseResult, new AzureDevOpsUndocumentedConfigurationBinder(azureNugetFeedProject, azureNugetFeedId, azureServiceHost, azureAccessTokenResourceId))
+        .AddOptionalBinder(parseResult, new AzCliSideCarConfigurationBinder(azureAzSideCarAddress, azureAzSideCarToken))
 ));
-githubCommand.SetAction(DefaultCommandHandler.GetHandler((serviceCollection, parseResult) => serviceCollection
-    .AddBinder(parseResult, new SourceConfigurationBinder(directory))
-    .AddBinder(parseResult, new GitCredentialsConfigurationBinder(gitUsernameArgument, gitPasswordArgument))
-    .AddBinder(parseResult, x => new CachingConfigurationBinder(
-        x.GetRequiredService<TimeProvider>(),
-        resetCache
-    ))
+
+githubCommand.SetAction(DefaultCommandHandler.GetHandler((serviceCollection, parseResult) =>
+    AddCommonConfiguration(serviceCollection, parseResult, directory, gitUsernameArgument, gitPasswordArgument, resetCache)
+    // GitHub-specific configuration would go here
 ));
 
 rootCommand.Subcommands.Add(azureDevOpsCommand);
