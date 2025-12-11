@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Aviationexam.DependencyUpdater.Repository.Abstractions;
+namespace Aviationexam.DependencyUpdater.Interfaces.Repository;
 
 public interface IPackageFeedClient
 {

@@ -1,4 +1,4 @@
-using Aviationexam.DependencyUpdater.Repository.Abstractions;
+using Aviationexam.DependencyUpdater.Interfaces.Repository;
 using System;
 
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;

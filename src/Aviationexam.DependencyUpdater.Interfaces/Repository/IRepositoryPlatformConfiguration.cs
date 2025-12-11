@@ -1,4 +1,4 @@
-namespace Aviationexam.DependencyUpdater.Repository.Abstractions;
+namespace Aviationexam.DependencyUpdater.Interfaces.Repository;
 
 public interface IRepositoryPlatformConfiguration
 {
