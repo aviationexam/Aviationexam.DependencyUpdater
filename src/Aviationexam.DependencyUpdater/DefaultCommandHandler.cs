@@ -7,6 +7,7 @@ using Aviationexam.DependencyUpdater.Nuget.Configurations;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.CommandLine;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using ZLinq;
@@ -56,7 +57,7 @@ internal sealed class DefaultCommandHandler(
 
                 var gitMetadataConfig = new GitMetadataConfig
                 {
-                    Milestone = nugetUpdate.Milestone.AsAny.AsString.GetString(),
+                    Milestone = nugetUpdate.Milestone.ValueKind is JsonValueKind.String or JsonValueKind.Number ? nugetUpdate.Milestone.AsAny.AsString.GetString() : null,
                     Reviewers = nugetUpdate.Reviewers ?? [],
                     CommitAuthor = nugetUpdate.CommitAuthor ?? GitAuthorConstants.DefaultCommitAuthor,
                     CommitAuthorEmail = nugetUpdate.CommitAuthorEmail ?? GitAuthorConstants.DefaultCommitAuthorEmail,
