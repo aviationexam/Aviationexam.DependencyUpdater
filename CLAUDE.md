@@ -34,19 +34,33 @@ dotnet format
 
 ### Run the tool locally
 The main project `Aviationexam.DependencyUpdater` is the CLI entry point. Run with:
+
+**Azure DevOps:**
 ```bash
 dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- \
   --directory "/path/to/repo" \
   --git-password "<token>" \
-  --organization "<org>" \
-  --project "<project-id>" \
-  --repository "<repo-id>" \
-  --pat "<pat>" \
-  --account-id "<account-id>" \
-  --nuget-project "<nuget-project-id>" \
-  --nuget-feed-id "<feed-id>" \
-  --nuget-service-host "<service-host>" \
-  --access-token-resource-id "499b84ac-1321-427f-aa17-267ca6975798"
+  --platform azure-devops \
+  --azure-organization "<org>" \
+  --azure-project "<project-id>" \
+  --azure-repository "<repo-id>" \
+  --azure-pat "<pat>" \
+  --azure-account-id "<account-id>" \
+  --azure-nuget-project "<nuget-project-id>" \
+  --azure-nuget-feed-id "<feed-id>" \
+  --azure-nuget-service-host "<service-host>" \
+  --azure-access-token-resource-id "499b84ac-1321-427f-aa17-267ca6975798"
+```
+
+**GitHub:** *(not yet implemented)*
+```bash
+dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- \
+  --directory "/path/to/repo" \
+  --git-password "<token>" \
+  --platform github \
+  --github-owner "<owner>" \
+  --github-repository "<repo>" \
+  --github-token "<token>"
 ```
 
 ## Solution Structure
@@ -58,7 +72,8 @@ The solution uses a modular architecture with clear separation of concerns:
 - **Aviationexam.DependencyUpdater.Common** - Shared domain models and utilities (Package, IgnoreResolver, GroupResolver, etc.)
 - **Aviationexam.DependencyUpdater.Nuget** - NuGet-specific package resolution and version handling
 - **Aviationexam.DependencyUpdater.Vcs.Git** - Git operations using LibGit2Sharp
-- **Aviationexam.DependencyUpdater.Repository.DevOps** - Azure DevOps integration (pull requests, artifact feeds, upstream ingestion)
+- **Aviationexam.DependencyUpdater.Repository.Abstractions** - Platform-agnostic repository interfaces (IRepositoryClient, IPackageFeedClient)
+- **Aviationexam.DependencyUpdater.Repository.DevOps** - Azure DevOps implementation (pull requests, artifact feeds, upstream ingestion)
 - **Aviationexam.DependencyUpdater.Interfaces** - Core interfaces and contracts
 - **Aviationexam.DependencyUpdater.DefaultImplementations** - Default implementations for file system and environment variable access
 - **Aviationexam.DependencyUpdater.Constants** - Shared constants
@@ -90,6 +105,31 @@ Git operations are abstracted through `ISourceVersioningFactory` and `ISourceVer
 ### Ignore and Group Resolution
 - `IgnoreResolver` - Determines which package updates to skip based on Dependabot ignore rules (supports wildcards)
 - `GroupResolver` - Groups related package updates together according to Dependabot group configuration
+
+### Multi-Platform Repository Support
+The tool now supports multiple repository platforms through an abstraction layer:
+
+**Platform Selection:**
+- Required `--platform` CLI argument to select between `azure-devops` or `github`
+- Platform-specific configuration arguments (prefixed with `--azure-*` or `--github-*`)
+
+**Core Abstractions:**
+- `IRepositoryClient` - Platform-agnostic interface for pull request operations
+  - List, get, create, update, and abandon pull requests
+  - Implemented by `RepositoryAzureDevOpsClient` (GitHub implementation pending)
+- `IPackageFeedClient` - Optional interface for platform-specific package feed operations
+  - Azure Artifacts upstream ingestion for Azure DevOps
+  - Not used for GitHub (wrapped in `Optional<IPackageFeedClient>`)
+
+**Architecture Layers:**
+1. **VCS Layer** (platform-agnostic) - Git operations via LibGit2Sharp
+2. **Repository Platform Layer** - PR and feed operations specific to Azure DevOps or GitHub
+3. **Package Management Layer** (platform-agnostic) - NuGet package resolution
+
+**DI Registration:**
+- Platform implementations registered using factory pattern in `RepositoryPlatformServiceCollectionExtensions`
+- Runtime platform selection based on `PlatformSelection` enum value
+- Conditional registration of `IPackageFeedClient` based on platform capabilities
 
 ## Configuration File Format
 
