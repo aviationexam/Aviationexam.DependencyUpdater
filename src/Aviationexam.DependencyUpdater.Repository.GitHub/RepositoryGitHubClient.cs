@@ -132,6 +132,7 @@ public class RepositoryGitHubClient(
         var newPullRequest = new NewPullRequest(title, branchName, targetBranchName ?? PullRequestConstants.DefaultBranch)
         {
             Body = description,
+            MaintainerCanModify = true,
         };
 
         var pullRequest = await createPullRequestAsyncResiliencePipeline.ExecuteAsync(
@@ -160,25 +161,24 @@ public class RepositoryGitHubClient(
         // Add reviewers
         if (reviewers.Count > 0)
         {
-            var reviewersRequest = new PullRequestReviewRequest(
-                [.. reviewers],
-                [] // No team reviewers for now
+            var assigneesRequest = new AssigneesUpdate(
+                [.. reviewers]
             );
 
             try
             {
-                await gitHubClient.PullRequest.ReviewRequest.Create(
+                await gitHubClient.Issue.Assignee.AddAssignees(
                     gitHubConfiguration.Owner,
                     gitHubConfiguration.Repository,
                     pullRequest.Number,
-                    reviewersRequest
+                    assigneesRequest
                 );
             }
             catch (ApiException ex)
             {
                 if (logger.IsEnabled(LogLevel.Warning))
                 {
-                    logger.LogWarning(ex, "Failed to add reviewers to pull request {pullRequestId}", pullRequest.Number);
+                    logger.LogWarning(ex, "Failed to add assignees to pull request {pullRequestId}", pullRequest.Number);
                 }
             }
         }
