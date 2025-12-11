@@ -1,8 +1,11 @@
 using Aviationexam.DependencyUpdater;
+using Aviationexam.DependencyUpdater.Interfaces.Repository;
+using Aviationexam.DependencyUpdater.Repository.DevOps;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.CommandLine;
 using System.IO;
+using System.Linq;
 
 var directory = new Option<string>(
     "--directory"
@@ -10,6 +13,7 @@ var directory = new Option<string>(
 {
     Description = "The path to the local Git repository where dependencies will be updated.",
     Required = true,
+    Arity = ArgumentArity.ExactlyOne,
     DefaultValueFactory = _ => Directory.GetCurrentDirectory(),
 }.AcceptLegalFilePathsOnly();
 
@@ -19,6 +23,7 @@ var gitUsernameArgument = new Option<string>(
 {
     Description = "The username used for authenticating with the remote Git repository.",
     Required = false,
+    Arity = ArgumentArity.ExactlyOne,
     DefaultValueFactory = _ => string.Empty,
 };
 var gitPasswordArgument = new Option<string>(
@@ -27,6 +32,7 @@ var gitPasswordArgument = new Option<string>(
 {
     Description = "The password or personal access token used for authenticating with the remote Git repository.",
     Required = true,
+    Arity = ArgumentArity.ExactlyOne,
 };
 
 var platform = new Option<EPlatformSelection>(
@@ -50,6 +56,7 @@ var azureOrganization = new Option<string>(
 {
     Description = "The name of the Azure DevOps organization (e.g., 'contoso').",
     Required = true,
+    Arity = ArgumentArity.ExactlyOne,
 };
 
 var azureProject = new Option<string>(
@@ -58,6 +65,7 @@ var azureProject = new Option<string>(
 {
     Description = "The Azure DevOps project that contains the target repository.",
     Required = true,
+    Arity = ArgumentArity.ExactlyOne,
 };
 
 var azureRepository = new Option<string>(
@@ -66,6 +74,7 @@ var azureRepository = new Option<string>(
 {
     Description = "The name of the Azure DevOps Git repository to operate on.",
     Required = true,
+    Arity = ArgumentArity.ExactlyOne,
 };
 
 var azurePat = new Option<string>(
@@ -74,6 +83,7 @@ var azurePat = new Option<string>(
 {
     Description = "The Azure DevOps personal access token used for authentication.",
     Required = true,
+    Arity = ArgumentArity.ExactlyOne,
 };
 
 var azureAccountId = new Option<string>(
@@ -82,6 +92,7 @@ var azureAccountId = new Option<string>(
 {
     Description = "The Azure DevOps user or service account ID used for API access.",
     Required = true,
+    Arity = ArgumentArity.ExactlyOne,
 };
 
 var azureNugetFeedProject = new Option<string>(
@@ -90,6 +101,7 @@ var azureNugetFeedProject = new Option<string>(
 {
     Description = "The Azure DevOps project that contains the NuGet artifacts feed.",
     Required = true,
+    Arity = ArgumentArity.ExactlyOne,
 };
 
 var azureNugetFeedId = new Option<string>(
@@ -98,6 +110,7 @@ var azureNugetFeedId = new Option<string>(
 {
     Description = "The ID of the Azure Artifacts NuGet feed used for dependency resolution.",
     Required = true,
+    Arity = ArgumentArity.ExactlyOne,
 };
 
 var azureServiceHost = new Option<string>(
@@ -106,6 +119,7 @@ var azureServiceHost = new Option<string>(
 {
     Description = "The internal Azure DevOps service host identifier used when accessing upstream package data.",
     Required = true,
+    Arity = ArgumentArity.ExactlyOne,
 };
 
 var azureAccessTokenResourceId = new Option<string>(
@@ -114,6 +128,7 @@ var azureAccessTokenResourceId = new Option<string>(
 {
     Description = "The Azure Active Directory resource ID used to acquire access tokens for upstream ingestion.",
     Required = true,
+    Arity = ArgumentArity.ExactlyOne,
 };
 
 var azureAzSideCarAddress = new Option<string>(
@@ -122,6 +137,7 @@ var azureAzSideCarAddress = new Option<string>(
 {
     Description = "The URL address for AZ sidecar service, used to fetch Azure DevOps access-token.",
     Required = false,
+    Arity = ArgumentArity.ExactlyOne,
 };
 
 var azureAzSideCarToken = new Option<string>(
@@ -130,6 +146,7 @@ var azureAzSideCarToken = new Option<string>(
 {
     Description = "The token for AZ sidecar service, used to fetch Azure DevOps access-token.",
     Required = false,
+    Arity = ArgumentArity.ExactlyOne,
 };
 
 var resetCache = new Option<bool>(
@@ -138,7 +155,8 @@ var resetCache = new Option<bool>(
 {
     Description = "Clears the internal dependency cache before processing updates.",
     Required = false,
-    DefaultValueFactory = _ => false
+    Arity = ArgumentArity.ExactlyOne,
+    DefaultValueFactory = _ => false,
 };
 
 var rootCommand = new RootCommand("Dependency updater tool that processes dependency updates based on configuration files.")
