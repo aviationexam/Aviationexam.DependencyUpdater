@@ -2,6 +2,7 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
+using Aviationexam.DependencyUpdater.Repository.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -14,7 +15,7 @@ public sealed class NugetVersionWriter(
     NugetDirectoryPackagesPropsVersionWriter directoryPackagesPropsVersionWriter,
     NugetCsprojVersionWriter csprojVersionWriter,
     DotnetToolsVersionWriter dotnetToolsVersionWriter,
-    IRepositoryClient repositoryClient
+    Optional<IPackageFeedClient> packageFeedClient
 )
 {
     public async Task<ESetVersion> TrySetVersion(
@@ -38,11 +39,14 @@ public sealed class NugetVersionWriter(
             return ESetVersion.OutOfRepository;
         }
 
-        await repositoryClient.EnsurePackageVersionIsAvailableAsync(
-            nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
-            nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion(),
-            cancellationToken
-        );
+        if (packageFeedClient.Value is not null)
+        {
+            await packageFeedClient.Value.EnsurePackageVersionIsAvailableAsync(
+                nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
+                nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion(),
+                cancellationToken
+            );
+        }
 
         return nugetUpdateCandidate.NugetDependency.NugetFile.Type switch
         {

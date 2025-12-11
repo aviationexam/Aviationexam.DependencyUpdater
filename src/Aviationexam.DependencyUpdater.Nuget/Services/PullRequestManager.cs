@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Repository.Abstractions;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading;

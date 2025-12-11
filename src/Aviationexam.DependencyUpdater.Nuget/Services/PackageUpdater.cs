@@ -4,6 +4,7 @@ using Aviationexam.DependencyUpdater.Nuget.Configurations;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Writers;
+using Aviationexam.DependencyUpdater.Repository.Abstractions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
