@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.CommandLine;
 using System.IO;
-using System.Linq;
 
 var directory = new Option<string>(
     "--directory"
@@ -32,15 +31,6 @@ var gitPasswordArgument = new Option<string>(
 )
 {
     Description = "The password or personal access token used for authenticating with the remote Git repository.",
-    Required = true,
-    Arity = ArgumentArity.ExactlyOne,
-};
-
-var platform = new Option<EPlatformSelection>(
-    "--platform"
-)
-{
-    Description = "The repository platform to use: AzureDevOps or GitHub",
     Required = true,
     Arity = ArgumentArity.ExactlyOne,
 };
@@ -159,7 +149,11 @@ var rootCommand = new RootCommand("Dependency updater tool that processes depend
     directory,
     gitUsernameArgument,
     gitPasswordArgument,
-    platform,
+    resetCache,
+};
+
+var azureDevOpsCommand = new Command(nameof(EPlatformSelection.AzureDevOps), "Updates dependencies in Azure DevOps repositories.")
+{
     azureOrganization,
     azureProject,
     azureRepository,
@@ -171,28 +165,33 @@ var rootCommand = new RootCommand("Dependency updater tool that processes depend
     azureAccessTokenResourceId,
     azureAzSideCarAddress,
     azureAzSideCarToken,
-    resetCache,
 };
-rootCommand.SetAction(DefaultCommandHandler.GetHandler((serviceCollection, parseResult) =>
+var githubCommand = new Command(nameof(EPlatformSelection.GitHub), "Updates dependencies in GitHub repositories.")
 {
-    var platformValue = parseResult.GetRequiredValue(platform);
+};
 
-    serviceCollection
-        .AddBinder(parseResult, new SourceConfigurationBinder(directory))
-        .AddBinder(parseResult, new GitCredentialsConfigurationBinder(gitUsernameArgument, gitPasswordArgument))
-        .AddBinder(parseResult, x => new CachingConfigurationBinder(
-            x.GetRequiredService<TimeProvider>(),
-            resetCache
-        ));
+azureDevOpsCommand.SetAction(DefaultCommandHandler.GetHandler((serviceCollection, parseResult) => serviceCollection
+    .AddBinder(parseResult, new SourceConfigurationBinder(directory))
+    .AddBinder(parseResult, new GitCredentialsConfigurationBinder(gitUsernameArgument, gitPasswordArgument))
+    .AddBinder(parseResult, x => new CachingConfigurationBinder(
+        x.GetRequiredService<TimeProvider>(),
+        resetCache
+    ))
+    .AddBinder(parseResult, new AzureDevOpsConfigurationBinder(azureOrganization, azureProject, azureRepository, azurePat, azureAccountId))
+    .AddSingleton<IRepositoryPlatformConfiguration>(x => x.GetRequiredService<AzureDevOpsConfiguration>())
+    .AddBinder(parseResult, new AzureDevOpsUndocumentedConfigurationBinder(azureNugetFeedProject, azureNugetFeedId, azureServiceHost, azureAccessTokenResourceId))
+    .AddOptionalBinder(parseResult, new AzCliSideCarConfigurationBinder(azureAzSideCarAddress, azureAzSideCarToken))
+));
+githubCommand.SetAction(DefaultCommandHandler.GetHandler((serviceCollection, parseResult) => serviceCollection
+    .AddBinder(parseResult, new SourceConfigurationBinder(directory))
+    .AddBinder(parseResult, new GitCredentialsConfigurationBinder(gitUsernameArgument, gitPasswordArgument))
+    .AddBinder(parseResult, x => new CachingConfigurationBinder(
+        x.GetRequiredService<TimeProvider>(),
+        resetCache
+    ))
+));
 
-    if (platformValue is EPlatformSelection.AzureDevOps)
-    {
-        serviceCollection
-            .AddBinder(parseResult, new AzureDevOpsConfigurationBinder(azureOrganization, azureProject, azureRepository, azurePat, azureAccountId))
-            .AddSingleton<IRepositoryPlatformConfiguration>(x => x.GetRequiredService<AzureDevOpsConfiguration>())
-            .AddBinder(parseResult, new AzureDevOpsUndocumentedConfigurationBinder(azureNugetFeedProject, azureNugetFeedId, azureServiceHost, azureAccessTokenResourceId))
-            .AddOptionalBinder(parseResult, new AzCliSideCarConfigurationBinder(azureAzSideCarAddress, azureAzSideCarToken));
-    }
-}));
+rootCommand.Subcommands.Add(azureDevOpsCommand);
+rootCommand.Subcommands.Add(githubCommand);
 
 return await rootCommand.Parse(args).InvokeAsync();
