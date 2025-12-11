@@ -40,15 +40,15 @@ The main project `Aviationexam.DependencyUpdater` is the CLI entry point. Run us
 dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- AzureDevOps \
   --directory "/path/to/repo" \
   --git-password "<token>" \
-  --azure-organization "<org>" \
-  --azure-project "<project-id>" \
-  --azure-repository "<repo-id>" \
-  --azure-pat "<pat>" \
-  --azure-account-id "<account-id>" \
-  --azure-nuget-project "<nuget-project-id>" \
-  --azure-nuget-feed-id "<feed-id>" \
-  --azure-nuget-service-host "<service-host>" \
-  --azure-access-token-resource-id "499b84ac-1321-427f-aa17-267ca6975798"
+  --organization "<org>" \
+  --project "<project-id>" \
+  --repository "<repo-id>" \
+  --pat "<pat>" \
+  --account-id "<account-id>" \
+  --nuget-project "<nuget-project-id>" \
+  --nuget-feed-id "<feed-id>" \
+  --nuget-service-host "<service-host>" \
+  --access-token-resource-id "499b84ac-1321-427f-aa17-267ca6975798"
 ```
 
 **GitHub:** *(not yet implemented)*
@@ -126,7 +126,7 @@ The tool supports multiple repository platforms through a clean abstraction laye
 **Platform Selection:**
 - Platform is selected via subcommands: `AzureDevOps` or `GitHub`
 - Each platform has its own Command class in the `Commands` namespace (e.g., `AzureDevOpsCommand`, `GitHubCommand`)
-- Platform-specific configuration arguments are scoped to their respective subcommands (prefixed with `--azure-*` or `--github-*`)
+- Platform-specific configuration arguments are scoped to their respective subcommands (no prefix needed since subcommand provides context)
 - Platform selection enum: `EPlatformSelection` with members `AzureDevOps`, `GitHub`
 - Command classes inherit from `System.CommandLine.Command` and encapsulate their options and service configuration
 
@@ -229,13 +229,15 @@ To add support for a new platform (e.g., GitHub):
 6. **Create Command Class**: Create `Commands/<Platform>Command.cs`:
    - Inherit from `System.CommandLine.Command`
    - Base constructor call: `base(nameof(EPlatformSelection.<Platform>), "<description>")`
-   - Declare platform-specific options as private fields
+   - Declare platform-specific options as private fields (e.g., `--organization`, `--repository`)
    - Initialize and add options in constructor via `Options.Add()`
-   - Implement `ConfigureServices(IServiceCollection, ParseResult, ...)` method to set up DI bindings
+   - Implement `ConfigureServices(IServiceCollection, ParseResult)` method to set up DI bindings
 7. **Create Configuration Binder**: Create binder to map CLI arguments to configuration object
 8. **Wire Up in Program.cs**:
    - Instantiate the command class
    - Call `SetAction(DefaultCommandHandler.GetHandler(...))` with service configuration
    - Add subcommand to root command via `rootCommand.Subcommands.Add()`
+
+**Note**: Argument names don't need platform prefixes (e.g., use `--organization` not `--azure-organization`) since the subcommand already provides the platform context.
 
 The keyed services pattern automatically resolves the correct implementation at runtime based on the configuration's `Platform` property. The command pattern keeps platform-specific CLI options organized in their own classes.

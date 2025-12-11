@@ -47,17 +47,17 @@ dotnet dependency-updater AzureDevOps \
   --directory "/path/to/repo" \
   --git-username "<git-username>" \
   --git-password "<git-password-or-token>" \
-  --azure-organization "<azure-devops-org>" \
-  --azure-project <project-id> \
-  --azure-repository <repository-id> \
-  --azure-pat "<azure-devops-pat>" \
-  --azure-account-id <account-id> \
-  --azure-nuget-project <nuget-project-id> \
-  --azure-nuget-feed-id <nuget-feed-id> \
-  --azure-nuget-service-host '<service-host>' \
-  --azure-access-token-resource-id 499b84ac-1321-427f-aa17-267ca6975798 \
-  --azure-az-side-car-address '<az-side-car-url>' \
-  --azure-az-side-car-token '<az-side-car-token>' \
+  --organization "<azure-devops-org>" \
+  --project <project-id> \
+  --repository <repository-id> \
+  --pat "<azure-devops-pat>" \
+  --account-id <account-id> \
+  --nuget-project <nuget-project-id> \
+  --nuget-feed-id <nuget-feed-id> \
+  --nuget-service-host '<service-host>' \
+  --access-token-resource-id 499b84ac-1321-427f-aa17-267ca6975798 \
+  --az-side-car-address '<az-side-car-url>' \
+  --az-side-car-token '<az-side-car-token>' \
   --reset-cache
 ```
 
@@ -92,19 +92,19 @@ Available for all platform subcommands:
 
 Required when using the `AzureDevOps` subcommand:
 
-| Argument                          | Required | Description                                                                                |
-|-----------------------------------|:--------:|--------------------------------------------------------------------------------------------|
-| --azure-organization              |    Y     | Azure DevOps organization name                                                             |
-| --azure-project                   |    Y     | Azure DevOps project containing the target repository                                      |
-| --azure-repository                |    Y     | Name of the Azure DevOps Git repository                                                    |
-| --azure-pat                       |    Y     | Azure DevOps personal access token                                                         |
-| --azure-account-id                |    Y     | Azure DevOps user or service account ID                                                    |
-| --azure-nuget-project             |    Y     | Azure DevOps project containing the NuGet artifacts feed                                   |
-| --azure-nuget-feed-id             |    Y     | ID of the Azure Artifacts NuGet feed                                                       |
-| --azure-nuget-service-host        |    Y     | Internal Azure DevOps service host identifier                                              |
-| --azure-access-token-resource-id  |    Y     | Azure AD resource ID for upstream ingestion (always: 499b84ac-1321-427f-aa17-267ca6975798) |
-| --azure-az-side-car-address       |    N     | URL for AZ sidecar service (optional)                                                      |
-| --azure-az-side-car-token         |    N     | Token for AZ sidecar service (optional)                                                    |
+| Argument                     | Required | Description                                                                                |
+|------------------------------|:--------:|--------------------------------------------------------------------------------------------|
+| --organization               |    Y     | Azure DevOps organization name                                                             |
+| --project                    |    Y     | Azure DevOps project containing the target repository                                      |
+| --repository                 |    Y     | Name of the Azure DevOps Git repository                                                    |
+| --pat                        |    Y     | Azure DevOps personal access token                                                         |
+| --account-id                 |    Y     | Azure DevOps user or service account ID                                                    |
+| --nuget-project              |    Y     | Azure DevOps project containing the NuGet artifacts feed                                   |
+| --nuget-feed-id              |    Y     | ID of the Azure Artifacts NuGet feed                                                       |
+| --nuget-service-host         |    Y     | Internal Azure DevOps service host identifier                                              |
+| --access-token-resource-id   |    Y     | Azure AD resource ID for upstream ingestion (always: 499b84ac-1321-427f-aa17-267ca6975798) |
+| --az-side-car-address        |    N     | URL for AZ sidecar service (optional)                                                      |
+| --az-side-car-token          |    N     | Token for AZ sidecar service (optional)                                                    |
 
 ### GitHub Arguments
 
