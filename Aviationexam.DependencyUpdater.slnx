@@ -4,6 +4,7 @@
     <File Path="src\WarningConfiguration.targets" />
     <File Path="src\nuget.config" />
     <File Path="src\Directory.Packages.props" />
+    <File Path="README.md" />
     <File Path="src\Directory.Build.props" />
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
