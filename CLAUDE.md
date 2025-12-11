@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Aviationexam.DependencyUpdater is a .NET command-line tool for automating dependency updates in projects using Azure DevOps Git repositories and NuGet artifact feeds. It reads Dependabot-style configuration files and processes updates accordingly.
+Aviationexam.DependencyUpdater is a .NET command-line tool for automating dependency updates in projects using Git repositories and NuGet feeds. It supports multiple repository platforms (currently Azure DevOps, with GitHub planned) and reads Dependabot-style configuration files to process updates accordingly.
 
 ## Build Commands
 
@@ -71,10 +71,12 @@ The solution uses a modular architecture with clear separation of concerns:
 - **Aviationexam.DependencyUpdater.ConfigurationParser** - Parses Dependabot v2 YAML configuration files and converts them to internal models
 - **Aviationexam.DependencyUpdater.Common** - Shared domain models and utilities (Package, IgnoreResolver, GroupResolver, etc.)
 - **Aviationexam.DependencyUpdater.Nuget** - NuGet-specific package resolution and version handling
-- **Aviationexam.DependencyUpdater.Vcs.Git** - Git operations using LibGit2Sharp
-- **Aviationexam.DependencyUpdater.Repository.Abstractions** - Platform-agnostic repository interfaces (IRepositoryClient, IPackageFeedClient)
+- **Aviationexam.DependencyUpdater.Vcs.Git** - Git operations using LibGit2Sharp (platform-agnostic)
 - **Aviationexam.DependencyUpdater.Repository.DevOps** - Azure DevOps implementation (pull requests, artifact feeds, upstream ingestion)
-- **Aviationexam.DependencyUpdater.Interfaces** - Core interfaces and contracts
+- **Aviationexam.DependencyUpdater.Interfaces** - Core interfaces and contracts including:
+  - Repository abstractions (`IRepositoryClient`, `IPackageFeedClient`, `IRepositoryPlatformConfiguration`)
+  - Package management interfaces
+  - VCS abstractions
 - **Aviationexam.DependencyUpdater.DefaultImplementations** - Default implementations for file system and environment variable access
 - **Aviationexam.DependencyUpdater.Constants** - Shared constants
 - **Aviationexam.DependencyUpdater.TestsInfrastructure** - Shared test utilities
@@ -92,7 +94,7 @@ The solution uses a modular architecture with clear separation of concerns:
 The application uses Microsoft.Extensions.DependencyInjection throughout. Service registration is organized via `ServiceCollectionExtensions` classes in each project.
 
 ### Configuration Binding
-Command-line arguments are bound to configuration objects using custom binders (e.g., `SourceConfigurationBinder`, `DevOpsConfigurationBinder`) in Program.cs.
+Command-line arguments are bound to configuration objects using custom binders (e.g., `SourceConfigurationBinder`, `AzureDevOpsConfigurationBinder`) in Program.cs. Platform selection (`EPlatformSelection` enum) is parsed directly in Program.cs due to IBinder<T> constraints requiring reference types.
 
 ### VCS Abstraction
 Git operations are abstracted through `ISourceVersioningFactory` and `ISourceVersioningWorkspace` interfaces, with implementations in the Vcs.Git project.
@@ -107,19 +109,22 @@ Git operations are abstracted through `ISourceVersioningFactory` and `ISourceVer
 - `GroupResolver` - Groups related package updates together according to Dependabot group configuration
 
 ### Multi-Platform Repository Support
-The tool now supports multiple repository platforms through an abstraction layer:
+The tool supports multiple repository platforms through a clean abstraction layer:
 
 **Platform Selection:**
 - Required `--platform` CLI argument to select between `azure-devops` or `github`
 - Platform-specific configuration arguments (prefixed with `--azure-*` or `--github-*`)
+- Platform selection enum: `EPlatformSelection` (AzureDevOps, GitHub)
 
-**Core Abstractions:**
+**Core Abstractions** (in `Aviationexam.DependencyUpdater.Interfaces.Repository`):
 - `IRepositoryClient` - Platform-agnostic interface for pull request operations
   - List, get, create, update, and abandon pull requests
   - Implemented by `RepositoryAzureDevOpsClient` (GitHub implementation pending)
 - `IPackageFeedClient` - Optional interface for platform-specific package feed operations
-  - Azure Artifacts upstream ingestion for Azure DevOps
+  - Azure Artifacts upstream ingestion for Azure DevOps (via `AzureArtifactsPackageFeedClient`)
   - Not used for GitHub (wrapped in `Optional<IPackageFeedClient>`)
+- `IRepositoryPlatformConfiguration` - Base interface for platform-specific configurations
+  - Implemented by `AzureDevOpsConfiguration` (GitHub configuration pending)
 
 **Architecture Layers:**
 1. **VCS Layer** (platform-agnostic) - Git operations via LibGit2Sharp
@@ -128,8 +133,14 @@ The tool now supports multiple repository platforms through an abstraction layer
 
 **DI Registration:**
 - Platform implementations registered using factory pattern in `RepositoryPlatformServiceCollectionExtensions`
-- Runtime platform selection based on `PlatformSelection` enum value
-- Conditional registration of `IPackageFeedClient` based on platform capabilities
+- Runtime platform selection based on `EPlatformSelection` enum value
+- Conditional registration of `Optional<IPackageFeedClient>` based on platform capabilities
+- Azure DevOps registration via `AddRepositoryDevOps()` in `ServiceCollectionExtensions`
+
+**Key Implementation Details:**
+- Platform-specific binders (e.g., `AzureDevOpsConfigurationBinder`, `AzureDevOpsUndocumentedConfigurationBinder`) validate platform selection before binding
+- Factory pattern resolves `IRepositoryClient` and `Optional<IPackageFeedClient>` at runtime based on platform
+- Namespace organization: Repository abstractions in `Aviationexam.DependencyUpdater.Interfaces.Repository`
 
 ## Configuration File Format
 
@@ -169,3 +180,14 @@ Git operations are in `Vcs.Git` project using LibGit2Sharp. The `GitSourceVersio
 
 ### Adding new package sources
 Extend `IPackageManager` interface and create implementation similar to the Nuget project structure. Register in DI container via `ServiceCollectionExtensions`.
+
+### Adding new repository platforms
+To add support for a new platform (e.g., GitHub):
+1. Create new project `Aviationexam.DependencyUpdater.Repository.<Platform>`
+2. Implement `IRepositoryClient` for PR operations
+3. Optionally implement `IPackageFeedClient` if the platform has package feed features
+4. Create configuration class implementing `IRepositoryPlatformConfiguration`
+5. Add platform to `EPlatformSelection` enum
+6. Create configuration binder for platform-specific CLI arguments
+7. Update `RepositoryPlatformServiceCollectionExtensions` factory to include new platform
+8. Register platform services via `ServiceCollectionExtensions` in the platform project
