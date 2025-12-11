@@ -598,7 +598,7 @@
           "Microsoft.Extensions.Http": "[10.0.1, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.1, )",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "[10.0.1, )",
-          "Octokit": "[13.0.1, )",
+          "Octokit": "[14.0.0, )",
           "Polly.Core": "[8.6.5, )",
           "Polly.Extensions": "[8.6.5, )"
         }
@@ -777,9 +777,9 @@
       },
       "Octokit": {
         "type": "CentralTransitive",
-        "requested": "[13.0.1, )",
-        "resolved": "13.0.1",
-        "contentHash": "tjXTa2FXzbd3n17VWpi8UXe05EIJqHcWJW8C2kukftIve00duWiZL8x4i1vlZQ0zQ4RbRANbRc7J5K7Co/1spQ=="
+        "requested": "[14.0.0, )",
+        "resolved": "14.0.0",
+        "contentHash": "jGOuTH1l+TCpJH+fwYOp7USzHDuGfN1jKbLz3J2COwyn+wL08eynvpnM6rY2qkzIEXum3PN2p2QkP3BW/p9Qcw=="
       },
       "Polly.Core": {
         "type": "CentralTransitive",
