@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater;
+using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Interfaces.Repository;
 using Aviationexam.DependencyUpdater.Repository.DevOps;
 using Microsoft.Extensions.DependencyInjection;
