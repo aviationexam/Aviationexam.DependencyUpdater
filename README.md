@@ -40,14 +40,13 @@ dotnet tool install --global Aviationexam.DependencyUpdater --prerelease --add-s
 
 ### Azure DevOps
 
-Run the tool from your terminal:
+Run the tool from your terminal using the `AzureDevOps` subcommand:
 
 ```sh
-dotnet dependency-updater \
+dotnet dependency-updater AzureDevOps \
   --directory "/path/to/repo" \
   --git-username "<git-username>" \
   --git-password "<git-password-or-token>" \
-  --platform AzureDevOps \
   --azure-organization "<azure-devops-org>" \
   --azure-project <project-id> \
   --azure-repository <repository-id> \
@@ -64,14 +63,13 @@ dotnet dependency-updater \
 
 ### GitHub
 
-GitHub support is planned but not yet implemented:
+GitHub support is planned but not yet implemented. Once implemented, usage will be:
 
 ```sh
-dotnet dependency-updater \
+dotnet dependency-updater GitHub \
   --directory "/path/to/repo" \
   --git-username "<git-username>" \
   --git-password "<git-password-or-token>" \
-  --platform GitHub \
   --github-owner "<owner>" \
   --github-repository "<repo>" \
   --github-token "<github-token>"
@@ -81,17 +79,18 @@ dotnet dependency-updater \
 
 ### Common Arguments
 
+Available for all platform subcommands:
+
 | Argument       | Required | Default | Description                                                     |
 |----------------|:--------:|:-------:|-----------------------------------------------------------------|
 | --directory    |    Y     |   cwd   | Path to the local Git repository                                |
 | --git-username |    N     |   ''    | Username for remote Git authentication                          |
 | --git-password |    Y     |         | Password or personal access token for remote Git authentication |
-| --platform     |    Y     |         | Repository platform: `AzureDevOps` or `GitHub`                  |
 | --reset-cache  |    N     |  false  | Clears the internal dependency cache before processing updates  |
 
 ### Azure DevOps Arguments
 
-Required when `--platform AzureDevOps`:
+Required when using the `AzureDevOps` subcommand:
 
 | Argument                          | Required | Description                                                                                |
 |-----------------------------------|:--------:|--------------------------------------------------------------------------------------------|
@@ -109,7 +108,7 @@ Required when `--platform AzureDevOps`:
 
 ### GitHub Arguments
 
-Required when `--platform GitHub` (not yet implemented):
+Required when using the `GitHub` subcommand (not yet implemented):
 
 | Argument           | Required | Description                             |
 |--------------------|:--------:|-----------------------------------------|

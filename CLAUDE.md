@@ -33,14 +33,13 @@ dotnet format
 ```
 
 ### Run the tool locally
-The main project `Aviationexam.DependencyUpdater` is the CLI entry point. Run with:
+The main project `Aviationexam.DependencyUpdater` is the CLI entry point. Run using platform-specific subcommands:
 
 **Azure DevOps:**
 ```bash
-dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- \
+dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- AzureDevOps \
   --directory "/path/to/repo" \
   --git-password "<token>" \
-  --platform AzureDevOps \
   --azure-organization "<org>" \
   --azure-project "<project-id>" \
   --azure-repository "<repo-id>" \
@@ -54,10 +53,9 @@ dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyU
 
 **GitHub:** *(not yet implemented)*
 ```bash
-dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- \
+dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- GitHub \
   --directory "/path/to/repo" \
   --git-password "<token>" \
-  --platform GitHub \
   --github-owner "<owner>" \
   --github-repository "<repo>" \
   --github-token "<token>"
@@ -94,9 +92,9 @@ The solution uses a modular architecture with clear separation of concerns:
 The application uses Microsoft.Extensions.DependencyInjection throughout. Service registration is organized via `ServiceCollectionExtensions` classes in each project.
 
 ### Configuration Binding
-Command-line arguments are bound to configuration objects using custom binders (e.g., `SourceConfigurationBinder`, `AzureDevOpsConfigurationBinder`) in Program.cs. The `ServiceCollectionExtensions` class uses C# 13's extension block syntax to provide fluent binder registration methods.
+Command-line arguments are bound to configuration objects using custom binders (e.g., `SourceConfigurationBinder`, `AzureDevOpsConfigurationBinder`). The `ServiceCollectionExtensions` class uses C# 13's extension block syntax to provide fluent binder registration methods.
 
-Platform selection uses `Option<EPlatformSelection>` which leverages System.CommandLine's automatic enum parsing. Users specify platform values as enum names (e.g., `--platform AzureDevOps` or `--platform GitHub`). All CLI options explicitly define `Arity = ArgumentArity.ExactlyOne` for clear argument expectations.
+Platform selection is handled via subcommands (`AzureDevOps` or `GitHub`), with each platform having its own Command class that encapsulates platform-specific options and configuration. Common configuration is shared across platforms via the `.BindCommonConfiguration()` extension method. All CLI options explicitly define `Arity = ArgumentArity.ExactlyOne` for clear argument expectations.
 
 ### VCS Abstraction
 Git operations are abstracted through `ISourceVersioningFactory` and `ISourceVersioningWorkspace` interfaces, with implementations in the Vcs.Git project.
@@ -114,10 +112,11 @@ Git operations are abstracted through `ISourceVersioningFactory` and `ISourceVer
 The tool supports multiple repository platforms through a clean abstraction layer:
 
 **Platform Selection:**
-- Required `--platform` CLI argument accepts enum values: `AzureDevOps` or `GitHub`
-- Platform-specific configuration arguments (prefixed with `--azure-*` or `--github-*`)
+- Platform is selected via subcommands: `AzureDevOps` or `GitHub`
+- Each platform has its own Command class in the `Commands` namespace (e.g., `AzureDevOpsCommand`, `GitHubCommand`)
+- Platform-specific configuration arguments are scoped to their respective subcommands (prefixed with `--azure-*` or `--github-*`)
 - Platform selection enum: `EPlatformSelection` with members `AzureDevOps`, `GitHub`
-- System.CommandLine automatically parses enum values from command line
+- Command classes inherit from `System.CommandLine.Command` and encapsulate their options and service configuration
 
 **Core Abstractions** (in `Aviationexam.DependencyUpdater.Interfaces.Repository`):
 - `IRepositoryClient` - Platform-agnostic interface for pull request operations
@@ -206,7 +205,7 @@ To add support for a new platform (e.g., GitHub):
 2. **Create Platform Project**: Create `Aviationexam.DependencyUpdater.Repository.<Platform>` project
 3. **Implement Configuration**: Create configuration class implementing `IRepositoryPlatformConfiguration`
    - Implement `Platform` property to return the correct enum value (e.g., `EPlatformSelection.GitHub`)
-   - Use `Azure` prefix for Azure-specific configs, appropriate prefix for other platforms
+   - Use appropriate prefix for platform-specific configs (e.g., `Azure` for Azure DevOps, `GitHub` for GitHub)
 4. **Implement Clients**:
    - Implement `IRepositoryClient` for PR operations
    - Optionally implement `IPackageFeedClient` if the platform has package feed features
@@ -215,8 +214,16 @@ To add support for a new platform (e.g., GitHub):
    .AddKeyedScoped<IRepositoryClient, RepositoryGitHubClient>(EPlatformSelection.GitHub)
    .AddKeyedScoped<IPackageFeedClient, GitHubPackageFeedClient>(EPlatformSelection.GitHub) // if applicable
    ```
-6. **Create CLI Arguments**: Add platform-specific options to Program.cs (e.g., `--github-*`)
+6. **Create Command Class**: Create `Commands/<Platform>Command.cs`:
+   - Inherit from `System.CommandLine.Command`
+   - Base constructor call: `base(nameof(EPlatformSelection.<Platform>), "<description>")`
+   - Declare platform-specific options as private fields
+   - Initialize and add options in constructor via `Options.Add()`
+   - Implement `ConfigureServices(IServiceCollection, ParseResult, ...)` method to set up DI bindings
 7. **Create Configuration Binder**: Create binder to map CLI arguments to configuration object
-8. **Wire Up in Program.cs**: Add platform-specific service registration call in service collection setup
+8. **Wire Up in Program.cs**:
+   - Instantiate the command class
+   - Call `SetAction(DefaultCommandHandler.GetHandler(...))` with service configuration
+   - Add subcommand to root command via `rootCommand.Subcommands.Add()`
 
-The keyed services pattern automatically resolves the correct implementation at runtime based on the configuration's `Platform` property. System.CommandLine handles enum parsing automatically - no custom parser needed.
+The keyed services pattern automatically resolves the correct implementation at runtime based on the configuration's `Platform` property. The command pattern keeps platform-specific CLI options organized in their own classes.
