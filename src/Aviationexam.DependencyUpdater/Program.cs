@@ -53,15 +53,15 @@ var rootCommand = new RootCommand("Dependency updater tool that processes depend
 var azureDevOpsCommand = new AzureDevOpsCommand();
 var githubCommand = new GitHubCommand();
 
-azureDevOpsCommand.SetAction(DefaultCommandHandler.GetHandler((serviceCollection, parseResult) =>
-{
-    azureDevOpsCommand.ConfigureServices(serviceCollection, parseResult, directory, gitUsernameArgument, gitPasswordArgument, resetCache);
-}));
+azureDevOpsCommand.SetAction(DefaultCommandHandler.GetHandler((serviceCollection, parseResult) => azureDevOpsCommand
+    .ConfigureServices(serviceCollection, parseResult)
+    .BindCommonConfiguration(parseResult, directory, gitUsernameArgument, gitPasswordArgument, resetCache)
+));
 
-githubCommand.SetAction(DefaultCommandHandler.GetHandler((serviceCollection, parseResult) =>
-{
-    githubCommand.ConfigureServices(serviceCollection, parseResult, directory, gitUsernameArgument, gitPasswordArgument, resetCache);
-}));
+githubCommand.SetAction(DefaultCommandHandler.GetHandler((serviceCollection, parseResult) => githubCommand
+    .ConfigureServices(serviceCollection, parseResult)
+    .BindCommonConfiguration(parseResult, directory, gitUsernameArgument, gitPasswordArgument, resetCache)
+));
 
 rootCommand.Subcommands.Add(azureDevOpsCommand);
 rootCommand.Subcommands.Add(githubCommand);
