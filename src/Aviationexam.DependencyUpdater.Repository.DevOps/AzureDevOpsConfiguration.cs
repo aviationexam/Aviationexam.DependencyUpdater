@@ -3,9 +3,9 @@ using System;
 
 namespace Aviationexam.DependencyUpdater.Repository.DevOps;
 
-public sealed class AzureDevOpsConfiguration : RepositoryPlatformConfiguration
+public sealed class AzureDevOpsConfiguration : IRepositoryPlatformConfiguration
 {
-    public override string PlatformName => "azure-devops";
+    public static string PlatformName => "azure-devops";
 
     public Uri OrganizationEndpoint => new($"https://dev.azure.com/{Organization}", UriKind.Absolute);
 
