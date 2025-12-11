@@ -1,5 +1,4 @@
 using Aviationexam.DependencyUpdater.Repository.Abstractions;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ZLinq;
