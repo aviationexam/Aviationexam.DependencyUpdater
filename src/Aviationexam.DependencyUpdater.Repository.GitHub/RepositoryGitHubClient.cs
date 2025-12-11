@@ -1,6 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Constants;
 using Aviationexam.DependencyUpdater.Interfaces.Repository;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Octokit;
 using Polly;
@@ -16,6 +17,7 @@ namespace Aviationexam.DependencyUpdater.Repository.GitHub;
 public class RepositoryGitHubClient(
     GitHubConfiguration gitHubConfiguration,
     IGitHubClient gitHubClient,
+    [FromKeyedServices($"{nameof(IGitHubClient.PullRequest.Create)}-pipeline")]
     ResiliencePipeline<Octokit.PullRequest> createPullRequestAsyncResiliencePipeline,
     ILogger<RepositoryGitHubClient> logger
 ) : IRepositoryClient
