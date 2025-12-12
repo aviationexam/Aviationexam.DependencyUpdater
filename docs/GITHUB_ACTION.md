@@ -498,15 +498,15 @@ on:
 
 ## Comparison with Dependabot
 
-| Feature | Aviationexam.DependencyUpdater | GitHub Dependabot |
-|---------|-------------------------------|-------------------|
-| NuGet Support | ✅ Yes | ✅ Yes |
-| Custom Grouping | ✅ Yes | ✅ Yes |
-| Ignore Rules | ✅ Yes | ✅ Yes |
-| Private Feeds | ✅ Yes (via nuget.config) | ⚠️ Limited |
-| Submodules | ✅ Yes | ❌ No |
-| Self-Hosted | ✅ Yes (GitHub Actions) | ❌ No |
-| Configuration | Dependabot v2 YAML | Dependabot v2 YAML |
+| Feature         | Aviationexam.DependencyUpdater  | GitHub Dependabot  |
+|-----------------|---------------------------------|--------------------|
+| NuGet Support   | ✅ Yes                           | ✅ Yes              |
+| Custom Grouping | ✅ Yes                           | ✅ Yes              |
+| Ignore Rules    | ✅ Yes                           | ✅ Yes              |
+| Private Feeds   | ✅ Yes (via nuget.config)        | ⚠️ Limited         |
+| Submodules      | ✅ Yes                           | ❌ No               |
+| Self-Hosted     | ✅ Yes (GitHub Actions)          | ❌ No               |
+| Configuration   | Dependabot v2 YAML              | Dependabot v2 YAML |
 
 ## Resources
 
