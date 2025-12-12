@@ -10,7 +10,7 @@ on:
   # Run on a schedule (every day at 8am UTC)
   schedule:
     - cron: '0 8 * * *'
-  
+
   # Allow manual triggering
   workflow_dispatch:
 
@@ -26,12 +26,12 @@ jobs:
     # For private registry authentication, set environment variables at job level:
     # env:
     #   DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_PAT }}
-    
+
     steps:
       # Checkout the repository
       - name: Checkout repository
-        uses: actions/checkout@v4
-      
+        uses: actions/checkout@v6
+
       # Run the dependency updater
       # Requires .github/updater.yml configuration file
       - name: Update dependencies
