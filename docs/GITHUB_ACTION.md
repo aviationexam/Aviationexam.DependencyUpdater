@@ -6,7 +6,13 @@ This document explains how to use Aviationexam.DependencyUpdater as a GitHub Act
 
 ### 1. Create Configuration File
 
-Create a configuration file at `.github/updater.yml` or `.github/dependabot.yml` in your repository. This file follows the [Dependabot v2 configuration schema](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file).
+Create a configuration file at `.github/updater.yml` (preferred) or `.github/dependabot.yml` (fallback) in your repository. The configuration is based on the [Dependabot v2 schema](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file) with additional custom fields.
+
+**Configuration file discovery order:**
+1. `.github/updater.yml` (preferred)
+2. `.azuredevops/updater.yml`
+3. `.github/dependabot.yml` (fallback)
+4. `.azuredevops/dependabot.yml` (fallback)
 
 **Example configuration:**
 
@@ -15,8 +21,35 @@ version: 2
 updates:
   - package-ecosystem: "nuget"
     directory: "/"
-    schedule:
-      interval: "weekly"
+    
+    # Optional: Target specific framework for updates
+    targetFramework: "net9.0"
+    
+    # Optional: Custom commit author (defaults to GitHub Actions bot)
+    commit-author: "DependencyBot"
+    commit-author-email: "bot@example.com"
+    
+    # Optional: Reviewers to assign to PRs
+    reviewers:
+      - "tech-lead"
+      - "team-reviewer"
+    
+    # Optional: Execute dotnet restore (default: true)
+    execute-restore: true
+    
+    # Optional: Custom restore directory
+    restore-directory: "./src"
+    
+    # Optional: Fallback NuGet registries
+    fallback-registries:
+      nuget-org: "https://api.nuget.org/v3/index.json"
+    
+    # Optional: Update submodules
+    update-submodules:
+      - path: "submodules/shared-lib"
+        branch: "main"
+    
+    # Group related packages into a single PR
     groups:
       # Group all patch updates together
       patch-updates:
@@ -26,6 +59,8 @@ updates:
       microsoft-extensions:
         patterns:
           - "Microsoft.Extensions.*"
+    
+    # Ignore specific dependencies or version ranges
     ignore:
       # Ignore major version updates for a specific package
       - dependency-name: "Newtonsoft.Json"
@@ -78,24 +113,15 @@ All inputs are optional and have sensible defaults:
 | Input | Description | Default | Required |
 |-------|-------------|---------|----------|
 | `github-token` | GitHub token for authentication | `${{ github.token }}` | No |
-| `config-file` | Path to updater configuration file | Auto-detected (`.github/updater.yml` or `.github/dependabot.yml`) | No |
 | `directory` | Repository directory to process | `${{ github.workspace }}` | No |
 | `reset-cache` | Clear dependency cache before processing | `false` | No |
 | `owner` | GitHub repository owner | `${{ github.repository_owner }}` | No |
 | `repository` | GitHub repository name | `${{ github.event.repository.name }}` | No |
 | `dotnet-version` | .NET SDK version to use | `9.0.x` | No |
 
+**Note:** Configuration files are automatically discovered. No need to specify the path.
+
 ### Advanced Examples
-
-#### Custom Configuration File Location
-
-```yaml
-- name: Update dependencies
-  uses: aviationexam/Aviationexam.DependencyUpdater@v1
-  with:
-    github-token: ${{ secrets.GITHUB_TOKEN }}
-    config-file: .config/dependency-updates.yml
-```
 
 #### Clear Cache on Each Run
 
@@ -132,27 +158,25 @@ on:
     - cron: '0 9 1 * *'
 ```
 
-#### Multiple Jobs for Different Directories
+#### Process Different Directories
+
+If you have multiple configuration entries in your `.github/updater.yml` with different directories, they will all be processed in a single run:
 
 ```yaml
-jobs:
-  update-main-project:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: aviationexam/Aviationexam.DependencyUpdater@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          config-file: .github/updater-main.yml
+# .github/updater.yml
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/src/MainProject"
+    groups:
+      all-updates:
+        patterns: ["*"]
   
-  update-tools:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: aviationexam/Aviationexam.DependencyUpdater@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          config-file: .github/updater-tools.yml
+  - package-ecosystem: "nuget"
+    directory: "/tools"
+    groups:
+      tool-updates:
+        patterns: ["*"]
 ```
 
 ## How It Works
@@ -186,7 +210,7 @@ permissions:
 
 ## Configuration File Format
 
-The configuration file follows the Dependabot v2 YAML schema. Here are the most commonly used options:
+The configuration file is based on the Dependabot v2 YAML schema with additional custom fields. **Note:** The `schedule` section is not used - the action runs based on your GitHub Actions workflow schedule.
 
 ### Basic Structure
 
@@ -194,9 +218,77 @@ The configuration file follows the Dependabot v2 YAML schema. Here are the most 
 version: 2
 updates:
   - package-ecosystem: "nuget"  # Currently only "nuget" is supported
-    directory: "/"               # Directory containing packages
-    schedule:
-      interval: "daily"          # daily, weekly, or monthly
+    directory: "/"               # Directory containing packages (relative to repository root)
+```
+
+### Custom Fields
+
+This tool extends the standard Dependabot schema with additional fields:
+
+#### `targetFramework` (optional)
+Target a specific .NET framework for updates:
+```yaml
+targetFramework: "net9.0"
+```
+
+#### `commit-author` and `commit-author-email` (optional)
+Customize the commit author for dependency update commits:
+```yaml
+commit-author: "DependencyBot"
+commit-author-email: "bot@example.com"
+```
+Default: Uses GitHub Actions bot identity
+
+#### `reviewers` (optional)
+Assign reviewers to created pull requests:
+```yaml
+reviewers:
+  - "tech-lead"
+  - "team-member"
+```
+
+#### `execute-restore` (optional)
+Control whether `dotnet restore` is executed before analyzing dependencies:
+```yaml
+execute-restore: true  # default: true
+```
+
+#### `restore-directory` (optional)
+Specify a custom directory for restore operations:
+```yaml
+restore-directory: "./src"
+```
+
+#### `fallback-registries` (optional)
+Define fallback NuGet registries as key-value pairs:
+```yaml
+fallback-registries:
+  nuget-org: "https://api.nuget.org/v3/index.json"
+  custom-feed: "https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json"
+```
+
+#### `update-submodules` (optional)
+Update Git submodules as part of the dependency update process:
+```yaml
+update-submodules:
+  - path: "submodules/shared-library"
+    branch: "main"
+  - path: "submodules/common-tools"
+    branch: "develop"
+```
+
+### Standard Dependabot Fields
+
+#### `registries` (optional)
+Define NuGet registries with authentication. Supports `nuget-feed-version` for specifying API version:
+```yaml
+registries:
+  my-private-feed:
+    type: nuget-feed
+    url: https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json
+    username: username
+    password: ${{ secrets.NUGET_TOKEN }}
+    nuget-feed-version: v3  # Custom field: v2 or v3
 ```
 
 ### Grouping Updates

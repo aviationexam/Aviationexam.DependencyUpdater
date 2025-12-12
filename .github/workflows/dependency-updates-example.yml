@@ -26,11 +26,10 @@ jobs:
         uses: actions/checkout@v4
       
       # Run the dependency updater
+      # Requires .github/updater.yml configuration file
       - name: Update dependencies
         uses: aviationexam/Aviationexam.DependencyUpdater@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          # Optional: specify config file path if not using default location
-          # config-file: .github/updater.yml
           # Optional: clear cache before processing
           # reset-cache: 'true'
