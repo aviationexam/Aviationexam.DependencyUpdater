@@ -235,7 +235,7 @@
         "dependencies": {
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
           "Corvus.Json.ExtendedTypes": "[4.4.1, )",
-          "Corvus.Json.SourceGenerator": "[4.4.1, )",
+          "Corvus.Json.SourceGenerator": "[4.4.2, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.1, )",
           "Yaml2JsonNode": "[2.4.0, )",
           "YamlDotNet": "[16.3.0, )"
@@ -272,9 +272,9 @@
       },
       "Corvus.Json.SourceGenerator": {
         "type": "CentralTransitive",
-        "requested": "[4.4.1, )",
-        "resolved": "4.4.1",
-        "contentHash": "gs6t6KDZ5XW1sM0GubN5IcXaqfiXze62DVrbfUVTbOOU3M50wrRaxvHde5f96ShjQfQHPDXNu2UA9IrFbvjuaQ=="
+        "requested": "[4.4.2, )",
+        "resolved": "4.4.2",
+        "contentHash": "BSoYhHu9rapbxMh1pyuWDGQ+o9cl4HhxJQ0A51fKcCfr0clJp0X4M7y3dPm02lw86WZnItrGgphTVjBGkuovEw=="
       },
       "Corvus.UriTemplates": {
         "type": "CentralTransitive",
