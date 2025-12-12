@@ -85,7 +85,7 @@ updates:
 
 ### 2. Create Workflow File
 
-Create a workflow file at `.github/workflows/dependency-updates.yml`:
+Create a workflow file at `.github/workflows/dependency-updates.yml` (see [example](dependency-updates-example.yml)):
 
 ```yaml
 name: Dependency Updates
