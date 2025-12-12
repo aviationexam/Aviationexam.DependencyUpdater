@@ -53,14 +53,11 @@ updates:
     
     # Group related packages into a single PR
     groups:
-      # Group all patch updates together
-      patch-updates:
-        update-types:
-          - "patch"
-      # Group specific packages
+      # Group specific packages by pattern
       microsoft-extensions:
         patterns:
           - "Microsoft.Extensions.*"
+          - "System.*"
     
     # Ignore specific dependencies or version ranges
     ignore:
@@ -322,7 +319,7 @@ updates:
 
 ### Grouping Updates
 
-Group related packages into a single pull request:
+Group related packages into a single pull request using patterns:
 
 ```yaml
 groups:
@@ -332,12 +329,13 @@ groups:
       - "Microsoft.*"
       - "System.*"
   
-  # Group by update type
-  minor-and-patch:
-    update-types:
-      - "minor"
-      - "patch"
+  # Group all dependencies together
+  all-dependencies:
+    patterns:
+      - "*"
 ```
+
+**Note:** The `update-types` field in groups is not supported. Use `patterns` to group packages.
 
 ### Ignoring Dependencies
 

@@ -7,9 +7,9 @@
 name: Dependency Updates
 
 on:
-  # Run on a schedule (every Monday at 8am UTC)
+  # Run on a schedule (every day at 8am UTC)
   schedule:
-    - cron: '0 8 * * 1'
+    - cron: '0 8 * * *'
   
   # Allow manual triggering
   workflow_dispatch:
