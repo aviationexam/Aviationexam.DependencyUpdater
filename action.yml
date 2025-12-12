@@ -71,6 +71,7 @@ runs:
       run: |
         ARGS=(
           "--directory" "${{ inputs.directory }}"
+          "--git-username" "x-access-token"
           "--git-password" "${{ inputs.github-token }}"
         )
         
