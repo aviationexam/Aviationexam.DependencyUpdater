@@ -44,6 +44,9 @@ updates:
       nuget-dependencies:
         patterns:
           - "NuGet.*"
+      corvus-json-dependencies:
+        patterns:
+          - "Corvus.Json.*"
     ignore:
       - dependency-name: "Microsoft.*"
         update-types:
