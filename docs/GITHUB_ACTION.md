@@ -120,11 +120,11 @@ All inputs are optional and have sensible defaults:
 | `owner`          | GitHub repository owner                                             | `${{ github.repository_owner }}`      | No       |
 | `repository`     | GitHub repository name                                              | `${{ github.event.repository.name }}` | No       |
 | `dotnet-version` | .NET SDK version to use (use `skip` to skip .NET setup)             | `10.0.x`                              | No       |
-| `tool-version`   | Tool version to install (`latest` or specific version like `0.4.0`) | `0.4.0`                               | No       |
+| `tool-version` | Tool version to install (`latest` or specific version like `0.4.0`) | `latest` | No |
 
-**Notes:**
+**Notes:** 
 - Configuration files are automatically discovered. No need to specify the path.
-- The `tool-version` defaults to the current release version matching the action tag. Use `latest` to always install the newest stable release.
+- The `tool-version` defaults to `latest` which installs the newest stable release. You can pin to a specific version (e.g., `0.4.0`) for reproducibility.
 
 ### Advanced Examples
 

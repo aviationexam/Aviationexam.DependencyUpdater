@@ -40,7 +40,7 @@ inputs:
   tool-version:
     description: 'Version of Aviationexam.DependencyUpdater tool to install (use "latest" for latest stable version, or specify version like "0.4.0")'
     required: false
-    default: '0.4.0'
+    default: 'latest'
 
 runs:
   using: 'composite'
