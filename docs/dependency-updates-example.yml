@@ -4,7 +4,7 @@
 # Note: The 'schedule' section below controls when this GitHub Action runs.
 # The tool does NOT use the 'schedule' section from .github/updater.yml configuration.
 
-name: Dependency Updates
+name: 'Updater: Dependency Updates'
 
 on:
   # Run on a schedule (every day at 8am UTC)
