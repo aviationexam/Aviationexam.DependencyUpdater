@@ -22,7 +22,7 @@ updates:
   - package-ecosystem: "nuget"
     directory: "/"
     
-    # Optional: Target specific framework for updates
+    # Optional: Fallback framework when not auto-detected
     targetFramework: "net9.0"
     
     # Optional: Custom commit author (defaults to GitHub Actions bot)
@@ -226,7 +226,7 @@ updates:
 This tool extends the standard Dependabot schema with additional fields:
 
 #### `targetFramework` (optional)
-Target a specific .NET framework for updates:
+Specifies which .NET framework to use when there's no other hint about the framework version in the project files. This serves as a fallback when the tool cannot automatically determine the target framework:
 ```yaml
 targetFramework: "net9.0"
 ```
