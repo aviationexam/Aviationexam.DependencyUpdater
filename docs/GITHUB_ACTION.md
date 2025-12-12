@@ -40,9 +40,11 @@ updates:
     # Optional: Custom restore directory
     restore-directory: "./src"
     
-    # Optional: Fallback NuGet registries
+    # Optional: Define registries and their URLs
+    registries:
+      - nuget-feed
     fallback-registries:
-      nuget-org: "https://api.nuget.org/v3/index.json"
+      nuget-feed: "https://api.nuget.org/v3/index.json"
     
     # Optional: Update submodules
     update-submodules:
@@ -259,13 +261,20 @@ Specify a custom directory for restore operations:
 restore-directory: "./src"
 ```
 
-#### `fallback-registries` (optional)
-Define fallback NuGet registries as key-value pairs:
+#### `registries` and `fallback-registries`
+Define registries to use for package resolution. The `registries` field lists registry names, and `fallback-registries` maps those names to URLs:
+
 ```yaml
+registries:
+  - nuget-feed
+  - custom-feed
+
 fallback-registries:
-  nuget-org: "https://api.nuget.org/v3/index.json"
+  nuget-feed: "https://api.nuget.org/v3/index.json"
   custom-feed: "https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json"
 ```
+
+The tool will use registries in the order listed, with `fallback-registries` providing the actual feed URLs.
 
 #### `update-submodules` (optional)
 Update Git submodules as part of the dependency update process:
@@ -279,8 +288,22 @@ update-submodules:
 
 ### Standard Dependabot Fields
 
-#### `registries` (optional)
-Define NuGet registries with authentication. Supports `nuget-feed-version` for specifying API version:
+#### `registries` (two formats)
+
+**Format 1: Simple list with fallback-registries (recommended for custom feeds)**
+```yaml
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/"
+    registries:
+      - nuget-org
+      - custom-feed
+    fallback-registries:
+      nuget-org: "https://api.nuget.org/v3/index.json"
+      custom-feed: "https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json"
+```
+
+**Format 2: Standard Dependabot registries definition (for authenticated feeds)**
 ```yaml
 registries:
   my-private-feed:
@@ -289,6 +312,12 @@ registries:
     username: username
     password: ${{ secrets.NUGET_TOKEN }}
     nuget-feed-version: v3  # Custom field: v2 or v3
+
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/"
+    registries:
+      - my-private-feed
 ```
 
 ### Grouping Updates
