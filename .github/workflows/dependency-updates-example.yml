@@ -1,5 +1,8 @@
 # Example workflow for running Aviationexam Dependency Updater
 # Copy this file to your repository's .github/workflows/ directory and customize as needed
+#
+# Note: The 'schedule' section below controls when this GitHub Action runs.
+# The tool does NOT use the 'schedule' section from .github/updater.yml configuration.
 
 name: Dependency Updates
 
