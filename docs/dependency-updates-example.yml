@@ -4,7 +4,7 @@
 # Note: The 'schedule' section below controls when this GitHub Action runs.
 # The tool does NOT use the 'schedule' section from .github/updater.yml configuration.
 
-name: Dependency Updates
+name: 'Updater: Dependency Updates'
 
 on:
   # Run on a schedule (every day at 8am UTC)
@@ -28,9 +28,11 @@ jobs:
     #   DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_PAT }}
 
     steps:
-      # Checkout the repository
+      # Checkout the repository with full history (required for git operations)
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Full clone required for rebase and fetch operations
 
       # Run the dependency updater
       # Requires .github/updater.yml configuration file

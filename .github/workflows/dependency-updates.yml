@@ -1,4 +1,4 @@
-name: Dependency Updates
+name: 'Updater: Dependency Updates'
 
 on:
   schedule:
@@ -19,9 +19,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
+      # Checkout the repository with full history for rebasing
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Full clone required for git operations (rebase, fetch)
 
       # Run the dependency updater using the action from this repository
       - name: Update dependencies
