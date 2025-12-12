@@ -113,7 +113,7 @@ All inputs are optional and have sensible defaults:
 | `reset-cache` | Clear dependency cache before processing | `false` | No |
 | `owner` | GitHub repository owner | `${{ github.repository_owner }}` | No |
 | `repository` | GitHub repository name | `${{ github.event.repository.name }}` | No |
-| `dotnet-version` | .NET SDK version to use | `10.0.x` | No |
+| `dotnet-version` | .NET SDK version to use (use `skip` to skip .NET setup) | `10.0.x` | No |
 | `tool-version` | Tool version to install (`latest` or specific version like `0.4.0`) | `0.4.0` | No |
 
 **Notes:** 
@@ -140,6 +140,25 @@ All inputs are optional and have sensible defaults:
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     dotnet-version: '10.0.x'  # Use .NET 10
+```
+
+#### Skip .NET Setup (Already Installed)
+
+If .NET SDK is already installed by a previous step or available on the runner:
+
+```yaml
+- name: Setup .NET (custom configuration)
+  uses: actions/setup-dotnet@v5
+  with:
+    dotnet-version: |
+      9.0.x
+      10.0.x
+
+- name: Update dependencies
+  uses: aviationexam/Aviationexam.DependencyUpdater@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    dotnet-version: 'skip'  # Skip .NET setup, already configured
 ```
 
 #### Use Specific Tool Version
