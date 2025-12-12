@@ -7,12 +7,20 @@ public static class BranchNameGenerator
     public static string GetBranchNamePrefix(
         string? sourceDirectory,
         string updater
-    ) => string.Join(
-        '/',
-        UpdaterBranchPrefix,
-        updater,
-        sourceDirectory ?? "no-subdirectory"
-    );
+    )
+    {
+        if (sourceDirectory is "/")
+        {
+            sourceDirectory = null;
+        }
+
+        return string.Join(
+            '/',
+            UpdaterBranchPrefix,
+            updater,
+            sourceDirectory ?? "no-subdirectory"
+        );
+    }
 
     public static string GetBranchName(
         GroupEntry groupEntry,

@@ -31,7 +31,10 @@ public sealed class PullRequestManager(
                 || !knownPullRequests.AsValueEnumerable().Contains(pullRequest.PullRequestId)
             )
             {
-                logger.LogDebug("Abandoning pull request {PullRequestId}", pullRequest.PullRequestId);
+                if (logger.IsEnabled(LogLevel.Debug))
+                {
+                    logger.LogDebug("Abandoning pull request {PullRequestId}", pullRequest.PullRequestId);
+                }
 
                 await repositoryClient.AbandonPullRequestAsync(pullRequest, cancellationToken);
             }
