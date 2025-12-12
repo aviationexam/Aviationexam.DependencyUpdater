@@ -111,15 +111,15 @@ Commit both files to your repository and push to GitHub. The action will run acc
 
 All inputs are optional and have sensible defaults:
 
-| Input | Description | Default | Required |
-|-------|-------------|---------|----------|
-| `github-token` | GitHub token for authentication | `${{ github.token }}` | No |
-| `directory` | Repository directory to process | `${{ github.workspace }}` | No |
-| `reset-cache` | Clear dependency cache before processing | `false` | No |
-| `owner` | GitHub repository owner | `${{ github.repository_owner }}` | No |
-| `repository` | GitHub repository name | `${{ github.event.repository.name }}` | No |
-| `dotnet-version` | .NET SDK version to use (use `skip` to skip .NET setup) | `10.0.x` | No |
-| `tool-version` | Tool version to install (`latest` or specific version like `0.4.0`) | `0.4.0` | No |
+| Input            | Description                                                         | Default                               | Required |
+|------------------|---------------------------------------------------------------------|---------------------------------------|----------|
+| `github-token`   | GitHub token for authentication                                     | `${{ github.token }}`                 | No       |
+| `directory`      | Repository directory to process                                     | `${{ github.workspace }}`             | No       |
+| `reset-cache`    | Clear dependency cache before processing                            | `false`                               | No       |
+| `owner`          | GitHub repository owner                                             | `${{ github.repository_owner }}`      | No       |
+| `repository`     | GitHub repository name                                              | `${{ github.event.repository.name }}` | No       |
+| `dotnet-version` | .NET SDK version to use (use `skip` to skip .NET setup)             | `10.0.x`                              | No       |
+| `tool-version`   | Tool version to install (`latest` or specific version like `0.4.0`) | `0.4.0`                               | No       |
 
 **Notes:** 
 - Configuration files are automatically discovered. No need to specify the path.
