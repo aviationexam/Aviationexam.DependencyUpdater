@@ -1,0 +1,88 @@
+name: 'Aviationexam Dependency Updater'
+description: 'Automatically update NuGet dependencies in your repository'
+author: 'Aviationexam'
+
+branding:
+  icon: 'package'
+  color: 'blue'
+
+inputs:
+  github-token:
+    description: 'GitHub token for authentication (defaults to GITHUB_TOKEN)'
+    required: false
+    default: ${{ github.token }}
+  
+  directory:
+    description: 'Repository directory to process (defaults to workspace root)'
+    required: false
+    default: ${{ github.workspace }}
+  
+  reset-cache:
+    description: 'Clear dependency cache before processing'
+    required: false
+    default: 'false'
+  
+  owner:
+    description: 'GitHub repository owner (defaults to current repository owner)'
+    required: false
+    default: ${{ github.repository_owner }}
+  
+  repository:
+    description: 'GitHub repository name (defaults to current repository name)'
+    required: false
+    default: ${{ github.event.repository.name }}
+  
+  dotnet-version:
+    description: '.NET SDK version to use (use "skip" to skip .NET setup if already installed)'
+    required: false
+    default: '10.0.x'
+  
+  tool-version:
+    description: 'Version of Aviationexam.DependencyUpdater tool to install (use "latest" for latest stable version, or specify version like "0.4.0")'
+    required: false
+    default: 'latest'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup .NET
+      if: inputs.dotnet-version != 'skip'
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+    
+    - name: Install Aviationexam.DependencyUpdater
+      shell: bash
+      run: |
+        TOOL_VERSION="${{ inputs.tool-version }}"
+        
+        if [ "$TOOL_VERSION" = "latest" ]; then
+          echo "Installing latest version of Aviationexam.DependencyUpdater..."
+          dotnet tool install --global Aviationexam.DependencyUpdater
+        else
+          echo "Installing Aviationexam.DependencyUpdater version $TOOL_VERSION..."
+          dotnet tool install --global Aviationexam.DependencyUpdater --version "$TOOL_VERSION"
+        fi
+    
+    - name: Run Dependency Updater
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: |
+        ARGS=(
+          "--directory" "${{ inputs.directory }}"
+          "--git-password" "${{ inputs.github-token }}"
+        )
+        
+        if [ "${{ inputs.reset-cache }}" = "true" ]; then
+          ARGS+=("--reset-cache")
+        fi
+        
+        ARGS+=(
+          "GitHub"
+          "--owner" "${{ inputs.owner }}"
+          "--repository" "${{ inputs.repository }}"
+          "--token" "${{ inputs.github-token }}"
+        )
+        
+        dotnet dependency-updater "${ARGS[@]}"

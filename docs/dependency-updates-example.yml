@@ -1,0 +1,42 @@
+# Example workflow for running Aviationexam Dependency Updater
+# Copy this file to your repository's .github/workflows/ directory and customize as needed
+#
+# Note: The 'schedule' section below controls when this GitHub Action runs.
+# The tool does NOT use the 'schedule' section from .github/updater.yml configuration.
+
+name: Dependency Updates
+
+on:
+  # Run on a schedule (every day at 8am UTC)
+  schedule:
+    - cron: '0 8 * * *'
+
+  # Allow manual triggering
+  workflow_dispatch:
+
+# Required permissions for the action to work
+permissions:
+  contents: write      # Required to create branches and commits
+  pull-requests: write # Required to create pull requests
+  issues: write        # Required to create and apply labels to pull requests
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    # For private registry authentication, set environment variables at job level:
+    # env:
+    #   DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_PAT }}
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # Run the dependency updater
+      # Requires .github/updater.yml configuration file
+      - name: Update dependencies
+        uses: aviationexam/Aviationexam.DependencyUpdater@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Optional: clear cache before processing
+          # reset-cache: 'true'
