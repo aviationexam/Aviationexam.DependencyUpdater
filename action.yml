@@ -33,9 +33,9 @@ inputs:
     default: ${{ github.event.repository.name }}
   
   dotnet-version:
-    description: '.NET SDK version to use (defaults to 9.0.x for compatibility)'
+    description: '.NET SDK version to use'
     required: false
-    default: '9.0.x'
+    default: '10.0.x'
 
 runs:
   using: 'composite'
