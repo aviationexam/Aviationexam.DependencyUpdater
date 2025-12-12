@@ -4,9 +4,14 @@ on:
   release:
     types: [created]
 
+# Only run for NuGet package releases (tags like v0.4.1, v1.0.0)
+# Exclude action releases (tags like action/v1, action/v2)
+
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # Skip if release tag starts with 'action/'
+    if: ${{ !startsWith(github.event.release.tag_name, 'action/') }}
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
     steps:
