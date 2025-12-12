@@ -18,6 +18,14 @@ Create a configuration file at `.github/updater.yml` (preferred) or `.github/dep
 
 ```yaml
 version: 2
+
+# Define registries at the root level
+registries:
+  nuget-org:
+    type: nuget-feed
+    url: https://api.nuget.org/v3/index.json
+    nuget-feed-version: V3
+
 updates:
   - package-ecosystem: "nuget"
     directory: "/"
@@ -40,11 +48,9 @@ updates:
     # Optional: Custom restore directory
     restore-directory: "./src"
     
-    # Optional: Define registries and their URLs
+    # Optional: Reference registries defined in root
     registries:
-      - nuget-feed
-    fallback-registries:
-      nuget-feed: "https://api.nuget.org/v3/index.json"
+      - nuget-org
     
     # Optional: Update submodules
     update-submodules:
@@ -258,20 +264,25 @@ Specify a custom directory for restore operations:
 restore-directory: "./src"
 ```
 
-#### `registries` and `fallback-registries`
-Define registries to use for package resolution. The `registries` field lists registry names, and `fallback-registries` maps those names to URLs:
+#### `registries` (in updates section)
+List of registry names to use for this update configuration. These reference registries defined at the root level:
 
 ```yaml
 registries:
-  - nuget-feed
+  - nuget-org
   - custom-feed
+```
 
+#### `fallback-registries` (custom field)
+Alternative way to define simple registry URLs directly in the update section without root-level registry definitions:
+
+```yaml
 fallback-registries:
   nuget-feed: "https://api.nuget.org/v3/index.json"
   custom-feed: "https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json"
 ```
 
-The tool will use registries in the order listed, with `fallback-registries` providing the actual feed URLs.
+Use `fallback-registries` when you need simple URL mappings without authentication or additional configuration.
 
 #### `update-submodules` (optional)
 Update Git submodules as part of the dependency update process:
@@ -285,37 +296,34 @@ update-submodules:
 
 ### Standard Dependabot Fields
 
-#### `registries` (two formats)
+#### Root-Level `registries`
+Define registries at the root level of the configuration file. Each registry can include authentication and custom settings:
 
-**Format 1: Simple list with fallback-registries (recommended for custom feeds)**
 ```yaml
-updates:
-  - package-ecosystem: "nuget"
-    directory: "/"
-    registries:
-      - nuget-org
-      - custom-feed
-    fallback-registries:
-      nuget-org: "https://api.nuget.org/v3/index.json"
-      custom-feed: "https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json"
-```
+version: 2
 
-**Format 2: Standard Dependabot registries definition (for authenticated feeds)**
-```yaml
 registries:
+  nuget-org:
+    type: nuget-feed
+    url: https://api.nuget.org/v3/index.json
+    nuget-feed-version: V3  # Custom field: V2 or V3
+  
   my-private-feed:
     type: nuget-feed
     url: https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json
     username: username
     password: ${{ secrets.NUGET_TOKEN }}
-    nuget-feed-version: v3  # Custom field: v2 or v3
+    nuget-feed-version: V3
 
 updates:
   - package-ecosystem: "nuget"
     directory: "/"
     registries:
+      - nuget-org
       - my-private-feed
 ```
+
+**Note:** The `nuget-feed-version` field (V2 or V3) is a custom extension to specify the NuGet API version.
 
 ### Grouping Updates
 
