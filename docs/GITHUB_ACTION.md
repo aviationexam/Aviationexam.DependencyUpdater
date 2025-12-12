@@ -6,9 +6,11 @@ This document explains how to use Aviationexam.DependencyUpdater as a GitHub Act
 
 ### 1. Create Configuration File
 
-Create a configuration file at `.github/updater.yml` (preferred) or `.github/dependabot.yml` (fallback) in your repository. The configuration is based on the [Dependabot v2 schema](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file) with additional custom fields.
+Create a configuration file at `.github/updater.yml` (preferred) or `.github/dependabot.yml` (fallback) in your repository. The configuration is based on
+the [Dependabot v2 schema](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file) with additional custom fields.
 
 **Configuration file discovery order:**
+
 1. `.github/updater.yml` (preferred)
 2. `.azuredevops/updater.yml`
 3. `.github/dependabot.yml` (fallback)
@@ -27,7 +29,7 @@ registries:
     url: https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json
     token: PAT:${{ DEVOPS_TOKEN }}  # Resolved from environment variable
     nuget-feed-version: V3
-  
+
   nuget-org:
     type: nuget-feed
     url: https://api.nuget.org/v3/index.json
@@ -78,7 +80,7 @@ updates:
     ignore:
       # Ignore major version updates for a specific package
       - dependency-name: "Newtonsoft.Json"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
 ```
 
 ### 2. Create Workflow File
@@ -120,9 +122,10 @@ All inputs are optional and have sensible defaults:
 | `owner`          | GitHub repository owner                                             | `${{ github.repository_owner }}`      | No       |
 | `repository`     | GitHub repository name                                              | `${{ github.event.repository.name }}` | No       |
 | `dotnet-version` | .NET SDK version to use (use `skip` to skip .NET setup)             | `10.0.x`                              | No       |
-| `tool-version` | Tool version to install (`latest` or specific version like `0.4.0`) | `latest` | No |
+| `tool-version`   | Tool version to install (`latest` or specific version like `0.4.0`) | `latest`                              | No       |
 
-**Notes:** 
+**Notes:**
+
 - Configuration files are automatically discovered. No need to specify the path.
 - The `tool-version` defaults to `latest` which installs the newest stable release. You can pin to a specific version (e.g., `0.4.0`) for reproducibility.
 
@@ -214,13 +217,13 @@ updates:
     directory: "/src/MainProject"
     groups:
       all-updates:
-        patterns: ["*"]
+        patterns: [ "*" ]
 
   - package-ecosystem: "nuget"
     directory: "/tools"
     groups:
       tool-updates:
-        patterns: ["*"]
+        patterns: [ "*" ]
 ```
 
 ## How It Works
@@ -232,6 +235,7 @@ The GitHub Action is implemented as a **composite action** that:
 3. Runs the tool with the GitHub platform configuration
 
 This approach provides:
+
 - **Fast startup** - No Docker image build required
 - **Transparency** - All steps visible in action logs
 - **Flexibility** - Easy to customize .NET SDK version
@@ -256,7 +260,8 @@ permissions:
 
 ## Configuration File Format
 
-The configuration file is based on the Dependabot v2 YAML schema with additional custom fields. **Note:** The `schedule` section is not used - the action runs based on your GitHub Actions workflow schedule.
+The configuration file is based on the Dependabot v2 YAML schema with additional custom fields. **Note:** The `schedule` section is not used - the action runs based on your GitHub Actions workflow
+schedule.
 
 ### Basic Structure
 
@@ -272,21 +277,29 @@ updates:
 This tool extends the standard Dependabot schema with additional fields:
 
 #### `targetFramework` (optional)
-Specifies which .NET framework to use when there's no other hint about the framework version in the project files. This serves as a fallback when the tool cannot automatically determine the target framework:
+
+Specifies which .NET framework to use when there's no other hint about the framework version in the project files. This serves as a fallback when the tool cannot automatically determine the target
+framework:
+
 ```yaml
 targetFramework: "net9.0"
 ```
 
 #### `commit-author` and `commit-author-email` (optional)
+
 Customize the commit author for dependency update commits:
+
 ```yaml
 commit-author: "DependencyBot"
 commit-author-email: "bot@example.com"
 ```
+
 Default: Uses GitHub Actions bot identity
 
 #### `reviewers` (optional)
+
 Assign reviewers to created pull requests:
+
 ```yaml
 reviewers:
   - "tech-lead"
@@ -294,13 +307,17 @@ reviewers:
 ```
 
 #### `execute-restore` (optional)
+
 Control whether `dotnet restore` is executed before analyzing dependencies:
+
 ```yaml
 execute-restore: true  # default: true
 ```
 
 #### `restore-directory` (optional)
+
 Specify a custom directory for restore operations:
+
 ```yaml
 restore-directory: "./src"
 ```
@@ -315,6 +332,7 @@ Both fields reference registry names defined at the root level:
 **Usage patterns:**
 
 1. **Private registries with public fallback** (most common):
+
 ```yaml
 registries:
   - my-private-feed  # Primary: private feed with auth
@@ -323,12 +341,14 @@ fallback-registries:
 ```
 
 2. **Only public registries**:
+
 ```yaml
 registries:
   - nuget-org
 ```
 
 3. **Multiple private registries with fallback**:
+
 ```yaml
 registries:
   - private-feed-1
@@ -337,13 +357,16 @@ fallback-registries:
   - nuget-org
 ```
 
-**Important:** 
+**Important:**
+
 - All registry names must be defined at the root level of the configuration
 - Credentials are specified directly in `.github/updater.yml` using the `token` field
 - Use GitHub secrets for sensitive credentials (e.g., `token: PAT:${{ DEVOPS_TOKEN }}`)
 
 #### `update-submodules` (optional)
+
 Update Git submodules as part of the dependency update process:
+
 ```yaml
 update-submodules:
   - path: "submodules/shared-library"
@@ -355,6 +378,7 @@ update-submodules:
 ### Standard Dependabot Fields
 
 #### Root-Level `registries`
+
 Define all registries (both private and public) at the root level of the configuration file:
 
 ```yaml
@@ -366,7 +390,7 @@ registries:
     url: https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json
     token: PAT:${{ DEVOPS_TOKEN }}  # Use GitHub secrets for credentials
     nuget-feed-version: V3  # Custom field: V2 or V3
-  
+
   nuget-org:
     type: nuget-feed
     url: https://api.nuget.org/v3/index.json
@@ -382,11 +406,13 @@ updates:
 ```
 
 **Authentication:**
+
 - Credentials are specified in the `token` field using environment variable references
 - Token format: `PAT:${{ ENV_VAR_NAME }}`
 - Environment variables are resolved from the system environment at runtime
 
 **Example configuration with environment variable:**
+
 ```yaml
 # .github/updater.yml
 registries:
@@ -407,10 +433,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_PAT }}  # Set at job level
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Update dependencies
         uses: aviationexam/Aviationexam.DependencyUpdater@v1
         with:
@@ -450,11 +476,11 @@ ignore:
 
   # Ignore major version updates
   - dependency-name: "Breaking.Changes.Package"
-    update-types: ["version-update:semver-major"]
+    update-types: [ "version-update:semver-major" ]
 
   # Ignore specific version ranges
   - dependency-name: "Problematic.Package"
-    versions: ["1.x", "2.0.0"]
+    versions: [ "1.x", "2.0.0" ]
 ```
 
 ### Update Limits
@@ -508,15 +534,15 @@ on:
 
 ## Comparison with Dependabot
 
-| Feature         | Aviationexam.DependencyUpdater  | GitHub Dependabot  |
-|-----------------|---------------------------------|--------------------|
-| NuGet Support   | ✅ Yes                           | ✅ Yes              |
-| Custom Grouping | ✅ Yes                           | ✅ Yes              |
-| Ignore Rules    | ✅ Yes                           | ✅ Yes              |
-| Private Feeds   | ✅ Yes (via nuget.config)        | ⚠️ Limited         |
-| Submodules      | ✅ Yes                           | ❌ No               |
-| Self-Hosted     | ✅ Yes (GitHub Actions)          | ❌ No               |
-| Configuration   | Dependabot v2 YAML              | Dependabot v2 YAML |
+| Feature         | Aviationexam.DependencyUpdater | GitHub Dependabot  |
+|-----------------|--------------------------------|--------------------|
+| NuGet Support   | ✅ Yes                          | ✅ Yes              |
+| Custom Grouping | ✅ Yes                          | ✅ Yes              |
+| Ignore Rules    | ✅ Yes                          | ✅ Yes              |
+| Private Feeds   | ✅ Yes (via nuget.config)       | ⚠️ Limited         |
+| Submodules      | ✅ Yes                          | ❌ No               |
+| Self-Hosted     | ✅ Yes (GitHub Actions)         | ❌ No               |
+| Configuration   | Dependabot v2 YAML             | Dependabot v2 YAML |
 
 ## Resources
 
