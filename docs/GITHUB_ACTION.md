@@ -19,11 +19,12 @@ Create a configuration file at `.github/updater.yml` (preferred) or `.github/dep
 ```yaml
 version: 2
 
-# Define registries at the root level
+# Define private/authenticated registries at the root level
+# Registry names must match those in nuget.config for authentication
 registries:
-  nuget-org:
+  my-private-feed:
     type: nuget-feed
-    url: https://api.nuget.org/v3/index.json
+    url: https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json
     nuget-feed-version: V3
 
 updates:
@@ -48,9 +49,11 @@ updates:
     # Optional: Custom restore directory
     restore-directory: "./src"
     
-    # Optional: Reference registries defined in root
+    # Optional: Use private registries (defined at root) and public fallbacks
     registries:
-      - nuget-org
+      - my-private-feed
+    fallback-registries:
+      nuget-org: "https://api.nuget.org/v3/index.json"
     
     # Optional: Update submodules
     update-submodules:
@@ -122,7 +125,7 @@ All inputs are optional and have sensible defaults:
 | `reset-cache` | Clear dependency cache before processing | `false` | No |
 | `owner` | GitHub repository owner | `${{ github.repository_owner }}` | No |
 | `repository` | GitHub repository name | `${{ github.event.repository.name }}` | No |
-| `dotnet-version` | .NET SDK version to use | `9.0.x` | No |
+| `dotnet-version` | .NET SDK version to use | `10.0.x` | No |
 
 **Note:** Configuration files are automatically discovered. No need to specify the path.
 
@@ -264,25 +267,41 @@ Specify a custom directory for restore operations:
 restore-directory: "./src"
 ```
 
-#### `registries` (in updates section)
-List of registry names to use for this update configuration. These reference registries defined at the root level:
+#### `registries` and `fallback-registries` (in updates section)
 
+These fields control which NuGet feeds to use for package resolution:
+
+**`registries`**: List of private/authenticated registry names defined at the root level
+**`fallback-registries`**: Map of public registry names to URLs (no authentication needed)
+
+**Usage patterns:**
+
+1. **Private registries with public fallback** (most common):
+```yaml
+registries:
+  - my-private-feed  # Defined at root with auth
+fallback-registries:
+  nuget-org: "https://api.nuget.org/v3/index.json"
+```
+
+2. **Only public registries**:
 ```yaml
 registries:
   - nuget-org
-  - custom-feed
-```
-
-#### `fallback-registries` (custom field)
-Alternative way to define simple registry URLs directly in the update section without root-level registry definitions:
-
-```yaml
 fallback-registries:
-  nuget-feed: "https://api.nuget.org/v3/index.json"
-  custom-feed: "https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json"
+  nuget-org: "https://api.nuget.org/v3/index.json"
 ```
 
-Use `fallback-registries` when you need simple URL mappings without authentication or additional configuration.
+3. **Multiple private registries**:
+```yaml
+registries:
+  - private-feed-1
+  - private-feed-2
+fallback-registries:
+  nuget-org: "https://api.nuget.org/v3/index.json"
+```
+
+**Important:** To authenticate private registries, use the same registry name in both `.github/updater.yml` and `nuget.config`. The tool will read credentials from `nuget.config`.
 
 #### `update-submodules` (optional)
 Update Git submodules as part of the dependency update process:
@@ -297,30 +316,46 @@ update-submodules:
 ### Standard Dependabot Fields
 
 #### Root-Level `registries`
-Define registries at the root level of the configuration file. Each registry can include authentication and custom settings:
+Define private/authenticated registries at the root level of the configuration file:
 
 ```yaml
 version: 2
 
 registries:
-  nuget-org:
-    type: nuget-feed
-    url: https://api.nuget.org/v3/index.json
-    nuget-feed-version: V3  # Custom field: V2 or V3
-  
   my-private-feed:
     type: nuget-feed
     url: https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json
-    username: username
-    password: ${{ secrets.NUGET_TOKEN }}
-    nuget-feed-version: V3
+    nuget-feed-version: V3  # Custom field: V2 or V3
 
 updates:
   - package-ecosystem: "nuget"
     directory: "/"
     registries:
-      - nuget-org
       - my-private-feed
+    fallback-registries:
+      nuget-org: "https://api.nuget.org/v3/index.json"
+```
+
+**Authentication:**
+- Registry names in `.github/updater.yml` must match the package source names in `nuget.config`
+- Credentials are read from `nuget.config` (not from updater.yml)
+- For GitHub Actions, use secrets for sensitive credentials in `nuget.config`
+
+**Example `nuget.config` with authentication:**
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+    <add key="my-private-feed" value="https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json" />
+    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+  </packageSources>
+  <packageSourceCredentials>
+    <my-private-feed>
+      <add key="Username" value="username" />
+      <add key="ClearTextPassword" value="%NUGET_TOKEN%" />
+    </my-private-feed>
+  </packageSourceCredentials>
+</configuration>
 ```
 
 **Note:** The `nuget-feed-version` field (V2 or V3) is a custom extension to specify the NuGet API version.
