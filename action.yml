@@ -36,22 +36,44 @@ inputs:
     description: 'GitHub repository name (defaults to current repository name)'
     required: false
     default: ${{ github.event.repository.name }}
+  
+  dotnet-version:
+    description: '.NET SDK version to use (defaults to 9.0.x for compatibility)'
+    required: false
+    default: '9.0.x'
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - '--directory'
-    - ${{ inputs.directory }}
-    - '--git-password'
-    - ${{ inputs.github-token }}
-    - 'GitHub'
-    - '--owner'
-    - ${{ inputs.owner }}
-    - '--repository'
-    - ${{ inputs.repository }}
-    - '--token'
-    - ${{ inputs.github-token }}
-    - ${{ inputs.config-file != '' && '--config-file' || '' }}
-    - ${{ inputs.config-file }}
-    - ${{ inputs.reset-cache == 'true' && '--reset-cache' || '' }}
+  using: 'composite'
+  steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+    
+    - name: Install Aviationexam.DependencyUpdater
+      shell: bash
+      run: dotnet tool install --global Aviationexam.DependencyUpdater --prerelease
+    
+    - name: Run Dependency Updater
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: |
+        ARGS=(
+          "--directory" "${{ inputs.directory }}"
+          "--git-password" "${{ inputs.github-token }}"
+          "GitHub"
+          "--owner" "${{ inputs.owner }}"
+          "--repository" "${{ inputs.repository }}"
+          "--token" "${{ inputs.github-token }}"
+        )
+        
+        if [ -n "${{ inputs.config-file }}" ]; then
+          ARGS+=("--config-file" "${{ inputs.config-file }}")
+        fi
+        
+        if [ "${{ inputs.reset-cache }}" = "true" ]; then
+          ARGS+=("--reset-cache")
+        fi
+        
+        dotnet dependency-updater "${ARGS[@]}"
