@@ -1,0 +1,36 @@
+# Example workflow for running Aviationexam Dependency Updater
+# Copy this file to your repository's .github/workflows/ directory and customize as needed
+
+name: Dependency Updates
+
+on:
+  # Run on a schedule (every Monday at 8am UTC)
+  schedule:
+    - cron: '0 8 * * 1'
+  
+  # Allow manual triggering
+  workflow_dispatch:
+
+# Required permissions for the action to work
+permissions:
+  contents: write      # Required to create branches and commits
+  pull-requests: write # Required to create pull requests
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      # Run the dependency updater
+      - name: Update dependencies
+        uses: aviationexam/Aviationexam.DependencyUpdater@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Optional: specify config file path if not using default location
+          # config-file: .github/updater.yml
+          # Optional: clear cache before processing
+          # reset-cache: 'true'

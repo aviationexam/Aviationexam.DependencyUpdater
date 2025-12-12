@@ -6,6 +6,8 @@
 
 A command-line tool for automating dependency updates in projects using Git repositories and NuGet feeds. Supports multiple repository platforms including Azure DevOps and GitHub.
 
+**For GitHub users:** Use the [GitHub Action](#github-action-recommended) for the easiest setup experience.
+
 ## Features
 
 - Updates dependencies in a local Git repository based on Dependabot configuration files
@@ -13,10 +15,44 @@ A command-line tool for automating dependency updates in projects using Git repo
 - Supports Azure DevOps Git and NuGet artifact feeds with upstream ingestion
 - Handles authentication for private repositories and feeds
 - Platform-agnostic package management for NuGet
+- Available as a GitHub Action for seamless CI/CD integration
 
 ## Installation
 
-This project is distributed as a .NET tool. To install it globally, run:
+### GitHub Action (Recommended)
+
+The easiest way to use this tool in GitHub repositories is via the GitHub Action:
+
+1. Create a configuration file at `.github/updater.yml` or `.github/dependabot.yml`
+2. Create a workflow file at `.github/workflows/dependency-updates.yml`:
+
+```yaml
+name: Dependency Updates
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Every Monday at 8am UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aviationexam/Aviationexam.DependencyUpdater@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+See the [GitHub Action documentation](docs/GITHUB_ACTION.md) for detailed configuration options and examples.
+
+### .NET Global Tool
+
+This project is also distributed as a .NET tool. To install it globally, run:
 
 ```sh
 dotnet tool install --global Aviationexam.DependencyUpdater
@@ -28,7 +64,7 @@ Or to update to the latest version:
 dotnet tool update --global Aviationexam.DependencyUpdater
 ```
 
-### Nightly builds
+#### Nightly builds
 
 You can install the latest nightly build from the Feedz.io feed:
 

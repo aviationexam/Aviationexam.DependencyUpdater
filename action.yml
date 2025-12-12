@@ -1,0 +1,57 @@
+name: 'Aviationexam Dependency Updater'
+description: 'Automatically update NuGet dependencies in your repository'
+author: 'Aviationexam'
+
+branding:
+  icon: 'package'
+  color: 'blue'
+
+inputs:
+  github-token:
+    description: 'GitHub token for authentication (defaults to GITHUB_TOKEN)'
+    required: false
+    default: ${{ github.token }}
+  
+  config-file:
+    description: 'Path to updater configuration file (.github/updater.yml or .github/dependabot.yml)'
+    required: false
+    default: ''
+  
+  directory:
+    description: 'Repository directory to process (defaults to workspace root)'
+    required: false
+    default: ${{ github.workspace }}
+  
+  reset-cache:
+    description: 'Clear dependency cache before processing'
+    required: false
+    default: 'false'
+  
+  owner:
+    description: 'GitHub repository owner (defaults to current repository owner)'
+    required: false
+    default: ${{ github.repository_owner }}
+  
+  repository:
+    description: 'GitHub repository name (defaults to current repository name)'
+    required: false
+    default: ${{ github.event.repository.name }}
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - '--directory'
+    - ${{ inputs.directory }}
+    - '--git-password'
+    - ${{ inputs.github-token }}
+    - 'GitHub'
+    - '--owner'
+    - ${{ inputs.owner }}
+    - '--repository'
+    - ${{ inputs.repository }}
+    - '--token'
+    - ${{ inputs.github-token }}
+    - ${{ inputs.config-file != '' && '--config-file' || '' }}
+    - ${{ inputs.config-file }}
+    - ${{ inputs.reset-cache == 'true' && '--reset-cache' || '' }}
