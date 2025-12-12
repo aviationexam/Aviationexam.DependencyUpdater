@@ -24,6 +24,7 @@ public interface IRepositoryClient
         string description,
         string? milestone,
         IReadOnlyCollection<string> reviewers,
+        IReadOnlyCollection<string> labels,
         string sourceDirectory,
         string updater,
         CancellationToken cancellationToken

@@ -334,6 +334,7 @@ public sealed class PackageUpdater(
             description: commitMessage,
             gitMetadataConfig.Milestone,
             gitMetadataConfig.Reviewers,
+            gitMetadataConfig.Labels,
             sourceDirectory: repositoryConfig.SubdirectoryPath ?? string.Empty,
             updater: updater,
             cancellationToken

@@ -18,6 +18,11 @@ public sealed class GitMetadataConfig
     public required IReadOnlyCollection<string> Reviewers { get; init; }
 
     /// <summary>
+    /// The labels for the pull request.
+    /// </summary>
+    public required IReadOnlyCollection<string> Labels { get; init; }
+
+    /// <summary>
     /// The commit author name.
     /// </summary>
     public required string CommitAuthor { get; init; }
