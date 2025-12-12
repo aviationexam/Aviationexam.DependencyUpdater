@@ -12,11 +12,6 @@ inputs:
     required: false
     default: ${{ github.token }}
   
-  config-file:
-    description: 'Path to updater configuration file (.github/updater.yml or .github/dependabot.yml)'
-    required: false
-    default: ''
-  
   directory:
     description: 'Repository directory to process (defaults to workspace root)'
     required: false
@@ -67,10 +62,6 @@ runs:
           "--repository" "${{ inputs.repository }}"
           "--token" "${{ inputs.github-token }}"
         )
-        
-        if [ -n "${{ inputs.config-file }}" ]; then
-          ARGS+=("--config-file" "${{ inputs.config-file }}")
-        fi
         
         if [ "${{ inputs.reset-cache }}" = "true" ]; then
           ARGS+=("--reset-cache")
