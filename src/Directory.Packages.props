@@ -53,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Corvus.Json.ExtendedTypes" Version="4.4.1" />
-    <PackageVersion Include="Corvus.Json.SourceGenerator" Version="4.4.1" />
+    <PackageVersion Include="Corvus.Json.SourceGenerator" Version="4.4.2" />
     <PackageVersion Include="Corvus.UriTemplates" Version="2.3.2" />
   </ItemGroup>
   <ItemGroup>
