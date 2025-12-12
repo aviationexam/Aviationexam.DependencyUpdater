@@ -4,7 +4,7 @@ on:
   schedule:
     # Run every day at 8am UTC
     - cron: '0 8 * * *'
-  
+
   # Allow manual triggering
   workflow_dispatch:
 
@@ -17,12 +17,12 @@ permissions:
 jobs:
   update-dependencies:
     runs-on: ubuntu-latest
-    
+
     steps:
       # Checkout the repository
       - name: Checkout repository
-        uses: actions/checkout@v4
-      
+        uses: actions/checkout@v6
+
       # Run the dependency updater using the action from this repository
       - name: Update dependencies
         uses: ./  # Use the action from the current repository
