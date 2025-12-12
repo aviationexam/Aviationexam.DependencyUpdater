@@ -83,6 +83,7 @@ All inputs are optional and have sensible defaults:
 | `reset-cache` | Clear dependency cache before processing | `false` | No |
 | `owner` | GitHub repository owner | `${{ github.repository_owner }}` | No |
 | `repository` | GitHub repository name | `${{ github.event.repository.name }}` | No |
+| `dotnet-version` | .NET SDK version to use | `9.0.x` | No |
 
 ### Advanced Examples
 
@@ -104,6 +105,16 @@ All inputs are optional and have sensible defaults:
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     reset-cache: 'true'
+```
+
+#### Use Specific .NET SDK Version
+
+```yaml
+- name: Update dependencies
+  uses: aviationexam/Aviationexam.DependencyUpdater@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    dotnet-version: '10.0.x'  # Use .NET 10
 ```
 
 #### Run on Different Schedules
@@ -143,6 +154,20 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           config-file: .github/updater-tools.yml
 ```
+
+## How It Works
+
+The GitHub Action is implemented as a **composite action** that:
+
+1. Sets up the .NET SDK using `actions/setup-dotnet@v5`
+2. Installs the `Aviationexam.DependencyUpdater` global tool
+3. Runs the tool with the GitHub platform configuration
+
+This approach provides:
+- **Fast startup** - No Docker image build required
+- **Transparency** - All steps visible in action logs
+- **Flexibility** - Easy to customize .NET SDK version
+- **Efficiency** - Leverages GitHub Actions caching for .NET
 
 ## Permissions
 
