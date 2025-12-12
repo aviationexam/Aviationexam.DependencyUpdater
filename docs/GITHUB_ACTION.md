@@ -20,11 +20,12 @@ Create a configuration file at `.github/updater.yml` (preferred) or `.github/dep
 version: 2
 
 # Define all registries at the root level
-# Registry names must match those in nuget.config for authentication
+# Use token field with environment variables for authentication
 registries:
   my-private-feed:
     type: nuget-feed
     url: https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json
+    token: PAT:${{ DEVOPS_TOKEN }}  # Resolved from environment variable
     nuget-feed-version: V3
   
   nuget-org:
@@ -35,36 +36,36 @@ registries:
 updates:
   - package-ecosystem: "nuget"
     directory: "/"
-    
+
     # Optional: Fallback framework when not auto-detected
     targetFramework: "net9.0"
-    
+
     # Optional: Custom commit author (defaults to GitHub Actions bot)
     commit-author: "DependencyBot"
     commit-author-email: "bot@example.com"
-    
+
     # Optional: Reviewers to assign to PRs
     reviewers:
       - "tech-lead"
       - "team-reviewer"
-    
+
     # Optional: Execute dotnet restore (default: true)
     execute-restore: true
-    
+
     # Optional: Custom restore directory
     restore-directory: "./src"
-    
+
     # Optional: Use private registries and public fallbacks (both defined at root)
     registries:
       - my-private-feed
     fallback-registries:
       - nuget-org
-    
+
     # Optional: Update submodules
     update-submodules:
       - path: "submodules/shared-lib"
         branch: "main"
-    
+
     # Group related packages into a single PR
     groups:
       # Group specific packages by pattern
@@ -72,7 +73,7 @@ updates:
         patterns:
           - "Microsoft.Extensions.*"
           - "System.*"
-    
+
     # Ignore specific dependencies or version ranges
     ignore:
       # Ignore major version updates for a specific package
@@ -91,7 +92,7 @@ on:
   schedule:
     # Run every Monday at 8am UTC
     - cron: '0 8 * * 1'
-  
+
   # Allow manual triggering from Actions tab
   workflow_dispatch:
 
@@ -121,7 +122,7 @@ All inputs are optional and have sensible defaults:
 | `dotnet-version` | .NET SDK version to use (use `skip` to skip .NET setup)             | `10.0.x`                              | No       |
 | `tool-version`   | Tool version to install (`latest` or specific version like `0.4.0`) | `0.4.0`                               | No       |
 
-**Notes:** 
+**Notes:**
 - Configuration files are automatically discovered. No need to specify the path.
 - The `tool-version` defaults to the current release version matching the action tag. Use `latest` to always install the newest stable release.
 
@@ -193,10 +194,10 @@ on:
   schedule:
     # Daily at midnight UTC
     - cron: '0 0 * * *'
-    
+
     # Every 6 hours
     - cron: '0 */6 * * *'
-    
+
     # First day of every month at 9am UTC
     - cron: '0 9 1 * *'
 ```
@@ -214,7 +215,7 @@ updates:
     groups:
       all-updates:
         patterns: ["*"]
-  
+
   - package-ecosystem: "nuget"
     directory: "/tools"
     groups:
@@ -338,8 +339,8 @@ fallback-registries:
 
 **Important:** 
 - All registry names must be defined at the root level of the configuration
-- To authenticate private registries, use the same registry name in both `.github/updater.yml` and `nuget.config`
-- The tool will read credentials from `nuget.config`
+- Credentials are specified directly in `.github/updater.yml` using the `token` field
+- Use GitHub secrets for sensitive credentials (e.g., `token: PAT:${{ DEVOPS_TOKEN }}`)
 
 #### `update-submodules` (optional)
 Update Git submodules as part of the dependency update process:
@@ -363,6 +364,7 @@ registries:
   my-private-feed:
     type: nuget-feed
     url: https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json
+    token: PAT:${{ DEVOPS_TOKEN }}  # Use GitHub secrets for credentials
     nuget-feed-version: V3  # Custom field: V2 or V3
   
   nuget-org:
@@ -380,25 +382,29 @@ updates:
 ```
 
 **Authentication:**
-- Registry names in `.github/updater.yml` must match the package source names in `nuget.config`
-- Credentials are read from `nuget.config` (not from updater.yml)
-- For GitHub Actions, use secrets for sensitive credentials in `nuget.config`
+- Credentials are specified in the `token` field using environment variable references
+- Token format: `PAT:${{ ENV_VAR_NAME }}`
+- Environment variables are resolved from the system environment at runtime
 
-**Example `nuget.config` with authentication:**
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-  <packageSources>
-    <add key="my-private-feed" value="https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json" />
-    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
-  </packageSources>
-  <packageSourceCredentials>
-    <my-private-feed>
-      <add key="Username" value="username" />
-      <add key="ClearTextPassword" value="%NUGET_TOKEN%" />
-    </my-private-feed>
-  </packageSourceCredentials>
-</configuration>
+**Example configuration with environment variable:**
+```yaml
+# .github/updater.yml
+registries:
+  my-private-feed:
+    type: nuget-feed
+    url: https://pkgs.dev.azure.com/org/_packaging/feed/nuget/v3/index.json
+    token: PAT:${{ DEVOPS_TOKEN }}
+    nuget-feed-version: V3
+```
+
+**Example workflow setting environment variables:**
+```yaml
+- name: Update dependencies
+  uses: aviationexam/Aviationexam.DependencyUpdater@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+  env:
+    DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_PAT }}
 ```
 
 **Note:** The `nuget-feed-version` field (V2 or V3) is a custom extension to specify the NuGet API version.
@@ -414,7 +420,7 @@ groups:
     patterns:
       - "Microsoft.*"
       - "System.*"
-  
+
   # Group all dependencies together
   all-dependencies:
     patterns:
@@ -431,11 +437,11 @@ Skip updates for specific packages or version ranges:
 ignore:
   # Ignore all updates for a package
   - dependency-name: "Legacy.Package"
-  
+
   # Ignore major version updates
   - dependency-name: "Breaking.Changes.Package"
     update-types: ["version-update:semver-major"]
-  
+
   # Ignore specific version ranges
   - dependency-name: "Problematic.Package"
     versions: ["1.x", "2.0.0"]
