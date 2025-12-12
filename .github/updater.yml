@@ -1,7 +1,7 @@
 version: 2
 
 registries:
-  nuget.org:
+  nuget:
     type: nuget-feed
     url: https://api.nuget.org/v3/index.json
     nuget-feed-version: V3
@@ -22,7 +22,7 @@ updates:
       prefix: "chore"
       include: "scope" # Adds the dependency name to the commit message
     registries:
-      - nuget.org
+      - nuget
     groups:
       microsoft-dependencies:
         patterns:
