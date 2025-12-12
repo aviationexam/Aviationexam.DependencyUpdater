@@ -93,19 +93,7 @@ on:
 permissions:
   contents: write      # Create branches and commits
   pull-requests: write # Create pull requests
-
-jobs:
-  update-dependencies:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
-      - name: Update dependencies
-        uses: aviationexam/Aviationexam.DependencyUpdater@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+  issues: write        # Create and apply labels to pull requests
 ```
 
 ### 3. Commit and Push
@@ -130,7 +118,7 @@ All inputs are optional and have sensible defaults:
 
 **Notes:** 
 - Configuration files are automatically discovered. No need to specify the path.
-- The `tool-version` defaults to the current release version matching the action tag. Use `latest` to always install the newest prerelease version.
+- The `tool-version` defaults to the current release version matching the action tag. Use `latest` to always install the newest stable release.
 
 ### Advanced Examples
 
@@ -171,7 +159,7 @@ All inputs are optional and have sensible defaults:
   uses: aviationexam/Aviationexam.DependencyUpdater@v1
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
-    tool-version: 'latest'  # Always install latest prerelease
+    tool-version: 'latest'  # Always install latest stable release
 ```
 
 #### Run on Different Schedules
@@ -230,6 +218,7 @@ The GitHub Action requires the following permissions to function properly:
 
 - **contents: write** - Create branches and commits for dependency updates
 - **pull-requests: write** - Create pull requests with the updates
+- **issues: write** - Create and apply labels to pull requests
 
 These permissions are specified in the workflow file:
 
@@ -237,6 +226,7 @@ These permissions are specified in the workflow file:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 ```
 
 ## Configuration File Format

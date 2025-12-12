@@ -18,6 +18,7 @@ on:
 permissions:
   contents: write      # Required to create branches and commits
   pull-requests: write # Required to create pull requests
+  issues: write        # Required to create and apply labels to pull requests
 
 jobs:
   update-dependencies:
