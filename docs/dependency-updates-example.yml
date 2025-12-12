@@ -28,9 +28,11 @@ jobs:
     #   DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_PAT }}
 
     steps:
-      # Checkout the repository
+      # Checkout the repository with full history (required for git operations)
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Full clone required for rebase and fetch operations
 
       # Run the dependency updater
       # Requires .github/updater.yml configuration file
