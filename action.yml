@@ -36,6 +36,11 @@ inputs:
     description: '.NET SDK version to use'
     required: false
     default: '10.0.x'
+  
+  tool-version:
+    description: 'Version of Aviationexam.DependencyUpdater tool to install (use "latest" for latest version, or specify version like "0.4.0")'
+    required: false
+    default: '0.4.0'
 
 runs:
   using: 'composite'
@@ -47,7 +52,16 @@ runs:
     
     - name: Install Aviationexam.DependencyUpdater
       shell: bash
-      run: dotnet tool install --global Aviationexam.DependencyUpdater --prerelease
+      run: |
+        TOOL_VERSION="${{ inputs.tool-version }}"
+        
+        if [ "$TOOL_VERSION" = "latest" ]; then
+          echo "Installing latest version of Aviationexam.DependencyUpdater..."
+          dotnet tool install --global Aviationexam.DependencyUpdater --prerelease
+        else
+          echo "Installing Aviationexam.DependencyUpdater version $TOOL_VERSION..."
+          dotnet tool install --global Aviationexam.DependencyUpdater --version "$TOOL_VERSION"
+        fi
     
     - name: Run Dependency Updater
       shell: bash
