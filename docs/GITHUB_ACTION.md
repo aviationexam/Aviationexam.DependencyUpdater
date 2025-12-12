@@ -126,8 +126,11 @@ All inputs are optional and have sensible defaults:
 | `owner` | GitHub repository owner | `${{ github.repository_owner }}` | No |
 | `repository` | GitHub repository name | `${{ github.event.repository.name }}` | No |
 | `dotnet-version` | .NET SDK version to use | `10.0.x` | No |
+| `tool-version` | Tool version to install (`latest` or specific version like `0.4.0`) | `0.4.0` | No |
 
-**Note:** Configuration files are automatically discovered. No need to specify the path.
+**Notes:** 
+- Configuration files are automatically discovered. No need to specify the path.
+- The `tool-version` defaults to the current release version matching the action tag. Use `latest` to always install the newest prerelease version.
 
 ### Advanced Examples
 
@@ -149,6 +152,26 @@ All inputs are optional and have sensible defaults:
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     dotnet-version: '10.0.x'  # Use .NET 10
+```
+
+#### Use Specific Tool Version
+
+```yaml
+- name: Update dependencies
+  uses: aviationexam/Aviationexam.DependencyUpdater@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    tool-version: '0.3.0'  # Use specific version
+```
+
+#### Always Use Latest Tool Version
+
+```yaml
+- name: Update dependencies
+  uses: aviationexam/Aviationexam.DependencyUpdater@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    tool-version: 'latest'  # Always install latest prerelease
 ```
 
 #### Run on Different Schedules
