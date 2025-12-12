@@ -102,7 +102,25 @@ permissions:
   contents: write      # Create branches and commits
   pull-requests: write # Create pull requests
   issues: write        # Create and apply labels to pull requests
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Full clone required for git operations (rebase, fetch)
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Update dependencies
+        uses: aviationexam/Aviationexam.DependencyUpdater@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+**Important:** The `fetch-depth: 0` parameter is **required** to ensure a full clone of the repository. The tool performs Git operations (rebase, fetch) that require the complete Git history. A shallow clone (the default) will cause errors.
 
 ### 3. Commit and Push
 
