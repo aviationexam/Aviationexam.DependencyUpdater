@@ -71,14 +71,17 @@ runs:
         ARGS=(
           "--directory" "${{ inputs.directory }}"
           "--git-password" "${{ inputs.github-token }}"
-          "GitHub"
-          "--owner" "${{ inputs.owner }}"
-          "--repository" "${{ inputs.repository }}"
-          "--token" "${{ inputs.github-token }}"
         )
         
         if [ "${{ inputs.reset-cache }}" = "true" ]; then
           ARGS+=("--reset-cache")
         fi
+        
+        ARGS+=(
+          "GitHub"
+          "--owner" "${{ inputs.owner }}"
+          "--repository" "${{ inputs.repository }}"
+          "--token" "${{ inputs.github-token }}"
+        )
         
         dotnet dependency-updater "${ARGS[@]}"
