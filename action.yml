@@ -33,7 +33,7 @@ inputs:
     default: ${{ github.event.repository.name }}
   
   dotnet-version:
-    description: '.NET SDK version to use'
+    description: '.NET SDK version to use (use "skip" to skip .NET setup if already installed)'
     required: false
     default: '10.0.x'
   
@@ -46,6 +46,7 @@ runs:
   using: 'composite'
   steps:
     - name: Setup .NET
+      if: inputs.dotnet-version != 'skip'
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
