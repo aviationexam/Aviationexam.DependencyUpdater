@@ -398,13 +398,23 @@ registries:
 ```
 
 **Example workflow setting environment variables:**
+
+Environment variables must be set at the **job level** (not step level) for composite actions:
+
 ```yaml
-- name: Update dependencies
-  uses: aviationexam/Aviationexam.DependencyUpdater@v1
-  with:
-    github-token: ${{ secrets.GITHUB_TOKEN }}
-  env:
-    DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_PAT }}
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    env:
+      DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_PAT }}  # Set at job level
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Update dependencies
+        uses: aviationexam/Aviationexam.DependencyUpdater@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 **Note:** The `nuget-feed-version` field (V2 or V3) is a custom extension to specify the NuGet API version.

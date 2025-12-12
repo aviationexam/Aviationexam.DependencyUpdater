@@ -23,6 +23,9 @@ permissions:
 jobs:
   update-dependencies:
     runs-on: ubuntu-latest
+    # For private registry authentication, set environment variables at job level:
+    # env:
+    #   DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_PAT }}
     
     steps:
       # Checkout the repository
