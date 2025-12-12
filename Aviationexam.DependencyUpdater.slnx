@@ -15,7 +15,7 @@
   </Folder>
   <Folder Name="/Solution Items/workflow/">
     <File Path=".github\workflows\build.yml" />
-    <File Path=".github\workflows\dependency-updates-example.yml" />
+    <File Path="docs\dependency-updates-example.yml" />
     <File Path=".github\workflows\dependency-updates.yml" />
     <File Path=".github\workflows\nightly-release.yml" />
     <File Path=".github\workflows\pr-build.yml" />
