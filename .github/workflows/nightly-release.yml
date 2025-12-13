@@ -36,7 +36,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore --nologo "-p:Version=${{ steps.gitversion.outputs.FullSemVer }}"
       - name: Pack with .Net
         run: dotnet pack src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj --nologo --no-restore --configuration Release --output nuget-packages -p:PackageVersion=${{ steps.gitversion.outputs.FullSemVer }} -p:AotBuild=false
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: Nuget-packages-${{ steps.gitversion.outputs.FullSemVer }}
           path: nuget-packages
