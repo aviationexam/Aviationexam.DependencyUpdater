@@ -99,6 +99,7 @@ public class RepositoryAzureDevOpsClient(
         string description,
         string? milestone,
         IReadOnlyCollection<string> reviewers,
+        IReadOnlyCollection<string> labels,
         string sourceDirectory,
         string updater,
         CancellationToken cancellationToken
@@ -130,6 +131,7 @@ public class RepositoryAzureDevOpsClient(
                 new WebApiTagDefinition { Name = PullRequestConstants.TagName },
                 new WebApiTagDefinition { Name = $"{PullRequestConstants.TagName}={updater}" },
                 new WebApiTagDefinition { Name = $"{PullRequestConstants.SourceTagName}={sourceDirectory}" },
+                .. labels.AsValueEnumerable().Select(label => new WebApiTagDefinition { Name = label }),
             ],
         };
 

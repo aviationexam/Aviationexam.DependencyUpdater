@@ -59,6 +59,7 @@ internal sealed class DefaultCommandHandler(
                 {
                     Milestone = nugetUpdate.Milestone.ValueKind is JsonValueKind.String or JsonValueKind.Number ? nugetUpdate.Milestone.AsAny.AsString.GetString() : null,
                     Reviewers = nugetUpdate.Reviewers ?? [],
+                    Labels = [.. nugetUpdate.Labels.AsValueEnumerable().Select(x => x.GetString()!)],
                     CommitAuthor = nugetUpdate.CommitAuthor ?? GitAuthorConstants.DefaultCommitAuthor,
                     CommitAuthorEmail = nugetUpdate.CommitAuthorEmail ?? GitAuthorConstants.DefaultCommitAuthorEmail,
                     UpdateSubmodules = [.. nugetUpdate.UpdateSubmodules.AsValueEnumerable().Select(x => x.MapToSubmoduleEntry())],

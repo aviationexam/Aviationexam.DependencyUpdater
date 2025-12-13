@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Octokit;
 using Polly;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -113,18 +114,20 @@ public class RepositoryGitHubClient(
         string description,
         string? milestone,
         IReadOnlyCollection<string> reviewers,
+        IReadOnlyCollection<string> labels,
         string sourceDirectory,
         string updater,
         CancellationToken cancellationToken
     )
     {
-        // Ensure required labels exist
-        var labelsToApply = new[]
-        {
+        // Ensure required labels exist (including user-defined labels from config)
+        IReadOnlyCollection<string> labelsToApply =
+        [
             PullRequestConstants.TagName,
             $"{PullRequestConstants.TagName}={updater}",
-            $"{PullRequestConstants.SourceTagName}={sourceDirectory}"
-        };
+            $"{PullRequestConstants.SourceTagName}={sourceDirectory}",
+            .. labels
+        ];
 
         await EnsureLabelsExistAsync(labelsToApply, cancellationToken);
 
@@ -155,7 +158,7 @@ public class RepositoryGitHubClient(
             gitHubConfiguration.Owner,
             gitHubConfiguration.Repository,
             pullRequest.Number,
-            labelsToApply
+            [.. labelsToApply]
         );
 
         // Add reviewers
@@ -323,7 +326,7 @@ public class RepositoryGitHubClient(
     }
 
     private async Task EnsureLabelsExistAsync(
-        string[] labels,
+        IReadOnlyCollection<string> labels,
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         CancellationToken cancellationToken
     )
@@ -346,10 +349,21 @@ public class RepositoryGitHubClient(
             {
                 try
                 {
-                    var color = labelName == PullRequestConstants.TagName ? MainLabelColor : MetadataLabelColor;
+                    var color = labelName switch
+                    {
+                        PullRequestConstants.TagName => MainLabelColor,
+                        not null when labelName.StartsWith(PullRequestConstants.TagName) || labelName.StartsWith(PullRequestConstants.SourceTagName) => MetadataLabelColor,
+                        null => throw new ArgumentNullException(nameof(labelName), "Label name cannot be null"),
+                        _ => "0075CA", // Blue for user-defined labels
+                    };
+
+                    var description = labelName.StartsWith(PullRequestConstants.TagName) || labelName.StartsWith(PullRequestConstants.SourceTagName)
+                        ? $"Managed by {PullRequestConstants.TagName}"
+                        : "Updater label";
+
                     var newLabel = new NewLabel(labelName, color)
                     {
-                        Description = $"Managed by {PullRequestConstants.TagName}",
+                        Description = description,
                     };
 
                     await gitHubClient.Issue.Labels.Create(
