@@ -80,19 +80,25 @@ public partial class NugetDirectoryPackagesPropsParser(
             if (match.Success)
             {
                 var conditionalTargetFramework = match.Groups["tfm"].Value;
-                logger.LogDebug(
-                    "Found conditional target framework {TargetFramework} for package {PackageName}",
-                    conditionalTargetFramework,
-                    packageName
-                );
+                if (logger.IsEnabled(LogLevel.Debug))
+                {
+                    logger.LogDebug(
+                        "Found conditional target framework {TargetFramework} for package {PackageName}",
+                        conditionalTargetFramework,
+                        packageName
+                    );
+                }
                 return [new NugetTargetFramework(conditionalTargetFramework)];
             }
-
-            logger.LogWarning(
-                "Unable to parse condition '{Condition}' for package {PackageName}",
-                condition,
-                packageName
-            );
+            
+            if (logger.IsEnabled(LogLevel.Warning))
+            {
+                logger.LogWarning(
+                    "Unable to parse condition '{Condition}' for package {PackageName}",
+                    condition,
+                    packageName
+                );
+            }
         }
 
         // Fall back to default behavior
