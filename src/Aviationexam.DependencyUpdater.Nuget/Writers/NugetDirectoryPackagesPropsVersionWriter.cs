@@ -95,18 +95,12 @@ public sealed partial class NugetDirectoryPackagesPropsVersionWriter(
             return null;
         }
 
-        // If there's only one match, return it
-        if (packageVersionElements.Count == 1)
-        {
-            return packageVersionElements[0].Attribute("Version");
-        }
-
         // Multiple matches - need to find the one matching the target framework
-        // Priority: 
+        // Priority:
         // 1. PackageVersion element with matching Condition
         // 2. PackageVersion in ItemGroup with matching Condition
         // 3. PackageVersion without Condition (unconditional)
-        
+
         var targetFrameworkNames = targetFrameworks.AsValueEnumerable().Select(tf => tf.TargetFramework).ToHashSet();
 
         foreach (var element in packageVersionElements)
