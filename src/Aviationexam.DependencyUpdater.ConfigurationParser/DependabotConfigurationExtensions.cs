@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace Aviationexam.DependencyUpdater.ConfigurationParser;
 
 public static class DependabotConfigurationExtensions
@@ -12,10 +14,12 @@ public static class DependabotConfigurationExtensions
 
         public IReadOnlyCollection<KeyValuePair<string, DependabotConfiguration.Registry.Entity>> ExtractFeeds(
             string registryType
-        ) => config.Registries
-            .Select(x => KeyValuePair.Create(x.Key.GetString(), x.Value.As<DependabotConfiguration.Registry.Entity>()))
-            .Where(x => x.Value.Type.GetString() == registryType)
-            .ToList();
+        ) => config.Registries.ValueKind is JsonValueKind.Object
+            ? config.Registries
+                .Select(x => KeyValuePair.Create(x.Key.GetString(), x.Value.As<DependabotConfiguration.Registry.Entity>()))
+                .Where(x => x.Value.Type.GetString() == registryType)
+                .ToList()
+            : [];
 
         public IReadOnlyCollection<T> ExtractFeeds<T>(
             string registryType,
