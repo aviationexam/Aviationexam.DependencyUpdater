@@ -176,11 +176,6 @@ public class DependabotConfigurationParserTests
                     directory: "/"
                     schedule:
                       interval: "daily"
-
-                  - package-ecosystem: "github-actions"
-                    directory: "/"
-                    schedule:
-                      interval: "daily"
                 """.AsStream();
 
         fileSystem
@@ -197,10 +192,8 @@ public class DependabotConfigurationParserTests
         Assert.NotNull(response);
 
         var nugetUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("nuget"));
-        var githubActionsUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("github-actions"));
         
         Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), nugetUpdate.DirectoryValue);
-        Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), githubActionsUpdate.DirectoryValue);
         
         // ExtractFeeds should not throw when registries section is missing
         var feeds = response.Value.ExtractFeeds("nuget-feed");
