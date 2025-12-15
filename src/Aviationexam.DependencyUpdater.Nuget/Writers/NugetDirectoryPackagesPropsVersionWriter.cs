@@ -1,12 +1,12 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
+using Aviationexam.DependencyUpdater.Nuget.Helpers;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -15,13 +15,10 @@ using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Writers;
 
-public sealed partial class NugetDirectoryPackagesPropsVersionWriter(
+public sealed class NugetDirectoryPackagesPropsVersionWriter(
     IFileSystem fileSystem
 )
 {
-    // Matches Condition="'$(TargetFramework)' == 'net9.0'" or Condition="'$(TargetFramework)'=='net9.0'" (with or without spaces)
-    [GeneratedRegex(@"\'\$\(TargetFramework\)\'\s*==\s*\'(?<tfm>[^\']+)\'", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 100)]
-    private static partial Regex TargetFrameworkConditionRegex();
 
     public async Task<ESetVersion> TrySetVersionAsync(
         NugetUpdateCandidate nugetUpdateCandidate,
@@ -106,41 +103,27 @@ public sealed partial class NugetDirectoryPackagesPropsVersionWriter(
         foreach (var element in packageVersionElements)
         {
             // Check element condition first
-            var elementCondition = element.Attribute("Condition")?.Value;
-            if (!string.IsNullOrWhiteSpace(elementCondition))
+            var elementCondition = element.GetCondition();
+            var conditionalTfm = TargetFrameworkConditionHelper.TryExtractTargetFramework(elementCondition);
+            if (conditionalTfm is not null && targetFrameworkNames.Contains(conditionalTfm))
             {
-                var match = TargetFrameworkConditionRegex().Match(elementCondition);
-                if (match.Success)
-                {
-                    var conditionalTfm = match.Groups["tfm"].Value;
-                    if (targetFrameworkNames.Contains(conditionalTfm))
-                    {
-                        return element.Attribute("Version");
-                    }
-                }
+                return element.Attribute("Version");
             }
 
             // Check parent ItemGroup condition
-            var parentCondition = element.Parent?.Attribute("Condition")?.Value;
-            if (!string.IsNullOrWhiteSpace(parentCondition))
+            var parentCondition = element.Parent?.GetCondition();
+            conditionalTfm = TargetFrameworkConditionHelper.TryExtractTargetFramework(parentCondition);
+            if (conditionalTfm is not null && targetFrameworkNames.Contains(conditionalTfm))
             {
-                var match = TargetFrameworkConditionRegex().Match(parentCondition);
-                if (match.Success)
-                {
-                    var conditionalTfm = match.Groups["tfm"].Value;
-                    if (targetFrameworkNames.Contains(conditionalTfm))
-                    {
-                        return element.Attribute("Version");
-                    }
-                }
+                return element.Attribute("Version");
             }
         }
 
         // If no conditional match found, return the first unconditional one
         foreach (var element in packageVersionElements)
         {
-            var elementCondition = element.Attribute("Condition")?.Value;
-            var parentCondition = element.Parent?.Attribute("Condition")?.Value;
+            var elementCondition = element.GetCondition();
+            var parentCondition = element.Parent?.GetCondition();
 
             if (string.IsNullOrWhiteSpace(elementCondition) && string.IsNullOrWhiteSpace(parentCondition))
             {

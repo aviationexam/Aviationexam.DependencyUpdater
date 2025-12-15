@@ -1,23 +1,21 @@
 using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Nuget.Extensions;
+using Aviationexam.DependencyUpdater.Nuget.Helpers;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
 using NuGet.Versioning;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Parsers;
 
-public partial class NugetDirectoryPackagesPropsParser(
+public class NugetDirectoryPackagesPropsParser(
     IFileSystem fileSystem,
     ILogger<NugetDirectoryPackagesPropsParser> logger
 )
 {
-    // Matches Condition="'$(TargetFramework)' == 'net9.0'" or Condition="'$(TargetFramework)'=='net9.0'" (with or without spaces)
-    [GeneratedRegex(@"\'\$\(TargetFramework\)\'\s*==\s*\'(?<tfm>[^\']+)\'", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 100)]
-    private static partial Regex TargetFrameworkConditionRegex();
 
     public IEnumerable<NugetDependency> Parse(
         string repositoryPath,
@@ -47,7 +45,7 @@ public partial class NugetDirectoryPackagesPropsParser(
             {
                 Include = x.Attribute("Include")?.Value,
                 Version = x.Attribute("Version")?.Value,
-                Condition = x.Attribute("Condition")?.Value ?? x.Parent?.Attribute("Condition")?.Value,
+                Condition = x.GetConditionIncludingParent(),
             })
             .Where(x => x.Include is not null && x.Version is not null)
             .Select(x => new NugetDependency(
@@ -74,31 +72,27 @@ public partial class NugetDirectoryPackagesPropsParser(
     )
     {
         // If there's a condition, try to extract the target framework
-        if (!string.IsNullOrWhiteSpace(condition))
+        var conditionalTargetFramework = TargetFrameworkConditionHelper.TryExtractTargetFramework(condition);
+        if (conditionalTargetFramework is not null)
         {
-            var match = TargetFrameworkConditionRegex().Match(condition);
-            if (match.Success)
+            if (logger.IsEnabled(LogLevel.Debug))
             {
-                var conditionalTargetFramework = match.Groups["tfm"].Value;
-                if (logger.IsEnabled(LogLevel.Debug))
-                {
-                    logger.LogDebug(
-                        "Found conditional target framework {TargetFramework} for package {PackageName}",
-                        conditionalTargetFramework,
-                        packageName
-                    );
-                }
-                return [new NugetTargetFramework(conditionalTargetFramework)];
-            }
-            
-            if (logger.IsEnabled(LogLevel.Warning))
-            {
-                logger.LogWarning(
-                    "Unable to parse condition '{Condition}' for package {PackageName}",
-                    condition,
+                logger.LogDebug(
+                    "Found conditional target framework {TargetFramework} for package {PackageName}",
+                    conditionalTargetFramework,
                     packageName
                 );
             }
+            return [new NugetTargetFramework(conditionalTargetFramework)];
+        }
+
+        if (!string.IsNullOrWhiteSpace(condition) && logger.IsEnabled(LogLevel.Warning))
+        {
+            logger.LogWarning(
+                "Unable to parse condition '{Condition}' for package {PackageName}",
+                condition,
+                packageName
+            );
         }
 
         // Fall back to default behavior
