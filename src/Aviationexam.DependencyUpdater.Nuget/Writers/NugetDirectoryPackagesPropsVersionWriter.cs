@@ -3,7 +3,6 @@ using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Helpers;
 using Aviationexam.DependencyUpdater.Nuget.Models;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -106,16 +105,6 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
             var condition = element.GetConditionIncludingParent();
             var conditionalTfm = TargetFrameworkConditionHelper.TryExtractTargetFramework(condition);
             if (conditionalTfm is not null && targetFrameworkNames.Contains(conditionalTfm))
-            {
-                return element.Attribute("Version");
-            }
-        }
-
-        // If no conditional match found, return the first unconditional one
-        foreach (var element in packageVersionElements)
-        {
-            var condition = element.GetConditionIncludingParent();
-            if (string.IsNullOrWhiteSpace(condition))
             {
                 return element.Attribute("Version");
             }
