@@ -149,4 +149,61 @@ public class DependabotConfigurationParserTests
 
         Assert.Null(response);
     }
+
+    [Fact]
+    public void ParseWithoutRegistriesWorks()
+    {
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
+            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+        );
+
+        var fileSystem = Substitute.For<IFileSystem>();
+        var logger = Substitute.For<ILogger<DependabotConfigurationParser>>();
+
+        fileSystem
+            .Exists(temporaryDirectoryProvider.GetPath("dependabot.yml"))
+            .Returns(true);
+
+        using var dependabotYmlStream =
+            // language=yml
+            """
+                # Configuration without registries section
+
+                version: 2
+
+                updates:
+                  - package-ecosystem: "nuget"
+                    directory: "/"
+                    schedule:
+                      interval: "daily"
+
+                  - package-ecosystem: "github-actions"
+                    directory: "/"
+                    schedule:
+                      interval: "daily"
+                """.AsStream();
+
+        fileSystem
+            .FileOpen(temporaryDirectoryProvider.GetPath("dependabot.yml"), FileMode.Open, FileAccess.Read, FileShare.Read)
+            .Returns(dependabotYmlStream);
+
+        var dependabotConfigurationParser = new DependabotConfigurationParser(
+            fileSystem,
+            logger
+        );
+
+        var response = dependabotConfigurationParser.Parse(temporaryDirectoryProvider.GetPath("dependabot.yml"));
+
+        Assert.NotNull(response);
+
+        var nugetUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("nuget"));
+        var githubActionsUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("github-actions"));
+        
+        Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), nugetUpdate.DirectoryValue);
+        Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), githubActionsUpdate.DirectoryValue);
+        
+        // ExtractFeeds should not throw when registries section is missing
+        var feeds = response.Value.ExtractFeeds("nuget-feed");
+        Assert.Empty(feeds);
+    }
 }
