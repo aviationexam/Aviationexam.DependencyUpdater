@@ -2,7 +2,6 @@ using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
 using NuGet.Versioning;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -46,31 +45,24 @@ public partial class NugetDirectoryPackagesPropsParser(
             .Where(e => e.Name.LocalName == "PackageVersion")
             .Select(x => new
             {
-                Element = x,
                 Include = x.Attribute("Include")?.Value,
                 Version = x.Attribute("Version")?.Value,
                 Condition = x.Attribute("Condition")?.Value ?? x.Parent?.Attribute("Condition")?.Value,
             })
             .Where(x => x.Include is not null && x.Version is not null)
-            .Select(x =>
-            {
-                // Determine target frameworks based on condition
-                var effectiveTargetFrameworks = GetEffectiveTargetFrameworks(
+            .Select(x => new NugetDependency(
+                nugetFile,
+                new NugetPackageVersion(
+                    x.Include!,
+                    new NuGetVersion(x.Version!)
+                ),
+                GetEffectiveTargetFrameworks(
                     x.Condition,
                     x.Include!,
                     packagesTargetFrameworks,
                     targetFrameworks
-                );
-
-                return new NugetDependency(
-                    nugetFile,
-                    new NugetPackageVersion(
-                        x.Include!,
-                        new NuGetVersion(x.Version!)
-                    ),
-                    effectiveTargetFrameworks
-                );
-            })
+                )
+            ))
             .ToList();
     }
 
@@ -95,7 +87,7 @@ public partial class NugetDirectoryPackagesPropsParser(
                 );
                 return [new NugetTargetFramework(conditionalTargetFramework)];
             }
-            
+
             logger.LogWarning(
                 "Unable to parse condition '{Condition}' for package {PackageName}",
                 condition,
