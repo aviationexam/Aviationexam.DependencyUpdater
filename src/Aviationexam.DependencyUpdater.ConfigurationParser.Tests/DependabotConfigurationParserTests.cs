@@ -192,9 +192,9 @@ public class DependabotConfigurationParserTests
         Assert.NotNull(response);
 
         var nugetUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("nuget"));
-        
+
         Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), nugetUpdate.DirectoryValue);
-        
+
         // ExtractFeeds should not throw when registries section is missing
         var feeds = response.Value.ExtractFeeds("nuget-feed");
         Assert.Empty(feeds);
