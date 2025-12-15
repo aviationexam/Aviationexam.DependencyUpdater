@@ -16,7 +16,6 @@ public class NugetDirectoryPackagesPropsParser(
     ILogger<NugetDirectoryPackagesPropsParser> logger
 )
 {
-
     public IEnumerable<NugetDependency> Parse(
         string repositoryPath,
         NugetFile nugetFile,
