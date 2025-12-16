@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Helpers;
@@ -8,14 +9,22 @@ public static partial class TargetFrameworkConditionHelper
     [GeneratedRegex(@"\'\$\(TargetFramework\)\'\s*==\s*\'(?<tfm>[^\']+)\'", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 100)]
     private static partial Regex TargetFrameworkConditionRegex();
 
-    public static string? TryExtractTargetFramework(string? condition)
+    public static bool TryExtractTargetFramework(string? condition, [NotNullWhen(true)] out string? targetFramework)
     {
+        targetFramework = null;
+
         if (string.IsNullOrWhiteSpace(condition))
         {
-            return null;
+            return false;
         }
 
         var match = TargetFrameworkConditionRegex().Match(condition);
-        return match.Success ? match.Groups["tfm"].Value : null;
+        if (match.Success)
+        {
+            targetFramework = match.Groups["tfm"].Value;
+            return true;
+        }
+
+        return false;
     }
 }

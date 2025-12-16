@@ -71,8 +71,7 @@ public class NugetDirectoryPackagesPropsParser(
     )
     {
         // If there's a condition, try to extract the target framework
-        var conditionalTargetFramework = TargetFrameworkConditionHelper.TryExtractTargetFramework(condition);
-        if (conditionalTargetFramework is not null)
+        if (TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTargetFramework))
         {
             if (logger.IsEnabled(LogLevel.Debug))
             {
