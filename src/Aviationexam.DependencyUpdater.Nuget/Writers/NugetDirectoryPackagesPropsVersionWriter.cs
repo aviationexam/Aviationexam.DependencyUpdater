@@ -18,7 +18,6 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
     IFileSystem fileSystem
 )
 {
-
     public async Task<ESetVersion> TrySetVersionAsync(
         NugetUpdateCandidate nugetUpdateCandidate,
         string fullPath,
@@ -103,8 +102,10 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
         foreach (var element in packageVersionElements)
         {
             var condition = element.GetConditionIncludingParent();
-            if (TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTfm) &&
-                targetFrameworkNames.Contains(conditionalTfm))
+            if (
+                TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTfm)
+                && targetFrameworkNames.Contains(conditionalTfm)
+            )
             {
                 return element.Attribute("Version");
             }
