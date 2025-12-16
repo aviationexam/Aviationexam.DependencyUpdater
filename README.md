@@ -129,6 +129,18 @@ Available for all platform subcommands:
 | --git-password |    Y     |         | Password or personal access token for remote Git authentication |
 | --reset-cache  |    N     |  false  | Clears the internal dependency cache before processing updates  |
 
+## Advanced Configuration
+
+### MSBuild Properties
+
+The following MSBuild properties are automatically set during dependency update operations and can be used in project files to customize restore behavior:
+
+| Property                         | Description                                                                                             |
+|----------------------------------|---------------------------------------------------------------------------------------------------------|
+| DependencyUpdaterMinimalRestore  | Set to `true` by `NugetCli.Restore()` to skip non-essential external resource downloads during restore (e.g., schema files) |
+
+Projects can check this property in their build targets to optimize restore performance during dependency updates.
+
 ### Azure DevOps Arguments
 
 Required when using the `AzureDevOps` subcommand:

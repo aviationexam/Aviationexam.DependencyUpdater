@@ -38,7 +38,7 @@ public class NugetCli(
         var processStartInfo = new ProcessStartInfo
         {
             FileName = "dotnet",
-            Arguments = "restore --force-evaluate",
+            Arguments = "restore --force-evaluate -p:DependencyUpdaterMinimalRestore=true",
             WorkingDirectory = workingDirectory,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
