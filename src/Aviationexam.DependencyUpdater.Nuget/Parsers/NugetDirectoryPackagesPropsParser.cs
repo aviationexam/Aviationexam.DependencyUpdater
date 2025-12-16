@@ -1,4 +1,6 @@
 using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Nuget.Extensions;
+using Aviationexam.DependencyUpdater.Nuget.Helpers;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
 using NuGet.Versioning;
@@ -42,6 +44,7 @@ public class NugetDirectoryPackagesPropsParser(
             {
                 Include = x.Attribute("Include")?.Value,
                 Version = x.Attribute("Version")?.Value,
+                Condition = x.GetConditionIncludingParent(),
             })
             .Where(x => x.Include is not null && x.Version is not null)
             .Select(x => new NugetDependency(
@@ -50,10 +53,52 @@ public class NugetDirectoryPackagesPropsParser(
                     x.Include!,
                     new NuGetVersion(x.Version!)
                 ),
-                packagesTargetFrameworks.TryGetValue(x.Include!, out var packageTargetFrameworks)
-                    ? packageTargetFrameworks.AsValueEnumerable().Union(targetFrameworks).ToList()
-                    : targetFrameworks
+                GetEffectiveTargetFrameworks(
+                    x.Condition,
+                    x.Include!,
+                    packagesTargetFrameworks,
+                    targetFrameworks
+                )
             ))
             .ToList();
+    }
+
+    private IReadOnlyCollection<NugetTargetFramework> GetEffectiveTargetFrameworks(
+        string? condition,
+        string packageName,
+        IReadOnlyDictionary<string, IReadOnlyCollection<NugetTargetFramework>> packagesTargetFrameworks,
+        IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks
+    )
+    {
+        // If there's a condition, try to extract the target framework
+        if (TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTargetFramework))
+        {
+            if (logger.IsEnabled(LogLevel.Debug))
+            {
+                logger.LogDebug(
+                    "Found conditional target framework {TargetFramework} for package {PackageName}",
+                    conditionalTargetFramework,
+                    packageName
+                );
+            }
+            return [new NugetTargetFramework(conditionalTargetFramework)];
+        }
+
+        if (!string.IsNullOrWhiteSpace(condition) && logger.IsEnabled(LogLevel.Warning))
+        {
+            logger.LogWarning(
+                "Unable to parse condition '{Condition}' for package {PackageName}",
+                condition,
+                packageName
+            );
+        }
+
+        // Fall back to default behavior
+        if (packagesTargetFrameworks.TryGetValue(packageName, out var packageTargetFrameworks))
+        {
+            return packageTargetFrameworks.AsValueEnumerable().Union(defaultTargetFrameworks).ToList();
+        }
+
+        return defaultTargetFrameworks;
     }
 }

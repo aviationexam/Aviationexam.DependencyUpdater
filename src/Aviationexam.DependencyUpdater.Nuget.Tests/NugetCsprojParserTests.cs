@@ -172,4 +172,192 @@ public class NugetCsprojParserTests
 
         Assert.Empty(response);
     }
+
+    [Fact]
+    public void ParseConditionalItemGroupWorks()
+    {
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
+            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+        );
+
+        var fileSystem = Substitute.For<IFileSystem>();
+        var logger = Substitute.For<ILogger<NugetCsprojParser>>();
+
+        fileSystem
+            .Exists(temporaryDirectoryProvider.GetPath("project/Project.csproj"))
+            .Returns(true);
+
+        using var projectFileStream =
+            // language=csproj
+            """
+                <Project Sdk="Microsoft.NET.Sdk">
+
+                  <PropertyGroup>
+                    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+                  </PropertyGroup>
+
+                  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+                    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.0" />
+                  </ItemGroup>
+
+                  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+                    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.0" />
+                  </ItemGroup>
+
+                  <ItemGroup>
+                    <PackageReference Include="Microsoft.Extensions.Hosting" />
+                  </ItemGroup>
+
+                </Project>
+                """.AsStream();
+
+        fileSystem
+            .FileOpen(temporaryDirectoryProvider.GetPath("project/Project.csproj"), FileMode.Open, FileAccess.Read, FileShare.Read)
+            .Returns(projectFileStream);
+
+        var csprojParser = new NugetCsprojParser(
+            fileSystem,
+            logger
+        );
+
+        var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
+        var response = csprojParser.Parse(temporaryDirectoryProvider.TemporaryDirectory, nugetFile);
+
+        Assert.Equal([
+            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.AspNetCore.WebUtilities", new NuGet.Versioning.VersionRange(new NuGet.Versioning.NuGetVersion("9.0.0"))), [
+                new NugetTargetFramework("net9.0"),
+            ]),
+            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.AspNetCore.WebUtilities", new NuGet.Versioning.VersionRange(new NuGet.Versioning.NuGetVersion("8.0.0"))), [
+                new NugetTargetFramework("net8.0"),
+            ]),
+            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Extensions.Hosting", null), [
+                new NugetTargetFramework("net8.0"),
+                new NugetTargetFramework("net9.0"),
+            ]),
+        ], response);
+    }
+
+    [Fact]
+    public void ParseConditionalPackageReferenceElementWorks()
+    {
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
+            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+        );
+
+        var fileSystem = Substitute.For<IFileSystem>();
+        var logger = Substitute.For<ILogger<NugetCsprojParser>>();
+
+        fileSystem
+            .Exists(temporaryDirectoryProvider.GetPath("project/Project.csproj"))
+            .Returns(true);
+
+        using var projectFileStream =
+            // language=csproj
+            """
+                <Project Sdk="Microsoft.NET.Sdk">
+
+                  <PropertyGroup>
+                    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+                  </PropertyGroup>
+
+                  <ItemGroup>
+                    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" Condition="'$(TargetFramework)' == 'net9.0'" />
+                    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" Condition="'$(TargetFramework)' == 'net8.0'" />
+                  </ItemGroup>
+
+                </Project>
+                """.AsStream();
+
+        fileSystem
+            .FileOpen(temporaryDirectoryProvider.GetPath("project/Project.csproj"), FileMode.Open, FileAccess.Read, FileShare.Read)
+            .Returns(projectFileStream);
+
+        var csprojParser = new NugetCsprojParser(
+            fileSystem,
+            logger
+        );
+
+        var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
+        var response = csprojParser.Parse(temporaryDirectoryProvider.TemporaryDirectory, nugetFile);
+
+        Assert.Equal([
+            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Extensions.Hosting", new NuGet.Versioning.VersionRange(new NuGet.Versioning.NuGetVersion("9.0.0"))), [
+                new NugetTargetFramework("net9.0"),
+            ]),
+            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Extensions.Hosting", new NuGet.Versioning.VersionRange(new NuGet.Versioning.NuGetVersion("8.0.0"))), [
+                new NugetTargetFramework("net8.0"),
+            ]),
+        ], response);
+    }
+
+    [Fact]
+    public void ParseMixedConditionalFormatsWorks()
+    {
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
+            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+        );
+
+        var fileSystem = Substitute.For<IFileSystem>();
+        var logger = Substitute.For<ILogger<NugetCsprojParser>>();
+
+        fileSystem
+            .Exists(temporaryDirectoryProvider.GetPath("project/Project.csproj"))
+            .Returns(true);
+
+        using var projectFileStream =
+            // language=csproj
+            """
+                <Project Sdk="Microsoft.NET.Sdk">
+
+                  <PropertyGroup>
+                    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+                  </PropertyGroup>
+
+                  <!-- Conditional ItemGroup -->
+                  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+                    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.0" />
+                  </ItemGroup>
+
+                  <!-- Conditional PackageReference element -->
+                  <ItemGroup>
+                    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4" Condition="'$(TargetFramework)' == 'net9.0'" />
+                    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.10" Condition="'$(TargetFramework)' == 'net8.0'" />
+                  </ItemGroup>
+
+                  <!-- Unconditional -->
+                  <ItemGroup>
+                    <PackageReference Include="Meziantou.Analyzer" Version="2.0.177" />
+                  </ItemGroup>
+
+                </Project>
+                """.AsStream();
+
+        fileSystem
+            .FileOpen(temporaryDirectoryProvider.GetPath("project/Project.csproj"), FileMode.Open, FileAccess.Read, FileShare.Read)
+            .Returns(projectFileStream);
+
+        var csprojParser = new NugetCsprojParser(
+            fileSystem,
+            logger
+        );
+
+        var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
+        var response = csprojParser.Parse(temporaryDirectoryProvider.TemporaryDirectory, nugetFile);
+
+        Assert.Equal([
+            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.AspNetCore.WebUtilities", new NuGet.Versioning.VersionRange(new NuGet.Versioning.NuGetVersion("9.0.0"))), [
+                new NugetTargetFramework("net9.0"),
+            ]),
+            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Extensions.Hosting", new NuGet.Versioning.VersionRange(new NuGet.Versioning.NuGetVersion("9.0.4"))), [
+                new NugetTargetFramework("net9.0"),
+            ]),
+            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Extensions.Hosting", new NuGet.Versioning.VersionRange(new NuGet.Versioning.NuGetVersion("8.0.10"))), [
+                new NugetTargetFramework("net8.0"),
+            ]),
+            new NugetDependency(nugetFile, new NugetPackageReference("Meziantou.Analyzer", new NuGet.Versioning.VersionRange(new NuGet.Versioning.NuGetVersion("2.0.177"))), [
+                new NugetTargetFramework("net8.0"),
+                new NugetTargetFramework("net9.0"),
+            ]),
+        ], response);
+    }
 }

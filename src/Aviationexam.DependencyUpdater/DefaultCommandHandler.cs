@@ -45,7 +45,9 @@ internal sealed class DefaultCommandHandler(
 
             foreach (var nugetUpdate in nugetUpdates)
             {
-                var registries = nugetUpdate.Registries.AsValueEnumerable().Select(x => x.AsString.GetString()!).ToList();
+                var registries = nugetUpdate.Registries is { ValueKind: JsonValueKind.Object } r
+                    ? r.AsValueEnumerable().Select(x => x.AsString.GetString()!).ToList()
+                    : [];
                 var fallbackRegistries = nugetUpdate.FallbackRegistries;
 
                 var repositoryConfig = new RepositoryConfig

@@ -1,6 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
+using Aviationexam.DependencyUpdater.Nuget.Helpers;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
 using System.IO;
@@ -30,13 +31,12 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
 
         var doc = await XDocument.LoadAsync(fileStream, LoadOptions.PreserveWhitespace, cancellationToken);
 
-        var versionAttribute = doc
-            .Descendants()
-            .AsValueEnumerable()
-            .Where(e => e.Name.LocalName == "PackageVersion")
-            .Where(e => e.Attribute("Include")?.Value == packageName)
-            .Select(x => x.Attribute("Version"))
-            .SingleOrDefault();
+        // Find the matching PackageVersion element, considering target frameworks
+        var versionAttribute = FindMatchingPackageVersionAttribute(
+            doc,
+            packageName,
+            nugetUpdateCandidate.NugetDependency.TargetFrameworks
+        );
 
         if (versionAttribute is null)
         {
@@ -70,5 +70,58 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
         }
 
         return ESetVersion.VersionSet;
+    }
+
+    private XAttribute? FindMatchingPackageVersionAttribute(
+        XDocument doc,
+        string packageName,
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks
+    )
+    {
+        var packageVersionElements = doc
+            .Descendants()
+            .AsValueEnumerable()
+            .Where(e => e.Name.LocalName == "PackageVersion")
+            .Where(e => e.Attribute("Include")?.Value == packageName)
+            .ToList();
+
+        if (packageVersionElements.Count == 0)
+        {
+            return null;
+        }
+
+        // Multiple matches - need to find the one matching the target framework
+        // Priority:
+        // 1. PackageVersion element with matching Condition
+        // 2. PackageVersion in ItemGroup with matching Condition
+        // 3. PackageVersion without Condition (unconditional)
+
+        var targetFrameworkNames = targetFrameworks.AsValueEnumerable().Select(tf => tf.TargetFramework).ToHashSet();
+
+        // First, try to find a conditional match for the target frameworks
+        foreach (var element in packageVersionElements)
+        {
+            var condition = element.GetConditionIncludingParent();
+            if (
+                TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTfm)
+                && targetFrameworkNames.Contains(conditionalTfm)
+            )
+            {
+                return element.Attribute("Version");
+            }
+        }
+
+        // If no conditional match found, return the first unconditional one
+        foreach (var element in packageVersionElements)
+        {
+            var condition = element.GetConditionIncludingParent();
+            if (string.IsNullOrWhiteSpace(condition))
+            {
+                return element.Attribute("Version");
+            }
+        }
+
+        // Fallback: return the first match (shouldn't happen, but better than null)
+        return packageVersionElements[0].Attribute("Version");
     }
 }
