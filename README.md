@@ -133,13 +133,13 @@ Available for all platform subcommands:
 
 ### MSBuild Properties
 
-The following MSBuild properties can be used to customize the restore behavior in target projects:
+The following MSBuild properties are automatically set during dependency update operations and can be used in project files to customize restore behavior:
 
-| Property                         | Default | Description                                                                                             |
-|----------------------------------|:-------:|---------------------------------------------------------------------------------------------------------|
-| DependencyUpdaterMinimalRestore  |  false  | When set to `true`, skips non-essential external resource downloads during restore (e.g., schema files) |
+| Property                         | Description                                                                                             |
+|----------------------------------|---------------------------------------------------------------------------------------------------------|
+| DependencyUpdaterMinimalRestore  | Set to `true` by `NugetCli.Restore()` to skip non-essential external resource downloads during restore (e.g., schema files) |
 
-This property is automatically set by `NugetCli.Restore()` and can be used in project files to optimize restore performance during dependency updates.
+Projects can check this property in their build targets to optimize restore performance during dependency updates.
 
 ### Azure DevOps Arguments
 
