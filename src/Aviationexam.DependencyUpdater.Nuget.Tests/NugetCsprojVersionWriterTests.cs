@@ -2,8 +2,8 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Services;
+using Aviationexam.DependencyUpdater.Nuget.Tests.Infrastructure;
 using Aviationexam.DependencyUpdater.Nuget.Writers;
-using Aviationexam.DependencyUpdater.TestsInfrastructure;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using NuGet.Protocol;
@@ -27,7 +27,7 @@ public class NugetCsprojVersionWriterTests
 
         var fileSystem = Substitute.For<IFileSystem>();
 
-        var csprojContent =
+        await using var fileStream = new MemoryStream(
             // language=csproj
             """
                 <Project Sdk="Microsoft.NET.Sdk">
@@ -45,15 +45,16 @@ public class NugetCsprojVersionWriterTests
                   </ItemGroup>
 
                 </Project>
-                """;
+                """u8.ToArray()
+        );
 
-        await using var csprojStream = csprojContent.AsStream();
+        await using var proxyFileStream = new StreamProxy(fileStream);
 
         var filePath = temporaryDirectoryProvider.GetPath("Project.csproj");
 
         fileSystem
             .FileOpen(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None)
-            .Returns(csprojStream);
+            .Returns(proxyFileStream);
 
         var writer = new NugetCsprojVersionWriter(fileSystem);
 
@@ -81,8 +82,8 @@ public class NugetCsprojVersionWriterTests
 
         Assert.Equal(ESetVersion.VersionSet, result);
 
-        csprojStream.Position = 0;
-        using var reader = new StreamReader(csprojStream);
+        fileStream.Position = 0;
+        using var reader = new StreamReader(fileStream);
         var updatedContent = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
 
         Assert.Contains("Version=\"9.0.1\"", updatedContent);
@@ -100,7 +101,7 @@ public class NugetCsprojVersionWriterTests
 
         var fileSystem = Substitute.For<IFileSystem>();
 
-        var csprojContent =
+        await using var fileStream = new MemoryStream(
             // language=csproj
             """
                 <Project Sdk="Microsoft.NET.Sdk">
@@ -115,15 +116,16 @@ public class NugetCsprojVersionWriterTests
                   </ItemGroup>
 
                 </Project>
-                """;
+                """u8.ToArray()
+        );
 
-        await using var csprojStream = csprojContent.AsStream();
+        await using var proxyFileStream = new StreamProxy(fileStream);
 
         var filePath = temporaryDirectoryProvider.GetPath("Project.csproj");
 
         fileSystem
             .FileOpen(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None)
-            .Returns(csprojStream);
+            .Returns(proxyFileStream);
 
         var writer = new NugetCsprojVersionWriter(fileSystem);
 
@@ -151,8 +153,8 @@ public class NugetCsprojVersionWriterTests
 
         Assert.Equal(ESetVersion.VersionSet, result);
 
-        csprojStream.Position = 0;
-        using var reader = new StreamReader(csprojStream);
+        fileStream.Position = 0;
+        using var reader = new StreamReader(fileStream);
         var updatedContent = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
 
         Assert.Contains("Version=\"8.0.10\"", updatedContent);
@@ -170,7 +172,7 @@ public class NugetCsprojVersionWriterTests
 
         var fileSystem = Substitute.For<IFileSystem>();
 
-        var csprojContent =
+        await using var fileStream = new MemoryStream(
             // language=csproj
             """
                 <Project Sdk="Microsoft.NET.Sdk">
@@ -184,15 +186,16 @@ public class NugetCsprojVersionWriterTests
                   </ItemGroup>
 
                 </Project>
-                """;
+                """u8.ToArray()
+        );
 
-        await using var csprojStream = csprojContent.AsStream();
+        await using var proxyFileStream = new StreamProxy(fileStream);
 
         var filePath = temporaryDirectoryProvider.GetPath("Project.csproj");
 
         fileSystem
             .FileOpen(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None)
-            .Returns(csprojStream);
+            .Returns(proxyFileStream);
 
         var writer = new NugetCsprojVersionWriter(fileSystem);
 
@@ -223,8 +226,8 @@ public class NugetCsprojVersionWriterTests
 
         Assert.Equal(ESetVersion.VersionSet, result);
 
-        csprojStream.Position = 0;
-        using var reader = new StreamReader(csprojStream);
+        fileStream.Position = 0;
+        using var reader = new StreamReader(fileStream);
         var updatedContent = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
 
         Assert.Contains("Version=\"2.0.177\"", updatedContent);
