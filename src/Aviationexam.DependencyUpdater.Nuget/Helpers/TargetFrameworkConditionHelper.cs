@@ -5,8 +5,11 @@ namespace Aviationexam.DependencyUpdater.Nuget.Helpers;
 
 public static partial class TargetFrameworkConditionHelper
 {
-    // Matches Condition="'$(TargetFramework)' == 'net9.0'" or Condition="'$(TargetFramework)'=='net9.0'" (with or without spaces)
-    [GeneratedRegex(@"\'\$\(TargetFramework\)\'\s*==\s*\'(?<tfm>[^\']+)\'", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 100)]
+    // Matches:
+    // - Condition="'$(TargetFramework)' == 'net9.0'" (quoted variable)
+    // - Condition="'$(TargetFramework)'=='net9.0'" (quoted variable, no spaces)
+    // - Condition="$(TargetFramework) == 'netstandard2.0'" (unquoted variable)
+    [GeneratedRegex(@"\'?\$\(TargetFramework\)\'?\s*==\s*\'(?<tfm>[^\']+)\'", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 100)]
     private static partial Regex TargetFrameworkConditionRegex();
 
     public static bool TryExtractTargetFramework(string? condition, [NotNullWhen(true)] out string? targetFramework)

@@ -399,4 +399,84 @@ public class NugetDirectoryPackagesPropsParserTests
         Assert.Equal("1.5.4", ((NugetPackageVersion) actualList[9].NugetPackage).Version.ToString());
         Assert.Equal(3, actualList[9].TargetFrameworks.Count);
     }
+
+    [Fact]
+    public void ParseConditionalWithUnquotedVariableWorks()
+    {
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
+            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+        );
+
+        var fileSystem = Substitute.For<IFileSystem>();
+        var logger = Substitute.For<ILogger<NugetDirectoryPackagesPropsParser>>();
+
+        fileSystem
+            .Exists(temporaryDirectoryProvider.GetPath("Directory.Packages.props"))
+            .Returns(true);
+
+        using var directoryPackagesPropsStream =
+            // language=props
+            """
+                <Project>
+                  <PropertyGroup>
+                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                  </PropertyGroup>
+
+                  <ItemGroup Condition="$(TargetFramework) == 'netstandard2.0'">
+                    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0" />
+                  </ItemGroup>
+
+                  <ItemGroup>
+                    <PackageVersion Include="System.Text.Json" Version="9.0.1" Condition="$(TargetFramework) == 'netstandard2.0'" />
+                    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.4" />
+                  </ItemGroup>
+
+                </Project>
+                """.AsStream();
+
+        fileSystem
+            .FileOpen(temporaryDirectoryProvider.GetPath("Directory.Packages.props"), FileMode.Open, FileAccess.Read, FileShare.Read)
+            .Returns(directoryPackagesPropsStream);
+
+        var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
+            fileSystem,
+            logger
+        );
+
+        var nugetFile = new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps);
+        var packagesTargetFrameworks = new Dictionary<string, IReadOnlyCollection<NugetTargetFramework>>();
+        var targetFrameworks = new List<NugetTargetFramework>
+        {
+            new("netstandard2.0"),
+            new("net8.0"),
+        };
+
+        var response = directoryPackagesPropsParser.Parse(
+            temporaryDirectoryProvider.TemporaryDirectory,
+            nugetFile,
+            packagesTargetFrameworks,
+            targetFrameworks
+        );
+
+        var actualList = response.AsValueEnumerable().ToList();
+
+        Assert.Equal(3, actualList.Count);
+
+        // First package - conditional ItemGroup with unquoted variable
+        Assert.Equal("Microsoft.Bcl.AsyncInterfaces", actualList[0].NugetPackage.GetPackageName());
+        Assert.Equal("9.0.0", ((NugetPackageVersion) actualList[0].NugetPackage).Version.ToString());
+        Assert.Single(actualList[0].TargetFrameworks);
+        Assert.Equal("netstandard2.0", actualList[0].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
+
+        // Second package - conditional element with unquoted variable
+        Assert.Equal("System.Text.Json", actualList[1].NugetPackage.GetPackageName());
+        Assert.Equal("9.0.1", ((NugetPackageVersion) actualList[1].NugetPackage).Version.ToString());
+        Assert.Single(actualList[1].TargetFrameworks);
+        Assert.Equal("netstandard2.0", actualList[1].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
+
+        // Third package - no condition, should have all target frameworks
+        Assert.Equal("Microsoft.Extensions.Hosting", actualList[2].NugetPackage.GetPackageName());
+        Assert.Equal("9.0.4", ((NugetPackageVersion) actualList[2].NugetPackage).Version.ToString());
+        Assert.Equal(2, actualList[2].TargetFrameworks.Count);
+    }
 }
