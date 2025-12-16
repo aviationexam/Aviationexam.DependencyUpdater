@@ -360,4 +360,60 @@ public class NugetCsprojParserTests
             ]),
         ], response);
     }
+
+    [Fact]
+    public void ParseConditionalWithUnquotedVariableWorks()
+    {
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
+            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+        );
+
+        var fileSystem = Substitute.For<IFileSystem>();
+        var logger = Substitute.For<ILogger<NugetCsprojParser>>();
+
+        fileSystem
+            .Exists(temporaryDirectoryProvider.GetPath("project/Project.csproj"))
+            .Returns(true);
+
+        using var projectFileStream =
+            // language=csproj
+            """
+                <Project Sdk="Microsoft.NET.Sdk">
+
+                  <PropertyGroup>
+                    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+                  </PropertyGroup>
+
+                  <ItemGroup Condition="$(TargetFramework) == 'netstandard2.0'">
+                    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0" />
+                  </ItemGroup>
+
+                  <ItemGroup>
+                    <PackageReference Include="System.Text.Json" Version="9.0.1" Condition="$(TargetFramework) == 'netstandard2.0'" />
+                  </ItemGroup>
+
+                </Project>
+                """.AsStream();
+
+        fileSystem
+            .FileOpen(temporaryDirectoryProvider.GetPath("project/Project.csproj"), FileMode.Open, FileAccess.Read, FileShare.Read)
+            .Returns(projectFileStream);
+
+        var csprojParser = new NugetCsprojParser(
+            fileSystem,
+            logger
+        );
+
+        var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
+        var response = csprojParser.Parse(temporaryDirectoryProvider.TemporaryDirectory, nugetFile);
+
+        Assert.Equal([
+            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Bcl.AsyncInterfaces", new NuGet.Versioning.VersionRange(new NuGet.Versioning.NuGetVersion("9.0.0"))), [
+                new NugetTargetFramework("netstandard2.0"),
+            ]),
+            new NugetDependency(nugetFile, new NugetPackageReference("System.Text.Json", new NuGet.Versioning.VersionRange(new NuGet.Versioning.NuGetVersion("9.0.1"))), [
+                new NugetTargetFramework("netstandard2.0"),
+            ]),
+        ], response);
+    }
 }
