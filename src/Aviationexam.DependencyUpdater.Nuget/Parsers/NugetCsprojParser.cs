@@ -1,4 +1,6 @@
 using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Nuget.Extensions;
+using Aviationexam.DependencyUpdater.Nuget.Helpers;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
 using NuGet.Versioning;
@@ -50,10 +52,18 @@ public class NugetCsprojParser(
                     version = new VersionRange(new NuGetVersion(versionValue));
                 }
 
+                // Check for conditional PackageReference (element or parent ItemGroup condition)
+                var condition = packageReference.GetConditionIncludingParent();
+                var effectiveTargetFrameworks = GetEffectiveTargetFrameworks(
+                    condition,
+                    packageId,
+                    targetFrameworks
+                );
+
                 yield return new NugetDependency(
                     nugetFile,
                     new NugetPackageReference(packageId, version),
-                    targetFrameworks
+                    effectiveTargetFrameworks
                 );
             }
         }
@@ -86,6 +96,39 @@ public class NugetCsprojParser(
                 yield return importedDependency;
             }
         }
+    }
+
+    private IReadOnlyCollection<NugetTargetFramework> GetEffectiveTargetFrameworks(
+        string? condition,
+        string packageId,
+        IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks
+    )
+    {
+        // If there's a condition, try to extract the target framework
+        if (TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTargetFramework))
+        {
+            if (logger.IsEnabled(LogLevel.Debug))
+            {
+                logger.LogDebug(
+                    "Found conditional target framework {TargetFramework} for package {PackageName}",
+                    conditionalTargetFramework,
+                    packageId
+                );
+            }
+            return [new NugetTargetFramework(conditionalTargetFramework)];
+        }
+
+        if (!string.IsNullOrWhiteSpace(condition) && logger.IsEnabled(LogLevel.Warning))
+        {
+            logger.LogWarning(
+                "Package {PackageName} has a Condition attribute that could not be parsed: {Condition}",
+                packageId,
+                condition
+            );
+        }
+
+        // No condition or condition not recognized - use default target frameworks
+        return defaultTargetFrameworks;
     }
 
     private IEnumerable<NugetTargetFramework> ParseTargetFrameworks(XDocument doc)
