@@ -83,7 +83,7 @@ public class NugetCli(
 
         _ = Task.Run([SuppressMessage("ReSharper", "AccessToDisposedClosure")] async () =>
         {
-            while (await process.StandardOutput.ReadLineAsync(cancellationToken) is { } line)
+            while (await process.StandardError.ReadLineAsync(cancellationToken) is { } line)
             {
                 if (!string.IsNullOrWhiteSpace(line))
                 {
