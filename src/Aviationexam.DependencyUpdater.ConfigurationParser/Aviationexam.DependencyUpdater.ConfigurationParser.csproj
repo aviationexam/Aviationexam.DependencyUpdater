@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -34,7 +34,7 @@
     <AdditionalFiles Include="$(DependabotSchemaFile)" />
   </ItemGroup>
 
-  <Target Name="DownloadDependabotSchema" BeforeTargets="Restore;_GenerateRestoreProjectSpec" Condition=" !Exists('$(DependabotSchemaFile)')">
+  <Target Name="DownloadDependabotSchema" BeforeTargets="Restore;_GenerateRestoreProjectSpec" Condition=" !Exists('$(DependabotSchemaFile)') AND '$(DependencyUpdaterMinimalRestore)' != 'true' ">
     <Message Importance="High" Text="Downloading $(DependabotSchemaUrl) to the $(DependabotSchemaFile)" />
 
     <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(DependabotSchemaUrl) --output $(DependabotSchemaFile)" />
