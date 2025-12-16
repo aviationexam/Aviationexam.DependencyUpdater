@@ -37,7 +37,7 @@ var resetCache = new Option<bool>(
 {
     Description = "Clears the internal dependency cache before processing updates.",
     Required = false,
-    Arity = ArgumentArity.ExactlyOne,
+    Arity = ArgumentArity.ZeroOrOne,
     DefaultValueFactory = _ => false,
 };
 
