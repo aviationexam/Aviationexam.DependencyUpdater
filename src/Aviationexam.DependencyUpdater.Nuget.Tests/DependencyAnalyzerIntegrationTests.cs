@@ -297,4 +297,110 @@ public class DependencyAnalyzerIntegrationTests
             Assert.Equal(3, d.TargetFrameworks.Count);
         });
     }
+
+    /// <summary>
+    /// Tests ZLinq package parsing - a simple unconditional package.
+    /// ZLinq is used across all target frameworks without special versioning.
+    /// </summary>
+    [Fact]
+    public void Parse_ZLinqPackage_HasAllTargetFrameworks()
+    {
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
+            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+        );
+
+        var directoryPackagesPropsContent =
+            // language=xml
+            """
+            <Project>
+              <PropertyGroup>
+                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+              </PropertyGroup>
+              <ItemGroup>
+                <PackageVersion Include="ZLinq" Version="1.5.4" />
+              </ItemGroup>
+            </Project>
+            """;
+
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks =
+        [
+            new("net8.0"),
+            new("net9.0"),
+            new("net10.0")
+        ];
+
+        var dependencies = ParseDirectoryPackagesProps(
+            temporaryDirectoryProvider,
+            directoryPackagesPropsContent,
+            targetFrameworks
+        ).ToList();
+
+        Assert.Single(dependencies);
+
+        var zlinqPackage = dependencies[0];
+        Assert.Equal("ZLinq", zlinqPackage.NugetPackage.GetPackageName());
+        Assert.Equal("1.5.4", ((NugetPackageVersion)zlinqPackage.NugetPackage).Version.ToString());
+        
+        // Should have all target frameworks (unconditional)
+        Assert.Equal(3, zlinqPackage.TargetFrameworks.Count);
+        Assert.Contains(zlinqPackage.TargetFrameworks, tf => tf.TargetFramework == "net8.0");
+        Assert.Contains(zlinqPackage.TargetFrameworks, tf => tf.TargetFramework == "net9.0");
+        Assert.Contains(zlinqPackage.TargetFrameworks, tf => tf.TargetFramework == "net10.0");
+    }
+
+    /// <summary>
+    /// Tests ZeroQL package with preview/prerelease version parsing.
+    /// ZeroQL uses preview versions (8.0.0-preview.7) and should be parsed correctly.
+    /// This tests that prerelease version strings are handled properly.
+    /// </summary>
+    [Fact]
+    public void Parse_ZeroQLPreviewVersion_ParsesCorrectly()
+    {
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
+            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+        );
+
+        var directoryPackagesPropsContent =
+            // language=xml
+            """
+            <Project>
+              <PropertyGroup>
+                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+              </PropertyGroup>
+              <ItemGroup>
+                <PackageVersion Include="ZeroQL" Version="8.0.0-preview.7" />
+              </ItemGroup>
+            </Project>
+            """;
+
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks =
+        [
+            new("net8.0"),
+            new("net9.0"),
+            new("net10.0")
+        ];
+
+        var dependencies = ParseDirectoryPackagesProps(
+            temporaryDirectoryProvider,
+            directoryPackagesPropsContent,
+            targetFrameworks
+        ).ToList();
+
+        Assert.Single(dependencies);
+
+        var zeroqlPackage = dependencies[0];
+        Assert.Equal("ZeroQL", zeroqlPackage.NugetPackage.GetPackageName());
+        
+        // Verify preview version is parsed correctly
+        var version = ((NugetPackageVersion)zeroqlPackage.NugetPackage).Version;
+        Assert.Equal("8.0.0-preview.7", version.ToString());
+        Assert.True(version.IsPrerelease);
+        Assert.Equal("preview.7", version.Release);
+        
+        // Should have all target frameworks (unconditional)
+        Assert.Equal(3, zeroqlPackage.TargetFrameworks.Count);
+        Assert.Contains(zeroqlPackage.TargetFrameworks, tf => tf.TargetFramework == "net8.0");
+        Assert.Contains(zeroqlPackage.TargetFrameworks, tf => tf.TargetFramework == "net9.0");
+        Assert.Contains(zeroqlPackage.TargetFrameworks, tf => tf.TargetFramework == "net10.0");
+    }
 }
