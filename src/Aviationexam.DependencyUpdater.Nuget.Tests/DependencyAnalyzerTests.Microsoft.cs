@@ -76,25 +76,6 @@ public partial class DependencyAnalyzerTests
             [DefaultNugetSource] = new(mockSourceRepository, null),
         };
 
-        // Fetch real package metadata from NuGet.org and filter to specific versions
-        // Only include versions for the major versions we're testing (8.x, 9.x, 10.x separately)
-        var aspNetCoreMetadata = await FetchRealPackageMetadataAsync(
-            "Microsoft.AspNetCore.WebUtilities",
-            ["8.0.0", "8.0.22", "9.0.0", "9.0.1", "9.0.10", "9.0.11", "10.0.0", "10.0.1"]
-        );
-
-        var dependencyInjectionMetadata = await FetchRealPackageMetadataAsync(
-            "Microsoft.Extensions.DependencyInjection",
-            ["8.0.0", "8.0.22", "9.0.0", "9.0.1", "9.0.11"]
-        );
-
-        // System.Text.Json - include all major versions
-        // The ignore rules will prevent cross-major-version updates
-        var textJsonMetadata = await FetchRealPackageMetadataAsync(
-            "System.Text.Json",
-            ["8.0.0", "8.0.22", "9.0.0", "9.0.5", "9.0.11", "10.0.0", "10.0.1"]
-        );
-
         // Mock INugetVersionFetcher
         // Key insight: FetchPackageVersionsAsync returns ALL available versions from the NuGet feed
         // for a given package name, regardless of target framework. The filtering by target framework
@@ -108,7 +89,7 @@ public partial class DependencyAnalyzerTests
                 Arg.Is<NugetDependency>(d => d.NugetPackage.GetPackageName() == "Microsoft.AspNetCore.WebUtilities"),
                 Arg.Any<SourceCacheContext>(),
                 Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(aspNetCoreMetadata));
+            .Returns(Task.FromResult(LoadPackageMetadataFromResource("Microsoft.AspNetCore.WebUtilities")));
 
         mockVersionFetcher
             .FetchPackageVersionsAsync(
@@ -116,7 +97,7 @@ public partial class DependencyAnalyzerTests
                 Arg.Is<NugetDependency>(d => d.NugetPackage.GetPackageName() == "Microsoft.Extensions.DependencyInjection"),
                 Arg.Any<SourceCacheContext>(),
                 Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(dependencyInjectionMetadata));
+            .Returns(Task.FromResult(LoadPackageMetadataFromResource("Microsoft.Extensions.DependencyInjection")));
 
         mockVersionFetcher
             .FetchPackageVersionsAsync(
@@ -124,7 +105,7 @@ public partial class DependencyAnalyzerTests
                 Arg.Is<NugetDependency>(d => d.NugetPackage.GetPackageName() == "System.Text.Json"),
                 Arg.Any<SourceCacheContext>(),
                 Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(textJsonMetadata));
+            .Returns(Task.FromResult(LoadPackageMetadataFromResource("System.Text.Json")));
 
         mockVersionFetcher
             .FetchPackageVersionsAsync(
@@ -132,7 +113,7 @@ public partial class DependencyAnalyzerTests
                 Arg.Is<NugetDependency>(d => d.NugetPackage.GetPackageName() == "Meziantou.Analyzer"),
                 Arg.Any<SourceCacheContext>(),
                 Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(GetMeziantouAnalyzerPackageMetadata()));
+            .Returns(Task.FromResult(LoadPackageMetadataFromResource("Meziantou.Analyzer")));
 
         // Mock FetchPackageMetadataAsync to return null for transitive dependencies
         // This skips transitive dependency validation in this test
