@@ -123,9 +123,42 @@ public partial class DependencyAnalyzerTests
     }
 
     /// <summary>
+    /// Loads package metadata from embedded JSON resource file.
+    /// This provides realistic test data with real dependency information without requiring network calls.
+    /// </summary>
+    protected static IEnumerable<IPackageSearchMetadata> LoadPackageMetadataFromResource(
+        string packageName
+    )
+    {
+        var assembly = typeof(DependencyAnalyzerTests).Assembly;
+        var resourceName = $"Aviationexam.DependencyUpdater.Nuget.Tests.Assets.{packageName}.json";
+
+        using var stream = assembly.GetManifestResourceStream(resourceName);
+        if (stream == null)
+        {
+            throw new InvalidOperationException($"Embedded resource not found: {resourceName}");
+        }
+
+        var allMetadata = JsonSerializer.Deserialize(
+            stream,
+            NugetJsonSerializerContext.Default.IEnumerablePackageSearchMetadataRegistration
+        );
+
+        if (allMetadata == null)
+        {
+            throw new InvalidOperationException($"Failed to deserialize metadata from {resourceName}");
+        }
+
+        var versionSet = new HashSet<string>(versionsToInclude);
+
+        return allMetadata;
+    }
+
+    /// <summary>
     /// Fetches real package metadata from NuGet.org for a given package and filters to only include specified versions.
     /// This provides realistic test data with real dependency information.
     /// Returns PackageSearchMetadataRegistration instances which are the actual concrete type returned by NuGet.
+    /// NOTE: Prefer LoadPackageMetadataFromResource() to avoid network calls during tests.
     /// </summary>
     protected static async Task<IEnumerable<IPackageSearchMetadata>> FetchRealPackageMetadataAsync(
         string packageName,
