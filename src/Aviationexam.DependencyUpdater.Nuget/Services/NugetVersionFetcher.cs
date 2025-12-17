@@ -12,7 +12,7 @@ namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
 public sealed class NugetVersionFetcher(
     ILogger logger
-)
+) : INugetVersionFetcher
 {
     public async Task<IEnumerable<IPackageSearchMetadata>> FetchPackageVersionsAsync(
         SourceRepository repository,

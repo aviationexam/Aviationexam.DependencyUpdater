@@ -16,7 +16,7 @@ using ZLinq;
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
 public sealed class DependencyAnalyzer(
-    NugetVersionFetcher nugetVersionFetcher,
+    INugetVersionFetcher nugetVersionFetcher,
     FutureVersionResolver futureVersionResolver,
     TargetFrameworksResolver targetFrameworksResolver,
     IgnoredDependenciesResolver ignoredDependenciesResolver,
