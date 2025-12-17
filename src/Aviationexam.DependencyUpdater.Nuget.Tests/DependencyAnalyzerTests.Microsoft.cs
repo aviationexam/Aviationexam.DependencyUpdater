@@ -4,6 +4,7 @@ using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Services;
 using NSubstitute;
 using NuGet.Protocol.Core.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -87,11 +88,11 @@ public partial class DependencyAnalyzerTests
             ["8.0.0", "8.0.22", "9.0.0", "9.0.1", "9.0.11"]
         );
 
-        // For System.Text.Json, to keep test simple, only include 9.x and 10.x versions
-        // to avoid net8.0 @ 8.0.22 seeing updates to 9.x/10.x
+        // System.Text.Json - include all major versions
+        // The ignore rules will prevent cross-major-version updates
         var textJsonMetadata = await FetchRealPackageMetadataAsync(
             "System.Text.Json",
-            ["9.0.0", "9.0.5", "9.0.11", "10.0.0", "10.0.1"]
+            ["8.0.0", "8.0.22", "9.0.0", "9.0.5", "9.0.11", "10.0.0", "10.0.1"]
         );
 
         var mezianiauAnalyzerMetadata = await FetchRealPackageMetadataAsync(
@@ -177,22 +178,23 @@ public partial class DependencyAnalyzerTests
         Assert.Equal(3, net90Updates.Count); // 3 net9.0 packages should have updates
         Assert.Equal(3, result.DependenciesToUpdate.Count); // Only net9.0 packages should have updates
 
-        // Verify specific packages
-        var aspNetCoreUpdate = net90Updates.FirstOrDefault(u =>
-            u.Key.NugetPackage.GetPackageName() == "Microsoft.AspNetCore.WebUtilities");
-        Assert.NotNull(aspNetCoreUpdate.Key);
-        Assert.Contains(aspNetCoreUpdate.Value, v => v.PackageVersion.Version.ToString().StartsWith("9.0.11"));
+        // Verify specific packages - with ignore rules for semver-major, only minor/patch updates within same major version
+        var aspNetCoreUpdate = Assert.Single(net90Updates, u => u.Key.NugetPackage.GetPackageName() == "Microsoft.AspNetCore.WebUtilities");
+        // Only 9.x updates (9.0.11, 9.0.10, 9.0.1), no 10.x due to semver-major ignore
+        Assert.Equal([new Version(9, 0, 11, 0), new Version(9, 0, 10, 0), new Version(9, 0, 1, 0)], 
+            aspNetCoreUpdate.Value.Select(x => x.PackageVersion.Version).ToArray());
 
-        var dependencyInjectionUpdate = net90Updates.FirstOrDefault(u =>
+        var dependencyInjectionUpdate = Assert.Single(net90Updates, u => 
             u.Key.NugetPackage.GetPackageName() == "Microsoft.Extensions.DependencyInjection");
-        Assert.NotNull(dependencyInjectionUpdate.Key);
-        Assert.Contains(dependencyInjectionUpdate.Value, v => v.PackageVersion.Version.ToString().StartsWith("9.0.11"));
+        // Only 9.x updates (9.0.11, 9.0.1), no 8.x or 10.x due to semver-major ignore
+        Assert.Equal([new Version(9, 0, 11, 0), new Version(9, 0, 1, 0)], 
+            dependencyInjectionUpdate.Value.Select(x => x.PackageVersion.Version).ToArray());
 
-        var textJsonUpdate = net90Updates.FirstOrDefault(u =>
+        var textJsonUpdate = Assert.Single(net90Updates, u =>
             u.Key.NugetPackage.GetPackageName() == "System.Text.Json");
-        Assert.NotNull(textJsonUpdate.Key);
-        // System.Text.Json 9.0.0 should have 9.x updates but also includes 10.x (cross-major updates)
-        Assert.Contains(textJsonUpdate.Value, v => v.PackageVersion.Version.ToString().StartsWith("9.0.11"));
+        // Only 9.x updates (9.0.11, 9.0.5), no 10.x due to semver-major ignore
+        Assert.Equal([new Version(9, 0, 11, 0), new Version(9, 0, 5, 0)], 
+            textJsonUpdate.Value.Select(x => x.PackageVersion.Version).ToArray());
 
         // Verify net8.0 and net10.0 packages have NO updates (they're already at latest for their framework)
         var net80Updates = result.DependenciesToUpdate
