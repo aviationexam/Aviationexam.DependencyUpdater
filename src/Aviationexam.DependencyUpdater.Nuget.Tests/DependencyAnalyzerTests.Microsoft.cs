@@ -34,6 +34,11 @@ public partial class DependencyAnalyzerTests
                 new NugetPackageVersion("Microsoft.AspNetCore.WebUtilities", "8.0.22"),
                 [new NugetTargetFramework("net8.0")]
             ),
+            new(
+                nugetFile,
+                new NugetPackageVersion("System.Text.Json", "8.0.22"),
+                [new NugetTargetFramework("net8.0")]
+            ),
             // net9.0 packages (at 9.0.0, updates available to 9.0.11)
             new(
                 nugetFile,
@@ -151,7 +156,10 @@ public partial class DependencyAnalyzerTests
         var result = await analyzer.AnalyzeDependenciesAsync(
             context,
             sourceRepositories,
-            [],
+            [
+                new IgnoreEntry("Microsoft.*", ["version-update:semver-major"]),
+                new IgnoreEntry("System.*", ["version-update:semver-major"]),
+            ],
             currentPackageVersions,
             cachingConfiguration,
             TestContext.Current.CancellationToken
