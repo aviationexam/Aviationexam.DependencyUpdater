@@ -403,4 +403,84 @@ public class DependencyAnalyzerIntegrationTests
         Assert.Contains(zeroqlPackage.TargetFrameworks, tf => tf.TargetFramework == "net9.0");
         Assert.Contains(zeroqlPackage.TargetFrameworks, tf => tf.TargetFramework == "net10.0");
     }
+
+    /// <summary>
+    /// Tests the problematic scenario from Aviationexam.MoneyErp where Meziantou.Extensions.Logging.Xunit.v3
+    /// is present in ALL target frameworks but should be updated uniformly.
+    /// The issue is that this package appears in conditional ItemGroups for each framework,
+    /// but all have the same version (1.1.19) and should be updated together.
+    /// This tests that packages appearing in multiple conditional blocks are correctly parsed
+    /// as separate dependencies for each framework.
+    /// </summary>
+    [Fact]
+    public void Parse_MeziantouLoggingXunitCrossFramework_CreatesSeparateDependenciesPerFramework()
+    {
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
+            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+        );
+
+        var directoryPackagesPropsContent =
+            // language=xml
+            """
+            <Project>
+              <PropertyGroup>
+                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+              </PropertyGroup>
+              <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+                <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="1.1.19" />
+              </ItemGroup>
+              <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+                <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="1.1.19" />
+              </ItemGroup>
+              <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+                <PackageVersion Include="Meziantou.Extensions.Logging.Xunit.v3" Version="1.1.19" />
+              </ItemGroup>
+            </Project>
+            """;
+
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks =
+        [
+            new("net8.0"),
+            new("net9.0"),
+            new("net10.0")
+        ];
+
+        var dependencies = ParseDirectoryPackagesProps(
+            temporaryDirectoryProvider,
+            directoryPackagesPropsContent,
+            targetFrameworks
+        ).ToList();
+
+        // Should create 3 separate dependencies - one for each framework
+        Assert.Equal(3, dependencies.Count);
+
+        // Each dependency should be for the same package with same version
+        Assert.All(dependencies, d =>
+        {
+            Assert.Equal("Meziantou.Extensions.Logging.Xunit.v3", d.NugetPackage.GetPackageName());
+            Assert.Equal("1.1.19", ((NugetPackageVersion)d.NugetPackage).Version.ToString());
+        });
+
+        // Each dependency should have exactly ONE target framework
+        Assert.All(dependencies, d => Assert.Single(d.TargetFrameworks));
+
+        // Verify we have one dependency for each framework
+        var net80Dep = dependencies.FirstOrDefault(d => d.TargetFrameworks.First().TargetFramework == "net8.0");
+        var net90Dep = dependencies.FirstOrDefault(d => d.TargetFrameworks.First().TargetFramework == "net9.0");
+        var net100Dep = dependencies.FirstOrDefault(d => d.TargetFrameworks.First().TargetFramework == "net10.0");
+
+        Assert.NotNull(net80Dep);
+        Assert.NotNull(net90Dep);
+        Assert.NotNull(net100Dep);
+
+        // All should have the same version
+        Assert.Equal("1.1.19", ((NugetPackageVersion)net80Dep.NugetPackage).Version.ToString());
+        Assert.Equal("1.1.19", ((NugetPackageVersion)net90Dep.NugetPackage).Version.ToString());
+        Assert.Equal("1.1.19", ((NugetPackageVersion)net100Dep.NugetPackage).Version.ToString());
+
+        // Key insight: When the same package appears in multiple conditional blocks with the same version,
+        // it creates separate NugetDependency instances. The DependencyAnalyzer should treat these
+        // independently for updates, which means if one framework's version is updated, the others
+        // should also be considered for update to maintain consistency.
+    }
 }
