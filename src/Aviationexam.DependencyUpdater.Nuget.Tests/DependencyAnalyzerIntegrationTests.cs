@@ -152,7 +152,7 @@ public class DependencyAnalyzerIntegrationTests
         Assert.Equal(4, net80Dependencies.Count);
 
         var microsoftAspNetCoreNet80 = net80Dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.AspNetCore.WebUtilities");
-        Assert.Equal("8.0.22", ((NugetPackageVersion)microsoftAspNetCoreNet80.NugetPackage).Version.ToString());
+        Assert.Equal("8.0.22", ((NugetPackageVersion) microsoftAspNetCoreNet80.NugetPackage).Version.ToString());
         Assert.Single(microsoftAspNetCoreNet80.TargetFrameworks);
         Assert.Equal("net8.0", microsoftAspNetCoreNet80.TargetFrameworks.First().TargetFramework);
 
@@ -163,12 +163,12 @@ public class DependencyAnalyzerIntegrationTests
         Assert.Equal(5, net90Dependencies.Count);
 
         var microsoftAspNetCoreNet90 = net90Dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.AspNetCore.WebUtilities");
-        Assert.Equal("9.0.0", ((NugetPackageVersion)microsoftAspNetCoreNet90.NugetPackage).Version.ToString());
+        Assert.Equal("9.0.0", ((NugetPackageVersion) microsoftAspNetCoreNet90.NugetPackage).Version.ToString());
         Assert.Single(microsoftAspNetCoreNet90.TargetFrameworks);
         Assert.Equal("net9.0", microsoftAspNetCoreNet90.TargetFrameworks.First().TargetFramework);
 
         var systemTextJsonNet90 = net90Dependencies.First(d => d.NugetPackage.GetPackageName() == "System.Text.Json");
-        Assert.Equal("9.0.0", ((NugetPackageVersion)systemTextJsonNet90.NugetPackage).Version.ToString());
+        Assert.Equal("9.0.0", ((NugetPackageVersion) systemTextJsonNet90.NugetPackage).Version.ToString());
         Assert.Single(systemTextJsonNet90.TargetFrameworks);
         Assert.Equal("net9.0", systemTextJsonNet90.TargetFrameworks.First().TargetFramework);
 
@@ -179,7 +179,7 @@ public class DependencyAnalyzerIntegrationTests
         Assert.Equal(5, net100Dependencies.Count);
 
         var microsoftAspNetCoreNet100 = net100Dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.AspNetCore.WebUtilities");
-        Assert.Equal("10.0.1", ((NugetPackageVersion)microsoftAspNetCoreNet100.NugetPackage).Version.ToString());
+        Assert.Equal("10.0.1", ((NugetPackageVersion) microsoftAspNetCoreNet100.NugetPackage).Version.ToString());
         Assert.Single(microsoftAspNetCoreNet100.TargetFrameworks);
         Assert.Equal("net10.0", microsoftAspNetCoreNet100.TargetFrameworks.First().TargetFramework);
 
@@ -191,9 +191,9 @@ public class DependencyAnalyzerIntegrationTests
         Assert.Equal(3, aspNetCoreWebUtilitiesDeps.Count); // One for each framework
 
         // Each should have a different version
-        Assert.Contains(aspNetCoreWebUtilitiesDeps, d => ((NugetPackageVersion)d.NugetPackage).Version.ToString() == "8.0.22");
-        Assert.Contains(aspNetCoreWebUtilitiesDeps, d => ((NugetPackageVersion)d.NugetPackage).Version.ToString() == "9.0.0");
-        Assert.Contains(aspNetCoreWebUtilitiesDeps, d => ((NugetPackageVersion)d.NugetPackage).Version.ToString() == "10.0.1");
+        Assert.Contains(aspNetCoreWebUtilitiesDeps, d => ((NugetPackageVersion) d.NugetPackage).Version.ToString() == "8.0.22");
+        Assert.Contains(aspNetCoreWebUtilitiesDeps, d => ((NugetPackageVersion) d.NugetPackage).Version.ToString() == "9.0.0");
+        Assert.Contains(aspNetCoreWebUtilitiesDeps, d => ((NugetPackageVersion) d.NugetPackage).Version.ToString() == "10.0.1");
 
         // Each should have exactly one target framework
         Assert.All(aspNetCoreWebUtilitiesDeps, d => Assert.Single(d.TargetFrameworks));
@@ -258,22 +258,22 @@ public class DependencyAnalyzerIntegrationTests
 
         // Verify all packages have version 1.21.0
         var abstractionsPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.Kiota.Abstractions");
-        Assert.Equal("1.21.0", ((NugetPackageVersion)abstractionsPackage.NugetPackage).Version.ToString());
+        Assert.Equal("1.21.0", ((NugetPackageVersion) abstractionsPackage.NugetPackage).Version.ToString());
 
         var httpClientLibraryPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.Kiota.Http.HttpClientLibrary");
-        Assert.Equal("1.21.0", ((NugetPackageVersion)httpClientLibraryPackage.NugetPackage).Version.ToString());
+        Assert.Equal("1.21.0", ((NugetPackageVersion) httpClientLibraryPackage.NugetPackage).Version.ToString());
 
         var serializationFormPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.Kiota.Serialization.Form");
-        Assert.Equal("1.21.0", ((NugetPackageVersion)serializationFormPackage.NugetPackage).Version.ToString());
+        Assert.Equal("1.21.0", ((NugetPackageVersion) serializationFormPackage.NugetPackage).Version.ToString());
 
         var serializationJsonPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.Kiota.Serialization.Json");
-        Assert.Equal("1.21.0", ((NugetPackageVersion)serializationJsonPackage.NugetPackage).Version.ToString());
+        Assert.Equal("1.21.0", ((NugetPackageVersion) serializationJsonPackage.NugetPackage).Version.ToString());
 
         var serializationTextPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.Kiota.Serialization.Text");
-        Assert.Equal("1.21.0", ((NugetPackageVersion)serializationTextPackage.NugetPackage).Version.ToString());
+        Assert.Equal("1.21.0", ((NugetPackageVersion) serializationTextPackage.NugetPackage).Version.ToString());
 
         var serializationMultipartPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.Kiota.Serialization.Multipart");
-        Assert.Equal("1.21.0", ((NugetPackageVersion)serializationMultipartPackage.NugetPackage).Version.ToString());
+        Assert.Equal("1.21.0", ((NugetPackageVersion) serializationMultipartPackage.NugetPackage).Version.ToString());
 
         // Key assertion: All Kiota packages share the same version and should be grouped
         var kiotaPackageNames = new[]
@@ -293,7 +293,7 @@ public class DependencyAnalyzerIntegrationTests
         Assert.Equal(6, kiotaPackages.Count);
         Assert.All(kiotaPackages, d =>
         {
-            Assert.Equal("1.21.0", ((NugetPackageVersion)d.NugetPackage).Version.ToString());
+            Assert.Equal("1.21.0", ((NugetPackageVersion) d.NugetPackage).Version.ToString());
             Assert.Equal(3, d.TargetFrameworks.Count);
         });
     }
@@ -339,8 +339,8 @@ public class DependencyAnalyzerIntegrationTests
 
         var zlinqPackage = dependencies[0];
         Assert.Equal("ZLinq", zlinqPackage.NugetPackage.GetPackageName());
-        Assert.Equal("1.5.4", ((NugetPackageVersion)zlinqPackage.NugetPackage).Version.ToString());
-        
+        Assert.Equal("1.5.4", ((NugetPackageVersion) zlinqPackage.NugetPackage).Version.ToString());
+
         // Should have all target frameworks (unconditional)
         Assert.Equal(3, zlinqPackage.TargetFrameworks.Count);
         Assert.Contains(zlinqPackage.TargetFrameworks, tf => tf.TargetFramework == "net8.0");
@@ -390,13 +390,13 @@ public class DependencyAnalyzerIntegrationTests
 
         var zeroqlPackage = dependencies[0];
         Assert.Equal("ZeroQL", zeroqlPackage.NugetPackage.GetPackageName());
-        
+
         // Verify preview version is parsed correctly
-        var version = ((NugetPackageVersion)zeroqlPackage.NugetPackage).Version;
+        var version = ((NugetPackageVersion) zeroqlPackage.NugetPackage).Version;
         Assert.Equal("8.0.0-preview.7", version.ToString());
         Assert.True(version.IsPrerelease);
         Assert.Equal("preview.7", version.Release);
-        
+
         // Should have all target frameworks (unconditional)
         Assert.Equal(3, zeroqlPackage.TargetFrameworks.Count);
         Assert.Contains(zeroqlPackage.TargetFrameworks, tf => tf.TargetFramework == "net8.0");
@@ -458,7 +458,7 @@ public class DependencyAnalyzerIntegrationTests
         Assert.All(dependencies, d =>
         {
             Assert.Equal("Meziantou.Extensions.Logging.Xunit.v3", d.NugetPackage.GetPackageName());
-            Assert.Equal("1.1.19", ((NugetPackageVersion)d.NugetPackage).Version.ToString());
+            Assert.Equal("1.1.19", ((NugetPackageVersion) d.NugetPackage).Version.ToString());
         });
 
         // Each dependency should have exactly ONE target framework
@@ -474,9 +474,9 @@ public class DependencyAnalyzerIntegrationTests
         Assert.NotNull(net100Dep);
 
         // All should have the same version
-        Assert.Equal("1.1.19", ((NugetPackageVersion)net80Dep.NugetPackage).Version.ToString());
-        Assert.Equal("1.1.19", ((NugetPackageVersion)net90Dep.NugetPackage).Version.ToString());
-        Assert.Equal("1.1.19", ((NugetPackageVersion)net100Dep.NugetPackage).Version.ToString());
+        Assert.Equal("1.1.19", ((NugetPackageVersion) net80Dep.NugetPackage).Version.ToString());
+        Assert.Equal("1.1.19", ((NugetPackageVersion) net90Dep.NugetPackage).Version.ToString());
+        Assert.Equal("1.1.19", ((NugetPackageVersion) net100Dep.NugetPackage).Version.ToString());
 
         // Key insight: When the same package appears in multiple conditional blocks with the same version,
         // it creates separate NugetDependency instances. The DependencyAnalyzer should treat these
@@ -546,31 +546,31 @@ public class DependencyAnalyzerIntegrationTests
 
         // Verify specific packages
         var meziantou = dependencies.First(d => d.NugetPackage.GetPackageName() == "Meziantou.Analyzer");
-        Assert.Equal("2.0.260", ((NugetPackageVersion)meziantou.NugetPackage).Version.ToString());
+        Assert.Equal("2.0.260", ((NugetPackageVersion) meziantou.NugetPackage).Version.ToString());
 
         var microsoftExtensionsHosting = dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.Extensions.Hosting");
-        Assert.Equal("10.0.1", ((NugetPackageVersion)microsoftExtensionsHosting.NugetPackage).Version.ToString());
+        Assert.Equal("10.0.1", ((NugetPackageVersion) microsoftExtensionsHosting.NugetPackage).Version.ToString());
 
         var systemTextJson = dependencies.First(d => d.NugetPackage.GetPackageName() == "System.Text.Json");
-        Assert.Equal("10.0.1", ((NugetPackageVersion)systemTextJson.NugetPackage).Version.ToString());
+        Assert.Equal("10.0.1", ((NugetPackageVersion) systemTextJson.NugetPackage).Version.ToString());
 
         var systemCollectionsImmutable = dependencies.First(d => d.NugetPackage.GetPackageName() == "System.Collections.Immutable");
-        Assert.Equal("9.0.11", ((NugetPackageVersion)systemCollectionsImmutable.NugetPackage).Version.ToString());
+        Assert.Equal("9.0.11", ((NugetPackageVersion) systemCollectionsImmutable.NugetPackage).Version.ToString());
 
         var zlinq = dependencies.First(d => d.NugetPackage.GetPackageName() == "ZLinq");
-        Assert.Equal("1.5.4", ((NugetPackageVersion)zlinq.NugetPackage).Version.ToString());
+        Assert.Equal("1.5.4", ((NugetPackageVersion) zlinq.NugetPackage).Version.ToString());
 
         var xunit = dependencies.First(d => d.NugetPackage.GetPackageName() == "xunit.v3.mtp-v2");
-        Assert.Equal("3.2.1", ((NugetPackageVersion)xunit.NugetPackage).Version.ToString());
+        Assert.Equal("3.2.1", ((NugetPackageVersion) xunit.NugetPackage).Version.ToString());
 
         var nsubstitute = dependencies.First(d => d.NugetPackage.GetPackageName() == "NSubstitute");
-        Assert.Equal("5.3.0", ((NugetPackageVersion)nsubstitute.NugetPackage).Version.ToString());
+        Assert.Equal("5.3.0", ((NugetPackageVersion) nsubstitute.NugetPackage).Version.ToString());
 
         // Verify ItemGroup separation doesn't affect target framework assignment
         // Packages from both ItemGroups should have the same target frameworks
         var firstGroupPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "Meziantou.Analyzer");
         var secondGroupPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "xunit.v3.mtp-v2");
-        
+
         Assert.Equal(firstGroupPackage.TargetFrameworks.Count, secondGroupPackage.TargetFrameworks.Count);
     }
 }
