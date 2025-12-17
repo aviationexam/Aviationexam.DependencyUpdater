@@ -33,7 +33,7 @@ public partial class DependencyAnalyzerTests
     /// <summary>
     /// Creates a DependencyAnalyzer with real service instances and mocked version fetcher.
     /// </summary>
-    protected static DependencyAnalyzer CreateDependencyAnalyzer(
+    private static DependencyAnalyzer CreateDependencyAnalyzer(
         INugetVersionFetcher mockVersionFetcher
     )
     {
@@ -57,7 +57,7 @@ public partial class DependencyAnalyzerTests
     /// <summary>
     /// Creates a mock IPackageSearchMetadata for a specific package version.
     /// </summary>
-    protected static IPackageSearchMetadata CreatePackageMetadata(
+    private static IPackageSearchMetadata CreatePackageMetadata(
         SerializedPackage registration
     ) => new PackageSearchMetadataRegistration()
         .SetPackageId(registration.PackageId)
@@ -73,68 +73,10 @@ public partial class DependencyAnalyzerTests
         )).ToList());
 
     /// <summary>
-    /// Creates a PackageDependencyGroup for a specific target framework.
-    /// </summary>
-    protected static PackageDependencyGroup CreateDependencyGroup(
-        string targetFramework,
-        params IReadOnlyCollection<(string Name, string VersionRange)> dependencies
-    )
-    {
-        var tfm = NuGetFramework.Parse(targetFramework);
-        var packages = dependencies.AsValueEnumerable().Select(d =>
-            new PackageDependency(
-                d.Name,
-                VersionRange.Parse(d.VersionRange)
-            )
-        ).ToList();
-
-        return new PackageDependencyGroup(tfm, packages);
-    }
-
-    /// <summary>
-    /// Helper to verify that a dependency analysis result contains expected updates.
-    /// </summary>
-    protected static void AssertContainsUpdate(
-        DependencyAnalysisResult result,
-        string packageName,
-        string currentVersion,
-        string[] expectedVersions,
-        string[] targetFrameworks
-    )
-    {
-        var updates = result.DependenciesToUpdate
-            .AsValueEnumerable()
-            .Where(kvp => kvp.Key.NugetPackage.GetPackageName() == packageName)
-            .ToList();
-
-        Assert.NotEmpty(updates);
-
-        foreach (var update in updates)
-        {
-            var dependency = update.Key;
-            var versions = update.Value;
-
-            // Verify current version
-            Assert.Equal(currentVersion, ((NugetPackageVersion) dependency.NugetPackage).Version.ToString());
-
-            // Verify target frameworks match
-            var depFrameworks = dependency.TargetFrameworks.AsValueEnumerable().Select(tf => tf.TargetFramework).ToArray();
-            Assert.Subset(new HashSet<string>(targetFrameworks), new HashSet<string>(depFrameworks));
-
-            // Verify available versions
-            var availableVersions = versions.AsValueEnumerable().Select(v => v.PackageVersion.Version.ToString()).ToArray();
-            foreach (var expectedVersion in expectedVersions)
-            {
-                Assert.Contains(expectedVersion, availableVersions);
-            }
-        }
-    }
-
-    /// <summary>
     /// Loads package metadata from embedded JSON resource file.
     /// This provides realistic test data with real dependency information without requiring network calls.
     /// </summary>
-    protected static IEnumerable<IPackageSearchMetadata> LoadPackageMetadataFromResource(
+    private static IEnumerable<IPackageSearchMetadata> LoadPackageMetadataFromResource(
         string packageName
     )
     {
@@ -166,7 +108,7 @@ public partial class DependencyAnalyzerTests
     /// Returns PackageSearchMetadataRegistration instances which are the actual concrete type returned by NuGet.
     /// NOTE: Prefer LoadPackageMetadataFromResource() to avoid network calls during tests.
     /// </summary>
-    protected static async Task<IEnumerable<IPackageSearchMetadata>> FetchRealPackageMetadataAsync(
+    private static async Task<IEnumerable<IPackageSearchMetadata>> FetchRealPackageMetadataAsync(
         string packageName,
         IReadOnlyCollection<string> versionsToInclude
     )
