@@ -1,6 +1,646 @@
 [
   {
+    "CatalogUri": "https://api.nuget.org/v3/catalog0/data/2024.10.09.01.08.27/system.text.json.8.0.0.json",
     "Authors": "Microsoft",
+    "DependencySetsInternal": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETFramework",
+          "Version": "4.6.2.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETFramework,Version=v4.6.2",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": false,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Buffers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.1",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.1, )"
+            }
+          },
+          {
+            "Id": "System.Memory",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.5",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.5, )"
+            }
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "6.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "6.0.0",
+                "Major": 6,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[6.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          },
+          {
+            "Id": "System.ValueTuple",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.0",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "6.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v6.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "6.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "6.0.0",
+                "Major": 6,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[6.0.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "7.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v7.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "8.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v8.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Buffers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.1",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.1, )"
+            }
+          },
+          {
+            "Id": "System.Memory",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.5",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.5, )"
+            }
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "6.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "6.0.0",
+                "Major": 6,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[6.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          }
+        ]
+      }
+    ],
     "DependencySets": [
       {
         "TargetFramework": {
@@ -663,20 +1303,38 @@
       "HasVersion": true
     },
     "LicenseUrl": "https://www.nuget.org/packages/System.Text.Json/8.0.0/license",
+    "OwnersList": null,
+    "Owners": null,
+    "PackageId": "System.Text.Json",
     "ProjectUrl": "https://dot.net/",
+    "Published": "2023-11-14T14:36:47.42+01:00",
     "ReadmeUrl": "https://www.nuget.org/packages/System.Text.Json/8.0.0#show-readme-container",
     "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/system.text.json/8.0.0/readme",
     "ReportAbuseUrl": "https://www.nuget.org/packages/System.Text.Json/8.0.0/ReportAbuse",
     "PackageDetailsUrl": "https://www.nuget.org/packages/System.Text.Json/8.0.0?_src=template",
-    "Published": "2023-11-14T14:36:47.42+01:00",
-    "OwnersList": null,
-    "Owners": null,
     "RequireLicenseAcceptance": false,
     "Summary": "Provides high-performance and low-allocating types that serialize objects to JavaScript Object Notation (JSON) text and deserialize JSON text to objects, with UTF-8 support built-in. Also provides types to read and write JSON text encoded as UTF-8, and to create an in-memory document object model (DOM), that is read-only, for random access of the JSON elements within a structured view of the data.\n\nThe System.Text.Json library is built-in as part of the shared framework in .NET Runtime. The package can be installed when you need to use it in other target frameworks.",
     "Tags": "",
     "Title": "System.Text.Json",
-    "IsListed": true,
+    "Version": {
+      "Version": "8.0.0.0",
+      "IsLegacyVersion": false,
+      "Revision": 0,
+      "IsSemVer2": false,
+      "OriginalVersion": "8.0.0",
+      "Major": 8,
+      "Minor": 0,
+      "Patch": 0,
+      "ReleaseLabels": [],
+      "Release": "",
+      "IsPrerelease": false,
+      "HasMetadata": false,
+      "Metadata": ""
+    },
+    "ParsedVersions": null,
     "PrefixReserved": false,
+    "LicenseExpression": "MIT",
+    "LicenseExpressionVersion": null,
     "LicenseMetadata": {
       "Type": 1,
       "License": "MIT",
@@ -687,6 +1345,8 @@
       "Version": "1.0.0",
       "LicenseUrl": "https://licenses.nuget.org/MIT"
     },
+    "IsListed": true,
+    "DeprecationMetadata": null,
     "Vulnerabilities": [
       {
         "AdvisoryUrl": "https://github.com/advisories/GHSA-hh2w-p6rv-4g7w",
@@ -699,7 +1359,624 @@
     ]
   },
   {
+    "CatalogUri": "https://api.nuget.org/v3/catalog0/data/2024.11.12.19.11.51/system.text.json.9.0.0.json",
     "Authors": "Microsoft",
+    "DependencySetsInternal": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETFramework",
+          "Version": "4.6.2.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETFramework,Version=v4.6.2",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": false,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Buffers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.1",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.1, )"
+            }
+          },
+          {
+            "Id": "System.Memory",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.5",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.5, )"
+            }
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "6.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "6.0.0",
+                "Major": 6,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[6.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          },
+          {
+            "Id": "System.ValueTuple",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.0",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "8.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v8.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "9.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v9.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": []
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Buffers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.1",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.1, )"
+            }
+          },
+          {
+            "Id": "System.Memory",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.5",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.5, )"
+            }
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "6.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "6.0.0",
+                "Major": 6,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[6.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          }
+        ]
+      }
+    ],
     "DependencySets": [
       {
         "TargetFramework": {
@@ -1339,20 +2616,38 @@
       "HasVersion": true
     },
     "LicenseUrl": "https://www.nuget.org/packages/System.Text.Json/9.0.0/license",
+    "OwnersList": null,
+    "Owners": null,
+    "PackageId": "System.Text.Json",
     "ProjectUrl": "https://dot.net/",
+    "Published": "2024-11-12T19:30:08.33+01:00",
     "ReadmeUrl": "https://www.nuget.org/packages/System.Text.Json/9.0.0#show-readme-container",
     "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/system.text.json/9.0.0/readme",
     "ReportAbuseUrl": "https://www.nuget.org/packages/System.Text.Json/9.0.0/ReportAbuse",
     "PackageDetailsUrl": "https://www.nuget.org/packages/System.Text.Json/9.0.0?_src=template",
-    "Published": "2024-11-12T19:30:08.33+01:00",
-    "OwnersList": null,
-    "Owners": null,
     "RequireLicenseAcceptance": false,
     "Summary": "Provides high-performance and low-allocating types that serialize objects to JavaScript Object Notation (JSON) text and deserialize JSON text to objects, with UTF-8 support built-in. Also provides types to read and write JSON text encoded as UTF-8, and to create an in-memory document object model (DOM), that is read-only, for random access of the JSON elements within a structured view of the data.\n\nThe System.Text.Json library is built-in as part of the shared framework in .NET Runtime. The package can be installed when you need to use it in other target frameworks.",
     "Tags": "",
     "Title": "System.Text.Json",
-    "IsListed": true,
+    "Version": {
+      "Version": "9.0.0.0",
+      "IsLegacyVersion": false,
+      "Revision": 0,
+      "IsSemVer2": false,
+      "OriginalVersion": "9.0.0",
+      "Major": 9,
+      "Minor": 0,
+      "Patch": 0,
+      "ReleaseLabels": [],
+      "Release": "",
+      "IsPrerelease": false,
+      "HasMetadata": false,
+      "Metadata": ""
+    },
+    "ParsedVersions": null,
     "PrefixReserved": false,
+    "LicenseExpression": "MIT",
+    "LicenseExpressionVersion": null,
     "LicenseMetadata": {
       "Type": 1,
       "License": "MIT",
@@ -1363,10 +2658,629 @@
       "Version": "1.0.0",
       "LicenseUrl": "https://licenses.nuget.org/MIT"
     },
+    "IsListed": true,
+    "DeprecationMetadata": null,
     "Vulnerabilities": null
   },
   {
+    "CatalogUri": "https://api.nuget.org/v3/catalog0/data/2025.05.13.18.31.56/system.text.json.9.0.5.json",
     "Authors": "Microsoft",
+    "DependencySetsInternal": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETFramework",
+          "Version": "4.6.2.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETFramework,Version=v4.6.2",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": false,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.5",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.5, )"
+            }
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.5",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.5, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.5",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.5, )"
+            }
+          },
+          {
+            "Id": "System.Buffers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.1",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.1, )"
+            }
+          },
+          {
+            "Id": "System.Memory",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.5",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.5, )"
+            }
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "6.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "6.0.0",
+                "Major": 6,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[6.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          },
+          {
+            "Id": "System.ValueTuple",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.0",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "8.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v8.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.5",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.5, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.5",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.5, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "9.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v9.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": []
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.5",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.5, )"
+            }
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.5",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.5, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.5",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.5, )"
+            }
+          },
+          {
+            "Id": "System.Buffers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.1",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.1, )"
+            }
+          },
+          {
+            "Id": "System.Memory",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.5",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.5, )"
+            }
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "6.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "6.0.0",
+                "Major": 6,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[6.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          }
+        ]
+      }
+    ],
     "DependencySets": [
       {
         "TargetFramework": {
@@ -2006,20 +3920,38 @@
       "HasVersion": true
     },
     "LicenseUrl": "https://www.nuget.org/packages/System.Text.Json/9.0.5/license",
+    "OwnersList": null,
+    "Owners": null,
+    "PackageId": "System.Text.Json",
     "ProjectUrl": "https://dot.net/",
+    "Published": "2025-05-13T20:08:45.267+02:00",
     "ReadmeUrl": "https://www.nuget.org/packages/System.Text.Json/9.0.5#show-readme-container",
     "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/system.text.json/9.0.5/readme",
     "ReportAbuseUrl": "https://www.nuget.org/packages/System.Text.Json/9.0.5/ReportAbuse",
     "PackageDetailsUrl": "https://www.nuget.org/packages/System.Text.Json/9.0.5?_src=template",
-    "Published": "2025-05-13T20:08:45.267+02:00",
-    "OwnersList": null,
-    "Owners": null,
     "RequireLicenseAcceptance": false,
     "Summary": "Provides high-performance and low-allocating types that serialize objects to JavaScript Object Notation (JSON) text and deserialize JSON text to objects, with UTF-8 support built-in. Also provides types to read and write JSON text encoded as UTF-8, and to create an in-memory document object model (DOM), that is read-only, for random access of the JSON elements within a structured view of the data.\n\nThe System.Text.Json library is built-in as part of the shared framework in .NET Runtime. The package can be installed when you need to use it in other target frameworks.",
     "Tags": "",
     "Title": "System.Text.Json",
-    "IsListed": true,
+    "Version": {
+      "Version": "9.0.5.0",
+      "IsLegacyVersion": false,
+      "Revision": 0,
+      "IsSemVer2": false,
+      "OriginalVersion": "9.0.5",
+      "Major": 9,
+      "Minor": 0,
+      "Patch": 5,
+      "ReleaseLabels": [],
+      "Release": "",
+      "IsPrerelease": false,
+      "HasMetadata": false,
+      "Metadata": ""
+    },
+    "ParsedVersions": null,
     "PrefixReserved": false,
+    "LicenseExpression": "MIT",
+    "LicenseExpressionVersion": null,
     "LicenseMetadata": {
       "Type": 1,
       "License": "MIT",
@@ -2030,10 +3962,629 @@
       "Version": "1.0.0",
       "LicenseUrl": "https://licenses.nuget.org/MIT"
     },
+    "IsListed": true,
+    "DeprecationMetadata": null,
     "Vulnerabilities": null
   },
   {
+    "CatalogUri": "https://api.nuget.org/v3/catalog0/data/2025.11.11.11.27.49/system.text.json.9.0.11.json",
     "Authors": "Microsoft",
+    "DependencySetsInternal": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETFramework",
+          "Version": "4.6.2.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETFramework,Version=v4.6.2",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": false,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          },
+          {
+            "Id": "System.Buffers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.1",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.1, )"
+            }
+          },
+          {
+            "Id": "System.Memory",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.5",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.5, )"
+            }
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "6.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "6.0.0",
+                "Major": 6,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[6.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          },
+          {
+            "Id": "System.ValueTuple",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.0",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "8.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v8.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "9.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v9.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": []
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          },
+          {
+            "Id": "System.Buffers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.1",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.1, )"
+            }
+          },
+          {
+            "Id": "System.Memory",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.5.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.5",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 5,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.5, )"
+            }
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "6.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "6.0.0",
+                "Major": 6,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[6.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          }
+        ]
+      }
+    ],
     "DependencySets": [
       {
         "TargetFramework": {
@@ -2673,20 +5224,38 @@
       "HasVersion": true
     },
     "LicenseUrl": "https://www.nuget.org/packages/System.Text.Json/9.0.11/license",
+    "OwnersList": null,
+    "Owners": null,
+    "PackageId": "System.Text.Json",
     "ProjectUrl": "https://dot.net/",
+    "Published": "2025-11-11T12:20:12.78+01:00",
     "ReadmeUrl": "https://www.nuget.org/packages/System.Text.Json/9.0.11#show-readme-container",
     "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/system.text.json/9.0.11/readme",
     "ReportAbuseUrl": "https://www.nuget.org/packages/System.Text.Json/9.0.11/ReportAbuse",
     "PackageDetailsUrl": "https://www.nuget.org/packages/System.Text.Json/9.0.11?_src=template",
-    "Published": "2025-11-11T12:20:12.78+01:00",
-    "OwnersList": null,
-    "Owners": null,
     "RequireLicenseAcceptance": false,
     "Summary": "Provides high-performance and low-allocating types that serialize objects to JavaScript Object Notation (JSON) text and deserialize JSON text to objects, with UTF-8 support built-in. Also provides types to read and write JSON text encoded as UTF-8, and to create an in-memory document object model (DOM), that is read-only, for random access of the JSON elements within a structured view of the data.\n\nThe System.Text.Json library is built-in as part of the shared framework in .NET Runtime. The package can be installed when you need to use it in other target frameworks.",
     "Tags": "",
     "Title": "System.Text.Json",
-    "IsListed": true,
+    "Version": {
+      "Version": "9.0.11.0",
+      "IsLegacyVersion": false,
+      "Revision": 0,
+      "IsSemVer2": false,
+      "OriginalVersion": "9.0.11",
+      "Major": 9,
+      "Minor": 0,
+      "Patch": 11,
+      "ReleaseLabels": [],
+      "Release": "",
+      "IsPrerelease": false,
+      "HasMetadata": false,
+      "Metadata": ""
+    },
+    "ParsedVersions": null,
     "PrefixReserved": false,
+    "LicenseExpression": "MIT",
+    "LicenseExpressionVersion": null,
     "LicenseMetadata": {
       "Type": 1,
       "License": "MIT",
@@ -2697,10 +5266,713 @@
       "Version": "1.0.0",
       "LicenseUrl": "https://licenses.nuget.org/MIT"
     },
+    "IsListed": true,
+    "DeprecationMetadata": null,
     "Vulnerabilities": null
   },
   {
+    "CatalogUri": "https://api.nuget.org/v3/catalog0/data/2025.11.11.12.13.33/system.text.json.10.0.0.json",
     "Authors": "Microsoft",
+    "DependencySetsInternal": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETFramework",
+          "Version": "4.6.2.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETFramework,Version=v4.6.2",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": false,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.0",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.0, )"
+            }
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.0",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.0",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Buffers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.6.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.6.1",
+                "Major": 4,
+                "Minor": 6,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.6.1, )"
+            }
+          },
+          {
+            "Id": "System.Memory",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.6.3.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.6.3",
+                "Major": 4,
+                "Minor": 6,
+                "Patch": 3,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.6.3, )"
+            }
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "6.1.2.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "6.1.2",
+                "Major": 6,
+                "Minor": 1,
+                "Patch": 2,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[6.1.2, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.6.3.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.6.3",
+                "Major": 4,
+                "Minor": 6,
+                "Patch": 3,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.6.3, )"
+            }
+          },
+          {
+            "Id": "System.ValueTuple",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.6.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.6.1",
+                "Major": 4,
+                "Minor": 6,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.6.1, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "8.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v8.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.0",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.0",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "9.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v9.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.0",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.0",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "10.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v10.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": []
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.0",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.0, )"
+            }
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.0",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.0",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Buffers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.6.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.6.1",
+                "Major": 4,
+                "Minor": 6,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.6.1, )"
+            }
+          },
+          {
+            "Id": "System.Memory",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.6.3.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.6.3",
+                "Major": 4,
+                "Minor": 6,
+                "Patch": 3,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.6.3, )"
+            }
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "6.1.2.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "6.1.2",
+                "Major": 6,
+                "Minor": 1,
+                "Patch": 2,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[6.1.2, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.6.3.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.6.3",
+                "Major": 4,
+                "Minor": 6,
+                "Patch": 3,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.6.3, )"
+            }
+          }
+        ]
+      }
+    ],
     "DependencySets": [
       {
         "TargetFramework": {
@@ -3424,20 +6696,38 @@
       "HasVersion": true
     },
     "LicenseUrl": "https://www.nuget.org/packages/System.Text.Json/10.0.0/license",
+    "OwnersList": null,
+    "Owners": null,
+    "PackageId": "System.Text.Json",
     "ProjectUrl": "https://dot.net/",
+    "Published": "2025-11-11T12:41:51.073+01:00",
     "ReadmeUrl": "https://www.nuget.org/packages/System.Text.Json/10.0.0#show-readme-container",
     "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/system.text.json/10.0.0/readme",
     "ReportAbuseUrl": "https://www.nuget.org/packages/System.Text.Json/10.0.0/ReportAbuse",
     "PackageDetailsUrl": "https://www.nuget.org/packages/System.Text.Json/10.0.0?_src=template",
-    "Published": "2025-11-11T12:41:51.073+01:00",
-    "OwnersList": null,
-    "Owners": null,
     "RequireLicenseAcceptance": false,
     "Summary": "Provides high-performance and low-allocating types that serialize objects to JavaScript Object Notation (JSON) text and deserialize JSON text to objects, with UTF-8 support built-in. Also provides types to read and write JSON text encoded as UTF-8, and to create an in-memory document object model (DOM), that is read-only, for random access of the JSON elements within a structured view of the data.\n\nThe System.Text.Json library is built-in as part of the shared framework in .NET Runtime. The package can be installed when you need to use it in other target frameworks.",
     "Tags": "",
     "Title": "System.Text.Json",
-    "IsListed": true,
+    "Version": {
+      "Version": "10.0.0.0",
+      "IsLegacyVersion": false,
+      "Revision": 0,
+      "IsSemVer2": false,
+      "OriginalVersion": "10.0.0",
+      "Major": 10,
+      "Minor": 0,
+      "Patch": 0,
+      "ReleaseLabels": [],
+      "Release": "",
+      "IsPrerelease": false,
+      "HasMetadata": false,
+      "Metadata": ""
+    },
+    "ParsedVersions": null,
     "PrefixReserved": false,
+    "LicenseExpression": "MIT",
+    "LicenseExpressionVersion": null,
     "LicenseMetadata": {
       "Type": 1,
       "License": "MIT",
@@ -3448,10 +6738,713 @@
       "Version": "1.0.0",
       "LicenseUrl": "https://licenses.nuget.org/MIT"
     },
+    "IsListed": true,
+    "DeprecationMetadata": null,
     "Vulnerabilities": null
   },
   {
+    "CatalogUri": "https://api.nuget.org/v3/catalog0/data/2025.12.09.17.22.35/system.text.json.10.0.1.json",
     "Authors": "Microsoft",
+    "DependencySetsInternal": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETFramework",
+          "Version": "4.6.2.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETFramework,Version=v4.6.2",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": false,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.1",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.1, )"
+            }
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.1",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.1, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.1",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.1, )"
+            }
+          },
+          {
+            "Id": "System.Buffers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.6.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.6.1",
+                "Major": 4,
+                "Minor": 6,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.6.1, )"
+            }
+          },
+          {
+            "Id": "System.Memory",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.6.3.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.6.3",
+                "Major": 4,
+                "Minor": 6,
+                "Patch": 3,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.6.3, )"
+            }
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "6.1.2.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "6.1.2",
+                "Major": 6,
+                "Minor": 1,
+                "Patch": 2,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[6.1.2, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.6.3.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.6.3",
+                "Major": 4,
+                "Minor": 6,
+                "Patch": 3,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.6.3, )"
+            }
+          },
+          {
+            "Id": "System.ValueTuple",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.6.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.6.1",
+                "Major": 4,
+                "Minor": 6,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.6.1, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "8.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v8.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.1",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.1, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.1",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.1, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "9.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v9.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.1",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.1, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.1",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.1, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "10.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v10.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": []
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.1",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.1, )"
+            }
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.1",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.1, )"
+            }
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.1",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.1, )"
+            }
+          },
+          {
+            "Id": "System.Buffers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.6.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.6.1",
+                "Major": 4,
+                "Minor": 6,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.6.1, )"
+            }
+          },
+          {
+            "Id": "System.Memory",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.6.3.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.6.3",
+                "Major": 4,
+                "Minor": 6,
+                "Patch": 3,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.6.3, )"
+            }
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "6.1.2.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "6.1.2",
+                "Major": 6,
+                "Minor": 1,
+                "Patch": 2,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[6.1.2, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.6.3.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.6.3",
+                "Major": 4,
+                "Minor": 6,
+                "Patch": 3,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.6.3, )"
+            }
+          }
+        ]
+      }
+    ],
     "DependencySets": [
       {
         "TargetFramework": {
@@ -4175,20 +8168,38 @@
       "HasVersion": true
     },
     "LicenseUrl": "https://www.nuget.org/packages/System.Text.Json/10.0.1/license",
+    "OwnersList": null,
+    "Owners": null,
+    "PackageId": "System.Text.Json",
     "ProjectUrl": "https://dot.net/",
+    "Published": "2025-12-09T18:11:49.73+01:00",
     "ReadmeUrl": "https://www.nuget.org/packages/System.Text.Json/10.0.1#show-readme-container",
     "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/system.text.json/10.0.1/readme",
     "ReportAbuseUrl": "https://www.nuget.org/packages/System.Text.Json/10.0.1/ReportAbuse",
     "PackageDetailsUrl": "https://www.nuget.org/packages/System.Text.Json/10.0.1?_src=template",
-    "Published": "2025-12-09T18:11:49.73+01:00",
-    "OwnersList": null,
-    "Owners": null,
     "RequireLicenseAcceptance": false,
     "Summary": "Provides high-performance and low-allocating types that serialize objects to JavaScript Object Notation (JSON) text and deserialize JSON text to objects, with UTF-8 support built-in. Also provides types to read and write JSON text encoded as UTF-8, and to create an in-memory document object model (DOM), that is read-only, for random access of the JSON elements within a structured view of the data.\n\nThe System.Text.Json library is built-in as part of the shared framework in .NET Runtime. The package can be installed when you need to use it in other target frameworks.",
     "Tags": "",
     "Title": "System.Text.Json",
-    "IsListed": true,
+    "Version": {
+      "Version": "10.0.1.0",
+      "IsLegacyVersion": false,
+      "Revision": 0,
+      "IsSemVer2": false,
+      "OriginalVersion": "10.0.1",
+      "Major": 10,
+      "Minor": 0,
+      "Patch": 1,
+      "ReleaseLabels": [],
+      "Release": "",
+      "IsPrerelease": false,
+      "HasMetadata": false,
+      "Metadata": ""
+    },
+    "ParsedVersions": null,
     "PrefixReserved": false,
+    "LicenseExpression": "MIT",
+    "LicenseExpressionVersion": null,
     "LicenseMetadata": {
       "Type": 1,
       "License": "MIT",
@@ -4199,6 +8210,8 @@
       "Version": "1.0.0",
       "LicenseUrl": "https://licenses.nuget.org/MIT"
     },
+    "IsListed": true,
+    "DeprecationMetadata": null,
     "Vulnerabilities": null
   }
 ]
