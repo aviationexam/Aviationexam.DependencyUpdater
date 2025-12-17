@@ -483,4 +483,94 @@ public class DependencyAnalyzerIntegrationTests
         // independently for updates, which means if one framework's version is updated, the others
         // should also be considered for update to maintain consistency.
     }
+
+    /// <summary>
+    /// Tests parsing of the current repository's Directory.Packages.props structure.
+    /// This is a real-world example with no conditional targetFramework blocks,
+    /// meaning all packages should receive all target frameworks.
+    /// Tests a mix of Microsoft.*, System.*, and third-party packages.
+    /// </summary>
+    [Fact]
+    public void Parse_CurrentRepositoryStructure_AllPackagesHaveAllTargetFrameworks()
+    {
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
+            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+        );
+
+        var directoryPackagesPropsContent =
+            // language=xml
+            """
+            <Project>
+              <PropertyGroup>
+                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+              </PropertyGroup>
+              <ItemGroup>
+                <PackageVersion Include="Meziantou.Analyzer" Version="2.0.260" />
+                <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
+                <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.1" />
+                <PackageVersion Include="NuGet.ProjectModel" Version="7.0.1" />
+                <PackageVersion Include="System.Text.Json" Version="10.0.1" />
+                <PackageVersion Include="System.Collections.Immutable" Version="9.0.11" />
+                <PackageVersion Include="ZLinq" Version="1.5.4" />
+              </ItemGroup>
+              <ItemGroup>
+                <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.1" />
+                <PackageVersion Include="NSubstitute" Version="5.3.0" />
+              </ItemGroup>
+            </Project>
+            """;
+
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks =
+        [
+            new("net9.0"),
+            new("net10.0")
+        ];
+
+        var dependencies = ParseDirectoryPackagesProps(
+            temporaryDirectoryProvider,
+            directoryPackagesPropsContent,
+            targetFrameworks
+        ).ToList();
+
+        // All 9 packages should be present
+        Assert.Equal(9, dependencies.Count);
+
+        // All packages should have both target frameworks (unconditional)
+        Assert.All(dependencies, d =>
+        {
+            Assert.Equal(2, d.TargetFrameworks.Count);
+            Assert.Contains(d.TargetFrameworks, tf => tf.TargetFramework == "net9.0");
+            Assert.Contains(d.TargetFrameworks, tf => tf.TargetFramework == "net10.0");
+        });
+
+        // Verify specific packages
+        var meziantou = dependencies.First(d => d.NugetPackage.GetPackageName() == "Meziantou.Analyzer");
+        Assert.Equal("2.0.260", ((NugetPackageVersion)meziantou.NugetPackage).Version.ToString());
+
+        var microsoftExtensionsHosting = dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.Extensions.Hosting");
+        Assert.Equal("10.0.1", ((NugetPackageVersion)microsoftExtensionsHosting.NugetPackage).Version.ToString());
+
+        var systemTextJson = dependencies.First(d => d.NugetPackage.GetPackageName() == "System.Text.Json");
+        Assert.Equal("10.0.1", ((NugetPackageVersion)systemTextJson.NugetPackage).Version.ToString());
+
+        var systemCollectionsImmutable = dependencies.First(d => d.NugetPackage.GetPackageName() == "System.Collections.Immutable");
+        Assert.Equal("9.0.11", ((NugetPackageVersion)systemCollectionsImmutable.NugetPackage).Version.ToString());
+
+        var zlinq = dependencies.First(d => d.NugetPackage.GetPackageName() == "ZLinq");
+        Assert.Equal("1.5.4", ((NugetPackageVersion)zlinq.NugetPackage).Version.ToString());
+
+        var xunit = dependencies.First(d => d.NugetPackage.GetPackageName() == "xunit.v3.mtp-v2");
+        Assert.Equal("3.2.1", ((NugetPackageVersion)xunit.NugetPackage).Version.ToString());
+
+        var nsubstitute = dependencies.First(d => d.NugetPackage.GetPackageName() == "NSubstitute");
+        Assert.Equal("5.3.0", ((NugetPackageVersion)nsubstitute.NugetPackage).Version.ToString());
+
+        // Verify ItemGroup separation doesn't affect target framework assignment
+        // Packages from both ItemGroups should have the same target frameworks
+        var firstGroupPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "Meziantou.Analyzer");
+        var secondGroupPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "xunit.v3.mtp-v2");
+        
+        Assert.Equal(firstGroupPackage.TargetFrameworks.Count, secondGroupPackage.TargetFrameworks.Count);
+    }
 }
