@@ -150,7 +150,7 @@ public partial class DependencyAnalyzerTests
             .Returns(Task.FromResult<IPackageSearchMetadata?>(null));
 
         var analyzer = CreateDependencyAnalyzer(mockVersionFetcher);
-        var currentPackageVersions = new Dictionary<string, PackageVersion>();
+        var currentPackageVersions = context.GetCurrentPackageVersions();
         var cachingConfiguration = new CachingConfiguration { MaxCacheAge = null };
 
         // Act
@@ -172,37 +172,50 @@ public partial class DependencyAnalyzerTests
 
         // Verify only net9.0 packages have updates
         var net90Updates = result.DependenciesToUpdate
-            .Where(kvp => kvp.Key.TargetFrameworks.Any(tf => tf.TargetFramework == "net9.0"))
+            .Where(kvp => kvp.Key.TargetFrameworks.Any(tf => tf.TargetFramework is "net9.0"))
             .ToList();
 
         Assert.Equal(3, net90Updates.Count); // 3 net9.0 packages should have updates
         Assert.Equal(3, result.DependenciesToUpdate.Count); // Only net9.0 packages should have updates
 
         // Verify specific packages - with ignore rules for semver-major, only minor/patch updates within same major version
-        var aspNetCoreUpdate = Assert.Single(net90Updates, u => u.Key.NugetPackage.GetPackageName() == "Microsoft.AspNetCore.WebUtilities");
+        var aspNetCoreUpdate = Assert.Single(
+            net90Updates,
+            u => u.Key.NugetPackage.GetPackageName() is "Microsoft.AspNetCore.WebUtilities"
+        );
         // Only 9.x updates (9.0.11, 9.0.10, 9.0.1), no 10.x due to semver-major ignore
-        Assert.Equal([new Version(9, 0, 11, 0), new Version(9, 0, 10, 0), new Version(9, 0, 1, 0)], 
-            aspNetCoreUpdate.Value.Select(x => x.PackageVersion.Version).ToArray());
+        Assert.Equal(
+            [new Version(9, 0, 11, 0), new Version(9, 0, 10, 0), new Version(9, 0, 1, 0)],
+            aspNetCoreUpdate.Value.Select(x => x.PackageVersion.Version)
+        );
 
-        var dependencyInjectionUpdate = Assert.Single(net90Updates, u => 
-            u.Key.NugetPackage.GetPackageName() == "Microsoft.Extensions.DependencyInjection");
+        var dependencyInjectionUpdate = Assert.Single(
+            net90Updates,
+            u => u.Key.NugetPackage.GetPackageName() is "Microsoft.Extensions.DependencyInjection"
+        );
         // Only 9.x updates (9.0.11, 9.0.1), no 8.x or 10.x due to semver-major ignore
-        Assert.Equal([new Version(9, 0, 11, 0), new Version(9, 0, 1, 0)], 
-            dependencyInjectionUpdate.Value.Select(x => x.PackageVersion.Version).ToArray());
+        Assert.Equal(
+            [new Version(9, 0, 11, 0), new Version(9, 0, 1, 0)],
+            dependencyInjectionUpdate.Value.Select(x => x.PackageVersion.Version)
+        );
 
-        var textJsonUpdate = Assert.Single(net90Updates, u =>
-            u.Key.NugetPackage.GetPackageName() == "System.Text.Json");
+        var textJsonUpdate = Assert.Single(
+            net90Updates,
+            u => u.Key.NugetPackage.GetPackageName() is "System.Text.Json"
+        );
         // Only 9.x updates (9.0.11, 9.0.5), no 10.x due to semver-major ignore
-        Assert.Equal([new Version(9, 0, 11, 0), new Version(9, 0, 5, 0)], 
-            textJsonUpdate.Value.Select(x => x.PackageVersion.Version).ToArray());
+        Assert.Equal(
+            [new Version(9, 0, 11, 0), new Version(9, 0, 5, 0)],
+            textJsonUpdate.Value.Select(x => x.PackageVersion.Version)
+        );
 
         // Verify net8.0 and net10.0 packages have NO updates (they're already at latest for their framework)
         var net80Updates = result.DependenciesToUpdate
-            .Where(kvp => kvp.Key.TargetFrameworks.Any(tf => tf.TargetFramework == "net8.0"))
+            .Where(kvp => kvp.Key.TargetFrameworks.Any(tf => tf.TargetFramework is "net8.0"))
             .ToList();
 
         var net100Updates = result.DependenciesToUpdate
-            .Where(kvp => kvp.Key.TargetFrameworks.Any(tf => tf.TargetFramework == "net10.0"))
+            .Where(kvp => kvp.Key.TargetFrameworks.Any(tf => tf.TargetFramework is "net10.0"))
             .ToList();
 
         Assert.Empty(net80Updates);
