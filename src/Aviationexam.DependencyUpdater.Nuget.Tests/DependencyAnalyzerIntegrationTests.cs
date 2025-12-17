@@ -198,4 +198,103 @@ public class DependencyAnalyzerIntegrationTests
         // Each should have exactly one target framework
         Assert.All(aspNetCoreWebUtilitiesDeps, d => Assert.Single(d.TargetFrameworks));
     }
+
+    /// <summary>
+    /// Tests the Kiota package group scenario from Aviationexam.MoneyErp.
+    /// Kiota packages are grouped together and should be updated as a cohesive unit.
+    /// All Kiota packages have the same version across all target frameworks (no conditional versioning).
+    /// This tests that unconditional packages (no targetFramework conditions) are parsed correctly
+    /// and receive all target frameworks.
+    /// </summary>
+    [Fact]
+    public void Parse_KiotaPackageGroup_AllPackagesHaveAllTargetFrameworks()
+    {
+        using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
+            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+        );
+
+        var directoryPackagesPropsContent =
+            // language=xml
+            """
+            <Project>
+              <PropertyGroup>
+                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+              </PropertyGroup>
+              <ItemGroup>
+                <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.21.0" />
+                <PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.21.0" />
+                <PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="1.21.0" />
+                <PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="1.21.0" />
+                <PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.21.0" />
+                <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.21.0" />
+              </ItemGroup>
+            </Project>
+            """;
+
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks =
+        [
+            new("net8.0"),
+            new("net9.0"),
+            new("net10.0")
+        ];
+
+        var dependencies = ParseDirectoryPackagesProps(
+            temporaryDirectoryProvider,
+            directoryPackagesPropsContent,
+            targetFrameworks
+        ).ToList();
+
+        // Verify we have 6 Kiota packages
+        Assert.Equal(6, dependencies.Count);
+
+        // All packages should have all target frameworks (unconditional)
+        foreach (var dependency in dependencies)
+        {
+            Assert.Equal(3, dependency.TargetFrameworks.Count);
+            Assert.Contains(dependency.TargetFrameworks, tf => tf.TargetFramework == "net8.0");
+            Assert.Contains(dependency.TargetFrameworks, tf => tf.TargetFramework == "net9.0");
+            Assert.Contains(dependency.TargetFrameworks, tf => tf.TargetFramework == "net10.0");
+        }
+
+        // Verify all packages have version 1.21.0
+        var abstractionsPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.Kiota.Abstractions");
+        Assert.Equal("1.21.0", ((NugetPackageVersion)abstractionsPackage.NugetPackage).Version.ToString());
+
+        var httpClientLibraryPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.Kiota.Http.HttpClientLibrary");
+        Assert.Equal("1.21.0", ((NugetPackageVersion)httpClientLibraryPackage.NugetPackage).Version.ToString());
+
+        var serializationFormPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.Kiota.Serialization.Form");
+        Assert.Equal("1.21.0", ((NugetPackageVersion)serializationFormPackage.NugetPackage).Version.ToString());
+
+        var serializationJsonPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.Kiota.Serialization.Json");
+        Assert.Equal("1.21.0", ((NugetPackageVersion)serializationJsonPackage.NugetPackage).Version.ToString());
+
+        var serializationTextPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.Kiota.Serialization.Text");
+        Assert.Equal("1.21.0", ((NugetPackageVersion)serializationTextPackage.NugetPackage).Version.ToString());
+
+        var serializationMultipartPackage = dependencies.First(d => d.NugetPackage.GetPackageName() == "Microsoft.Kiota.Serialization.Multipart");
+        Assert.Equal("1.21.0", ((NugetPackageVersion)serializationMultipartPackage.NugetPackage).Version.ToString());
+
+        // Key assertion: All Kiota packages share the same version and should be grouped
+        var kiotaPackageNames = new[]
+        {
+            "Microsoft.Kiota.Abstractions",
+            "Microsoft.Kiota.Http.HttpClientLibrary",
+            "Microsoft.Kiota.Serialization.Form",
+            "Microsoft.Kiota.Serialization.Json",
+            "Microsoft.Kiota.Serialization.Text",
+            "Microsoft.Kiota.Serialization.Multipart"
+        };
+
+        var kiotaPackages = dependencies
+            .Where(d => kiotaPackageNames.Contains(d.NugetPackage.GetPackageName()))
+            .ToList();
+
+        Assert.Equal(6, kiotaPackages.Count);
+        Assert.All(kiotaPackages, d =>
+        {
+            Assert.Equal("1.21.0", ((NugetPackageVersion)d.NugetPackage).Version.ToString());
+            Assert.Equal(3, d.TargetFrameworks.Count);
+        });
+    }
 }
