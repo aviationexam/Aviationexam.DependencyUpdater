@@ -154,7 +154,7 @@ public partial class DependencyAnalyzerTests
             [],
             currentPackageVersions,
             cachingConfiguration,
-            CancellationToken.None
+            TestContext.Current.CancellationToken
         );
 
         // Assert

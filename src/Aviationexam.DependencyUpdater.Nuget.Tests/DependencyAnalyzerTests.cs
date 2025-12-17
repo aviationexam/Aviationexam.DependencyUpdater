@@ -142,7 +142,7 @@ public partial class DependencyAnalyzerTests
             includeUnlisted: false,
             cacheContext,
             NullLogger.Instance,
-            CancellationToken.None
+            TestContext.Current.CancellationToken
         );
 
         return metadata
