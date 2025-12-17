@@ -234,8 +234,6 @@ This ensures tests can be properly cancelled and respect test timeouts.
 
 ### Integration Tests with Real NuGet Data
 When writing integration tests for `DependencyAnalyzer`:
-- **Use real NuGet metadata** via `FetchRealPackageMetadataAsync()` helper method
-- **Filter to specific versions** needed for the test scenario
 - **Mock only INugetVersionFetcher**: Mock `FetchPackageVersionsAsync()` to return filtered real metadata
 - **Skip transitive dependencies**: Mock `FetchPackageMetadataAsync()` to return `null` for simplified tests
 - **Use mock SourceRepository**: Don't use real repository instances in tests (use `Substitute.For<SourceRepository>()`)
