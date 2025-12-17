@@ -58,13 +58,19 @@ public partial class DependencyAnalyzerTests
     /// Creates a mock IPackageSearchMetadata for a specific package version.
     /// </summary>
     protected static IPackageSearchMetadata CreatePackageMetadata(
-        string packageName,
-        string version,
-        IEnumerable<PackageDependencyGroup>? dependencyGroups = null
+        SerializedPackage registration
     ) => new PackageSearchMetadataRegistration()
-        .SetPackageId(packageName)
-        .SetVersion(NuGetVersion.Parse(version))
-        .SetDependencySetsInternal(dependencyGroups ?? []);
+        .SetPackageId(registration.PackageId)
+        .SetVersion(NuGetVersion.Parse(registration.Version))
+        .SetDependencySetsInternal(registration.DependencySets.AsValueEnumerable().Select(d => new PackageDependencyGroup(
+            new NuGetFramework(
+                d.Framework,
+                Version.Parse(d.Version),
+                d.Platform,
+                Version.Parse(d.PlatformVersion)
+            ),
+            d.Packages.AsValueEnumerable().Select(p => new PackageDependency(p.Id, VersionRange.Parse(p.VersionRange))).ToList()
+        )).ToList());
 
     /// <summary>
     /// Creates a PackageDependencyGroup for a specific target framework.
@@ -143,7 +149,7 @@ public partial class DependencyAnalyzerTests
 
         var allMetadata = JsonSerializer.Deserialize(
             stream,
-            NugetJsonSerializerContext.Default.IEnumerablePackageSearchMetadataRegistration
+            NugetJsonSerializerContext.Default.IEnumerableSerializedPackage
         );
 
         if (allMetadata == null)
@@ -151,7 +157,7 @@ public partial class DependencyAnalyzerTests
             throw new InvalidOperationException($"Failed to deserialize metadata from {resourceName}");
         }
 
-        return allMetadata;
+        return allMetadata.AsValueEnumerable().Select(CreatePackageMetadata).ToList();
     }
 
     /// <summary>
@@ -184,11 +190,50 @@ public partial class DependencyAnalyzerTests
             .OrderBy(m => m.Identity.Version)
             .ToList();
 
-        TestContext.Current.AddAttachment(packageName, JsonSerializer.Serialize(
-            result.AsValueEnumerable().OfType<PackageSearchMetadataRegistration>().ToArray(),
-            NugetJsonSerializerContext.Default.IEnumerablePackageSearchMetadataRegistration
-        ));
+        var json = JsonSerializer.Serialize(
+            result.AsValueEnumerable().OfType<PackageSearchMetadataRegistration>().Select(x =>
+            {
+                return new SerializedPackage
+                {
+                    PackageId = x.PackageId,
+                    Version = x.Version.ToString(),
+                    DependencySets = x.DependencySets.AsValueEnumerable().Select(d => new SerializedDependencySet
+                    {
+                        Framework = d.TargetFramework.Framework,
+                        Version = d.TargetFramework.Version.ToString(),
+                        Platform = d.TargetFramework.Platform,
+                        PlatformVersion = d.TargetFramework.PlatformVersion.ToString(),
+                        Packages = d.Packages.AsValueEnumerable().Select(p => new SerializedDependency
+                        {
+                            Id = p.Id,
+                            VersionRange = p.VersionRange.ToString(),
+                        }).ToArray(),
+                    }).ToArray(),
+                };
+            }).ToArray(),
+            NugetJsonSerializerContext.Default.IEnumerableSerializedPackage
+        );
+        TestContext.Current.AddAttachment(packageName, json);
 
-        return result;
+        return result.AsValueEnumerable().OfType<PackageSearchMetadataRegistration>().Select(x =>
+        {
+            return new SerializedPackage
+            {
+                PackageId = x.PackageId,
+                Version = x.Version.ToString(),
+                DependencySets = x.DependencySets.AsValueEnumerable().Select(d => new SerializedDependencySet
+                {
+                    Framework = d.TargetFramework.Framework,
+                    Version = d.TargetFramework.Version.ToString(),
+                    Platform = d.TargetFramework.Platform,
+                    PlatformVersion = d.TargetFramework.PlatformVersion.ToString(),
+                    Packages = d.Packages.AsValueEnumerable().Select(p => new SerializedDependency
+                    {
+                        Id = p.Id,
+                        VersionRange = p.VersionRange.ToString(),
+                    }).ToArray(),
+                }).ToArray(),
+            };
+        }).Select(CreatePackageMetadata).ToArray();
     }
 }

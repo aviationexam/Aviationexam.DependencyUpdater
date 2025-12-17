@@ -41,13 +41,13 @@ public static class PackageSearchMetadataRegistrationExtension
 
     [SuppressMessage("ReSharper", "ConvertToExtensionBlock")]
     [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "<PackageId>k__BackingField")]
-    private static extern ref string PackageIdField(this PackageSearchMetadataRegistration packageSearchMetadataRegistration);
+    private static extern ref string PackageIdField(this PackageSearchMetadata packageSearchMetadataRegistration);
 
     [SuppressMessage("ReSharper", "ConvertToExtensionBlock")]
     [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "<Version>k__BackingField")]
-    private static extern ref NuGetVersion VersionField(this PackageSearchMetadataRegistration packageSearchMetadataRegistration);
+    private static extern ref NuGetVersion VersionField(this PackageSearchMetadata packageSearchMetadataRegistration);
 
     [SuppressMessage("ReSharper", "ConvertToExtensionBlock")]
     [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "<DependencySetsInternal>k__BackingField")]
-    private static extern ref IEnumerable<PackageDependencyGroup> DependencySetsInternalField(this PackageSearchMetadataRegistration packageSearchMetadataRegistration);
+    private static extern ref IEnumerable<PackageDependencyGroup> DependencySetsInternalField(this PackageSearchMetadata packageSearchMetadataRegistration);
 }
