@@ -150,10 +150,10 @@ public partial class DependencyAnalyzerTests
             .OrderBy(m => m.Identity.Version)
             .ToList();
 
-        TestContext.Current.AddAttachment(packageName, JsonSerializer.Serialize(result, new JsonSerializerOptions
-        {
-            WriteIndented = true,
-        }));
+        TestContext.Current.AddAttachment(packageName, JsonSerializer.Serialize(
+            result,
+            NugetJsonSerializerContext.Default.IEnumerableIPackageSearchMetadata
+        ));
 
         return result;
     }
@@ -384,6 +384,7 @@ public partial class DependencyAnalyzerTests
             "Vulnerabilities": null
           }
         ]
-        """
-    );
+        """,
+        NugetJsonSerializerContext.Default.IEnumerablePackageSearchMetadataRegistration
+    )!;
 }
