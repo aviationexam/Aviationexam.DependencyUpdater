@@ -125,6 +125,7 @@ public partial class DependencyAnalyzerTests
     /// <summary>
     /// Fetches real package metadata from NuGet.org for a given package and filters to only include specified versions.
     /// This provides realistic test data with real dependency information.
+    /// Returns PackageSearchMetadataRegistration instances which are the actual concrete type returned by NuGet.
     /// </summary>
     protected static async Task<IEnumerable<IPackageSearchMetadata>> FetchRealPackageMetadataAsync(
         string packageName,
