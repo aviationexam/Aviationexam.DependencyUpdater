@@ -1,0 +1,224 @@
+[
+  {
+    "Authors": "meziantou",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": []
+      }
+    ],
+    "Description": "A Roslyn analyzer to enforce some good practices in C#",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/meziantou.analyzer/2.0.258/icon",
+    "Identity": {
+      "Id": "Meziantou.Analyzer",
+      "Version": {
+        "Version": "2.0.258.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "2.0.258",
+        "Major": 2,
+        "Minor": 0,
+        "Patch": 258,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Meziantou.Analyzer/2.0.258/license",
+    "ProjectUrl": "https://github.com/meziantou/Meziantou.Analyzer",
+    "ReadmeUrl": "https://www.nuget.org/packages/Meziantou.Analyzer/2.0.258#show-readme-container",
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/meziantou.analyzer/2.0.258/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Meziantou.Analyzer/2.0.258/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Meziantou.Analyzer/2.0.258?_src=template",
+    "Published": "2025-12-13T06:29:29.69+01:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": false,
+    "Summary": "A Roslyn analyzer to enforce some good practices in C#",
+    "Tags": "Meziantou.Analyzer, analyzers",
+    "Title": "Meziantou.Analyzer",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  },
+  {
+    "Authors": "meziantou",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": []
+      }
+    ],
+    "Description": "A Roslyn analyzer to enforce some good practices in C#",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/meziantou.analyzer/2.0.259/icon",
+    "Identity": {
+      "Id": "Meziantou.Analyzer",
+      "Version": {
+        "Version": "2.0.259.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "2.0.259",
+        "Major": 2,
+        "Minor": 0,
+        "Patch": 259,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Meziantou.Analyzer/2.0.259/license",
+    "ProjectUrl": "https://github.com/meziantou/Meziantou.Analyzer",
+    "ReadmeUrl": "https://www.nuget.org/packages/Meziantou.Analyzer/2.0.259#show-readme-container",
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/meziantou.analyzer/2.0.259/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Meziantou.Analyzer/2.0.259/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Meziantou.Analyzer/2.0.259?_src=template",
+    "Published": "2025-12-13T16:59:26.697+01:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": false,
+    "Summary": "A Roslyn analyzer to enforce some good practices in C#",
+    "Tags": "Meziantou.Analyzer, analyzers",
+    "Title": "Meziantou.Analyzer",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  },
+  {
+    "Authors": "meziantou",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": []
+      }
+    ],
+    "Description": "A Roslyn analyzer to enforce some good practices in C#",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/meziantou.analyzer/2.0.260/icon",
+    "Identity": {
+      "Id": "Meziantou.Analyzer",
+      "Version": {
+        "Version": "2.0.260.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "2.0.260",
+        "Major": 2,
+        "Minor": 0,
+        "Patch": 260,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Meziantou.Analyzer/2.0.260/license",
+    "ProjectUrl": "https://github.com/meziantou/Meziantou.Analyzer",
+    "ReadmeUrl": "https://www.nuget.org/packages/Meziantou.Analyzer/2.0.260#show-readme-container",
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/meziantou.analyzer/2.0.260/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Meziantou.Analyzer/2.0.260/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Meziantou.Analyzer/2.0.260?_src=template",
+    "Published": "2025-12-13T18:24:36.12+01:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": false,
+    "Summary": "A Roslyn analyzer to enforce some good practices in C#",
+    "Tags": "Meziantou.Analyzer, analyzers",
+    "Title": "Meziantou.Analyzer",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  }
+]

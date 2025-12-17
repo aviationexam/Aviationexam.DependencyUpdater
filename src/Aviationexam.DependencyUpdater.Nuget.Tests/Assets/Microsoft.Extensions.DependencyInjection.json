@@ -1,0 +1,1823 @@
+[
+  {
+    "Authors": "Microsoft",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETFramework",
+          "Version": "4.6.2.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETFramework,Version=v4.6.2",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": false,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "6.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v6.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "7.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v7.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "8.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v8.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.1.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.1",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          }
+        ]
+      }
+    ],
+    "Description": "Default implementation of dependency injection for Microsoft.Extensions.DependencyInjection.",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection/8.0.0/icon",
+    "Identity": {
+      "Id": "Microsoft.Extensions.DependencyInjection",
+      "Version": {
+        "Version": "8.0.0.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "8.0.0",
+        "Major": 8,
+        "Minor": 0,
+        "Patch": 0,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/8.0.0/license",
+    "ProjectUrl": "https://dot.net/",
+    "ReadmeUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/8.0.0#show-readme-container",
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection/8.0.0/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/8.0.0/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/8.0.0?_src=template",
+    "Published": "2023-11-14T14:22:59.203+01:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": false,
+    "Summary": "Default implementation of dependency injection for Microsoft.Extensions.DependencyInjection.",
+    "Tags": "",
+    "Title": "Microsoft.Extensions.DependencyInjection",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  },
+  {
+    "Authors": "Microsoft",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETFramework",
+          "Version": "4.6.2.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETFramework,Version=v4.6.2",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": false,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "8.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v8.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "9.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v9.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.1.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.1",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          }
+        ]
+      }
+    ],
+    "Description": "Default implementation of dependency injection for Microsoft.Extensions.DependencyInjection.",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection/9.0.0/icon",
+    "Identity": {
+      "Id": "Microsoft.Extensions.DependencyInjection",
+      "Version": {
+        "Version": "9.0.0.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "9.0.0",
+        "Major": 9,
+        "Minor": 0,
+        "Patch": 0,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/9.0.0/license",
+    "ProjectUrl": "https://dot.net/",
+    "ReadmeUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/9.0.0#show-readme-container",
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection/9.0.0/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/9.0.0/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/9.0.0?_src=template",
+    "Published": "2024-11-12T19:13:41.96+01:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": false,
+    "Summary": "Default implementation of dependency injection for Microsoft.Extensions.DependencyInjection.",
+    "Tags": "",
+    "Title": "Microsoft.Extensions.DependencyInjection",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  },
+  {
+    "Authors": "Microsoft",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETFramework",
+          "Version": "4.6.2.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETFramework,Version=v4.6.2",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": false,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.1",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.1, )"
+            }
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.1",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.1, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "8.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v8.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.1",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.1, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "9.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v9.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.1",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.1, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.1",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.1, )"
+            }
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.1",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.1, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.1.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.1",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.1",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.1, )"
+            }
+          }
+        ]
+      }
+    ],
+    "Description": "Default implementation of dependency injection for Microsoft.Extensions.DependencyInjection.",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection/9.0.1/icon",
+    "Identity": {
+      "Id": "Microsoft.Extensions.DependencyInjection",
+      "Version": {
+        "Version": "9.0.1.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "9.0.1",
+        "Major": 9,
+        "Minor": 0,
+        "Patch": 1,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/9.0.1/license",
+    "ProjectUrl": "https://dot.net/",
+    "ReadmeUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/9.0.1#show-readme-container",
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection/9.0.1/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/9.0.1/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/9.0.1?_src=template",
+    "Published": "2025-01-14T19:14:31.373+01:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": false,
+    "Summary": "Default implementation of dependency injection for Microsoft.Extensions.DependencyInjection.",
+    "Tags": "",
+    "Title": "Microsoft.Extensions.DependencyInjection",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  },
+  {
+    "Authors": "Microsoft",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETFramework",
+          "Version": "4.6.2.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETFramework,Version=v4.6.2",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": false,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "8.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v8.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "9.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v9.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "4.5.4.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "4.5.4",
+                "Major": 4,
+                "Minor": 5,
+                "Patch": 4,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[4.5.4, )"
+            }
+          }
+        ]
+      },
+      {
+        "TargetFramework": {
+          "Framework": ".NETStandard",
+          "Version": "2.1.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETStandard,Version=v2.1",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          }
+        ]
+      }
+    ],
+    "Description": "Default implementation of dependency injection for Microsoft.Extensions.DependencyInjection.",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection/9.0.11/icon",
+    "Identity": {
+      "Id": "Microsoft.Extensions.DependencyInjection",
+      "Version": {
+        "Version": "9.0.11.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "9.0.11",
+        "Major": 9,
+        "Minor": 0,
+        "Patch": 11,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/9.0.11/license",
+    "ProjectUrl": "https://dot.net/",
+    "ReadmeUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/9.0.11#show-readme-container",
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection/9.0.11/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/9.0.11/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/9.0.11?_src=template",
+    "Published": "2025-11-11T12:22:11.847+01:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": false,
+    "Summary": "Default implementation of dependency injection for Microsoft.Extensions.DependencyInjection.",
+    "Tags": "",
+    "Title": "Microsoft.Extensions.DependencyInjection",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  }
+]

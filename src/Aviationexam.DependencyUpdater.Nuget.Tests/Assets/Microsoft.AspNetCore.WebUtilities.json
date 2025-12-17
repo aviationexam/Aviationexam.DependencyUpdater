@@ -1,0 +1,912 @@
+[
+  {
+    "Authors": "Microsoft",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "8.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v8.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          }
+        ]
+      }
+    ],
+    "Description": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/aspnetcore/tree/3f1acb59718cadf111a0a796681e3d3509bb3381",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/8.0.0/icon",
+    "Identity": {
+      "Id": "Microsoft.AspNetCore.WebUtilities",
+      "Version": {
+        "Version": "8.0.0.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "8.0.0",
+        "Major": 8,
+        "Minor": 0,
+        "Patch": 0,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/8.0.0/license",
+    "ProjectUrl": "https://asp.net/",
+    "ReadmeUrl": null,
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/8.0.0/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/8.0.0/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/8.0.0?_src=template",
+    "Published": "2023-11-14T14:22:46.683+01:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": true,
+    "Summary": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/aspnetcore/tree/3f1acb59718cadf111a0a796681e3d3509bb3381",
+    "Tags": "aspnetcore",
+    "Title": "Microsoft.AspNetCore.WebUtilities",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  },
+  {
+    "Authors": "Microsoft",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "8.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v8.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.22.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.22",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 22,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.22, )"
+            }
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "8.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "8.0.0",
+                "Major": 8,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[8.0.0, )"
+            }
+          }
+        ]
+      }
+    ],
+    "Description": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/aspnetcore/tree/ee417479933278bb5aadc5944706a96b5ef74a5d",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/8.0.22/icon",
+    "Identity": {
+      "Id": "Microsoft.AspNetCore.WebUtilities",
+      "Version": {
+        "Version": "8.0.22.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "8.0.22",
+        "Major": 8,
+        "Minor": 0,
+        "Patch": 22,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/8.0.22/license",
+    "ProjectUrl": "https://asp.net/",
+    "ReadmeUrl": null,
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/8.0.22/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/8.0.22/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/8.0.22?_src=template",
+    "Published": "2025-11-11T12:22:05.997+01:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": true,
+    "Summary": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/aspnetcore/tree/ee417479933278bb5aadc5944706a96b5ef74a5d",
+    "Tags": "aspnetcore",
+    "Title": "Microsoft.AspNetCore.WebUtilities",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  },
+  {
+    "Authors": "Microsoft",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "9.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v9.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.0",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.0, )"
+            }
+          }
+        ]
+      }
+    ],
+    "Description": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/aspnetcore/tree/af22effae4069a5dfb9b0735859de48820104f5b",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/9.0.0/icon",
+    "Identity": {
+      "Id": "Microsoft.AspNetCore.WebUtilities",
+      "Version": {
+        "Version": "9.0.0.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "9.0.0",
+        "Major": 9,
+        "Minor": 0,
+        "Patch": 0,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/9.0.0/license",
+    "ProjectUrl": "https://asp.net/",
+    "ReadmeUrl": null,
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/9.0.0/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/9.0.0/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/9.0.0?_src=template",
+    "Published": "2024-11-12T19:38:25.06+01:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": true,
+    "Summary": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/aspnetcore/tree/af22effae4069a5dfb9b0735859de48820104f5b",
+    "Tags": "aspnetcore",
+    "Title": "Microsoft.AspNetCore.WebUtilities",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  },
+  {
+    "Authors": "Microsoft",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "9.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v9.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.1",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.1, )"
+            }
+          }
+        ]
+      }
+    ],
+    "Description": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/aspnetcore/tree/4442a188f9200a57635373dcd640893c0e8dcc78",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/9.0.1/icon",
+    "Identity": {
+      "Id": "Microsoft.AspNetCore.WebUtilities",
+      "Version": {
+        "Version": "9.0.1.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "9.0.1",
+        "Major": 9,
+        "Minor": 0,
+        "Patch": 1,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/9.0.1/license",
+    "ProjectUrl": "https://asp.net/",
+    "ReadmeUrl": null,
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/9.0.1/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/9.0.1/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/9.0.1?_src=template",
+    "Published": "2025-01-14T19:37:02.94+01:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": true,
+    "Summary": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/aspnetcore/tree/4442a188f9200a57635373dcd640893c0e8dcc78",
+    "Tags": "aspnetcore",
+    "Title": "Microsoft.AspNetCore.WebUtilities",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  },
+  {
+    "Authors": "Microsoft",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "9.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v9.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.10.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.10",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 10,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.10, )"
+            }
+          }
+        ]
+      }
+    ],
+    "Description": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/aspnetcore/tree/5bae930797f60d2d04f3b1df6a33eaca85fc5f28",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/9.0.10/icon",
+    "Identity": {
+      "Id": "Microsoft.AspNetCore.WebUtilities",
+      "Version": {
+        "Version": "9.0.10.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "9.0.10",
+        "Major": 9,
+        "Minor": 0,
+        "Patch": 10,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/9.0.10/license",
+    "ProjectUrl": "https://asp.net/",
+    "ReadmeUrl": null,
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/9.0.10/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/9.0.10/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/9.0.10?_src=template",
+    "Published": "2025-10-14T19:16:52.493+02:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": true,
+    "Summary": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/aspnetcore/tree/5bae930797f60d2d04f3b1df6a33eaca85fc5f28",
+    "Tags": "aspnetcore",
+    "Title": "Microsoft.AspNetCore.WebUtilities",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  },
+  {
+    "Authors": "Microsoft",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "9.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v9.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "9.0.11.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "9.0.11",
+                "Major": 9,
+                "Minor": 0,
+                "Patch": 11,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[9.0.11, )"
+            }
+          }
+        ]
+      }
+    ],
+    "Description": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/aspnetcore/tree/d3aba8fe1a0d0f5c145506f292b72ea9d28406fc",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/9.0.11/icon",
+    "Identity": {
+      "Id": "Microsoft.AspNetCore.WebUtilities",
+      "Version": {
+        "Version": "9.0.11.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "9.0.11",
+        "Major": 9,
+        "Minor": 0,
+        "Patch": 11,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/9.0.11/license",
+    "ProjectUrl": "https://asp.net/",
+    "ReadmeUrl": null,
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/9.0.11/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/9.0.11/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/9.0.11?_src=template",
+    "Published": "2025-11-11T12:22:43.837+01:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": true,
+    "Summary": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/aspnetcore/tree/d3aba8fe1a0d0f5c145506f292b72ea9d28406fc",
+    "Tags": "aspnetcore",
+    "Title": "Microsoft.AspNetCore.WebUtilities",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  },
+  {
+    "Authors": "Microsoft",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "10.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v10.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.0.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.0",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 0,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.0, )"
+            }
+          }
+        ]
+      }
+    ],
+    "Description": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/10.0.0/icon",
+    "Identity": {
+      "Id": "Microsoft.AspNetCore.WebUtilities",
+      "Version": {
+        "Version": "10.0.0.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "10.0.0",
+        "Major": 10,
+        "Minor": 0,
+        "Patch": 0,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/10.0.0/license",
+    "ProjectUrl": "https://asp.net/",
+    "ReadmeUrl": null,
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/10.0.0/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/10.0.0/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/10.0.0?_src=template",
+    "Published": "2025-11-11T12:42:20.9+01:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": true,
+    "Summary": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa",
+    "Tags": "aspnetcore",
+    "Title": "Microsoft.AspNetCore.WebUtilities",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  },
+  {
+    "Authors": "Microsoft",
+    "DependencySets": [
+      {
+        "TargetFramework": {
+          "Framework": ".NETCoreApp",
+          "Version": "10.0.0.0",
+          "Platform": "",
+          "PlatformVersion": "0.0.0.0",
+          "HasPlatform": false,
+          "HasProfile": false,
+          "Profile": "",
+          "DotNetFrameworkName": ".NETCoreApp,Version=v10.0",
+          "DotNetPlatformName": "",
+          "IsPCL": false,
+          "IsPackageBased": true,
+          "AllFrameworkVersions": false,
+          "IsUnsupported": false,
+          "IsAgnostic": false,
+          "IsAny": false,
+          "IsSpecificFramework": true
+        },
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "Include": [],
+            "Exclude": [],
+            "VersionRange": {
+              "IsFloating": false,
+              "MinVersion": {
+                "Version": "10.0.1.0",
+                "IsLegacyVersion": false,
+                "Revision": 0,
+                "IsSemVer2": false,
+                "OriginalVersion": "10.0.1",
+                "Major": 10,
+                "Minor": 0,
+                "Patch": 1,
+                "ReleaseLabels": [],
+                "Release": "",
+                "IsPrerelease": false,
+                "HasMetadata": false,
+                "Metadata": ""
+              },
+              "MaxVersion": null,
+              "HasLowerBound": true,
+              "IsMinInclusive": true,
+              "HasUpperBound": false,
+              "IsMaxInclusive": false,
+              "HasLowerAndUpperBounds": false,
+              "Float": null,
+              "OriginalString": "[10.0.1, )"
+            }
+          }
+        ]
+      }
+    ],
+    "Description": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/dotnet/tree/fad253f51b461736dfd3cd9c15977bb7493becef",
+    "DownloadCount": null,
+    "IconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/10.0.1/icon",
+    "Identity": {
+      "Id": "Microsoft.AspNetCore.WebUtilities",
+      "Version": {
+        "Version": "10.0.1.0",
+        "IsLegacyVersion": false,
+        "Revision": 0,
+        "IsSemVer2": false,
+        "OriginalVersion": "10.0.1",
+        "Major": 10,
+        "Minor": 0,
+        "Patch": 1,
+        "ReleaseLabels": [],
+        "Release": "",
+        "IsPrerelease": false,
+        "HasMetadata": false,
+        "Metadata": ""
+      },
+      "HasVersion": true
+    },
+    "LicenseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/10.0.1/license",
+    "ProjectUrl": "https://asp.net/",
+    "ReadmeUrl": null,
+    "ReadmeFileUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.webutilities/10.0.1/readme",
+    "ReportAbuseUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/10.0.1/ReportAbuse",
+    "PackageDetailsUrl": "https://www.nuget.org/packages/Microsoft.AspNetCore.WebUtilities/10.0.1?_src=template",
+    "Published": "2025-12-09T18:12:12.253+01:00",
+    "OwnersList": null,
+    "Owners": null,
+    "RequireLicenseAcceptance": true,
+    "Summary": "ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.\n\nThis package was built from the source code at https://github.com/dotnet/dotnet/tree/fad253f51b461736dfd3cd9c15977bb7493becef",
+    "Tags": "aspnetcore",
+    "Title": "Microsoft.AspNetCore.WebUtilities",
+    "IsListed": true,
+    "PrefixReserved": false,
+    "LicenseMetadata": {
+      "Type": 1,
+      "License": "MIT",
+      "LicenseExpression": {
+        "Type": 0
+      },
+      "WarningsAndErrors": null,
+      "Version": "1.0.0",
+      "LicenseUrl": "https://licenses.nuget.org/MIT"
+    },
+    "Vulnerabilities": null
+  }
+]

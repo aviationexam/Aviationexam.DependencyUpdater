@@ -30,4 +30,8 @@
     <ProjectReference Include="..\Aviationexam.DependencyUpdater.TestsInfrastructure\Aviationexam.DependencyUpdater.TestsInfrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Assets\*.json" />
+  </ItemGroup>
+
 </Project>
