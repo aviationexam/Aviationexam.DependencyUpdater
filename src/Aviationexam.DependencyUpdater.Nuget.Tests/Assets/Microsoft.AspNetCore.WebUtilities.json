@@ -1,0 +1,154 @@
+[
+  {
+    "PackageId": "Microsoft.AspNetCore.WebUtilities",
+    "Version": "8.0.0",
+    "DependencySets": [
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "8.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "VersionRange": "[8.0.0, )"
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[8.0.0, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "Microsoft.AspNetCore.WebUtilities",
+    "Version": "8.0.22",
+    "DependencySets": [
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "8.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "VersionRange": "[8.0.22, )"
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[8.0.0, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "Microsoft.AspNetCore.WebUtilities",
+    "Version": "9.0.0",
+    "DependencySets": [
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "9.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "VersionRange": "[9.0.0, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "Microsoft.AspNetCore.WebUtilities",
+    "Version": "9.0.1",
+    "DependencySets": [
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "9.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "VersionRange": "[9.0.1, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "Microsoft.AspNetCore.WebUtilities",
+    "Version": "9.0.10",
+    "DependencySets": [
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "9.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "VersionRange": "[9.0.10, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "Microsoft.AspNetCore.WebUtilities",
+    "Version": "9.0.11",
+    "DependencySets": [
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "9.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "VersionRange": "[9.0.11, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "Microsoft.AspNetCore.WebUtilities",
+    "Version": "10.0.0",
+    "DependencySets": [
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "10.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "VersionRange": "[10.0.0, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "Microsoft.AspNetCore.WebUtilities",
+    "Version": "10.0.1",
+    "DependencySets": [
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "10.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Net.Http.Headers",
+            "VersionRange": "[10.0.1, )"
+          }
+        ]
+      }
+    ]
+  }
+]

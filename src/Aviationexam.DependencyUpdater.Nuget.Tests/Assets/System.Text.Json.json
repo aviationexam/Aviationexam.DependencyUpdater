@@ -1,0 +1,673 @@
+[
+  {
+    "PackageId": "System.Text.Json",
+    "Version": "8.0.0",
+    "DependencySets": [
+      {
+        "Framework": ".NETFramework",
+        "Version": "4.6.2.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[8.0.0, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[8.0.0, )"
+          },
+          {
+            "Id": "System.Buffers",
+            "VersionRange": "[4.5.1, )"
+          },
+          {
+            "Id": "System.Memory",
+            "VersionRange": "[4.5.5, )"
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "VersionRange": "[6.0.0, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          },
+          {
+            "Id": "System.ValueTuple",
+            "VersionRange": "[4.5.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "6.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[8.0.0, )"
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "VersionRange": "[6.0.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "7.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[8.0.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "8.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[8.0.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[8.0.0, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[8.0.0, )"
+          },
+          {
+            "Id": "System.Buffers",
+            "VersionRange": "[4.5.1, )"
+          },
+          {
+            "Id": "System.Memory",
+            "VersionRange": "[4.5.5, )"
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "VersionRange": "[6.0.0, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "System.Text.Json",
+    "Version": "9.0.0",
+    "DependencySets": [
+      {
+        "Framework": ".NETFramework",
+        "Version": "4.6.2.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[9.0.0, )"
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[9.0.0, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[9.0.0, )"
+          },
+          {
+            "Id": "System.Buffers",
+            "VersionRange": "[4.5.1, )"
+          },
+          {
+            "Id": "System.Memory",
+            "VersionRange": "[4.5.5, )"
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "VersionRange": "[6.0.0, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          },
+          {
+            "Id": "System.ValueTuple",
+            "VersionRange": "[4.5.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "8.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[9.0.0, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[9.0.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "9.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": []
+      },
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[9.0.0, )"
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[9.0.0, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[9.0.0, )"
+          },
+          {
+            "Id": "System.Buffers",
+            "VersionRange": "[4.5.1, )"
+          },
+          {
+            "Id": "System.Memory",
+            "VersionRange": "[4.5.5, )"
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "VersionRange": "[6.0.0, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "System.Text.Json",
+    "Version": "9.0.5",
+    "DependencySets": [
+      {
+        "Framework": ".NETFramework",
+        "Version": "4.6.2.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[9.0.5, )"
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[9.0.5, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[9.0.5, )"
+          },
+          {
+            "Id": "System.Buffers",
+            "VersionRange": "[4.5.1, )"
+          },
+          {
+            "Id": "System.Memory",
+            "VersionRange": "[4.5.5, )"
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "VersionRange": "[6.0.0, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          },
+          {
+            "Id": "System.ValueTuple",
+            "VersionRange": "[4.5.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "8.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[9.0.5, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[9.0.5, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "9.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": []
+      },
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[9.0.5, )"
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[9.0.5, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[9.0.5, )"
+          },
+          {
+            "Id": "System.Buffers",
+            "VersionRange": "[4.5.1, )"
+          },
+          {
+            "Id": "System.Memory",
+            "VersionRange": "[4.5.5, )"
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "VersionRange": "[6.0.0, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "System.Text.Json",
+    "Version": "9.0.11",
+    "DependencySets": [
+      {
+        "Framework": ".NETFramework",
+        "Version": "4.6.2.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[9.0.11, )"
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[9.0.11, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[9.0.11, )"
+          },
+          {
+            "Id": "System.Buffers",
+            "VersionRange": "[4.5.1, )"
+          },
+          {
+            "Id": "System.Memory",
+            "VersionRange": "[4.5.5, )"
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "VersionRange": "[6.0.0, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          },
+          {
+            "Id": "System.ValueTuple",
+            "VersionRange": "[4.5.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "8.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[9.0.11, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[9.0.11, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "9.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": []
+      },
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[9.0.11, )"
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[9.0.11, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[9.0.11, )"
+          },
+          {
+            "Id": "System.Buffers",
+            "VersionRange": "[4.5.1, )"
+          },
+          {
+            "Id": "System.Memory",
+            "VersionRange": "[4.5.5, )"
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "VersionRange": "[6.0.0, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "System.Text.Json",
+    "Version": "10.0.0",
+    "DependencySets": [
+      {
+        "Framework": ".NETFramework",
+        "Version": "4.6.2.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[10.0.0, )"
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[10.0.0, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[10.0.0, )"
+          },
+          {
+            "Id": "System.Buffers",
+            "VersionRange": "[4.6.1, )"
+          },
+          {
+            "Id": "System.Memory",
+            "VersionRange": "[4.6.3, )"
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "VersionRange": "[6.1.2, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.6.3, )"
+          },
+          {
+            "Id": "System.ValueTuple",
+            "VersionRange": "[4.6.1, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "8.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[10.0.0, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[10.0.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "9.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[10.0.0, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[10.0.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "10.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": []
+      },
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[10.0.0, )"
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[10.0.0, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[10.0.0, )"
+          },
+          {
+            "Id": "System.Buffers",
+            "VersionRange": "[4.6.1, )"
+          },
+          {
+            "Id": "System.Memory",
+            "VersionRange": "[4.6.3, )"
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "VersionRange": "[6.1.2, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.6.3, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "System.Text.Json",
+    "Version": "10.0.1",
+    "DependencySets": [
+      {
+        "Framework": ".NETFramework",
+        "Version": "4.6.2.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[10.0.1, )"
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[10.0.1, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[10.0.1, )"
+          },
+          {
+            "Id": "System.Buffers",
+            "VersionRange": "[4.6.1, )"
+          },
+          {
+            "Id": "System.Memory",
+            "VersionRange": "[4.6.3, )"
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "VersionRange": "[6.1.2, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.6.3, )"
+          },
+          {
+            "Id": "System.ValueTuple",
+            "VersionRange": "[4.6.1, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "8.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[10.0.1, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[10.0.1, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "9.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[10.0.1, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[10.0.1, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "10.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": []
+      },
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[10.0.1, )"
+          },
+          {
+            "Id": "System.IO.Pipelines",
+            "VersionRange": "[10.0.1, )"
+          },
+          {
+            "Id": "System.Text.Encodings.Web",
+            "VersionRange": "[10.0.1, )"
+          },
+          {
+            "Id": "System.Buffers",
+            "VersionRange": "[4.6.1, )"
+          },
+          {
+            "Id": "System.Memory",
+            "VersionRange": "[4.6.3, )"
+          },
+          {
+            "Id": "System.Runtime.CompilerServices.Unsafe",
+            "VersionRange": "[6.1.2, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.6.3, )"
+          }
+        ]
+      }
+    ]
+  }
+]

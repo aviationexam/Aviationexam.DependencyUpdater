@@ -1,0 +1,342 @@
+[
+  {
+    "PackageId": "Microsoft.Extensions.DependencyInjection",
+    "Version": "8.0.0",
+    "DependencySets": [
+      {
+        "Framework": ".NETFramework",
+        "Version": "4.6.2.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[8.0.0, )"
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[8.0.0, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "6.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[8.0.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "7.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[8.0.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "8.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[8.0.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[8.0.0, )"
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[8.0.0, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.1.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[8.0.0, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "Microsoft.Extensions.DependencyInjection",
+    "Version": "9.0.0",
+    "DependencySets": [
+      {
+        "Framework": ".NETFramework",
+        "Version": "4.6.2.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[9.0.0, )"
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.0, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "8.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "9.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.0, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[9.0.0, )"
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.0, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.1.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.0, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "Microsoft.Extensions.DependencyInjection",
+    "Version": "9.0.1",
+    "DependencySets": [
+      {
+        "Framework": ".NETFramework",
+        "Version": "4.6.2.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[9.0.1, )"
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.1, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "8.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.1, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "9.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.1, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[9.0.1, )"
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.1, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.1.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.1, )"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "PackageId": "Microsoft.Extensions.DependencyInjection",
+    "Version": "9.0.11",
+    "DependencySets": [
+      {
+        "Framework": ".NETFramework",
+        "Version": "4.6.2.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[9.0.11, )"
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.11, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "8.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.11, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETCoreApp",
+        "Version": "9.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.11, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Bcl.AsyncInterfaces",
+            "VersionRange": "[9.0.11, )"
+          },
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.11, )"
+          },
+          {
+            "Id": "System.Threading.Tasks.Extensions",
+            "VersionRange": "[4.5.4, )"
+          }
+        ]
+      },
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.1.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": [
+          {
+            "Id": "Microsoft.Extensions.DependencyInjection.Abstractions",
+            "VersionRange": "[9.0.11, )"
+          }
+        ]
+      }
+    ]
+  }
+]

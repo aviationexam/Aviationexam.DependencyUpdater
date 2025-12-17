@@ -1,0 +1,41 @@
+[
+  {
+    "PackageId": "Meziantou.Analyzer",
+    "Version": "2.0.258",
+    "DependencySets": [
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": []
+      }
+    ]
+  },
+  {
+    "PackageId": "Meziantou.Analyzer",
+    "Version": "2.0.259",
+    "DependencySets": [
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": []
+      }
+    ]
+  },
+  {
+    "PackageId": "Meziantou.Analyzer",
+    "Version": "2.0.260",
+    "DependencySets": [
+      {
+        "Framework": ".NETStandard",
+        "Version": "2.0.0.0",
+        "Platform": "",
+        "PlatformVersion": "0.0.0.0",
+        "Packages": []
+      }
+    ]
+  }
+]
