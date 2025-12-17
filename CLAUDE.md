@@ -223,7 +223,52 @@ The tool uses Octokit.NET for GitHub API integration in `Repository.GitHub`:
 - **C# Language Version**: Uses C# 13 features including extension block syntax in ServiceCollectionExtensions
 - **Target Frameworks**: Multi-targets .NET 9.0 and .NET 10.0
 
-## Common Development Workflows
+## Testing Guidelines
+
+### CancellationToken Usage
+**CRITICAL**: Never use `CancellationToken.None` in test code. Always use:
+- `TestContext.Current.CancellationToken` in test methods
+- `cancellationToken` parameter when passed to methods
+
+This ensures tests can be properly cancelled and respect test timeouts.
+
+### Integration Tests with Real NuGet Data
+When writing integration tests for `DependencyAnalyzer`:
+- **Use real NuGet metadata** via `FetchRealPackageMetadataAsync()` helper method
+- **Filter to specific versions** needed for the test scenario
+- **Mock only INugetVersionFetcher**: Mock `FetchPackageVersionsAsync()` to return filtered real metadata
+- **Skip transitive dependencies**: Mock `FetchPackageMetadataAsync()` to return `null` for simplified tests
+- **Use mock SourceRepository**: Don't use real repository instances in tests (use `Substitute.For<SourceRepository>()`)
+- **No fallback mocks**: Be explicit about which packages are being tested - if mock isn't set up, it should fail
+
+Example pattern:
+```csharp
+// Fetch real metadata from nuget.org
+var metadata = await FetchRealPackageMetadataAsync(
+    "PackageName",
+    ["1.0.0", "1.0.1", "1.1.0"]  // Only versions needed for test
+);
+
+// Mock to return real data
+mockVersionFetcher
+    .FetchPackageVersionsAsync(
+        Arg.Any<SourceRepository>(),
+        Arg.Is<NugetDependency>(d => d.NugetPackage.GetPackageName() == "PackageName"),
+        Arg.Any<SourceCacheContext>(),
+        Arg.Any<CancellationToken>())
+    .Returns(Task.FromResult(metadata));
+
+// Skip transitive dependency validation
+mockVersionFetcher
+    .FetchPackageMetadataAsync(
+        Arg.Any<SourceRepository>(),
+        Arg.Any<Package>(),
+        Arg.Any<SourceCacheContext>(),
+        Arg.Any<CancellationToken>())
+    .Returns(Task.FromResult<IPackageSearchMetadata?>(null));
+```
+
+### Common Development Workflows
 
 ### Running a specific test
 ```bash
