@@ -95,11 +95,6 @@ public partial class DependencyAnalyzerTests
             ["8.0.0", "8.0.22", "9.0.0", "9.0.5", "9.0.11", "10.0.0", "10.0.1"]
         );
 
-        var mezianiauAnalyzerMetadata = await FetchRealPackageMetadataAsync(
-            "Meziantou.Analyzer",
-            ["2.0.260"]
-        );
-
         // Mock INugetVersionFetcher
         // Key insight: FetchPackageVersionsAsync returns ALL available versions from the NuGet feed
         // for a given package name, regardless of target framework. The filtering by target framework
@@ -137,7 +132,7 @@ public partial class DependencyAnalyzerTests
                 Arg.Is<NugetDependency>(d => d.NugetPackage.GetPackageName() == "Meziantou.Analyzer"),
                 Arg.Any<SourceCacheContext>(),
                 Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(mezianiauAnalyzerMetadata));
+            .Returns(Task.FromResult(GetMeziantouAnalyzerPackageMetadata()));
 
         // Mock FetchPackageMetadataAsync to return null for transitive dependencies
         // This skips transitive dependency validation in this test
