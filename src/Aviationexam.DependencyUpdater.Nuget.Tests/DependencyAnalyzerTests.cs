@@ -14,10 +14,10 @@ using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Tests;
 
@@ -75,7 +75,7 @@ public partial class DependencyAnalyzerTests
     )
     {
         var tfm = NuGetFramework.Parse(targetFramework);
-        var packages = dependencies.Select(d =>
+        var packages = dependencies.AsValueEnumerable().Select(d =>
             new PackageDependency(
                 d.Name,
                 VersionRange.Parse(d.VersionRange)
@@ -97,6 +97,7 @@ public partial class DependencyAnalyzerTests
     )
     {
         var updates = result.DependenciesToUpdate
+            .AsValueEnumerable()
             .Where(kvp => kvp.Key.NugetPackage.GetPackageName() == packageName)
             .ToList();
 
@@ -111,11 +112,11 @@ public partial class DependencyAnalyzerTests
             Assert.Equal(currentVersion, ((NugetPackageVersion) dependency.NugetPackage).Version.ToString());
 
             // Verify target frameworks match
-            var depFrameworks = dependency.TargetFrameworks.Select(tf => tf.TargetFramework).ToArray();
+            var depFrameworks = dependency.TargetFrameworks.AsValueEnumerable().Select(tf => tf.TargetFramework).ToArray();
             Assert.Subset(new HashSet<string>(targetFrameworks), new HashSet<string>(depFrameworks));
 
             // Verify available versions
-            var availableVersions = versions.Select(v => v.PackageVersion.Version.ToString()).ToArray();
+            var availableVersions = versions.AsValueEnumerable().Select(v => v.PackageVersion.Version.ToString()).ToArray();
             foreach (var expectedVersion in expectedVersions)
             {
                 Assert.Contains(expectedVersion, availableVersions);
@@ -178,13 +179,14 @@ public partial class DependencyAnalyzerTests
         );
 
         var result = metadata
-            .Where(m => versionsToInclude.Contains(m.Identity.Version.ToString()))
+            .AsValueEnumerable()
+            .Where(m => versionsToInclude.AsValueEnumerable().Contains(m.Identity.Version.ToString()))
             .OrderBy(m => m.Identity.Version)
             .ToList();
 
         TestContext.Current.AddAttachment(packageName, JsonSerializer.Serialize(
-            result,
-            NugetJsonSerializerContext.Default.IEnumerableIPackageSearchMetadata
+            result.AsValueEnumerable().OfType<PackageSearchMetadataRegistration>().ToArray(),
+            NugetJsonSerializerContext.Default.IEnumerablePackageSearchMetadataRegistration
         ));
 
         return result;
