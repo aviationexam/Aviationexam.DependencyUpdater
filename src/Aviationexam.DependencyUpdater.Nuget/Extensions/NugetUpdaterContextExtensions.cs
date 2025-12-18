@@ -205,8 +205,20 @@ public static class NugetUpdaterContextExtensions
             {
                 var tfm = targetFramework.TargetFramework;
                 
-                // Only store the lowest version for each target framework
-                if (!frameworkVersions.TryGetValue(tfm, out var existingVersion) || version < existingVersion)
+                // There should never be different versions for the same target framework - this indicates a configuration error
+                if (frameworkVersions.TryGetValue(tfm, out var existingVersion))
+                {
+                    if (existingVersion != version)
+                    {
+                        throw new InvalidOperationException(
+                            $"Package '{packageName}' has conflicting versions for target framework '{tfm}': " +
+                            $"'{existingVersion.GetSerializedVersion()}' and '{version.GetSerializedVersion()}'. " +
+                            $"Each target framework must have exactly one version of each package."
+                        );
+                    }
+                    // Same version, skip adding it again
+                }
+                else
                 {
                     frameworkVersions[tfm] = version;
                 }
