@@ -190,20 +190,14 @@ public sealed class PackageUpdater(
             )
         )
         {
-            // Get the conflicting version for the target framework
-            var conflictingVersionStr = "unknown";
-            if (groupPackageVersions.TryGetValue(conflictingPackageVersion.Name, out var frameworkVersions))
-            {
-                // Try to get version for any of the target frameworks
-                foreach (var tf in nugetUpdateCandidate.NugetDependency.TargetFrameworks)
-                {
-                    if (frameworkVersions.TryGetValue(tf.TargetFramework, out var version))
-                    {
-                        conflictingVersionStr = version.GetSerializedVersion();
-                        break;
-                    }
-                }
-            }
+            // Get the conflicting versions for all target frameworks
+            var conflictingVersionStr = groupPackageVersions.TryGetValue(conflictingPackageVersion.Name, out var frameworkVersions)
+                ? string.Join(", ", nugetUpdateCandidate.NugetDependency.TargetFrameworks
+                    .AsValueEnumerable()
+                    .Where(tf => frameworkVersions.ContainsKey(tf.TargetFramework))
+                    .Select(tf => frameworkVersions[tf.TargetFramework].GetSerializedVersion())
+                    .ToArray())
+                : "unknown";
             
             logger.LogError(
                 "Cannot update '{PackageName}' to version '{Version}': it depends on '{ConflictingPackageName}' version '{ConflictingPackageVersionRequired}', but the current solution uses version '{ConflictingPackageVersionCurrent}'",
