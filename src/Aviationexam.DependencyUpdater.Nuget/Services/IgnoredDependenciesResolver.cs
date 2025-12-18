@@ -4,7 +4,6 @@ using Aviationexam.DependencyUpdater.Nuget.Models;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using System.Collections.Generic;
-using System.Linq;
 using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
