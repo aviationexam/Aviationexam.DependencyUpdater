@@ -34,7 +34,7 @@ public sealed class PackageUpdater(
         bool executeRestore,
         string? restoreDirectory,
         Queue<(IReadOnlyCollection<NugetUpdateCandidate> NugetUpdateCandidates, GroupEntry GroupEntry)> groupedPackagesToUpdateQueue,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersions,
         string updater,
         CancellationToken cancellationToken
     )
@@ -75,7 +75,7 @@ public sealed class PackageUpdater(
         string? restoreDirectory,
         GroupEntry groupEntry,
         IReadOnlyCollection<NugetUpdateCandidate> nugetUpdateCandidates,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersions,
         ISourceVersioning sourceVersioning,
         string updater,
         CancellationToken cancellationToken
@@ -96,10 +96,17 @@ public sealed class PackageUpdater(
             authorEmail: gitMetadataConfig.CommitAuthorEmail
         );
 
+        // Create a mutable copy of the current package versions for tracking updates
+        var mutablePackageVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
+        foreach (var kvp in currentPackageVersions)
+        {
+            mutablePackageVersions[kvp.Key] = new Dictionary<string, PackageVersion>(kvp.Value);
+        }
+        
         var updatedPackages = await UpdatePackageVersionsAsync(
             gitWorkspace,
             nugetUpdateCandidates,
-            groupPackageVersions: currentPackageVersions.AsValueEnumerable().ToDictionary(),
+            groupPackageVersions: mutablePackageVersions,
             cancellationToken
         ).ToListAsync(cancellationToken);
 
@@ -128,7 +135,7 @@ public sealed class PackageUpdater(
     private async IAsyncEnumerable<NugetUpdateCandidate> UpdatePackageVersionsAsync(
         ISourceVersioningWorkspace gitWorkspace,
         IReadOnlyCollection<NugetUpdateCandidate> packagesToUpdate,
-        Dictionary<string, PackageVersion> groupPackageVersions,
+        Dictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
@@ -171,24 +178,40 @@ public sealed class PackageUpdater(
 
     private void LogVersionConflict(
         NugetUpdateCandidate nugetUpdateCandidate,
-        Dictionary<string, PackageVersion> groupPackageVersions
+        Dictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions
     )
     {
         if (
             !nugetVersionWriter.IsCompatibleWithCurrentVersions(
                 nugetUpdateCandidate.PossiblePackageVersion,
+                nugetUpdateCandidate.NugetDependency.TargetFrameworks,
                 groupPackageVersions,
                 out var conflictingPackageVersion
             )
         )
         {
+            // Get the conflicting version for the target framework
+            var conflictingVersionStr = "unknown";
+            if (groupPackageVersions.TryGetValue(conflictingPackageVersion.Name, out var frameworkVersions))
+            {
+                // Try to get version for any of the target frameworks
+                foreach (var tf in nugetUpdateCandidate.NugetDependency.TargetFrameworks)
+                {
+                    if (frameworkVersions.TryGetValue(tf.TargetFramework, out var version))
+                    {
+                        conflictingVersionStr = version.GetSerializedVersion();
+                        break;
+                    }
+                }
+            }
+            
             logger.LogError(
                 "Cannot update '{PackageName}' to version '{Version}': it depends on '{ConflictingPackageName}' version '{ConflictingPackageVersionRequired}', but the current solution uses version '{ConflictingPackageVersionCurrent}'",
                 nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
                 nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion(),
                 conflictingPackageVersion.Name,
                 conflictingPackageVersion.Version.GetSerializedVersion(),
-                groupPackageVersions[conflictingPackageVersion.Name].GetSerializedVersion()
+                conflictingVersionStr
             );
         }
         else

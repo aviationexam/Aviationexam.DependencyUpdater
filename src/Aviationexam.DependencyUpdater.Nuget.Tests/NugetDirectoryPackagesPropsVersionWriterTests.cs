@@ -72,7 +72,7 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
         var result = await writer.TrySetVersionAsync(
             nugetUpdateCandidate,
             filePath,
-            new Dictionary<string, PackageVersion>(),
+            new Dictionary<string, IDictionary<string, PackageVersion>>(),
             TestContext.Current.CancellationToken
         );
 
@@ -140,7 +140,7 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
         var result = await writer.TrySetVersionAsync(
             nugetUpdateCandidate,
             filePath,
-            new Dictionary<string, PackageVersion>(),
+            new Dictionary<string, IDictionary<string, PackageVersion>>(),
             TestContext.Current.CancellationToken
         );
 
@@ -210,7 +210,7 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
         var result = await writer.TrySetVersionAsync(
             nugetUpdateCandidate,
             filePath,
-            new Dictionary<string, PackageVersion>(),
+            new Dictionary<string, IDictionary<string, PackageVersion>>(),
             TestContext.Current.CancellationToken
         );
 

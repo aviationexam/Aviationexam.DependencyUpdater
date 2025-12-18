@@ -15,17 +15,22 @@ public sealed class NugetVersionWriter(
     NugetDirectoryPackagesPropsVersionWriter directoryPackagesPropsVersionWriter,
     NugetCsprojVersionWriter csprojVersionWriter,
     DotnetToolsVersionWriter dotnetToolsVersionWriter,
-    Optional<IPackageFeedClient> optionalPackageFeedClient
+    Optional<IPackageFeedClient> optionalPackageFeedClient,
+    Services.TargetFrameworksResolver targetFrameworksResolver
 )
 {
     public async Task<ESetVersion> TrySetVersion(
         NugetUpdateCandidate nugetUpdateCandidate,
         ISourceVersioningWorkspace gitWorkspace,
-        IDictionary<string, PackageVersion> groupPackageVersions,
+        IDictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions,
         CancellationToken cancellationToken
     )
     {
-        if (!IsCompatibleWithCurrentVersions(nugetUpdateCandidate.PossiblePackageVersion, groupPackageVersions, out _))
+        if (!IsCompatibleWithCurrentVersions(
+            nugetUpdateCandidate.PossiblePackageVersion,
+            nugetUpdateCandidate.NugetDependency.TargetFrameworks,
+            groupPackageVersions,
+            out _))
         {
             return ESetVersion.VersionNotSet;
         }
@@ -60,7 +65,8 @@ public sealed class NugetVersionWriter(
 
     public bool IsCompatibleWithCurrentVersions(
         PossiblePackageVersion possiblePackageVersion,
-        IDictionary<string, PackageVersion> groupPackageVersions,
+        IReadOnlyCollection<Models.NugetTargetFramework> targetFrameworks,
+        IDictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions,
         [NotNullWhen(false)] out Package? conflictingPackageVersion
     )
     {
@@ -68,19 +74,31 @@ public sealed class NugetVersionWriter(
         {
             foreach (var dependencyPackage in dependencySet.Packages)
             {
-                if (groupPackageVersions.TryGetValue(dependencyPackage.Id, out var dependencyCurrentVersion))
+                if (groupPackageVersions.TryGetValue(dependencyPackage.Id, out var frameworkVersions))
                 {
-                    if (
-                        dependencyPackage.VersionRange.MinVersion is { } dependencyPackageMinVersion
-                        && dependencyPackageMinVersion.MapToPackageVersion() is { } dependencyPackageVersion
-                        && dependencyPackageVersion > dependencyCurrentVersion
-                    )
+                    // Get all compatible target frameworks for version checking
+                    var compatibleFrameworks = targetFrameworksResolver.GetCompatibleTargetFrameworks(
+                        targetFrameworks,
+                        frameworkVersions.Keys
+                    );
+                    
+                    foreach (var tfm in compatibleFrameworks)
                     {
-                        conflictingPackageVersion = new Package(
-                            dependencyPackage.Id,
-                            dependencyPackageVersion
-                        );
-                        return false;
+                        if (frameworkVersions.TryGetValue(tfm, out var dependencyCurrentVersion))
+                        {
+                            if (
+                                dependencyPackage.VersionRange.MinVersion is { } dependencyPackageMinVersion
+                                && dependencyPackageMinVersion.MapToPackageVersion() is { } dependencyPackageVersion
+                                && dependencyPackageVersion > dependencyCurrentVersion
+                            )
+                            {
+                                conflictingPackageVersion = new Package(
+                                    dependencyPackage.Id,
+                                    dependencyPackageVersion
+                                );
+                                return false;
+                            }
+                        }
                     }
                 }
             }

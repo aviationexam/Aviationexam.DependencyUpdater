@@ -69,7 +69,7 @@ public class DotnetToolsVersionWriterTests
         var result = await versionWriter.TrySetVersionAsync(
             updateCandidate,
             ".config/dotnet-tools.json",
-            new Dictionary<string, PackageVersion>(),
+            new Dictionary<string, IDictionary<string, PackageVersion>>(),
             TestContext.Current.CancellationToken
         );
 
@@ -152,7 +152,7 @@ public class DotnetToolsVersionWriterTests
         var result = await versionWriter.TrySetVersionAsync(
             updateCandidate,
             ".config/dotnet-tools.json",
-            new Dictionary<string, PackageVersion>(),
+            new Dictionary<string, IDictionary<string, PackageVersion>>(),
             TestContext.Current.CancellationToken
         );
 
@@ -199,7 +199,7 @@ public class DotnetToolsVersionWriterTests
         var result = await versionWriter.TrySetVersionAsync(
             updateCandidate,
             ".config/dotnet-tools.json",
-            new Dictionary<string, PackageVersion>(),
+            new Dictionary<string, IDictionary<string, PackageVersion>>(),
             TestContext.Current.CancellationToken
         );
 

@@ -21,7 +21,7 @@ public sealed class DotnetToolsVersionWriter(
     public async Task<ESetVersion> TrySetVersionAsync(
         NugetUpdateCandidate nugetUpdateCandidate,
         string fullPath,
-        IDictionary<string, PackageVersion> groupPackageVersions,
+        IDictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions,
         CancellationToken cancellationToken
     )
     {
@@ -73,9 +73,13 @@ public sealed class DotnetToolsVersionWriter(
         {
             toolEntryObject["version"] = nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
 
-            if (groupPackageVersions.ContainsKey(packageName))
+            if (groupPackageVersions.TryGetValue(packageName, out var frameworkVersions))
             {
-                groupPackageVersions[packageName] = nugetUpdateCandidate.PossiblePackageVersion.PackageVersion;
+                // Update version for each target framework this dependency applies to
+                foreach (var targetFramework in nugetUpdateCandidate.NugetDependency.TargetFrameworks)
+                {
+                    frameworkVersions[targetFramework.TargetFramework] = nugetUpdateCandidate.PossiblePackageVersion.PackageVersion;
+                }
             }
 
             fileStream.SetLength(0);
