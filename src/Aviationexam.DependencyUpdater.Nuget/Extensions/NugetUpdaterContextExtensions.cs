@@ -183,28 +183,28 @@ public static class NugetUpdaterContextExtensions
     )
     {
         var result = new Dictionary<string, IDictionary<string, PackageVersion>>();
-        
+
         foreach (var dependency in context.Dependencies)
         {
             var packageName = dependency.NugetPackage.GetPackageName();
             var version = dependency.NugetPackage.GetVersion();
-            
+
             if (version is null)
             {
                 continue;
             }
-            
+
             if (!result.TryGetValue(packageName, out var frameworkVersions))
             {
                 frameworkVersions = new Dictionary<string, PackageVersion>();
                 result[packageName] = frameworkVersions;
             }
-            
+
             // Add version for each target framework this dependency applies to
             foreach (var targetFramework in dependency.TargetFrameworks)
             {
                 var tfm = targetFramework.TargetFramework;
-                
+
                 // There should never be different versions for the same target framework - this indicates a configuration error
                 if (frameworkVersions.TryGetValue(tfm, out var existingVersion))
                 {
@@ -224,7 +224,7 @@ public static class NugetUpdaterContextExtensions
                 }
             }
         }
-        
+
         return result;
     }
 

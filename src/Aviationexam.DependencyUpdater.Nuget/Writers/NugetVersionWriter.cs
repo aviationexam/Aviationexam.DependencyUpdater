@@ -81,7 +81,7 @@ public sealed class NugetVersionWriter(
                         targetFrameworks,
                         frameworkVersions.Keys
                     );
-                    
+
                     foreach (var tfm in compatibleFrameworks)
                     {
                         if (frameworkVersions.TryGetValue(tfm, out var dependencyCurrentVersion))

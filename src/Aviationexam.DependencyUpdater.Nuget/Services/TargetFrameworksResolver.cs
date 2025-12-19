@@ -66,17 +66,17 @@ public sealed class TargetFrameworksResolver
     )
     {
         var compatibleFrameworks = new HashSet<string>();
-        
+
         foreach (var targetFramework in targetFrameworks)
         {
             var nugetFramework = NuGetFramework.Parse(
                 targetFramework.TargetFramework,
                 DefaultFrameworkNameProvider.Instance
             );
-            
+
             // Add the target framework itself
             compatibleFrameworks.Add(targetFramework.TargetFramework);
-            
+
             // Find all available frameworks that should be checked for version conflicts
             foreach (var availableFramework in availableFrameworks)
             {
@@ -84,12 +84,12 @@ public sealed class TargetFrameworksResolver
                     availableFramework,
                     DefaultFrameworkNameProvider.Instance
                 );
-                
+
                 // Only include frameworks that:
                 // 1. Can be consumed by the target framework (target is compatible with available)
                 // 2. Are NOT a different version of the same framework family
                 //    (e.g., don't include net9.0 when checking net10.0)
-                
+
                 if (DefaultCompatibilityProvider.Instance.IsCompatible(nugetFramework, availableNugetFramework))
                 {
                     // Exclude if both are the same framework family but different versions
@@ -100,12 +100,12 @@ public sealed class TargetFrameworksResolver
                         // Same framework family (e.g., both .NETCoreApp) but different versions - skip
                         continue;
                     }
-                    
+
                     compatibleFrameworks.Add(availableFramework);
                 }
             }
         }
-        
+
         return compatibleFrameworks;
     }
 }
