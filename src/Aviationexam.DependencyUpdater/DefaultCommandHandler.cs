@@ -45,6 +45,14 @@ internal sealed class DefaultCommandHandler(
 
             foreach (var nugetUpdate in nugetUpdates)
             {
+                var targetBranch = nugetUpdate.TargetBranch.GetString();
+                if (string.IsNullOrWhiteSpace(targetBranch))
+                {
+                    Console.Error.WriteLine($"Error: target-branch is required but not specified for directory '{nugetUpdate.DirectoryValue.GetString()}' in configuration file.");
+                    Console.Error.WriteLine("Please add 'target-branch' property to the update configuration in your updater.yml file.");
+                    return 1;
+                }
+
                 var registries = nugetUpdate.Registries is { ValueKind: JsonValueKind.Array } registriesEntity
                     ? registriesEntity.AsValueEnumerable().Select(x => x.AsString.GetString()!).ToList()
                     : [];
@@ -54,7 +62,7 @@ internal sealed class DefaultCommandHandler(
                 {
                     RepositoryPath = sourceConfiguration.Directory,
                     SubdirectoryPath = nugetUpdate.DirectoryValue.GetString(),
-                    SourceBranchName = nugetUpdate.TargetBranch.GetString(),
+                    SourceBranchName = targetBranch,
                 };
 
                 var gitMetadataConfig = new GitMetadataConfig
