@@ -102,7 +102,7 @@ public sealed class PackageUpdater(
         {
             mutablePackageVersions[kvp.Key] = new Dictionary<string, PackageVersion>(kvp.Value);
         }
-        
+
         var updatedPackages = await UpdatePackageVersionsAsync(
             gitWorkspace,
             nugetUpdateCandidates,
@@ -192,13 +192,13 @@ public sealed class PackageUpdater(
         {
             // Get the conflicting versions for all target frameworks
             var conflictingVersionStr = groupPackageVersions.TryGetValue(conflictingPackageVersion.Name, out var frameworkVersions)
-                ? string.Join(", ", nugetUpdateCandidate.NugetDependency.TargetFrameworks
+                ? nugetUpdateCandidate.NugetDependency.TargetFrameworks
                     .AsValueEnumerable()
                     .Where(tf => frameworkVersions.ContainsKey(tf.TargetFramework))
                     .Select(tf => frameworkVersions[tf.TargetFramework].GetSerializedVersion())
-                    .ToArray())
+                    .JoinToString(", ")
                 : "unknown";
-            
+
             logger.LogError(
                 "Cannot update '{PackageName}' to version '{Version}': it depends on '{ConflictingPackageName}' version '{ConflictingPackageVersionRequired}', but the current solution uses version '{ConflictingPackageVersionCurrent}'",
                 nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
