@@ -28,7 +28,7 @@ public sealed class DependencyAnalyzer(
         NugetUpdaterContext nugetUpdaterContext,
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
         IReadOnlyCollection<IgnoreEntry> ignoreEntries,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
         CachingConfiguration cachingConfiguration,
         CancellationToken cancellationToken
     )
@@ -57,7 +57,7 @@ public sealed class DependencyAnalyzer(
         // Process dependencies to update
         ProcessDependenciesToUpdate(
             ignoreResolver,
-            currentPackageVersions,
+            currentPackageVersionsPerTargetFramework,
             dependencyToUpdate,
             packageFlags,
             dependenciesToCheck
@@ -66,7 +66,7 @@ public sealed class DependencyAnalyzer(
         // Process dependencies to check
         await ProcessDependenciesToCheckAsync(
             ignoreResolver,
-            currentPackageVersions,
+            currentPackageVersionsPerTargetFramework,
             packageFlags,
             dependenciesToCheck,
             sourceRepositories,
@@ -224,7 +224,7 @@ public sealed class DependencyAnalyzer(
 
     private void ProcessDependenciesToUpdate(
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
         IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>> dependencyToUpdate,
         IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags,
         Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck
@@ -238,7 +238,7 @@ public sealed class DependencyAnalyzer(
                 {
                     _ = ProcessPackageDependencyGroup(
                         ignoreResolver,
-                        currentPackageVersions,
+                        currentPackageVersionsPerTargetFramework,
                         packageFlags,
                         dependenciesToCheck,
                         compatiblePackageDependencyGroup,
@@ -251,7 +251,7 @@ public sealed class DependencyAnalyzer(
 
     private IEnumerable<Package> ProcessPackageDependencyGroup(
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
         IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags,
         Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
         PackageDependencyGroup compatiblePackageDependencyGroup,
@@ -283,8 +283,10 @@ public sealed class DependencyAnalyzer(
                     continue;
                 }
 
+                // Check if this package is already at the correct version for this target framework
                 if (
-                    currentPackageVersions.TryGetValue(packageDependency.Id, out var currentVersion)
+                    currentPackageVersionsPerTargetFramework.TryGetValue(packageDependency.Id, out var frameworkVersions)
+                    && frameworkVersions.TryGetValue(targetFramework.TargetFramework, out var currentVersion)
                     && currentVersion == dependentPackage.Version
                 )
                 {
@@ -292,10 +294,17 @@ public sealed class DependencyAnalyzer(
                     continue;
                 }
 
+                // For ignore checking, we still need to pass a simple dictionary (for backwards compatibility with IgnoredDependenciesResolver)
+                // Create a simple dictionary with just the current version for this framework
+                var currentVersionsForIgnoreCheck = currentPackageVersionsPerTargetFramework
+                    .AsValueEnumerable()
+                    .Where(kvp => kvp.Value.ContainsKey(targetFramework.TargetFramework))
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value[targetFramework.TargetFramework]);
+
                 var isDependencyIgnored = ignoredDependenciesResolver.IsDependencyIgnored(
                     packageDependency,
                     ignoreResolver,
-                    currentPackageVersions
+                    currentVersionsForIgnoreCheck
                 );
 
                 if (isDependencyIgnored)
@@ -320,7 +329,7 @@ public sealed class DependencyAnalyzer(
 
     private async Task ProcessDependenciesToCheckAsync(
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
         IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags,
         Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
@@ -382,7 +391,7 @@ public sealed class DependencyAnalyzer(
 
                     ProcessPackageMetadata(
                         ignoreResolver,
-                        currentPackageVersions,
+                        currentPackageVersionsPerTargetFramework,
                         package,
                         targetFrameworks,
                         packageMetadata,
@@ -397,7 +406,7 @@ public sealed class DependencyAnalyzer(
 
     private void ProcessPackageMetadata(
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions,
+        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
         Package package,
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
         PackageVersion<PackageSearchMetadataRegistration> packageVersion,
@@ -417,7 +426,7 @@ public sealed class DependencyAnalyzer(
                 [],
                 (IEnumerable<Package> acc, PackageDependencyGroup compatiblePackageDependencyGroup) => acc.Concat(ProcessPackageDependencyGroup(
                     ignoreResolver,
-                    currentPackageVersions,
+                    currentPackageVersionsPerTargetFramework,
                     packageFlags,
                     dependenciesToCheck,
                     compatiblePackageDependencyGroup,

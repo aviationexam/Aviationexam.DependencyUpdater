@@ -52,7 +52,6 @@ public sealed class NugetUpdater(
 
         var nugetUpdaterContext = contextFactory.CreateContext(repositoryConfig, packageConfig.TargetFrameworks);
 
-        var currentPackageVersions = nugetUpdaterContext.GetCurrentPackageVersions();
         var currentPackageVersionsPerTargetFramework = nugetUpdaterContext.GetCurrentPackageVersionsPerTargetFramework();
         var sourceRepositories = nugetUpdaterContext.GetSourceRepositories(
             authConfig.NugetFeedAuthentications,
@@ -65,7 +64,7 @@ public sealed class NugetUpdater(
             nugetUpdaterContext,
             sourceRepositories,
             packageConfig.IgnoreEntries,
-            currentPackageVersions,
+            currentPackageVersionsPerTargetFramework,
             cachingConfiguration,
             cancellationToken
         );

@@ -126,7 +126,7 @@ public partial class DependencyAnalyzerTests
             .Returns(Task.FromResult<IPackageSearchMetadata?>(null));
 
         var analyzer = CreateDependencyAnalyzer(mockVersionFetcher);
-        var currentPackageVersions = context.GetCurrentPackageVersions();
+        var currentPackageVersionsPerTargetFramework = context.GetCurrentPackageVersionsPerTargetFramework();
         var cachingConfiguration = new CachingConfiguration { MaxCacheAge = null };
 
         // Act
@@ -137,7 +137,7 @@ public partial class DependencyAnalyzerTests
                 new IgnoreEntry("Microsoft.*", ["version-update:semver-major"]),
                 new IgnoreEntry("System.*", ["version-update:semver-major"]),
             ],
-            currentPackageVersions,
+            currentPackageVersionsPerTargetFramework,
             cachingConfiguration,
             TestContext.Current.CancellationToken
         );

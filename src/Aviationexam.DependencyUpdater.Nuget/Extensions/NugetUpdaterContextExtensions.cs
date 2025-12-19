@@ -168,16 +168,6 @@ public static class NugetUpdaterContextExtensions
         logger.LogWarning("Unable to find packageSource for dependency {dependencyName}", packageName);
     }
 
-    public static IReadOnlyDictionary<string, PackageVersion> GetCurrentPackageVersions(
-        this NugetUpdaterContext context
-    ) => context.Dependencies
-        .AsValueEnumerable()
-        .Select(x => x.NugetPackage)
-        .Select(x => (PackageName: x.GetPackageName(), Version: x.GetVersion()))
-        .Where(x => x.Version is not null)
-        .GroupBy(x => x.PackageName)
-        .ToDictionary(x => x.Key, x => x.AsValueEnumerable().OrderBy(y => y.Version).First().Version!);
-
     public static IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> GetCurrentPackageVersionsPerTargetFramework(
         this NugetUpdaterContext context
     )
