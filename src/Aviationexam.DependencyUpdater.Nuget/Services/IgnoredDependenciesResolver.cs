@@ -4,7 +4,6 @@ using Aviationexam.DependencyUpdater.Nuget.Models;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using System.Collections.Generic;
-using System.Linq;
 using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
@@ -74,11 +73,13 @@ public sealed class IgnoredDependenciesResolver
         }
 
         // Get the current version for this specific target framework
-        var currentVersion = currentPackageVersionsPerTargetFramework
-            .AsValueEnumerable()
-            .Where(kvp => kvp.Key == packageDependency.Id && kvp.Value.ContainsKey(targetFramework.TargetFramework))
-            .Select(kvp => kvp.Value[targetFramework.TargetFramework])
-            .FirstOrDefault() ?? proposedVersion;
+        var currentVersion = currentPackageVersionsPerTargetFramework.TryGetValue(packageDependency.Id, out var packageVersions)
+            ? packageVersions
+                .AsValueEnumerable()
+                .Where(v => v.Key == targetFramework.TargetFramework)
+                .Select(kvp => kvp.Value)
+                .FirstOrDefault() ?? proposedVersion
+            : proposedVersion;
 
         if (currentVersion > proposedVersion)
         {
