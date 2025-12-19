@@ -48,8 +48,8 @@ internal sealed class DefaultCommandHandler(
                 var targetBranch = nugetUpdate.TargetBranch.GetString();
                 if (string.IsNullOrWhiteSpace(targetBranch))
                 {
-                    Console.Error.WriteLine($"Error: target-branch is required but not specified for directory '{nugetUpdate.DirectoryValue.GetString()}' in configuration file.");
-                    Console.Error.WriteLine("Please add 'target-branch' property to the update configuration in your updater.yml file.");
+                    await Console.Error.WriteLineAsync($"Error: target-branch is required but not specified for directory '{nugetUpdate.DirectoryValue.GetString()}' in configuration file.");
+                    await Console.Error.WriteLineAsync("Please add 'target-branch' property to the update configuration in your updater.yml file.");
                     return 1;
                 }
 
