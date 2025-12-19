@@ -33,11 +33,9 @@ public sealed class PackageFilterer
                                     return false;
                                 }
 
-                                // Ensure all target frameworks for this dependency have valid flags
-                                return dependency.TargetFrameworks.AsValueEnumerable().All(tf =>
-                                    frameworkFlags.TryGetValue(tf, out var flag)
-                                    && flag is EDependencyFlag.Valid
-                                );
+                                return
+                                    frameworkFlags.TryGetValue(new NugetTargetFramework(group.TargetFramework.GetShortFolderName()), out var flag)
+                                    && flag is EDependencyFlag.Valid;
                             })),
                     ],
                 })
