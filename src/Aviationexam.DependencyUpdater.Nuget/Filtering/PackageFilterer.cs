@@ -24,11 +24,21 @@ public sealed class PackageFilterer
                             .CompatiblePackageDependencyGroups
                             .AsValueEnumerable()
                             .Where(group => group.Packages.AsValueEnumerable().All(package =>
-                                dependencyAnalysisResult.PackageFlags.TryGetValue(
-                                    new Package(package.Id, package.VersionRange.MinVersion!.MapToPackageVersion()),
-                                    out var flag
-                                ) && flag is EDependencyFlag.Valid
-                            )),
+                            {
+                                var packageKey = new Package(package.Id, package.VersionRange.MinVersion!.MapToPackageVersion());
+
+                                // Check if all target frameworks have valid flags for this package
+                                if (!dependencyAnalysisResult.PackageFlags.TryGetValue(packageKey, out var frameworkFlags))
+                                {
+                                    return false;
+                                }
+
+                                // Ensure all target frameworks for this dependency have valid flags
+                                return dependency.TargetFrameworks.AsValueEnumerable().All(tf =>
+                                    frameworkFlags.TryGetValue(tf, out var flag)
+                                    && flag is EDependencyFlag.Valid
+                                );
+                            })),
                     ],
                 })
                 .Where(x => x.CompatiblePackageDependencyGroups.Count > 0)

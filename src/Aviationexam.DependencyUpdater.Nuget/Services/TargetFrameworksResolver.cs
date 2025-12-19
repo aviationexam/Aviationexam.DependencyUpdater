@@ -53,4 +53,59 @@ public sealed class TargetFrameworksResolver
     ) => DefaultCompatibilityProvider.Instance.IsCompatible(
         dependencyTargetFramework, packageVersionNuGetFramework
     );
+
+    /// <summary>
+    /// Gets all target frameworks that should be checked for version conflicts.
+    /// For example, for net10.0, this returns net10.0 and netstandard frameworks,
+    /// but NOT net9.0 or net11.0 (different .NET versions should have independent versions).
+    /// This is used for version conflict checking across compatible frameworks.
+    /// </summary>
+    public IEnumerable<string> GetCompatibleTargetFrameworks(
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
+        IEnumerable<string> availableFrameworks
+    )
+    {
+        var compatibleFrameworks = new HashSet<string>();
+
+        foreach (var targetFramework in targetFrameworks)
+        {
+            var nugetFramework = NuGetFramework.Parse(
+                targetFramework.TargetFramework,
+                DefaultFrameworkNameProvider.Instance
+            );
+
+            // Add the target framework itself
+            compatibleFrameworks.Add(targetFramework.TargetFramework);
+
+            // Find all available frameworks that should be checked for version conflicts
+            foreach (var availableFramework in availableFrameworks)
+            {
+                var availableNugetFramework = NuGetFramework.Parse(
+                    availableFramework,
+                    DefaultFrameworkNameProvider.Instance
+                );
+
+                // Only include frameworks that:
+                // 1. Can be consumed by the target framework (target is compatible with available)
+                // 2. Are NOT a different version of the same framework family
+                //    (e.g., don't include net9.0 when checking net10.0)
+
+                if (DefaultCompatibilityProvider.Instance.IsCompatible(nugetFramework, availableNugetFramework))
+                {
+                    // Exclude if both are the same framework family but different versions
+                    // e.g., exclude net9.0 when target is net10.0
+                    if (nugetFramework.Framework == availableNugetFramework.Framework &&
+                        nugetFramework.Version != availableNugetFramework.Version)
+                    {
+                        // Same framework family (e.g., both .NETCoreApp) but different versions - skip
+                        continue;
+                    }
+
+                    compatibleFrameworks.Add(availableFramework);
+                }
+            }
+        }
+
+        return compatibleFrameworks;
+    }
 }

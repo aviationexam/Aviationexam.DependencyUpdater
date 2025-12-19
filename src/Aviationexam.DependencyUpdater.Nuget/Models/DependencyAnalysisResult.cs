@@ -5,5 +5,5 @@ namespace Aviationexam.DependencyUpdater.Nuget.Models;
 
 public record DependencyAnalysisResult(
     IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>> DependenciesToUpdate,
-    IDictionary<Package, EDependencyFlag> PackageFlags
+    IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> PackageFlags
 );

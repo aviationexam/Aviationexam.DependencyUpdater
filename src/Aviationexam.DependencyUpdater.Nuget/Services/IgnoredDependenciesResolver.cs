@@ -1,8 +1,11 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
+using Aviationexam.DependencyUpdater.Nuget.Models;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using System.Collections.Generic;
+using System.Linq;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
@@ -11,7 +14,8 @@ public sealed class IgnoredDependenciesResolver
     public IEnumerable<PackageDependencyGroup> FilterDependencyGroupsRequiringIgnoredPackages(
         IEnumerable<PackageDependencyGroup> packageDependencyGroups,
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions
+        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
+        NugetTargetFramework targetFramework
     )
     {
         foreach (var packageDependencyGroup in packageDependencyGroups)
@@ -19,7 +23,8 @@ public sealed class IgnoredDependenciesResolver
             var containsIgnoredDependencies = ContainsIgnoredDependencies(
                 packageDependencyGroup,
                 ignoreResolver,
-                currentPackageVersions
+                currentPackageVersionsPerTargetFramework,
+                targetFramework
             );
 
             if (containsIgnoredDependencies is false)
@@ -32,12 +37,18 @@ public sealed class IgnoredDependenciesResolver
     private bool ContainsIgnoredDependencies(
         PackageDependencyGroup packageDependencyGroup,
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions
+        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
+        NugetTargetFramework targetFramework
     )
     {
         foreach (var packageDependency in packageDependencyGroup.Packages)
         {
-            var isIgnored = IsDependencyIgnored(packageDependency, ignoreResolver, currentPackageVersions);
+            var isIgnored = IsDependencyIgnored(
+                packageDependency,
+                ignoreResolver,
+                currentPackageVersionsPerTargetFramework,
+                targetFramework
+            );
 
             if (isIgnored)
             {
@@ -51,7 +62,8 @@ public sealed class IgnoredDependenciesResolver
     public bool IsDependencyIgnored(
         PackageDependency packageDependency,
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, PackageVersion> currentPackageVersions
+        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
+        NugetTargetFramework targetFramework
     )
     {
         var proposedVersion = packageDependency.VersionRange.MinVersion?.MapToPackageVersion();
@@ -61,7 +73,12 @@ public sealed class IgnoredDependenciesResolver
             return false;
         }
 
-        var currentVersion = currentPackageVersions.GetValueOrDefault(packageDependency.Id, proposedVersion);
+        // Get the current version for this specific target framework
+        var currentVersion = currentPackageVersionsPerTargetFramework
+            .AsValueEnumerable()
+            .Where(kvp => kvp.Key == packageDependency.Id && kvp.Value.ContainsKey(targetFramework.TargetFramework))
+            .Select(kvp => kvp.Value[targetFramework.TargetFramework])
+            .FirstOrDefault() ?? proposedVersion;
 
         if (currentVersion > proposedVersion)
         {

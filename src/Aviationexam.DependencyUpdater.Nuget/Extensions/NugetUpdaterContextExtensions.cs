@@ -168,15 +168,55 @@ public static class NugetUpdaterContextExtensions
         logger.LogWarning("Unable to find packageSource for dependency {dependencyName}", packageName);
     }
 
-    public static IReadOnlyDictionary<string, PackageVersion> GetCurrentPackageVersions(
+    public static IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> GetCurrentPackageVersionsPerTargetFramework(
         this NugetUpdaterContext context
-    ) => context.Dependencies
-        .AsValueEnumerable()
-        .Select(x => x.NugetPackage)
-        .Select(x => (PackageName: x.GetPackageName(), Version: x.GetVersion()))
-        .Where(x => x.Version is not null)
-        .GroupBy(x => x.PackageName)
-        .ToDictionary(x => x.Key, x => x.AsValueEnumerable().OrderBy(y => y.Version).First().Version!);
+    )
+    {
+        var result = new Dictionary<string, IDictionary<string, PackageVersion>>();
+
+        foreach (var dependency in context.Dependencies)
+        {
+            var packageName = dependency.NugetPackage.GetPackageName();
+            var version = dependency.NugetPackage.GetVersion();
+
+            if (version is null)
+            {
+                continue;
+            }
+
+            if (!result.TryGetValue(packageName, out var frameworkVersions))
+            {
+                frameworkVersions = new Dictionary<string, PackageVersion>();
+                result[packageName] = frameworkVersions;
+            }
+
+            // Add version for each target framework this dependency applies to
+            foreach (var targetFramework in dependency.TargetFrameworks)
+            {
+                var tfm = targetFramework.TargetFramework;
+
+                // There should never be different versions for the same target framework - this indicates a configuration error
+                if (frameworkVersions.TryGetValue(tfm, out var existingVersion))
+                {
+                    if (existingVersion != version)
+                    {
+                        throw new InvalidOperationException(
+                            $"Package '{packageName}' has conflicting versions for target framework '{tfm}': " +
+                            $"'{existingVersion.GetSerializedVersion()}' and '{version.GetSerializedVersion()}'. " +
+                            $"Each target framework must have exactly one version of each package."
+                        );
+                    }
+                    // Same version, skip adding it again
+                }
+                else
+                {
+                    frameworkVersions[tfm] = version;
+                }
+            }
+        }
+
+        return result;
+    }
 
     public static IReadOnlyDictionary<NugetSource, NugetSourceRepository> GetSourceRepositories(
         this NugetUpdaterContext context,
