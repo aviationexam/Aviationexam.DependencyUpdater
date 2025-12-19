@@ -3,6 +3,7 @@ using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Interfaces.Repository;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
+using Aviationexam.DependencyUpdater.Nuget.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -16,7 +17,7 @@ public sealed class NugetVersionWriter(
     NugetCsprojVersionWriter csprojVersionWriter,
     DotnetToolsVersionWriter dotnetToolsVersionWriter,
     Optional<IPackageFeedClient> optionalPackageFeedClient,
-    Services.TargetFrameworksResolver targetFrameworksResolver
+    TargetFrameworksResolver targetFrameworksResolver
 )
 {
     public async Task<ESetVersion> TrySetVersion(
@@ -65,7 +66,7 @@ public sealed class NugetVersionWriter(
 
     public bool IsCompatibleWithCurrentVersions(
         PossiblePackageVersion possiblePackageVersion,
-        IReadOnlyCollection<Models.NugetTargetFramework> targetFrameworks,
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
         IDictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions,
         [NotNullWhen(false)] out Package? conflictingPackageVersion
     )
@@ -79,7 +80,7 @@ public sealed class NugetVersionWriter(
                     // Get all compatible target frameworks for version checking
                     var compatibleFrameworks = targetFrameworksResolver.GetCompatibleTargetFrameworks(
                         targetFrameworks,
-                        frameworkVersions.Keys
+                        [.. frameworkVersions.Keys]
                     );
 
                     foreach (var tfm in compatibleFrameworks)

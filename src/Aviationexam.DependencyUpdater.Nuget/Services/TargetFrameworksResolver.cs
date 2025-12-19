@@ -62,7 +62,7 @@ public sealed class TargetFrameworksResolver
     /// </summary>
     public IEnumerable<string> GetCompatibleTargetFrameworks(
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
-        IEnumerable<string> availableFrameworks
+        IReadOnlyCollection<string> availableFrameworks
     )
     {
         var compatibleFrameworks = new HashSet<string>();
