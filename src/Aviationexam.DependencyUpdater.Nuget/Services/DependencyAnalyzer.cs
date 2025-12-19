@@ -294,17 +294,11 @@ public sealed class DependencyAnalyzer(
                     continue;
                 }
 
-                // For ignore checking, we still need to pass a simple dictionary (for backwards compatibility with IgnoredDependenciesResolver)
-                // Create a simple dictionary with just the current version for this framework
-                var currentVersionsForIgnoreCheck = currentPackageVersionsPerTargetFramework
-                    .AsValueEnumerable()
-                    .Where(kvp => kvp.Value.ContainsKey(targetFramework.TargetFramework))
-                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value[targetFramework.TargetFramework]);
-
                 var isDependencyIgnored = ignoredDependenciesResolver.IsDependencyIgnored(
                     packageDependency,
                     ignoreResolver,
-                    currentVersionsForIgnoreCheck
+                    currentPackageVersionsPerTargetFramework,
+                    targetFramework
                 );
 
                 if (isDependencyIgnored)
