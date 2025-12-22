@@ -209,19 +209,6 @@ public sealed class DependencyAnalyzer(
         return versions;
     }
 
-    private TOriginalReference GetPreferredPackageSearchMetadataRegistration<TOriginalReference>(
-        IReadOnlyDictionary<EPackageSource, TOriginalReference> originalReference
-    ) => originalReference
-        .AsValueEnumerable()
-        .OrderBy(x => x.Key switch
-        {
-            EPackageSource.Default => 0,
-            EPackageSource.Fallback => 1,
-            _ => throw new ArgumentOutOfRangeException(nameof(x.Key), x.Key, null),
-        })
-        .Select(x => x.Value)
-        .First();
-
     private IReadOnlyCollection<DependencySet> GetPreferredDependencySets(
         IReadOnlyDictionary<EPackageSource, IReadOnlyCollection<DependencySet>> dependencySets
     ) => dependencySets
