@@ -70,7 +70,7 @@ public class NugetCsprojVersionWriterTests
                     new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
                 )
                 {
-                    DependencySets = [],
+                    DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
                 },
                 []
             )
@@ -144,7 +144,7 @@ public class NugetCsprojVersionWriterTests
                     new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
                 )
                 {
-                    DependencySets = [],
+                    DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
                 },
                 []
             )
@@ -220,7 +220,7 @@ public class NugetCsprojVersionWriterTests
                     new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
                 )
                 {
-                    DependencySets = [],
+                    DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
                 },
                 []
             )

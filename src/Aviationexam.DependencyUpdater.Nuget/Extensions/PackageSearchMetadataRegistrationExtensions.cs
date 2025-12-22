@@ -30,21 +30,14 @@ public static class PackageSearchMetadataRegistrationExtensions
         NugetReleaseLabelComparer.Instance
     );
 
-    private static IReadOnlyCollection<DependencySet> MapDependencySets(
+    private static IReadOnlyDictionary<EPackageSource, IReadOnlyCollection<DependencySet>> MapDependencySets(
         IReadOnlyDictionary<EPackageSource, PackageSearchMetadataRegistration> packageSearchMetadata
-    )
-    {
-        // Use the first available source's dependency sets
-        var firstMetadata = packageSearchMetadata.Values.AsValueEnumerable().FirstOrDefault();
-        if (firstMetadata is null)
-        {
-            return [];
-        }
+    ) => packageSearchMetadata.AsValueEnumerable().ToDictionary(
+        kvp => kvp.Key,
+        kvp => MapDependencySetsForSource(kvp.Value.DependencySets)
+    );
 
-        return MapDependencySets(firstMetadata.DependencySets);
-    }
-
-    private static IReadOnlyCollection<DependencySet> MapDependencySets(
+    private static IReadOnlyCollection<DependencySet> MapDependencySetsForSource(
         IEnumerable<PackageDependencyGroup> dependencySets
     ) => dependencySets.AsValueEnumerable().Select(group => new DependencySet(
         group.TargetFramework.GetShortFolderName(),

@@ -120,5 +120,5 @@ public record PackageVersion<TOriginalReference> : PackageVersion
 
     public IReadOnlyDictionary<EPackageSource, TOriginalReference> OriginalReference { get; init; }
 
-    public required IReadOnlyCollection<DependencySet> DependencySets { get; init; }
+    public required IReadOnlyDictionary<EPackageSource, IReadOnlyCollection<DependencySet>> DependencySets { get; init; }
 }

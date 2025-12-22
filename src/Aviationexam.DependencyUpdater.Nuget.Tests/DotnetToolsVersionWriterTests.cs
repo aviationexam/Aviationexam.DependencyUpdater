@@ -64,7 +64,7 @@ public class DotnetToolsVersionWriterTests
                 new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
             )
             {
-                DependencySets = [],
+                DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
             }, [])
         );
 
@@ -150,7 +150,7 @@ public class DotnetToolsVersionWriterTests
                 new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
             )
             {
-                DependencySets = [],
+                DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
             }, [])
         );
 
@@ -200,7 +200,7 @@ public class DotnetToolsVersionWriterTests
                 new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
             )
             {
-                DependencySets = [],
+                DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
             }, [])
         );
 

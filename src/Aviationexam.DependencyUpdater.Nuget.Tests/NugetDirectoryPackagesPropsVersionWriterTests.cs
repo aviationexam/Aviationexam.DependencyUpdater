@@ -66,7 +66,7 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
                     new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
                 )
                 {
-                    DependencySets = [],
+                    DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
                 },
                 []
             )
@@ -137,7 +137,7 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
                     new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
                 )
                 {
-                    DependencySets = [],
+                    DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
                 },
                 []
             )
@@ -210,7 +210,7 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
                     new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
                 )
                 {
-                    DependencySets = [],
+                    DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
                 },
                 []
             )
