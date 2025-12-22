@@ -3,7 +3,6 @@ using Aviationexam.DependencyUpdater.Nuget.Services;
 using NuGet.Packaging;
 using NuGet.Protocol;
 using System.Collections.Generic;
-using System.Linq;
 using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
