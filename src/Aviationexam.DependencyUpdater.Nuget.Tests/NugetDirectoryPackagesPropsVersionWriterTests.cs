@@ -64,7 +64,10 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
                 new PackageVersion<PackageSearchMetadataRegistration>(
                     new PackageVersion(new Version("9.0.1"), false, [], NugetReleaseLabelComparer.Instance),
                     new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
-                ),
+                )
+                {
+                    DependencySets = [],
+                },
                 []
             )
         );
@@ -132,7 +135,10 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
                 new PackageVersion<PackageSearchMetadataRegistration>(
                     new PackageVersion(new Version("8.0.10"), false, [], NugetReleaseLabelComparer.Instance),
                     new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
-                ),
+                )
+                {
+                    DependencySets = [],
+                },
                 []
             )
         );
@@ -202,7 +208,10 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
                 new PackageVersion<PackageSearchMetadataRegistration>(
                     new PackageVersion(new Version("2.0.177"), false, [], NugetReleaseLabelComparer.Instance),
                     new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
-                ),
+                )
+                {
+                    DependencySets = [],
+                },
                 []
             )
         );
