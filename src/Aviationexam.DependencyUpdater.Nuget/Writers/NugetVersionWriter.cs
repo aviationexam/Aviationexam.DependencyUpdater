@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Writers;
 
@@ -27,11 +28,14 @@ public sealed class NugetVersionWriter(
         CancellationToken cancellationToken
     )
     {
-        if (!IsCompatibleWithCurrentVersions(
-            nugetUpdateCandidate.PossiblePackageVersion,
-            nugetUpdateCandidate.NugetDependency.TargetFrameworks,
-            groupPackageVersions,
-            out _))
+        if (
+            !IsCompatibleWithCurrentVersions(
+                nugetUpdateCandidate.PossiblePackageVersion,
+                nugetUpdateCandidate.NugetDependency.TargetFrameworks,
+                groupPackageVersions,
+                out _
+            )
+        )
         {
             return ESetVersion.VersionNotSet;
         }
@@ -80,7 +84,7 @@ public sealed class NugetVersionWriter(
                     // Get all compatible target frameworks for version checking
                     var compatibleFrameworks = targetFrameworksResolver.GetCompatibleTargetFrameworks(
                         targetFrameworks,
-                        [.. frameworkVersions.Keys]
+                        [.. frameworkVersions.Keys.AsValueEnumerable().Intersect(targetFrameworks.AsValueEnumerable().Select(x => x.TargetFramework))]
                     );
 
                     foreach (var tfm in compatibleFrameworks)

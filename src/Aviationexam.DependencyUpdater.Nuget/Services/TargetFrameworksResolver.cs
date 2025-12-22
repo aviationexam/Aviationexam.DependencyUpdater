@@ -92,15 +92,6 @@ public sealed class TargetFrameworksResolver
 
                 if (DefaultCompatibilityProvider.Instance.IsCompatible(nugetFramework, availableNugetFramework))
                 {
-                    // Exclude if both are the same framework family but different versions
-                    // e.g., exclude net9.0 when target is net10.0
-                    if (nugetFramework.Framework == availableNugetFramework.Framework &&
-                        nugetFramework.Version != availableNugetFramework.Version)
-                    {
-                        // Same framework family (e.g., both .NETCoreApp) but different versions - skip
-                        continue;
-                    }
-
                     compatibleFrameworks.Add(availableFramework);
                 }
             }
