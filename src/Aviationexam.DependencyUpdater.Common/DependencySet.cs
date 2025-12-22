@@ -8,5 +8,5 @@ namespace Aviationexam.DependencyUpdater.Common;
 /// </summary>
 public record DependencySet(
     string TargetFramework,
-    IReadOnlyCollection<PackageDependency> Packages
+    IReadOnlyCollection<PackageDependencyInfo> Packages
 );

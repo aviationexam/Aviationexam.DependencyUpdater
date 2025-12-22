@@ -4,7 +4,7 @@ namespace Aviationexam.DependencyUpdater.Common;
 /// Represents a dependency on another package.
 /// Maps to NuGet.Packaging.Core.PackageDependency.
 /// </summary>
-public record PackageDependency(
+public record PackageDependencyInfo(
     string Id,
     string? VersionRange
 );
