@@ -28,11 +28,14 @@ public sealed class NugetVersionWriter(
         CancellationToken cancellationToken
     )
     {
-        if (!IsCompatibleWithCurrentVersions(
+        if (
+            !IsCompatibleWithCurrentVersions(
                 nugetUpdateCandidate.PossiblePackageVersion,
                 nugetUpdateCandidate.NugetDependency.TargetFrameworks,
                 groupPackageVersions,
-                out _))
+                out _
+            )
+        )
         {
             return ESetVersion.VersionNotSet;
         }
