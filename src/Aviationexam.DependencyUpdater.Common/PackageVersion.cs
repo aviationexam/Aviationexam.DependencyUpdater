@@ -119,4 +119,6 @@ public record PackageVersion<TOriginalReference> : PackageVersion
     ) => base.PrintMembers(builder);
 
     public IReadOnlyDictionary<EPackageSource, TOriginalReference> OriginalReference { get; init; }
+    
+    public IReadOnlyCollection<DependencySet> DependencySets { get; init; } = [];
 }
