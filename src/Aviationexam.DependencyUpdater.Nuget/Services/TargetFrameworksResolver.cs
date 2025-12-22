@@ -3,7 +3,6 @@ using Aviationexam.DependencyUpdater.Nuget.Models;
 using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
-using NuGet.Protocol;
 using NuGet.Versioning;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,36 +35,6 @@ public sealed class TargetFrameworksResolver
         )).ToList();
 
         var compatiblePackageDependencyGroups = packageDependencyGroups.AsEnumerable();
-
-        foreach (var dependencyTargetFramework in dependencyTargetFrameworks)
-        {
-            var tarGetFramework = NuGetFramework.Parse(
-                dependencyTargetFramework.TargetFramework,
-                DefaultFrameworkNameProvider.Instance
-            );
-
-            compatiblePackageDependencyGroups = GetCompatiblePackageDependencyGroups(
-                tarGetFramework, compatiblePackageDependencyGroups
-            );
-        }
-
-        return compatiblePackageDependencyGroups;
-    }
-
-    public IEnumerable<PackageDependencyGroup> GetCompatiblePackageDependencyGroups(
-        PackageSearchMetadataRegistration packageSearchMetadataRegistration,
-        IReadOnlyCollection<NugetTargetFramework> dependencyTargetFrameworks
-    )
-    {
-        if (!packageSearchMetadataRegistration.DependencySets.AsValueEnumerable().Any())
-        {
-            return dependencyTargetFrameworks.AsValueEnumerable().Select(x => new PackageDependencyGroup(NuGetFramework.Parse(
-                x.TargetFramework,
-                DefaultFrameworkNameProvider.Instance
-            ), [])).ToList();
-        }
-
-        var compatiblePackageDependencyGroups = packageSearchMetadataRegistration.DependencySets;
 
         foreach (var dependencyTargetFramework in dependencyTargetFrameworks)
         {
