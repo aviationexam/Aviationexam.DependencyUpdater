@@ -1,7 +1,10 @@
+using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using NuGet.Frameworks;
 using NuGet.Packaging;
+using NuGet.Packaging.Core;
 using NuGet.Protocol;
+using NuGet.Versioning;
 using System.Collections.Generic;
 using System.Linq;
 using ZLinq;
@@ -10,6 +13,45 @@ namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
 public sealed class TargetFrameworksResolver
 {
+    public IEnumerable<PackageDependencyGroup> GetCompatiblePackageDependencyGroups(
+        IReadOnlyCollection<DependencySet> dependencySets,
+        IReadOnlyCollection<NugetTargetFramework> dependencyTargetFrameworks
+    )
+    {
+        if (!dependencySets.AsValueEnumerable().Any())
+        {
+            return dependencyTargetFrameworks.AsValueEnumerable().Select(x => new PackageDependencyGroup(NuGetFramework.Parse(
+                x.TargetFramework,
+                DefaultFrameworkNameProvider.Instance
+            ), [])).ToList();
+        }
+
+        // Convert our DependencySet to NuGet's PackageDependencyGroup
+        var packageDependencyGroups = dependencySets.AsValueEnumerable().Select(ds => new PackageDependencyGroup(
+            NuGetFramework.Parse(ds.TargetFramework, DefaultFrameworkNameProvider.Instance),
+            ds.Packages.AsValueEnumerable().Select(p => new PackageDependency(
+                p.Id,
+                p.VersionRange is not null ? VersionRange.Parse(p.VersionRange) : null
+            )).ToList()
+        )).ToList();
+
+        var compatiblePackageDependencyGroups = packageDependencyGroups.AsEnumerable();
+
+        foreach (var dependencyTargetFramework in dependencyTargetFrameworks)
+        {
+            var tarGetFramework = NuGetFramework.Parse(
+                dependencyTargetFramework.TargetFramework,
+                DefaultFrameworkNameProvider.Instance
+            );
+
+            compatiblePackageDependencyGroups = GetCompatiblePackageDependencyGroups(
+                tarGetFramework, compatiblePackageDependencyGroups
+            );
+        }
+
+        return compatiblePackageDependencyGroups;
+    }
+
     public IEnumerable<PackageDependencyGroup> GetCompatiblePackageDependencyGroups(
         PackageSearchMetadataRegistration packageSearchMetadataRegistration,
         IReadOnlyCollection<NugetTargetFramework> dependencyTargetFrameworks

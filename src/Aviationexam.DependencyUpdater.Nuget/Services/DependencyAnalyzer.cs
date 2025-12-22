@@ -127,7 +127,7 @@ public sealed class DependencyAnalyzer(
                     .Select(x => new PossiblePackageVersion(
                         x,
                         targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
-                            GetPreferredPackageSearchMetadataRegistration(x.OriginalReference),
+                            GetPreferredDependencySets(x.DependencySets),
                             dependency.TargetFrameworks
                         ).AsValueEnumerable().ToList()
                     ))
@@ -221,6 +221,19 @@ public sealed class DependencyAnalyzer(
         })
         .Select(x => x.Value)
         .First();
+
+    private IReadOnlyCollection<DependencySet> GetPreferredDependencySets(
+        IReadOnlyDictionary<EPackageSource, IReadOnlyCollection<DependencySet>> dependencySets
+    ) => dependencySets
+        .AsValueEnumerable()
+        .OrderBy(x => x.Key switch
+        {
+            EPackageSource.Default => 0,
+            EPackageSource.Fallback => 1,
+            _ => throw new ArgumentOutOfRangeException(nameof(x.Key), x.Key, null),
+        })
+        .Select(x => x.Value)
+        .FirstOrDefault() ?? [];
 
     private void ProcessDependenciesToUpdate(
         IgnoreResolver ignoreResolver,
@@ -409,9 +422,8 @@ public sealed class DependencyAnalyzer(
         Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit
     )
     {
-        var packageSearchMetadataRegistration = GetPreferredPackageSearchMetadataRegistration(packageVersion.OriginalReference);
         var compatiblePackageDependencyGroups = targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
-            packageSearchMetadataRegistration,
+            GetPreferredDependencySets(packageVersion.DependencySets),
             targetFrameworks
         );
 
