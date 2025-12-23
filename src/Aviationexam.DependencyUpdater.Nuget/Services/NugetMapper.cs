@@ -45,7 +45,8 @@ public static class NugetMapper
     {
         if (packageSearchMetadata.AsValueEnumerable().All(x => x.Value is PackageSearchMetadataRegistration))
         {
-            return packageVersion.MapToPackageVersionWithDependencySets(
+            return PackageSearchMetadataRegistrationExtensions.MapToPackageVersionWithDependencySets(
+                packageVersion,
                 packageSearchMetadata.AsValueEnumerable()
                     .ToDictionary(x => x.Key, x => (PackageSearchMetadataRegistration) (object) x.Value)
             );

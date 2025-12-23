@@ -189,10 +189,14 @@ public sealed class DependencyAnalyzer(
                 }
 
                 return packageVersions.GroupBy(x => x.PackageVersion)
-                    .Select(x => x.Key.MapToPackageVersionWithDependencySets(x.AsValueEnumerable().ToDictionary(
-                        d => d.PackageSource,
-                        d => d.Metadata
-                    )))
+                    .Select(x => KeyValuePair.Create(
+                        x.Key,
+                        x.AsValueEnumerable().ToDictionary(
+                            d => d.PackageSource,
+                            d => d.Metadata
+                        )
+                    ))
+                    .Select(x => x.Key.MapToPackageVersionWithDependencySets(x.Value))
                     .ToList();
             }
 
