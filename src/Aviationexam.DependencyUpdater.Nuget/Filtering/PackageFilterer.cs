@@ -1,5 +1,4 @@
 using Aviationexam.DependencyUpdater.Common;
-using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
 using ZLinq;
@@ -18,21 +17,21 @@ public sealed class PackageFilterer
                 .AsValueEnumerable()
                 .Select(possiblePackageVersion => possiblePackageVersion with
                 {
-                    CompatiblePackageDependencyGroups =
+                    CompatibleDependencySets =
                     [
                         .. possiblePackageVersion
-                            .CompatiblePackageDependencyGroups
+                            .CompatibleDependencySets
                             .AsValueEnumerable()
                             .Where(group => group.Packages.AsValueEnumerable().All(package =>
                                 // Check if all target frameworks have valid flags for this package
-                                dependencyAnalysisResult.PackageFlags.TryGetValue(new Package(package.Id, package.VersionRange.MinVersion!.MapToPackageVersion()), out var frameworkFlags)
+                                dependencyAnalysisResult.PackageFlags.TryGetValue(new Package(package.Id, package.MinVersion!), out var frameworkFlags)
                                 // Ensure all target frameworks for this dependency have valid flags
-                                && frameworkFlags.TryGetValue(new NugetTargetFramework(group.TargetFramework.GetShortFolderName()), out var flag)
+                                && frameworkFlags.TryGetValue(new NugetTargetFramework(group.TargetFramework), out var flag)
                                 && flag is EDependencyFlag.Valid
                             )),
                     ],
                 })
-                .Where(x => x.CompatiblePackageDependencyGroups.Count > 0)
+                .Where(x => x.CompatibleDependencySets.Count > 0)
                 .ToList();
 
             if (newPossiblePackageVersions.Count > 0)

@@ -6,7 +6,6 @@ using Aviationexam.DependencyUpdater.Nuget.Tests.Infrastructure;
 using Aviationexam.DependencyUpdater.Nuget.Writers;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using NuGet.Protocol;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -59,9 +58,8 @@ public class DotnetToolsVersionWriterTests
                 new NugetPackageVersion("dotnet-ef", "9.0.0"),
                 [new NugetTargetFramework("net9.0")]
             ),
-            new PossiblePackageVersion(new PackageVersion<PackageSearchMetadataRegistration>(
-                new PackageVersion(new Version("10.0.0"), false, [], NugetReleaseLabelComparer.Instance),
-                new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
+            new PossiblePackageVersion(new PackageVersionWithDependencySets(
+                new PackageVersion(new Version("10.0.0"), false, [], NugetReleaseLabelComparer.Instance)
             )
             {
                 DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
@@ -145,9 +143,8 @@ public class DotnetToolsVersionWriterTests
                 new NugetPackageVersion("dotnet-ef", "9.0.0"),
                 [new NugetTargetFramework("net9.0")]
             ),
-            new PossiblePackageVersion(new PackageVersion<PackageSearchMetadataRegistration>(
-                new PackageVersion(new Version("10.0.0"), false, [], NugetReleaseLabelComparer.Instance),
-                new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
+            new PossiblePackageVersion(new PackageVersionWithDependencySets(
+                new PackageVersion(new Version("10.0.0"), false, [], NugetReleaseLabelComparer.Instance)
             )
             {
                 DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
@@ -195,9 +192,8 @@ public class DotnetToolsVersionWriterTests
                 new NugetPackageVersion("dotnet-ef", "9.0.0"),
                 [new NugetTargetFramework("net9.0")]
             ),
-            new PossiblePackageVersion(new PackageVersion<PackageSearchMetadataRegistration>(
-                new PackageVersion(new Version("10.0.0"), false, [], NugetReleaseLabelComparer.Instance),
-                new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
+            new PossiblePackageVersion(new PackageVersionWithDependencySets(
+                new PackageVersion(new Version("10.0.0"), false, [], NugetReleaseLabelComparer.Instance)
             )
             {
                 DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),

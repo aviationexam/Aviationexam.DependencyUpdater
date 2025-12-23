@@ -6,5 +6,10 @@ namespace Aviationexam.DependencyUpdater.Common;
 /// </summary>
 public record PackageDependencyInfo(
     string Id,
-    string? VersionRange
+    PackageVersion? MinVersion = null,
+    bool IncludeMinVersion = true,
+    PackageVersion? MaxVersion = null,
+    bool IncludeMaxVersion = false,
+    string? FloatRangeVersion = null,
+    string? OriginalVersionString = null
 );

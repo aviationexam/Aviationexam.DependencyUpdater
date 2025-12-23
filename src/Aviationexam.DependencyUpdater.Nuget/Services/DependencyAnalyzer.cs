@@ -126,12 +126,12 @@ public sealed class DependencyAnalyzer(
                     .AsValueEnumerable()
                     .Select(x => new PossiblePackageVersion(
                         x,
-                        targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
+                        targetFrameworksResolver.GetCompatibleDependencySets(
                             GetPreferredDependencySets(x.DependencySets),
                             dependency.TargetFrameworks
                         ).AsValueEnumerable().ToList()
                     ))
-                    .Where(x => x.CompatiblePackageDependencyGroups.Count > 0)
+                    .Where(x => x.CompatibleDependencySets.Count > 0)
                     .ToList();
 
                 if (futureVersions.Count == 0)
@@ -153,7 +153,7 @@ public sealed class DependencyAnalyzer(
         return results.AsValueEnumerable().OrderBy(r => r.Key.NugetPackage.GetPackageName()).ToList();
     }
 
-    private async Task<IReadOnlyCollection<PackageVersion<PackageSearchMetadataRegistration>>> FetchDependencyVersionsAsync(
+    private async Task<IReadOnlyCollection<PackageVersionWithDependencySets>> FetchDependencyVersionsAsync(
         NugetDependency dependency,
         IReadOnlyCollection<NugetSource> sources,
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
@@ -161,8 +161,8 @@ public sealed class DependencyAnalyzer(
         CancellationToken cancellationToken
     )
     {
-        var versions = new List<PackageVersion<PackageSearchMetadataRegistration>>();
-        var tasks = sources.Select(async Task<IEnumerable<PackageVersion<PackageSearchMetadataRegistration>>> (nugetSource) =>
+        var versions = new List<PackageVersionWithDependencySets>();
+        var tasks = sources.Select(async Task<IEnumerable<PackageVersionWithDependencySets>> (nugetSource) =>
         {
             if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
             {
@@ -176,7 +176,7 @@ public sealed class DependencyAnalyzer(
                     nugetCache,
                     cancellationToken
                 );
-                var packageVersions = rawPackageVersions.Select(x => (Metadata: x, PackageVersion: x.MapToPackageVersion(), PackageSource: EPackageSource.Default));
+                var packageVersions = rawPackageVersions.Select(x => (Metadata: x, PackageVersion: x.MapToPackageVersionWithDependencySets(), PackageSource: EPackageSource.Default));
 
                 if (sourceRepository.FallbackSourceRepository is { } fallbackSourceRepository)
                 {
@@ -187,11 +187,11 @@ public sealed class DependencyAnalyzer(
                         cancellationToken
                     );
 
-                    packageVersions = packageVersions.Concat(fallbackPackageVersions.Select(x => (Metadata: x, PackageVersion: x.MapToPackageVersion(), PackageSource: EPackageSource.Fallback)));
+                    packageVersions = packageVersions.Concat(fallbackPackageVersions.Select(x => (Metadata: x, PackageVersion: x.MapToPackageVersionWithDependencySets(), PackageSource: EPackageSource.Fallback)));
                 }
 
                 return packageVersions.GroupBy(x => x.PackageVersion)
-                    .Select(x => x.Key.MapToPackageVersion(x.AsValueEnumerable().ToDictionary(
+                    .Select(x => x.Key.MapToPackageVersionWithDependencySets(x.AsValueEnumerable().ToDictionary(
                         d => d.PackageSource,
                         d => d.Metadata
                     )))
@@ -234,14 +234,14 @@ public sealed class DependencyAnalyzer(
         {
             foreach (var possiblePackageVersion in possiblePackageVersions)
             {
-                foreach (var compatiblePackageDependencyGroup in possiblePackageVersion.CompatiblePackageDependencyGroups)
+                foreach (var compatibleDependencySet in possiblePackageVersion.CompatibleDependencySets)
                 {
-                    _ = ProcessPackageDependencyGroup(
+                    _ = ProcessDependencySet(
                         ignoreResolver,
                         currentPackageVersionsPerTargetFramework,
                         packageFlags,
                         dependenciesToCheck,
-                        compatiblePackageDependencyGroup,
+                        compatibleDependencySet,
                         dependency.TargetFrameworks
                     ).AsValueEnumerable().Count();
                 }
@@ -249,23 +249,23 @@ public sealed class DependencyAnalyzer(
         }
     }
 
-    private IEnumerable<Package> ProcessPackageDependencyGroup(
+    private IEnumerable<Package> ProcessDependencySet(
         IgnoreResolver ignoreResolver,
         IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
         IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags,
         Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
-        PackageDependencyGroup compatiblePackageDependencyGroup,
+        DependencySet compatibleDependencySet,
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks
     )
     {
-        foreach (var packageDependency in compatiblePackageDependencyGroup.Packages)
+        foreach (var packageDependency in compatibleDependencySet.Packages)
         {
-            if (packageDependency.VersionRange.MinVersion is not { } minVersion)
+            if (packageDependency.MinVersion is not { } minVersion)
             {
                 continue;
             }
 
-            var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersion());
+            var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersionWithDependencySets());
 
             // Initialize per-framework flags for this package if needed
             if (!packageFlags.TryGetValue(dependentPackage, out var frameworkFlags))
@@ -376,7 +376,7 @@ public sealed class DependencyAnalyzer(
                         }
                     }
 
-                    var packageMetadata = packageMetadataMap.MapToPackageVersion();
+                    var packageMetadata = packageMetadataMap.MapToPackageVersionWithDependencySets();
 
                     if (packageMetadata is null)
                     {
@@ -403,13 +403,13 @@ public sealed class DependencyAnalyzer(
         IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
         Package package,
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
-        PackageVersion<PackageSearchMetadataRegistration> packageVersion,
+        PackageVersionWithDependencySets packageVersion,
         IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags,
         Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
         Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit
     )
     {
-        var compatiblePackageDependencyGroups = targetFrameworksResolver.GetCompatiblePackageDependencyGroups(
+        var compatiblePackageDependencyGroups = targetFrameworksResolver.GetCompatibleDependencySets(
             GetPreferredDependencySets(packageVersion.DependencySets),
             targetFrameworks
         );

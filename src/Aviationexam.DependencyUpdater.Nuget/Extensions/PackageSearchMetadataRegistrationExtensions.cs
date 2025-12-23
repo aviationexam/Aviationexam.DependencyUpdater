@@ -1,5 +1,4 @@
 using Aviationexam.DependencyUpdater.Common;
-using Aviationexam.DependencyUpdater.Nuget.Services;
 using NuGet.Packaging;
 using NuGet.Protocol;
 using System.Collections.Generic;
@@ -9,25 +8,15 @@ namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 
 public static class PackageSearchMetadataRegistrationExtensions
 {
-    public static PackageVersion<PackageSearchMetadataRegistration> MapToPackageVersion(
+    public static PackageVersionWithDependencySets MapToPackageVersionWithDependencySets(
         this PackageVersion packageVersion,
         IReadOnlyDictionary<EPackageSource, PackageSearchMetadataRegistration> packageSearchMetadata
     ) => new(
-        packageVersion,
-        packageSearchMetadata
+        packageVersion
     )
     {
-        DependencySets = MapDependencySets(packageSearchMetadata)
+        DependencySets = MapDependencySets(packageSearchMetadata),
     };
-
-    public static PackageVersion MapToPackageVersion(
-        this PackageSearchMetadataRegistration packageSearchMetadataRegistration
-    ) => new(
-        packageSearchMetadataRegistration.Version.Version,
-        packageSearchMetadataRegistration.Version.IsPrerelease,
-        [.. packageSearchMetadataRegistration.Version.ReleaseLabels],
-        NugetReleaseLabelComparer.Instance
-    );
 
     private static IReadOnlyDictionary<EPackageSource, IReadOnlyCollection<DependencySet>> MapDependencySets(
         IReadOnlyDictionary<EPackageSource, PackageSearchMetadataRegistration> packageSearchMetadata
@@ -42,7 +31,12 @@ public static class PackageSearchMetadataRegistrationExtensions
         group.TargetFramework.GetShortFolderName(),
         group.Packages.AsValueEnumerable().Select(package => new PackageDependencyInfo(
             package.Id,
-            package.VersionRange?.ToString()
+            MinVersion: package.VersionRange.MinVersion?.MapToPackageVersion(),
+            IncludeMinVersion: package.VersionRange.IsMinInclusive,
+            MaxVersion: package.VersionRange.MaxVersion?.MapToPackageVersion(),
+            IncludeMaxVersion: package.VersionRange.IsMaxInclusive,
+            FloatRangeVersion: package.VersionRange.Float?.ToString(),
+            OriginalVersionString: package.VersionRange.OriginalString
         )).ToList()
     )).ToList();
 }
