@@ -14,6 +14,7 @@ using ZLinq;
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
 public sealed class DependencyAnalyzer(
+    IDependencyVersionsFetcher dependencyVersionsFetcher,
     INugetVersionFetcher nugetVersionFetcher,
     FutureVersionResolver futureVersionResolver,
     TargetFrameworksResolver targetFrameworksResolver,
@@ -107,7 +108,7 @@ public sealed class DependencyAnalyzer(
 
             try
             {
-                var versions = await FetchDependencyVersionsAsync(
+                var versions = await dependencyVersionsFetcher.FetchDependencyVersionsAsync(
                     dependency,
                     sources,
                     sourceRepositories,
@@ -151,66 +152,7 @@ public sealed class DependencyAnalyzer(
         return results.AsValueEnumerable().OrderBy(r => r.Key.NugetPackage.GetPackageName()).ToList();
     }
 
-    private async Task<IReadOnlyCollection<PackageVersionWithDependencySets>> FetchDependencyVersionsAsync(
-        NugetDependency dependency,
-        IReadOnlyCollection<NugetSource> sources,
-        IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
-        CachingConfiguration cachingConfiguration,
-        CancellationToken cancellationToken
-    )
-    {
-        var versions = new List<PackageVersionWithDependencySets>();
-        var tasks = sources.Select(async Task<IEnumerable<PackageVersionWithDependencySets>> (nugetSource) =>
-        {
-            if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
-            {
-                using var nugetCache = new SourceCacheContext();
 
-                nugetCache.MaxAge = cachingConfiguration.MaxCacheAge;
-
-                var rawPackageVersions = await nugetVersionFetcher.FetchPackageVersionsAsync(
-                    sourceRepository.SourceRepository,
-                    dependency,
-                    nugetCache,
-                    cancellationToken
-                );
-                var packageVersions = rawPackageVersions.Select(x => (Metadata: x, PackageVersion: x.MapToPackageVersion(), PackageSource: EPackageSource.Default));
-
-                if (sourceRepository.FallbackSourceRepository is { } fallbackSourceRepository)
-                {
-                    var fallbackPackageVersions = await nugetVersionFetcher.FetchPackageVersionsAsync(
-                        fallbackSourceRepository,
-                        dependency,
-                        nugetCache,
-                        cancellationToken
-                    );
-
-                    packageVersions = packageVersions.Concat(fallbackPackageVersions.Select(x => (Metadata: x, PackageVersion: x.MapToPackageVersion(), PackageSource: EPackageSource.Fallback)));
-                }
-
-                return packageVersions
-                    .GroupBy(x => x.PackageVersion)
-                    .Select(x => KeyValuePair.Create(
-                        x.Key,
-                        x.AsValueEnumerable().ToDictionary(
-                            d => d.PackageSource,
-                            d => d.Metadata
-                        )
-                    ))
-                    .Select(x => x.Key.MapToPackageVersionWithDependencySets(x.Value))
-                    .ToList();
-            }
-
-            return [];
-        });
-
-        await foreach (var job in Task.WhenEach(tasks).WithCancellation(cancellationToken))
-        {
-            versions.AddRange(await job);
-        }
-
-        return versions;
-    }
 
     private IReadOnlyCollection<DependencySet> GetPreferredDependencySets(
         IReadOnlyDictionary<EPackageSource, IReadOnlyCollection<DependencySet>> dependencySets

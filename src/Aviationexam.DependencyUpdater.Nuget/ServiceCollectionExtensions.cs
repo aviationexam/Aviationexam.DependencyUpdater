@@ -32,6 +32,7 @@ public static class ServiceCollectionExtensions
         .AddScoped<ILogger, NuGetLoggerAdapter>()
         .AddScoped<NugetVersionFetcherFactory>()
         .AddScoped<INugetVersionFetcher, NugetVersionFetcher>()
+        .AddScoped<IDependencyVersionsFetcher, DependencyVersionsFetcher>()
         .AddScoped<TargetFrameworksResolver>()
         .AddScoped<IgnoredDependenciesResolver>()
         .AddScoped<NugetVersionWriter>()
