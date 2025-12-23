@@ -1,10 +1,9 @@
 using Aviationexam.DependencyUpdater.Common;
-using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using NuGet.Packaging;
-using NuGet.Packaging.Core;
 using System.Collections.Generic;
 using ZLinq;
+using PackageDependencyInfo = Aviationexam.DependencyUpdater.Common.PackageDependencyInfo;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
@@ -59,13 +58,13 @@ public sealed class IgnoredDependenciesResolver
     }
 
     public bool IsDependencyIgnored(
-        PackageDependency packageDependency,
+        PackageDependencyInfo packageDependency,
         IgnoreResolver ignoreResolver,
         IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
         NugetTargetFramework targetFramework
     )
     {
-        var proposedVersion = packageDependency.VersionRange.MinVersion?.MapToPackageVersion();
+        var proposedVersion = packageDependency.MinVersion;
 
         if (proposedVersion is null)
         {

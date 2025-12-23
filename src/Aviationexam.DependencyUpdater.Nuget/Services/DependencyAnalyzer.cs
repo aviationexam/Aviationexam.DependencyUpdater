@@ -2,8 +2,6 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
-using NuGet.Packaging;
-using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using System;
 using System.Collections.Concurrent;
@@ -176,7 +174,7 @@ public sealed class DependencyAnalyzer(
                     nugetCache,
                     cancellationToken
                 );
-                var packageVersions = rawPackageVersions.Select(x => (Metadata: x, PackageVersion: x.MapToPackageVersionWithDependencySets(), PackageSource: EPackageSource.Default));
+                var packageVersions = rawPackageVersions.Select(x => (Metadata: x, PackageVersion: x.MapToPackageVersion(), PackageSource: EPackageSource.Default));
 
                 if (sourceRepository.FallbackSourceRepository is { } fallbackSourceRepository)
                 {
@@ -187,7 +185,7 @@ public sealed class DependencyAnalyzer(
                         cancellationToken
                     );
 
-                    packageVersions = packageVersions.Concat(fallbackPackageVersions.Select(x => (Metadata: x, PackageVersion: x.MapToPackageVersionWithDependencySets(), PackageSource: EPackageSource.Fallback)));
+                    packageVersions = packageVersions.Concat(fallbackPackageVersions.Select(x => (Metadata: x, PackageVersion: x.MapToPackageVersion(), PackageSource: EPackageSource.Fallback)));
                 }
 
                 return packageVersions.GroupBy(x => x.PackageVersion)
@@ -265,7 +263,7 @@ public sealed class DependencyAnalyzer(
                 continue;
             }
 
-            var dependentPackage = new Package(packageDependency.Id, minVersion.MapToPackageVersionWithDependencySets());
+            var dependentPackage = new Package(packageDependency.Id, minVersion);
 
             // Initialize per-framework flags for this package if needed
             if (!packageFlags.TryGetValue(dependentPackage, out var frameworkFlags))
@@ -417,7 +415,7 @@ public sealed class DependencyAnalyzer(
         dependenciesToRevisit.Push((package, [
             .. compatiblePackageDependencyGroups.AsValueEnumerable().Aggregate(
                 [],
-                (IEnumerable<Package> acc, PackageDependencyGroup compatiblePackageDependencyGroup) => acc.Concat(ProcessPackageDependencyGroup(
+                (IEnumerable<Package> acc, DependencySet compatiblePackageDependencyGroup) => acc.Concat(ProcessDependencySet(
                     ignoreResolver,
                     currentPackageVersionsPerTargetFramework,
                     packageFlags,

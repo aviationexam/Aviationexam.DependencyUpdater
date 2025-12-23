@@ -4,7 +4,6 @@ using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
@@ -22,7 +21,7 @@ public static class NugetMapper
 
         var packageVersion = packageSearchMetadata
             .AsValueEnumerable()
-            .Select(x => MapPackageSearchMetadataToPackageVersion(x.Value))
+            .Select(x => x.Value.MapToPackageVersion())
             .FirstOrDefault();
 
         if (packageVersion is null)
@@ -31,25 +30,39 @@ public static class NugetMapper
         }
 
         var registrationMetadata = packageSearchMetadata.AsValueEnumerable()
-            .ToDictionary(x => x.Key, x => (PackageSearchMetadataRegistration)(object)x.Value);
+            .ToDictionary(
+                x => x.Key,
+                x => (PackageSearchMetadataRegistration) (object) x.Value
+            );
 
         return packageVersion.MapToPackageVersionWithDependencySets(registrationMetadata);
     }
 
-    private static PackageVersion MapPackageSearchMetadataToPackageVersion<T>(
-        T packageSearchMetadata
+    public static PackageVersionWithDependencySets MapToPackageVersionWithDependencySets<T>(
+        this PackageVersion packageVersion,
+        IReadOnlyDictionary<EPackageSource, T> packageSearchMetadata
     ) where T : class, IPackageSearchMetadata
     {
-        if (packageSearchMetadata is not PackageSearchMetadataRegistration registration)
+        if (packageSearchMetadata.AsValueEnumerable().All(x => x.Value is PackageSearchMetadataRegistration))
         {
-            throw new ArgumentOutOfRangeException(nameof(packageSearchMetadata), packageSearchMetadata, "Metadata must be PackageSearchMetadataRegistration");
+            return packageVersion.MapToPackageVersionWithDependencySets(
+                packageSearchMetadata.AsValueEnumerable()
+                    .ToDictionary(x => x.Key, x => (PackageSearchMetadataRegistration) (object) x.Value)
+            );
         }
 
-        return new PackageVersion(
-            registration.Version.Version,
-            registration.Version.IsPrerelease,
-            [.. registration.Version.ReleaseLabels],
-            NugetReleaseLabelComparer.Instance
-        );
+        throw new ArgumentOutOfRangeException(nameof(packageSearchMetadata), packageSearchMetadata, null);
+    }
+
+    public static PackageVersion MapToPackageVersion<T>(
+        this T packageSearchMetadata
+    ) where T : class, IPackageSearchMetadata
+    {
+        if (packageSearchMetadata is PackageSearchMetadataRegistration packageSearchMetadataRegistration)
+        {
+            return PackageSearchMetadataRegistrationExtensions.MapToPackageVersion(packageSearchMetadataRegistration);
+        }
+
+        throw new ArgumentOutOfRangeException(nameof(packageSearchMetadata), packageSearchMetadata, null);
     }
 }

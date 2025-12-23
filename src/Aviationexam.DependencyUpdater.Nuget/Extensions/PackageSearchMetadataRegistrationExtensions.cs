@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Nuget.Services;
 using NuGet.Packaging;
 using NuGet.Protocol;
 using System.Collections.Generic;
@@ -8,6 +9,15 @@ namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 
 public static class PackageSearchMetadataRegistrationExtensions
 {
+    public static PackageVersion MapToPackageVersion(
+        this PackageSearchMetadataRegistration packageSearchMetadataRegistration
+    ) => new(
+        packageSearchMetadataRegistration.Version.Version,
+        packageSearchMetadataRegistration.Version.IsPrerelease,
+        [.. packageSearchMetadataRegistration.Version.ReleaseLabels],
+        NugetReleaseLabelComparer.Instance
+    );
+
     public static PackageVersionWithDependencySets MapToPackageVersionWithDependencySets(
         this PackageVersion packageVersion,
         IReadOnlyDictionary<EPackageSource, PackageSearchMetadataRegistration> packageSearchMetadata
