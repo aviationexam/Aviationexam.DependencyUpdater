@@ -2,7 +2,6 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
-using NuGet.Protocol.Core.Types;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,7 +14,6 @@ namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
 public sealed class DependencyAnalyzer(
     IDependencyVersionsFetcher dependencyVersionsFetcher,
-    INugetVersionFetcher nugetVersionFetcher,
     FutureVersionResolver futureVersionResolver,
     TargetFrameworksResolver targetFrameworksResolver,
     IgnoredDependenciesResolver ignoredDependenciesResolver,
@@ -153,7 +151,6 @@ public sealed class DependencyAnalyzer(
     }
 
 
-
     private IReadOnlyCollection<DependencySet> GetPreferredDependencySets(
         IReadOnlyDictionary<EPackageSource, IReadOnlyCollection<DependencySet>> dependencySets
     ) => dependencySets
@@ -282,63 +279,26 @@ public sealed class DependencyAnalyzer(
         {
             var (package, targetFrameworks) = item;
 
-            var nugetSources = context.GetSourcesForPackage(package.Name, logger);
+            var packageMetadata = await dependencyVersionsFetcher.FetchPackageMetadataAsync(
+                package,
+                [.. context.GetSourcesForPackage(package.Name, logger)],
+                sourceRepositories,
+                cachingConfiguration,
+                cancellationToken
+            );
 
-            foreach (var nugetSource in nugetSources)
+            if (packageMetadata is not null)
             {
-                if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
-                {
-                    using var nugetCache = new SourceCacheContext();
-
-                    nugetCache.MaxAge = cachingConfiguration.MaxCacheAge;
-
-                    var packageMetadataMap = new Dictionary<EPackageSource, IPackageSearchMetadata>();
-
-                    var defaultSourcePackageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
-                        sourceRepository.SourceRepository,
-                        package,
-                        nugetCache,
-                        cancellationToken
-                    );
-
-                    if (defaultSourcePackageMetadata is not null)
-                    {
-                        packageMetadataMap.Add(EPackageSource.Default, defaultSourcePackageMetadata);
-                    }
-
-                    if (sourceRepository.FallbackSourceRepository is { } fallbackSourceRepository)
-                    {
-                        var fallbackSourcePackageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
-                            fallbackSourceRepository,
-                            package,
-                            nugetCache,
-                            cancellationToken
-                        );
-
-                        if (fallbackSourcePackageMetadata is not null)
-                        {
-                            packageMetadataMap.Add(EPackageSource.Fallback, fallbackSourcePackageMetadata);
-                        }
-                    }
-
-                    var packageMetadata = packageMetadataMap.MapToPackageVersionWithDependencySets();
-
-                    if (packageMetadata is null)
-                    {
-                        continue;
-                    }
-
-                    ProcessPackageMetadata(
-                        ignoreResolver,
-                        currentPackageVersionsPerTargetFramework,
-                        package,
-                        targetFrameworks,
-                        packageMetadata,
-                        packageFlags,
-                        dependenciesToCheck,
-                        dependenciesToRevisit
-                    );
-                }
+                ProcessPackageMetadata(
+                    ignoreResolver,
+                    currentPackageVersionsPerTargetFramework,
+                    package,
+                    targetFrameworks,
+                    packageMetadata,
+                    packageFlags,
+                    dependenciesToCheck,
+                    dependenciesToRevisit
+                );
             }
         }
     }

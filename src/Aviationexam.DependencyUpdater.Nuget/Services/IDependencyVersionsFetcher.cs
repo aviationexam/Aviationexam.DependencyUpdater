@@ -15,4 +15,12 @@ public interface IDependencyVersionsFetcher
         CachingConfiguration cachingConfiguration,
         CancellationToken cancellationToken
     );
+
+    Task<PackageVersionWithDependencySets?> FetchPackageMetadataAsync(
+        Package package,
+        IReadOnlyCollection<NugetSource> sources,
+        IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
+        CachingConfiguration cachingConfiguration,
+        CancellationToken cancellationToken
+    );
 }

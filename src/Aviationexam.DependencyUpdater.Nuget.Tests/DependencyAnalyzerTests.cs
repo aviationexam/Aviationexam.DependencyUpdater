@@ -48,7 +48,6 @@ public partial class DependencyAnalyzerTests
 
         return new DependencyAnalyzer(
             dependencyVersionsFetcher,
-            mockVersionFetcher,
             futureVersionResolver,
             targetFrameworksResolver,
             ignoredDependenciesResolver,

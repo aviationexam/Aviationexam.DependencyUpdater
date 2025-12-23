@@ -69,4 +69,61 @@ public sealed class DependencyVersionsFetcher(
 
         return results.AsValueEnumerable().SelectMany(x => x).ToList();
     }
+
+    public async Task<PackageVersionWithDependencySets?> FetchPackageMetadataAsync(
+        Package package,
+        IReadOnlyCollection<NugetSource> sources,
+        IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
+        CachingConfiguration cachingConfiguration,
+        CancellationToken cancellationToken
+    )
+    {
+        foreach (var nugetSource in sources)
+        {
+            if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
+            {
+                using var nugetCache = new SourceCacheContext();
+
+                nugetCache.MaxAge = cachingConfiguration.MaxCacheAge;
+
+                var packageMetadataMap = new Dictionary<EPackageSource, IPackageSearchMetadata>();
+
+                var defaultSourcePackageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
+                    sourceRepository.SourceRepository,
+                    package,
+                    nugetCache,
+                    cancellationToken
+                );
+
+                if (defaultSourcePackageMetadata is not null)
+                {
+                    packageMetadataMap.Add(EPackageSource.Default, defaultSourcePackageMetadata);
+                }
+
+                if (sourceRepository.FallbackSourceRepository is { } fallbackSourceRepository)
+                {
+                    var fallbackSourcePackageMetadata = await nugetVersionFetcher.FetchPackageMetadataAsync(
+                        fallbackSourceRepository,
+                        package,
+                        nugetCache,
+                        cancellationToken
+                    );
+
+                    if (fallbackSourcePackageMetadata is not null)
+                    {
+                        packageMetadataMap.Add(EPackageSource.Fallback, fallbackSourcePackageMetadata);
+                    }
+                }
+
+                var packageMetadata = packageMetadataMap.MapToPackageVersionWithDependencySets();
+
+                if (packageMetadata is not null)
+                {
+                    return packageMetadata;
+                }
+            }
+        }
+
+        return null;
+    }
 }
