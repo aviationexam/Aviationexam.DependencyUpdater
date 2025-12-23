@@ -92,31 +92,3 @@ public record PackageVersion(
         return builder.ToString();
     }
 }
-
-public record PackageVersion<TOriginalReference> : PackageVersion
-{
-    public PackageVersion(
-        PackageVersion packageVersion,
-        IReadOnlyDictionary<EPackageSource, TOriginalReference> OriginalReference
-    ) : base(
-        packageVersion.Version,
-        packageVersion.IsPrerelease,
-        packageVersion.ReleaseLabels,
-        packageVersion.ReleaseLabelsComparer
-    )
-    {
-        this.OriginalReference = OriginalReference;
-    }
-
-    public virtual bool Equals(
-        PackageVersion<TOriginalReference>? other
-    ) => base.Equals(other);
-
-    public override int GetHashCode() => base.GetHashCode();
-
-    protected override bool PrintMembers(
-        StringBuilder builder
-    ) => base.PrintMembers(builder);
-
-    public IReadOnlyDictionary<EPackageSource, TOriginalReference> OriginalReference { get; init; }
-}

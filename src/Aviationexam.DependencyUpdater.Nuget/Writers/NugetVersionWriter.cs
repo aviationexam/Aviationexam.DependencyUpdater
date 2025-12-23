@@ -75,7 +75,7 @@ public sealed class NugetVersionWriter(
         [NotNullWhen(false)] out Package? conflictingPackageVersion
     )
     {
-        foreach (var dependencySet in possiblePackageVersion.CompatiblePackageDependencyGroups)
+        foreach (var dependencySet in possiblePackageVersion.CompatibleDependencySets)
         {
             foreach (var dependencyPackage in dependencySet.Packages)
             {
@@ -92,8 +92,7 @@ public sealed class NugetVersionWriter(
                         if (frameworkVersions.TryGetValue(tfm, out var dependencyCurrentVersion))
                         {
                             if (
-                                dependencyPackage.VersionRange.MinVersion is { } dependencyPackageMinVersion
-                                && dependencyPackageMinVersion.MapToPackageVersion() is { } dependencyPackageVersion
+                                dependencyPackage.MinVersion is { } dependencyPackageVersion
                                 && dependencyPackageVersion > dependencyCurrentVersion
                             )
                             {

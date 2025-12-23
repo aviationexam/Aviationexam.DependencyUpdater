@@ -6,7 +6,6 @@ using Aviationexam.DependencyUpdater.Nuget.Tests.Infrastructure;
 using Aviationexam.DependencyUpdater.Nuget.Writers;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
-using NuGet.Protocol;
 using NuGet.Versioning;
 using System;
 using System.Collections.Generic;
@@ -65,10 +64,12 @@ public class NugetCsprojVersionWriterTests
                 [new NugetTargetFramework("net9.0")]
             ),
             new PossiblePackageVersion(
-                new PackageVersion<PackageSearchMetadataRegistration>(
-                    new PackageVersion(new Version("9.0.1"), false, [], NugetReleaseLabelComparer.Instance),
-                    new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
-                ),
+                new PackageVersionWithDependencySets(
+                    new PackageVersion(new Version("9.0.1"), false, [], NugetReleaseLabelComparer.Instance)
+                )
+                {
+                    DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
+                },
                 []
             )
         );
@@ -136,10 +137,12 @@ public class NugetCsprojVersionWriterTests
                 [new NugetTargetFramework("net8.0")]
             ),
             new PossiblePackageVersion(
-                new PackageVersion<PackageSearchMetadataRegistration>(
-                    new PackageVersion(new Version("8.0.10"), false, [], NugetReleaseLabelComparer.Instance),
-                    new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
-                ),
+                new PackageVersionWithDependencySets(
+                    new PackageVersion(new Version("8.0.10"), false, [], NugetReleaseLabelComparer.Instance)
+                )
+                {
+                    DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
+                },
                 []
             )
         );
@@ -209,10 +212,12 @@ public class NugetCsprojVersionWriterTests
                 ]
             ),
             new PossiblePackageVersion(
-                new PackageVersion<PackageSearchMetadataRegistration>(
-                    new PackageVersion(new Version("2.0.177"), false, [], NugetReleaseLabelComparer.Instance),
-                    new Dictionary<EPackageSource, PackageSearchMetadataRegistration>()
-                ),
+                new PackageVersionWithDependencySets(
+                    new PackageVersion(new Version("2.0.177"), false, [], NugetReleaseLabelComparer.Instance)
+                )
+                {
+                    DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
+                },
                 []
             )
         );

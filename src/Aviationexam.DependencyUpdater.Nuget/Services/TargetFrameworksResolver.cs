@@ -1,7 +1,6 @@
+using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using NuGet.Frameworks;
-using NuGet.Packaging;
-using NuGet.Protocol;
 using System.Collections.Generic;
 using System.Linq;
 using ZLinq;
@@ -10,42 +9,44 @@ namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
 public sealed class TargetFrameworksResolver
 {
-    public IEnumerable<PackageDependencyGroup> GetCompatiblePackageDependencyGroups(
-        PackageSearchMetadataRegistration packageSearchMetadataRegistration,
+    public IEnumerable<DependencySet> GetCompatibleDependencySets(
+        IReadOnlyCollection<DependencySet> dependencySets,
         IReadOnlyCollection<NugetTargetFramework> dependencyTargetFrameworks
     )
     {
-        if (!packageSearchMetadataRegistration.DependencySets.AsValueEnumerable().Any())
+        if (!dependencySets.AsValueEnumerable().Any())
         {
-            return dependencyTargetFrameworks.AsValueEnumerable().Select(x => new PackageDependencyGroup(NuGetFramework.Parse(
+            return dependencyTargetFrameworks.AsValueEnumerable().Select(x => new DependencySet(
                 x.TargetFramework,
-                DefaultFrameworkNameProvider.Instance
-            ), [])).ToList();
+                []
+            )).ToList();
         }
 
-        var compatiblePackageDependencyGroups = packageSearchMetadataRegistration.DependencySets;
+        var compatibleDependencySets = dependencySets.AsEnumerable();
 
         foreach (var dependencyTargetFramework in dependencyTargetFrameworks)
         {
-            var tarGetFramework = NuGetFramework.Parse(
+            var targetFramework = NuGetFramework.Parse(
                 dependencyTargetFramework.TargetFramework,
                 DefaultFrameworkNameProvider.Instance
             );
 
-            compatiblePackageDependencyGroups = GetCompatiblePackageDependencyGroups(
-                tarGetFramework, compatiblePackageDependencyGroups
+            compatibleDependencySets = GetCompatibleDependencySets(
+                targetFramework, compatibleDependencySets
             );
         }
 
-        return compatiblePackageDependencyGroups;
+        return compatibleDependencySets;
     }
 
-    private IEnumerable<PackageDependencyGroup> GetCompatiblePackageDependencyGroups(
+    private IEnumerable<DependencySet> GetCompatibleDependencySets(
         NuGetFramework dependencyTargetFramework,
-        IEnumerable<PackageDependencyGroup> packageVersionDependencyGroups
-    ) => packageVersionDependencyGroups.Where(x =>
-        IsCompatible(dependencyTargetFramework, x.TargetFramework)
-    );
+        IEnumerable<DependencySet> dependencySets
+    ) => dependencySets.Where(ds =>
+    {
+        var dsFramework = NuGetFramework.Parse(ds.TargetFramework, DefaultFrameworkNameProvider.Instance);
+        return IsCompatible(dependencyTargetFramework, dsFramework);
+    });
 
     private bool IsCompatible(
         NuGetFramework dependencyTargetFramework,

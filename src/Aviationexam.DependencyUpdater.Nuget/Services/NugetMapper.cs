@@ -10,26 +10,45 @@ namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
 public static class NugetMapper
 {
-    public static PackageVersion<PackageSearchMetadataRegistration>? MapToPackageVersion<T>(
+    public static PackageVersionWithDependencySets? MapToPackageVersionWithDependencySets<T>(
         this IReadOnlyDictionary<EPackageSource, T> packageSearchMetadata
-    ) where T : class, IPackageSearchMetadata => packageSearchMetadata
-        .AsValueEnumerable()
-        .Select(x => x.Value.MapToPackageVersion())
-        .FirstOrDefault()?
-        .MapToPackageVersion(
-            packageSearchMetadata
-        );
+    ) where T : class, IPackageSearchMetadata
+    {
+        if (!packageSearchMetadata.AsValueEnumerable().All(x => x.Value is PackageSearchMetadataRegistration))
+        {
+            throw new ArgumentOutOfRangeException(nameof(packageSearchMetadata), packageSearchMetadata, "All metadata must be PackageSearchMetadataRegistration");
+        }
 
-    public static PackageVersion<PackageSearchMetadataRegistration> MapToPackageVersion<T>(
+        var packageVersion = packageSearchMetadata
+            .AsValueEnumerable()
+            .Select(x => x.Value.MapToPackageVersion())
+            .FirstOrDefault();
+
+        if (packageVersion is null)
+        {
+            return null;
+        }
+
+        var registrationMetadata = packageSearchMetadata.AsValueEnumerable()
+            .ToDictionary(
+                x => x.Key,
+                x => (PackageSearchMetadataRegistration) (object) x.Value
+            );
+
+        return packageVersion.MapToPackageVersionWithDependencySets(registrationMetadata);
+    }
+
+    public static PackageVersionWithDependencySets MapToPackageVersionWithDependencySets<T>(
         this PackageVersion packageVersion,
         IReadOnlyDictionary<EPackageSource, T> packageSearchMetadata
     ) where T : class, IPackageSearchMetadata
     {
         if (packageSearchMetadata.AsValueEnumerable().All(x => x.Value is PackageSearchMetadataRegistration))
         {
-            return PackageSearchMetadataRegistrationExtensions.MapToPackageVersion(
+            return PackageSearchMetadataRegistrationExtensions.MapToPackageVersionWithDependencySets(
                 packageVersion,
-                packageSearchMetadata.AsValueEnumerable().ToDictionary(x => x.Key, x => (PackageSearchMetadataRegistration) (object) x.Value)
+                packageSearchMetadata.AsValueEnumerable()
+                    .ToDictionary(x => x.Key, x => (PackageSearchMetadataRegistration) (object) x.Value)
             );
         }
 

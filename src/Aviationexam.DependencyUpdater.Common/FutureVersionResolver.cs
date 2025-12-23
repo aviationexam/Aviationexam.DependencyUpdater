@@ -5,10 +5,10 @@ namespace Aviationexam.DependencyUpdater.Common;
 
 public class FutureVersionResolver
 {
-    public IEnumerable<PackageVersion<TOriginalVersionReference>> ResolveFutureVersion<TOriginalVersionReference>(
+    public IEnumerable<PackageVersionWithDependencySets> ResolveFutureVersion(
         string dependencyName,
         PackageVersion? version,
-        IEnumerable<PackageVersion<TOriginalVersionReference>> versions,
+        IEnumerable<PackageVersionWithDependencySets> versions,
         IgnoreResolver ignoreResolver
     )
     {

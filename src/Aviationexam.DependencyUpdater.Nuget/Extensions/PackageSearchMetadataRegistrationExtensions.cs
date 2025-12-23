@@ -1,19 +1,23 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Services;
+using NuGet.Packaging;
 using NuGet.Protocol;
 using System.Collections.Generic;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 
 public static class PackageSearchMetadataRegistrationExtensions
 {
-    public static PackageVersion<PackageSearchMetadataRegistration> MapToPackageVersion(
+    public static PackageVersionWithDependencySets MapToPackageVersionWithDependencySets(
         this PackageVersion packageVersion,
         IReadOnlyDictionary<EPackageSource, PackageSearchMetadataRegistration> packageSearchMetadata
     ) => new(
-        packageVersion,
-        packageSearchMetadata
-    );
+        packageVersion
+    )
+    {
+        DependencySets = MapDependencySets(packageSearchMetadata),
+    };
 
     public static PackageVersion MapToPackageVersion(
         this PackageSearchMetadataRegistration packageSearchMetadataRegistration
@@ -23,4 +27,18 @@ public static class PackageSearchMetadataRegistrationExtensions
         [.. packageSearchMetadataRegistration.Version.ReleaseLabels],
         NugetReleaseLabelComparer.Instance
     );
+
+    private static IReadOnlyDictionary<EPackageSource, IReadOnlyCollection<DependencySet>> MapDependencySets(
+        IReadOnlyDictionary<EPackageSource, PackageSearchMetadataRegistration> packageSearchMetadata
+    ) => packageSearchMetadata.AsValueEnumerable().ToDictionary(
+        kvp => kvp.Key,
+        kvp => MapDependencySetsForSource(kvp.Value.DependencySets)
+    );
+
+    private static IReadOnlyCollection<DependencySet> MapDependencySetsForSource(
+        IEnumerable<PackageDependencyGroup> dependencySets
+    ) => dependencySets.AsValueEnumerable().Select(group => new DependencySet(
+        group.TargetFramework.GetShortFolderName(),
+        group.Packages.AsValueEnumerable().Select(package => package.MapToPackageDependencyInfo()).ToList()
+    )).ToList();
 }
