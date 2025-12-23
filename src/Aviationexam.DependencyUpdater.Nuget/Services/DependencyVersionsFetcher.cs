@@ -21,8 +21,7 @@ public sealed class DependencyVersionsFetcher(
         CancellationToken cancellationToken
     )
     {
-        var versions = new List<PackageVersionWithDependencySets>();
-        var tasks = sources.Select(async Task<IEnumerable<PackageVersionWithDependencySets>> (nugetSource) =>
+        var tasks = sources.Select(async Task<IReadOnlyCollection<PackageVersionWithDependencySets>> (nugetSource) =>
         {
             if (sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
             {
@@ -66,11 +65,8 @@ public sealed class DependencyVersionsFetcher(
             return [];
         });
 
-        await foreach (var job in Task.WhenEach(tasks).WithCancellation(cancellationToken))
-        {
-            versions.AddRange(await job);
-        }
+        var results = await Task.WhenAll(tasks);
 
-        return versions;
+        return results.AsValueEnumerable().SelectMany(x => x).ToList();
     }
 }
