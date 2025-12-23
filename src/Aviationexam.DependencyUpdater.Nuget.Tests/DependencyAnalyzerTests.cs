@@ -45,13 +45,16 @@ public partial class DependencyAnalyzerTests
         
         // Create a real DependencyVersionsFetcher with the mocked INugetVersionFetcher
         var dependencyVersionsFetcher = new DependencyVersionsFetcher(mockVersionFetcher);
+        
+        // Create DependencyUpdateProcessor
+        var dependencyUpdateProcessor = new DependencyUpdateProcessor(ignoredDependenciesResolver);
 
         return new DependencyAnalyzer(
             dependencyVersionsFetcher,
             futureVersionResolver,
             targetFrameworksResolver,
-            ignoredDependenciesResolver,
             ignoreResolverFactory,
+            dependencyUpdateProcessor,
             logger
         );
     }

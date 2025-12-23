@@ -16,8 +16,8 @@ public sealed class DependencyAnalyzer(
     IDependencyVersionsFetcher dependencyVersionsFetcher,
     FutureVersionResolver futureVersionResolver,
     TargetFrameworksResolver targetFrameworksResolver,
-    IgnoredDependenciesResolver ignoredDependenciesResolver,
     IgnoreResolverFactory ignoreResolverFactory,
+    DependencyUpdateProcessor dependencyUpdateProcessor,
     ILogger<DependencyAnalyzer> logger
 )
 {
@@ -41,19 +41,16 @@ public sealed class DependencyAnalyzer(
             cancellationToken
         );
 
-        // Initialize data structures for dependency analysis
-        var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
-        var dependenciesToCheck = new Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
-        var dependenciesToRevisit = new Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)>();
-
         // Process dependencies to update
-        ProcessDependenciesToUpdate(
+        var processingResult = dependencyUpdateProcessor.ProcessDependenciesToUpdate(
             ignoreResolver,
             currentPackageVersionsPerTargetFramework,
-            dependencyToUpdate,
-            packageFlags,
-            dependenciesToCheck
+            dependencyToUpdate
         );
+
+        var packageFlags = processingResult.PackageFlags;
+        var dependenciesToCheck = processingResult.DependenciesToCheck;
+        var dependenciesToRevisit = new Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)>();
 
         // Process dependencies to check
         await ProcessDependenciesToCheckAsync(
@@ -158,104 +155,7 @@ public sealed class DependencyAnalyzer(
         .Select(x => x.Value)
         .FirstOrDefault() ?? [];
 
-    private void ProcessDependenciesToUpdate(
-        IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
-        IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>> dependencyToUpdate,
-        IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags,
-        Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck
-    )
-    {
-        foreach (var (dependency, possiblePackageVersions) in dependencyToUpdate)
-        {
-            foreach (var possiblePackageVersion in possiblePackageVersions)
-            {
-                foreach (var compatibleDependencySet in possiblePackageVersion.CompatibleDependencySets)
-                {
-                    _ = ProcessDependencySet(
-                        ignoreResolver,
-                        currentPackageVersionsPerTargetFramework,
-                        packageFlags,
-                        dependenciesToCheck,
-                        compatibleDependencySet,
-                        dependency.TargetFrameworks
-                    ).AsValueEnumerable().Count();
-                }
-            }
-        }
-    }
 
-    private IEnumerable<Package> ProcessDependencySet(
-        IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
-        IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags,
-        Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
-        DependencySet compatibleDependencySet,
-        IReadOnlyCollection<NugetTargetFramework> targetFrameworks
-    )
-    {
-        foreach (var packageDependency in compatibleDependencySet.Packages)
-        {
-            if (packageDependency.MinVersion is not { } minVersion)
-            {
-                continue;
-            }
-
-            var dependentPackage = new Package(packageDependency.Id, minVersion);
-
-            // Initialize per-framework flags for this package if needed
-            if (!packageFlags.TryGetValue(dependentPackage, out var frameworkFlags))
-            {
-                frameworkFlags = new Dictionary<NugetTargetFramework, EDependencyFlag>();
-                packageFlags[dependentPackage] = frameworkFlags;
-            }
-
-            var shouldCheckDependency = false;
-            foreach (var targetFramework in targetFrameworks)
-            {
-                if (frameworkFlags.ContainsKey(targetFramework))
-                {
-                    // Already processed for this target framework
-                    continue;
-                }
-
-                // Check if this package is already at the correct version for this target framework
-                if (
-                    currentPackageVersionsPerTargetFramework.TryGetValue(packageDependency.Id, out var frameworkVersions)
-                    && frameworkVersions.TryGetValue(targetFramework.TargetFramework, out var currentVersion)
-                    && currentVersion == dependentPackage.Version
-                )
-                {
-                    frameworkFlags[targetFramework] = EDependencyFlag.Valid;
-                    continue;
-                }
-
-                var isDependencyIgnored = ignoredDependenciesResolver.IsDependencyIgnored(
-                    packageDependency,
-                    ignoreResolver,
-                    currentPackageVersionsPerTargetFramework,
-                    targetFramework
-                );
-
-                if (isDependencyIgnored)
-                {
-                    frameworkFlags[targetFramework] = EDependencyFlag.ContainsIgnoredDependency;
-                }
-                else
-                {
-                    frameworkFlags[targetFramework] = EDependencyFlag.Unknown;
-                    shouldCheckDependency = true;
-                }
-            }
-
-            if (shouldCheckDependency)
-            {
-                dependenciesToCheck.Enqueue((dependentPackage, targetFrameworks));
-            }
-
-            yield return dependentPackage;
-        }
-    }
 
     private async Task ProcessDependenciesToCheckAsync(
         IgnoreResolver ignoreResolver,
@@ -316,7 +216,7 @@ public sealed class DependencyAnalyzer(
         dependenciesToRevisit.Push((package, [
             .. compatiblePackageDependencyGroups.AsValueEnumerable().Aggregate(
                 [],
-                (IEnumerable<Package> acc, DependencySet compatiblePackageDependencyGroup) => acc.Concat(ProcessDependencySet(
+                (IEnumerable<Package> acc, DependencySet compatiblePackageDependencyGroup) => acc.Concat(dependencyUpdateProcessor.ProcessDependencySet(
                     ignoreResolver,
                     currentPackageVersionsPerTargetFramework,
                     packageFlags,

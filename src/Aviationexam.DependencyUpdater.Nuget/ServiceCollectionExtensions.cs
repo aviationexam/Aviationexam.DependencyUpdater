@@ -22,6 +22,7 @@ public static class ServiceCollectionExtensions
         .AddScoped<DotnetToolsParser>()
         .AddScoped<NugetUpdater>()
         .AddScoped<DependencyAnalyzer>()
+        .AddScoped<DependencyUpdateProcessor>()
         .AddScoped<NugetContextFactory>()
         .AddScoped<PackageFilterer>()
         .AddScoped<PackageUpdater>()
