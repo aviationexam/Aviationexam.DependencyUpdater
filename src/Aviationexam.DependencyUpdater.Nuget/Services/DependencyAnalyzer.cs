@@ -188,7 +188,8 @@ public sealed class DependencyAnalyzer(
                     packageVersions = packageVersions.Concat(fallbackPackageVersions.Select(x => (Metadata: x, PackageVersion: x.MapToPackageVersion(), PackageSource: EPackageSource.Fallback)));
                 }
 
-                return packageVersions.GroupBy(x => x.PackageVersion)
+                return packageVersions
+                    .GroupBy(x => x.PackageVersion)
                     .Select(x => KeyValuePair.Create(
                         x.Key,
                         x.AsValueEnumerable().ToDictionary(
