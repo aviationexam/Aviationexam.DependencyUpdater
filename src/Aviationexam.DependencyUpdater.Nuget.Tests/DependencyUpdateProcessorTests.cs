@@ -77,7 +77,7 @@ public sealed class DependencyUpdateProcessorTests
             Version: new Version(1, 0, 0),
             IsPrerelease: false,
             ReleaseLabels: [],
-            ReleaseLabelsComparer: Comparer<IReadOnlyCollection<string>>.Default
+            ReleaseLabelsComparer: NugetReleaseLabelComparer.Instance
         );
 
         var packageDependency = new PackageDependencyInfo(
@@ -101,13 +101,11 @@ public sealed class DependencyUpdateProcessorTests
         );
 
         // Assert
-        Assert.Single(result);
-        var expectedPackage = new Package("TestPackage", packageVersion);
-        Assert.Contains(expectedPackage, result);
+        var expectedPackage = Assert.Single(result);
+        Assert.Equal(new Package("TestPackage", packageVersion), expectedPackage);
 
         // Verify package flags were set
-        Assert.Contains(expectedPackage, packageFlags.Keys);
-        var flags = packageFlags[expectedPackage];
+        var flags = Assert.Contains(expectedPackage, packageFlags);
         Assert.Contains(targetFramework, flags.Keys);
         Assert.Equal(EDependencyFlag.Unknown, flags[targetFramework]);
 
@@ -129,7 +127,7 @@ public sealed class DependencyUpdateProcessorTests
             Version: new Version(1, 0, 0),
             IsPrerelease: false,
             ReleaseLabels: [],
-            ReleaseLabelsComparer: Comparer<IReadOnlyCollection<string>>.Default
+            ReleaseLabelsComparer: NugetReleaseLabelComparer.Instance
         );
 
         // Package is already installed at this version
@@ -165,11 +163,11 @@ public sealed class DependencyUpdateProcessorTests
         );
 
         // Assert
-        var expectedPackage = new Package("TestPackage", packageVersion);
-        Assert.Contains(expectedPackage, result);
+        var expectedPackage = Assert.Single(result);
+        Assert.Equal(new Package("TestPackage", packageVersion), expectedPackage);
 
         // Should be marked as valid since it's already at the correct version
-        var flags = packageFlags[expectedPackage];
+        var flags = Assert.Contains(expectedPackage, packageFlags);
         Assert.Equal(EDependencyFlag.Valid, flags[targetFramework]);
 
         // Should NOT be queued for checking since it's already valid
@@ -185,14 +183,14 @@ public sealed class DependencyUpdateProcessorTests
             Version: new Version(1, 0, 0),
             IsPrerelease: false,
             ReleaseLabels: [],
-            ReleaseLabelsComparer: Comparer<IReadOnlyCollection<string>>.Default
+            ReleaseLabelsComparer: NugetReleaseLabelComparer.Instance
         );
 
         var newVersion = new PackageVersion(
             Version: new Version(2, 0, 0),
             IsPrerelease: false,
             ReleaseLabels: [],
-            ReleaseLabelsComparer: Comparer<IReadOnlyCollection<string>>.Default
+            ReleaseLabelsComparer: NugetReleaseLabelComparer.Instance
         );
 
         var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>
@@ -239,11 +237,11 @@ public sealed class DependencyUpdateProcessorTests
         );
 
         // Assert
-        var expectedPackage = new Package("TestPackage", newVersion);
-        Assert.Contains(expectedPackage, result);
+        var expectedPackage = Assert.Single(result);
+        Assert.Equal(new Package("TestPackage", newVersion), expectedPackage);
 
         // Should be marked as containing ignored dependency
-        var flags = packageFlags[expectedPackage];
+        var flags = Assert.Contains(expectedPackage, packageFlags);
         Assert.Equal(EDependencyFlag.ContainsIgnoredDependency, flags[targetFramework]);
 
         // Should NOT be queued for checking since it's ignored
@@ -265,14 +263,14 @@ public sealed class DependencyUpdateProcessorTests
             Version: new Version(1, 0, 0),
             IsPrerelease: false,
             ReleaseLabels: [],
-            ReleaseLabelsComparer: Comparer<IReadOnlyCollection<string>>.Default
+            ReleaseLabelsComparer: NugetReleaseLabelComparer.Instance
         );
 
         var version2 = new PackageVersion(
             Version: new Version(2, 0, 0),
             IsPrerelease: false,
             ReleaseLabels: [],
-            ReleaseLabelsComparer: Comparer<IReadOnlyCollection<string>>.Default
+            ReleaseLabelsComparer: NugetReleaseLabelComparer.Instance
         );
 
         var dependencySet = new DependencySet(
@@ -318,7 +316,7 @@ public sealed class DependencyUpdateProcessorTests
             Version: new Version(1, 0, 0),
             IsPrerelease: false,
             ReleaseLabels: [],
-            ReleaseLabelsComparer: Comparer<IReadOnlyCollection<string>>.Default
+            ReleaseLabelsComparer: NugetReleaseLabelComparer.Instance
         );
 
         var packageDependency = new PackageDependencyInfo(
