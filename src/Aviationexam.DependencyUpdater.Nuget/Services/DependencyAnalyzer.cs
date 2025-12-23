@@ -33,17 +33,12 @@ public sealed class DependencyAnalyzer(
         var ignoreResolver = ignoreResolverFactory.Create(ignoreEntries);
 
         // Resolve possible package versions
-        var possiblePackageVersions = await ResolvePossiblePackageVersionsAsync(
+        var dependencyToUpdate = await ResolvePossiblePackageVersionsAsync(
             nugetUpdaterContext,
             sourceRepositories,
             ignoreResolver,
             cachingConfiguration,
             cancellationToken
-        );
-
-        var dependencyToUpdate = possiblePackageVersions.AsValueEnumerable().ToDictionary(
-            x => x.Key,
-            x => x.Value
         );
 
         // Initialize data structures for dependency analysis
@@ -79,7 +74,7 @@ public sealed class DependencyAnalyzer(
         return new DependencyAnalysisResult(dependencyToUpdate, packageFlags);
     }
 
-    private async Task<IEnumerable<KeyValuePair<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>>>> ResolvePossiblePackageVersionsAsync(
+    private async Task<IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>>> ResolvePossiblePackageVersionsAsync(
         NugetUpdaterContext nugetUpdaterContext,
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
         IgnoreResolver ignoreResolver,
@@ -123,10 +118,7 @@ public sealed class DependencyAnalyzer(
                     .AsValueEnumerable()
                     .Select(x => new PossiblePackageVersion(
                         x,
-                        targetFrameworksResolver.GetCompatibleDependencySets(
-                            GetPreferredDependencySets(x.DependencySets),
-                            dependency.TargetFrameworks
-                        ).AsValueEnumerable().ToList()
+                        GetPreferredDependencySets(x.DependencySets)
                     ))
                     .Where(x => x.CompatibleDependencySets.Count > 0)
                     .ToList();
@@ -147,7 +139,9 @@ public sealed class DependencyAnalyzer(
             }
         });
 
-        return results.AsValueEnumerable().OrderBy(r => r.Key.NugetPackage.GetPackageName()).ToList();
+        return results.AsValueEnumerable()
+            .OrderBy(r => r.Key.NugetPackage.GetPackageName())
+            .ToDictionary();
     }
 
 
