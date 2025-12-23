@@ -39,14 +39,6 @@ public static class PackageSearchMetadataRegistrationExtensions
         IEnumerable<PackageDependencyGroup> dependencySets
     ) => dependencySets.AsValueEnumerable().Select(group => new DependencySet(
         group.TargetFramework.GetShortFolderName(),
-        group.Packages.AsValueEnumerable().Select(package => new PackageDependencyInfo(
-            package.Id,
-            MinVersion: package.VersionRange.MinVersion?.MapToPackageVersion(),
-            IncludeMinVersion: package.VersionRange.IsMinInclusive,
-            MaxVersion: package.VersionRange.MaxVersion?.MapToPackageVersion(),
-            IncludeMaxVersion: package.VersionRange.IsMaxInclusive,
-            FloatRangeVersion: package.VersionRange.Float?.ToString(),
-            OriginalVersionString: package.VersionRange.OriginalString
-        )).ToList()
+        group.Packages.AsValueEnumerable().Select(package => package.MapToPackageDependencyInfo()).ToList()
     )).ToList();
 }
