@@ -43,12 +43,18 @@ public partial class DependencyAnalyzerTests
         var ignoreResolverFactoryLogger = Substitute.For<ILogger<IgnoreResolverFactory>>();
         var ignoreResolverFactory = new IgnoreResolverFactory(ignoreResolverFactoryLogger);
 
+        // Create a real DependencyVersionsFetcher with the mocked INugetVersionFetcher
+        var dependencyVersionsFetcher = new DependencyVersionsFetcher(mockVersionFetcher);
+
+        // Create DependencyUpdateProcessor
+        var dependencyUpdateProcessor = new DependencyUpdateProcessor(ignoredDependenciesResolver);
+
         return new DependencyAnalyzer(
-            mockVersionFetcher,
+            dependencyVersionsFetcher,
             futureVersionResolver,
             targetFrameworksResolver,
-            ignoredDependenciesResolver,
             ignoreResolverFactory,
+            dependencyUpdateProcessor,
             logger
         );
     }

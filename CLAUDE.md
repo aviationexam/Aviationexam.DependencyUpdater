@@ -309,3 +309,90 @@ To add support for a new platform (e.g., GitLab):
 **Note**: Argument names don't need platform prefixes (e.g., use `--organization` not `--azure-organization`) since the subcommand already provides the platform context.
 
 The keyed services pattern automatically resolves the correct implementation at runtime based on the configuration's `Platform` property. The command pattern keeps platform-specific CLI options organized in their own classes.
+
+## Recent Refactorings
+
+### DependencyUpdateProcessor Extraction (2024)
+
+Refactored `ProcessDependenciesToUpdate` method from `DependencyAnalyzer` to improve testability by extracting the logic into a new, dedicated service class.
+
+#### New Service Class: `DependencyUpdateProcessor`
+**Location:** `src/Aviationexam.DependencyUpdater.Nuget/Services/DependencyUpdateProcessor.cs`
+
+Extracted the dependency processing logic into a standalone, testable service with the following methods:
+
+- **`ProcessDependenciesToUpdate`**: Main entry point that processes all dependencies and returns results
+- **`ProcessDependencySet`**: Processes a single dependency set (now public and directly testable)
+- **`ProcessTargetFrameworks`**: Determines flags for each target framework
+- **`DetermineFrameworkFlag`**: Determines the specific flag for a target framework
+- **`IsAtCorrectVersion`**: Helper to check if a package is at the correct version
+
+#### New Result Type: `DependencyProcessingResult`
+**Location:** `src/Aviationexam.DependencyUpdater.Nuget/Models/DependencyProcessingResult.cs`
+
+A record that encapsulates the output of dependency processing:
+```csharp
+public sealed record DependencyProcessingResult(
+    IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> PackageFlags,
+    Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> DependenciesToCheck
+);
+```
+
+#### Updated `DependencyAnalyzer`
+- Injected `DependencyUpdateProcessor` via constructor
+- Removed `ignoredDependenciesResolver` parameter (now used by `DependencyUpdateProcessor`)
+- Removed private `ProcessDependenciesToUpdate` and `ProcessDependencySet` methods
+- Updated `ProcessPackageMetadata` to use `dependencyUpdateProcessor.ProcessDependencySet`
+
+Before:
+```csharp
+var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
+var dependenciesToCheck = new Queue<(Package, IReadOnlyCollection<NugetTargetFramework>)>();
+
+ProcessDependenciesToUpdate(
+    ignoreResolver,
+    currentPackageVersionsPerTargetFramework,
+    dependencyToUpdate,
+    packageFlags,
+    dependenciesToCheck
+);
+```
+
+After:
+```csharp
+var processingResult = dependencyUpdateProcessor.ProcessDependenciesToUpdate(
+    ignoreResolver,
+    currentPackageVersionsPerTargetFramework,
+    dependencyToUpdate
+);
+
+var packageFlags = processingResult.PackageFlags;
+var dependenciesToCheck = processingResult.DependenciesToCheck;
+```
+
+#### Test Suite: `DependencyUpdateProcessorTests`
+**Location:** `src/Aviationexam.DependencyUpdater.Nuget.Tests/DependencyUpdateProcessorTests.cs`
+
+Comprehensive unit tests demonstrating the improved testability:
+
+**Unit Tests (Fact):**
+- ✅ `ProcessDependencySet_WithNullMinVersion_SkipsPackage`
+- ✅ `ProcessDependencySet_WithSinglePackage_PopulatesPackageFlags`
+- ✅ `ProcessDependencySet_WithAlreadyInstalledVersion_MarksAsValid`
+- ✅ `ProcessDependencySet_WithIgnoredDependency_MarksAsContainsIgnoredDependency`
+- ✅ `ProcessDependencySet_WithMultiplePackages_ReturnsAllPackages`
+- ✅ `ProcessDependencySet_CalledTwiceWithSamePackage_DoesNotReprocessTargetFramework`
+
+**Theory Tests (using FutureDependenciesClassData):**
+- ✅ `ProcessDependenciesToUpdate_WithRealWorldData_ProcessesAllDependencies`
+- ✅ `ProcessDependenciesToUpdate_WithRealWorldData_QueuesUnknownDependencies`
+- ✅ `ProcessDependenciesToUpdate_WithRealWorldData_CountsExpectedPackages`
+
+The theory tests use **ALL** dependencies from `FutureDependenciesClassData` (real-world Aviationexam.Core.Common packages), validating the complete `ProcessDependenciesToUpdate` workflow with multiple packages, target frameworks, and complex transitive dependencies.
+
+#### Benefits
+1. **Improved Testability** - Public methods with clear inputs and outputs
+2. **Single Responsibility** - Separation between orchestration and processing logic
+3. **Better Encapsulation** - Dependencies encapsulated within appropriate services
+4. **Clearer API** - Explicit return types instead of side effects
+5. **Easier to Extend** - New processing strategies can be added without modifying orchestration code
