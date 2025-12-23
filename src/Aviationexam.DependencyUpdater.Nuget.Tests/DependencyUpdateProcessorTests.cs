@@ -6,6 +6,7 @@ using NSubstitute;
 using System;
 using System.Collections.Generic;
 using Xunit;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Tests;
 
@@ -37,7 +38,7 @@ public sealed class DependencyUpdateProcessorTests
 
         var packageDependency = new PackageDependencyInfo(
             Id: "TestPackage",
-            MinVersion: null  // No minimum version
+            MinVersion: null // No minimum version
         );
 
         var dependencySet = new DependencySet(
@@ -103,13 +104,13 @@ public sealed class DependencyUpdateProcessorTests
         Assert.Single(result);
         var expectedPackage = new Package("TestPackage", packageVersion);
         Assert.Contains(expectedPackage, result);
-        
+
         // Verify package flags were set
         Assert.Contains(expectedPackage, packageFlags.Keys);
         var flags = packageFlags[expectedPackage];
         Assert.Contains(targetFramework, flags.Keys);
         Assert.Equal(EDependencyFlag.Unknown, flags[targetFramework]);
-        
+
         // Verify dependency was queued for checking
         Assert.Single(dependenciesToCheck);
         var (queuedPackage, queuedFrameworks) = dependenciesToCheck.Dequeue();
@@ -166,11 +167,11 @@ public sealed class DependencyUpdateProcessorTests
         // Assert
         var expectedPackage = new Package("TestPackage", packageVersion);
         Assert.Contains(expectedPackage, result);
-        
+
         // Should be marked as valid since it's already at the correct version
         var flags = packageFlags[expectedPackage];
         Assert.Equal(EDependencyFlag.Valid, flags[targetFramework]);
-        
+
         // Should NOT be queued for checking since it's already valid
         Assert.Empty(dependenciesToCheck);
     }
@@ -240,11 +241,11 @@ public sealed class DependencyUpdateProcessorTests
         // Assert
         var expectedPackage = new Package("TestPackage", newVersion);
         Assert.Contains(expectedPackage, result);
-        
+
         // Should be marked as containing ignored dependency
         var flags = packageFlags[expectedPackage];
         Assert.Equal(EDependencyFlag.ContainsIgnoredDependency, flags[targetFramework]);
-        
+
         // Should NOT be queued for checking since it's ignored
         Assert.Empty(dependenciesToCheck);
     }
@@ -276,7 +277,8 @@ public sealed class DependencyUpdateProcessorTests
 
         var dependencySet = new DependencySet(
             TargetFramework: "net8.0",
-            Packages: [
+            Packages:
+            [
                 new PackageDependencyInfo("Package1", version1),
                 new PackageDependencyInfo("Package2", version2)
             ]
@@ -296,7 +298,7 @@ public sealed class DependencyUpdateProcessorTests
         Assert.Equal(2, result.Count);
         Assert.Contains(new Package("Package1", version1), result);
         Assert.Contains(new Package("Package2", version2), result);
-        
+
         Assert.Equal(2, packageFlags.Count);
         Assert.Equal(2, dependenciesToCheck.Count);
     }
@@ -352,5 +354,168 @@ public sealed class DependencyUpdateProcessorTests
 
         // Assert - Should not queue again since framework is already processed
         Assert.Equal(initialCheckCount, dependenciesToCheck.Count);
+    }
+
+    [Theory]
+    [ClassData(typeof(FutureDependenciesClassData))]
+    public void ProcessDependenciesToUpdate_WithRealWorldData_ProcessesAllDependencies(
+        IReadOnlyCollection<KeyValuePair<NugetDependency, IReadOnlyCollection<PackageVersionWithDependencySets>>> dependencies,
+        IReadOnlyDictionary<string, PackageVersionWithDependencySets?> _
+    )
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger>();
+        var ignoreResolver = new IgnoreResolver([], logger);
+        var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
+
+        // Convert ALL dependencies to the format expected by ProcessDependenciesToUpdate
+        var dependenciesToUpdate = dependencies.AsValueEnumerable()
+            .ToDictionary(
+                kvp => kvp.Key,
+                IReadOnlyCollection<PossiblePackageVersion> (kvp) => kvp.Value.AsValueEnumerable()
+                    .Select(pkgVersion => new PossiblePackageVersion(
+                        pkgVersion,
+                        pkgVersion.DependencySets.TryGetValue(EPackageSource.Default, out var depSets)
+                            ? depSets
+                            : []
+                    ))
+                    .ToList()
+            );
+
+        // Act
+        var result = _processor.ProcessDependenciesToUpdate(
+            ignoreResolver,
+            currentVersions,
+            dependenciesToUpdate
+        );
+
+        // Assert
+        Assert.NotEmpty(result.PackageFlags);
+        Assert.NotEmpty(result.DependenciesToCheck);
+
+        // All packages should have flags for their respective target frameworks
+        foreach (var (nugetDependency, dependencySetsCollection) in dependencies)
+        {
+            // Get all packages from this dependency's dependency sets
+            var packagesFromDependency = dependencySetsCollection.AsValueEnumerable()
+                .SelectMany(pkgVersion => pkgVersion.DependencySets.TryGetValue(EPackageSource.Default, out var depSets)
+                    ? depSets
+                    : [])
+                .SelectMany(ds => ds.Packages)
+                .Where(p => p.MinVersion != null)
+                .ToList();
+
+            // Verify each package has flags for the target frameworks
+            foreach (var packageDep in packagesFromDependency)
+            {
+                var package = new Package(packageDep.Id, packageDep.MinVersion!);
+
+                if (result.PackageFlags.TryGetValue(package, out var frameworkFlags))
+                {
+                    // Verify it has flags for the dependency's target frameworks
+                    foreach (var targetFramework in nugetDependency.TargetFrameworks)
+                    {
+                        Assert.Contains(targetFramework, frameworkFlags.Keys);
+                    }
+                }
+            }
+        }
+    }
+
+    [Theory]
+    [ClassData(typeof(FutureDependenciesClassData))]
+    public void ProcessDependenciesToUpdate_WithRealWorldData_QueuesUnknownDependencies(
+        IReadOnlyCollection<KeyValuePair<NugetDependency, IReadOnlyCollection<PackageVersionWithDependencySets>>> dependencies,
+        IReadOnlyDictionary<string, PackageVersionWithDependencySets?> _
+    )
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger>();
+        var ignoreResolver = new IgnoreResolver([], logger);
+        var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
+
+        // Convert ALL dependencies to the format expected by ProcessDependenciesToUpdate
+        var dependenciesToUpdate = dependencies.AsValueEnumerable()
+            .ToDictionary(
+                kvp => kvp.Key,
+                IReadOnlyCollection<PossiblePackageVersion> (kvp) => kvp.Value.AsValueEnumerable()
+                    .Select(pkgVersion => new PossiblePackageVersion(
+                        pkgVersion,
+                        pkgVersion.DependencySets.TryGetValue(EPackageSource.Default, out var depSets)
+                            ? depSets
+                            : []
+                    ))
+                    .ToList()
+            );
+
+        // Act
+        var result = _processor.ProcessDependenciesToUpdate(
+            ignoreResolver,
+            currentVersions,
+            dependenciesToUpdate
+        );
+
+        // Assert - Dependencies without current versions should be queued for checking
+        Assert.NotEmpty(result.DependenciesToCheck);
+
+        // All queued dependencies should have Unknown flag
+        foreach (var (package, _) in result.DependenciesToCheck)
+        {
+            Assert.Contains(package, result.PackageFlags.Keys);
+            var flags = result.PackageFlags[package];
+
+            // At least one framework should have Unknown flag
+            Assert.Contains(flags.Values, flag => flag == EDependencyFlag.Unknown);
+        }
+    }
+
+    [Theory]
+    [ClassData(typeof(FutureDependenciesClassData))]
+    public void ProcessDependenciesToUpdate_WithRealWorldData_CountsExpectedPackages(
+        IReadOnlyCollection<KeyValuePair<NugetDependency, IReadOnlyCollection<PackageVersionWithDependencySets>>> dependencies,
+        IReadOnlyDictionary<string, PackageVersionWithDependencySets?> _
+    )
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger>();
+        var ignoreResolver = new IgnoreResolver([], logger);
+        var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
+
+        // Convert ALL dependencies to the format expected by ProcessDependenciesToUpdate
+        var dependenciesToUpdate = dependencies.AsValueEnumerable()
+            .ToDictionary(
+                kvp => kvp.Key,
+                IReadOnlyCollection<PossiblePackageVersion> (kvp) => kvp.Value.AsValueEnumerable()
+                    .Select(pkgVersion => new PossiblePackageVersion(
+                        pkgVersion,
+                        pkgVersion.DependencySets.TryGetValue(EPackageSource.Default, out var depSets)
+                            ? depSets
+                            : []
+                    ))
+                    .ToList()
+            );
+
+        // Calculate expected unique packages from ALL dependency sets
+        var expectedPackageIds = dependencies.AsValueEnumerable()
+            .SelectMany(kvp => kvp.Value.AsValueEnumerable())
+            .SelectMany(pkgVersion => pkgVersion.DependencySets.TryGetValue(EPackageSource.Default, out var depSets)
+                ? depSets
+                : [])
+            .SelectMany(ds => ds.Packages)
+            .Where(p => p.MinVersion != null)
+            .Select(p => p.Id)
+            .Distinct()
+            .ToHashSet();
+
+        // Act
+        var result = _processor.ProcessDependenciesToUpdate(
+            ignoreResolver,
+            currentVersions,
+            dependenciesToUpdate
+        );
+
+        // Assert - Should have processed all unique packages from ALL dependencies
+        var processedPackageIds = result.PackageFlags.AsValueEnumerable().Select(p => p.Key.Name).ToHashSet();
+        Assert.Equal(expectedPackageIds, processedPackageIds);
     }
 }
