@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Services;
 using Microsoft.Extensions.Logging;
@@ -368,18 +369,7 @@ public sealed class DependencyUpdateProcessorTests
         var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
 
         // Convert ALL dependencies to the format expected by ProcessDependenciesToUpdate
-        var dependenciesToUpdate = dependencies.AsValueEnumerable()
-            .ToDictionary(
-                kvp => kvp.Key,
-                IReadOnlyCollection<PossiblePackageVersion> (kvp) => kvp.Value.AsValueEnumerable()
-                    .Select(pkgVersion => new PossiblePackageVersion(
-                        pkgVersion,
-                        pkgVersion.DependencySets.TryGetValue(EPackageSource.Default, out var depSets)
-                            ? depSets
-                            : []
-                    ))
-                    .ToList()
-            );
+        var dependenciesToUpdate = dependencies.ToPossiblePackageVersions();
 
         // Act
         var result = _processor.ProcessDependenciesToUpdate(
@@ -421,18 +411,7 @@ public sealed class DependencyUpdateProcessorTests
         var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
 
         // Convert ALL dependencies to the format expected by ProcessDependenciesToUpdate
-        var dependenciesToUpdate = dependencies.AsValueEnumerable()
-            .ToDictionary(
-                kvp => kvp.Key,
-                IReadOnlyCollection<PossiblePackageVersion> (kvp) => kvp.Value.AsValueEnumerable()
-                    .Select(pkgVersion => new PossiblePackageVersion(
-                        pkgVersion,
-                        pkgVersion.DependencySets.TryGetValue(EPackageSource.Default, out var depSets)
-                            ? depSets
-                            : []
-                    ))
-                    .ToList()
-            );
+        var dependenciesToUpdate = dependencies.ToPossiblePackageVersions();
 
         // Act
         var result = _processor.ProcessDependenciesToUpdate(
@@ -474,18 +453,7 @@ public sealed class DependencyUpdateProcessorTests
         var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
 
         // Convert ALL dependencies to the format expected by ProcessDependenciesToUpdate
-        var dependenciesToUpdate = dependencies.AsValueEnumerable()
-            .ToDictionary(
-                kvp => kvp.Key,
-                IReadOnlyCollection<PossiblePackageVersion> (kvp) => kvp.Value.AsValueEnumerable()
-                    .Select(pkgVersion => new PossiblePackageVersion(
-                        pkgVersion,
-                        pkgVersion.DependencySets.TryGetValue(EPackageSource.Default, out var depSets)
-                            ? depSets
-                            : []
-                    ))
-                    .ToList()
-            );
+        var dependenciesToUpdate = dependencies.ToPossiblePackageVersions();
 
         // Act
         var result = _processor.ProcessDependenciesToUpdate(
