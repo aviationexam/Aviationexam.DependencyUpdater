@@ -43,7 +43,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("8.0.6.0")),
                                 new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -99,7 +99,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("8.0.6.0")),
                                 new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -310,7 +310,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                     {
                         DependencySets = CreateDependencySets(
                             new DependencySet("netstandard2.0", [])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -320,34 +320,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                     new NugetPackageReference("Meziantou.Extensions.Logging.Xunit.v3", VersionRange.Parse("1.1.19")),
                     [new NugetTargetFramework("net8.0")]
                 ),
-                (IReadOnlyCollection<PackageVersionWithDependencySets>)
-                [
-                    new PackageVersionWithDependencySets(CreatePackageVersion("1.1.20.0"))
-                    {
-                        DependencySets = CreateDependencySets(
-                            new DependencySet("net8.0",
-                            [
-                                new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
-                                new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
-                            ]),
-                            new DependencySet("net9.0",
-                            [
-                                new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
-                                new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
-                            ]),
-                            new DependencySet("net10.0",
-                            [
-                                new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
-                                new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
-                            ]),
-                            new DependencySet("netstandard2.0",
-                            [
-                                new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
-                                new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
-                            ])
-                        )
-                    },
-                ]
+                CreateMeziantou_Extensions_Logging_Xunit_v3DependencySets()
             ),
             KeyValuePair.Create(
                 new NugetDependency(
@@ -355,34 +328,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                     new NugetPackageReference("Meziantou.Extensions.Logging.Xunit.v3", VersionRange.Parse("1.1.19")),
                     [new NugetTargetFramework("net9.0")]
                 ),
-                (IReadOnlyCollection<PackageVersionWithDependencySets>)
-                [
-                    new PackageVersionWithDependencySets(CreatePackageVersion("1.1.20.0"))
-                    {
-                        DependencySets = CreateDependencySets(
-                            new DependencySet("net8.0",
-                            [
-                                new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
-                                new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
-                            ]),
-                            new DependencySet("net9.0",
-                            [
-                                new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
-                                new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
-                            ]),
-                            new DependencySet("net10.0",
-                            [
-                                new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
-                                new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
-                            ]),
-                            new DependencySet("netstandard2.0",
-                            [
-                                new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
-                                new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
-                            ])
-                        )
-                    },
-                ]
+                CreateMeziantou_Extensions_Logging_Xunit_v3DependencySets()
             ),
             KeyValuePair.Create(
                 new NugetDependency(
@@ -390,34 +336,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                     new NugetPackageReference("Meziantou.Extensions.Logging.Xunit.v3", VersionRange.Parse("1.1.19")),
                     [new NugetTargetFramework("net10.0")]
                 ),
-                (IReadOnlyCollection<PackageVersionWithDependencySets>)
-                [
-                    new PackageVersionWithDependencySets(CreatePackageVersion("1.1.20.0"))
-                    {
-                        DependencySets = CreateDependencySets(
-                            new DependencySet("net8.0",
-                            [
-                                new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
-                                new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
-                            ]),
-                            new DependencySet("net9.0",
-                            [
-                                new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
-                                new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
-                            ]),
-                            new DependencySet("net10.0",
-                            [
-                                new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
-                                new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
-                            ]),
-                            new DependencySet("netstandard2.0",
-                            [
-                                new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
-                                new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
-                            ])
-                        )
-                    },
-                ]
+                CreateMeziantou_Extensions_Logging_Xunit_v3DependencySets()
             ),
             KeyValuePair.Create(
                 new NugetDependency(
@@ -432,7 +351,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                         DependencySets = CreateDependencySets(
                             new DependencySet("net9.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Net.Http.Headers", CreatePackageVersion("9.0.11.0"))
+                                new PackageDependencyInfo("Microsoft.Net.Http.Headers", CreatePackageVersion("9.0.11.0")),
                             ])
                         ),
                     },
@@ -441,7 +360,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                         DependencySets = CreateDependencySets(
                             new DependencySet("net10.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Net.Http.Headers", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Net.Http.Headers", CreatePackageVersion("10.0.0.0")),
                             ])
                         ),
                     },
@@ -452,7 +371,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             [
                                 new PackageDependencyInfo("Microsoft.Net.Http.Headers", CreatePackageVersion("10.0.1.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -469,7 +388,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                         DependencySets = CreateDependencySets(
                             new DependencySet("net10.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Net.Http.Headers", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Net.Http.Headers", CreatePackageVersion("10.0.0.0")),
                             ])
                         ),
                     },
@@ -480,7 +399,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             [
                                 new PackageDependencyInfo("Microsoft.Net.Http.Headers", CreatePackageVersion("10.0.1.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -505,11 +424,11 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                         DependencySets = CreateDependencySets(
                             new DependencySet("net462",
                             [
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ]),
                             new DependencySet("netstandard2.0",
                             [
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ]),
                             new DependencySet("netstandard2.1", [])
                         ),
@@ -526,7 +445,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
                             ]),
                             new DependencySet("netstandard2.1", [])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -552,20 +471,20 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             new DependencySet("net462",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("9.0.11.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("9.0.11.0")),
                             ]),
                             new DependencySet("net9.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("9.0.11.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("9.0.11.0")),
                             ]),
                             new DependencySet("netstandard2.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0")),
                             ])
                         ),
                     },
@@ -575,24 +494,24 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             new DependencySet("net462",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net9.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net10.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("netstandard2.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ])
                         ),
                     },
@@ -621,7 +540,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.1.0")),
                                 new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -639,24 +558,24 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             new DependencySet("net462",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net9.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net10.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("netstandard2.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ])
                         ),
                     },
@@ -685,7 +604,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.1.0")),
                                 new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -712,25 +631,25 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             [
                                 new PackageDependencyInfo("Microsoft.Bcl.AsyncInterfaces", CreatePackageVersion("9.0.11.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0")),
                             ]),
                             new DependencySet("net9.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0")),
                             ]),
                             new DependencySet("netstandard2.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Bcl.AsyncInterfaces", CreatePackageVersion("9.0.11.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0")),
                             ]),
                             new DependencySet("netstandard2.1",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0")),
                             ])
                         ),
                     },
@@ -741,29 +660,29 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             [
                                 new PackageDependencyInfo("Microsoft.Bcl.AsyncInterfaces", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net9.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net10.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("netstandard2.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Bcl.AsyncInterfaces", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ]),
                             new DependencySet("netstandard2.1",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                             ])
                         ),
                     },
@@ -798,7 +717,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.1.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -817,29 +736,29 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             [
                                 new PackageDependencyInfo("Microsoft.Bcl.AsyncInterfaces", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net9.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net10.0",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("netstandard2.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Bcl.AsyncInterfaces", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ]),
                             new DependencySet("netstandard2.1",
                             [
-                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                             ])
                         ),
                     },
@@ -874,7 +793,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.1.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -900,14 +819,14 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             new DependencySet("net462",
                             [
                                 new PackageDependencyInfo("Microsoft.Bcl.AsyncInterfaces", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0")),
                             ]),
                             new DependencySet("net8.0", []),
                             new DependencySet("net9.0", []),
                             new DependencySet("netstandard2.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Bcl.AsyncInterfaces", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0")),
                             ]),
                             new DependencySet("netstandard2.1", [])
                         ),
@@ -918,7 +837,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             new DependencySet("net462",
                             [
                                 new PackageDependencyInfo("Microsoft.Bcl.AsyncInterfaces", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ]),
                             new DependencySet("net8.0", []),
                             new DependencySet("net9.0", []),
@@ -926,7 +845,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             new DependencySet("netstandard2.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Bcl.AsyncInterfaces", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ]),
                             new DependencySet("netstandard2.1", [])
                         ),
@@ -948,7 +867,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
                             ]),
                             new DependencySet("netstandard2.1", [])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -966,7 +885,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             new DependencySet("net462",
                             [
                                 new PackageDependencyInfo("Microsoft.Bcl.AsyncInterfaces", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ]),
                             new DependencySet("net8.0", []),
                             new DependencySet("net9.0", []),
@@ -974,7 +893,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             new DependencySet("netstandard2.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Bcl.AsyncInterfaces", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ]),
                             new DependencySet("netstandard2.1", [])
                         ),
@@ -996,7 +915,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
                             ]),
                             new DependencySet("netstandard2.1", [])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -1025,7 +944,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("9.0.11.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("9.0.11.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("9.0.11.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
@@ -1034,7 +953,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.Diagnostics", CreatePackageVersion("9.0.11.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("9.0.11.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("9.0.11.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("9.0.11.0")),
                             ]),
                             new DependencySet("net9.0",
                             [
@@ -1043,7 +962,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.Diagnostics", CreatePackageVersion("9.0.11.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("9.0.11.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("9.0.11.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("9.0.11.0")),
                             ]),
                             new DependencySet("netstandard2.0",
                             [
@@ -1051,7 +970,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("9.0.11.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("9.0.11.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("9.0.11.0")),
                             ])
                         ),
                     },
@@ -1064,7 +983,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
@@ -1073,7 +992,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.Diagnostics", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net9.0",
                             [
@@ -1082,7 +1001,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.Diagnostics", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net10.0",
                             [
@@ -1091,7 +1010,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.Diagnostics", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("netstandard2.0",
                             [
@@ -1099,7 +1018,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0")),
                             ])
                         ),
                     },
@@ -1149,7 +1068,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("10.0.1.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.1.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -1170,7 +1089,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
@@ -1179,7 +1098,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.Diagnostics", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net9.0",
                             [
@@ -1188,7 +1107,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.Diagnostics", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net10.0",
                             [
@@ -1197,7 +1116,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.Diagnostics", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("netstandard2.0",
                             [
@@ -1205,7 +1124,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.0.0")),
                             ])
                         ),
                     },
@@ -1255,7 +1174,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.Logging", CreatePackageVersion("10.0.1.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Options", CreatePackageVersion("10.0.1.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -1282,29 +1201,29 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("System.ValueTuple", CreatePackageVersion("4.5.0.0"))
+                                new PackageDependencyInfo("System.ValueTuple", CreatePackageVersion("4.5.0.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("9.0.11.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("9.0.11.0")),
                             ]),
                             new DependencySet("net9.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("9.0.11.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("9.0.11.0")),
                             ]),
                             new DependencySet("netstandard2.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0"))
+                                new PackageDependencyInfo("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0")),
                             ]),
                             new DependencySet("netstandard2.1",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("9.0.11.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0"))
+                                new PackageDependencyInfo("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0")),
                             ])
                         ),
                     },
@@ -1315,34 +1234,34 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.ValueTuple", CreatePackageVersion("4.6.1.0"))
+                                new PackageDependencyInfo("System.ValueTuple", CreatePackageVersion("4.6.1.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net9.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net10.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("netstandard2.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0"))
+                                new PackageDependencyInfo("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0")),
                             ]),
                             new DependencySet("netstandard2.1",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0"))
+                                new PackageDependencyInfo("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0")),
                             ])
                         ),
                     },
@@ -1382,7 +1301,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.1.0")),
                                 new PackageDependencyInfo("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -1401,34 +1320,34 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.ValueTuple", CreatePackageVersion("4.6.1.0"))
+                                new PackageDependencyInfo("System.ValueTuple", CreatePackageVersion("4.6.1.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net9.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net10.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("netstandard2.0",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0"))
+                                new PackageDependencyInfo("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0")),
                             ]),
                             new DependencySet("netstandard2.1",
                             [
                                 new PackageDependencyInfo("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("10.0.0.0")),
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0"))
+                                new PackageDependencyInfo("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0")),
                             ])
                         ),
                     },
@@ -1468,7 +1387,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Extensions.Primitives", CreatePackageVersion("10.0.1.0")),
                                 new PackageDependencyInfo("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -1514,7 +1433,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("2.0.8.0")),
                                 new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("6.0.0.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -1566,7 +1485,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("6.0.0.0")),
                                 new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("6.0.10.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -1601,7 +1520,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             [
                                 new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -1639,7 +1558,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1.0")),
                                 new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("6.0.10.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -1674,7 +1593,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             [
                                 new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -1709,7 +1628,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                             [
                                 new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -1765,12 +1684,12 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("System.Memory", CreatePackageVersion("4.5.5.0")),
                                 new PackageDependencyInfo("System.Runtime.CompilerServices.Unsafe", CreatePackageVersion("6.0.0.0")),
                                 new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0")),
-                                new PackageDependencyInfo("System.ValueTuple", CreatePackageVersion("4.5.0.0"))
+                                new PackageDependencyInfo("System.ValueTuple", CreatePackageVersion("4.5.0.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
                                 new PackageDependencyInfo("System.IO.Pipelines", CreatePackageVersion("9.0.11.0")),
-                                new PackageDependencyInfo("System.Text.Encodings.Web", CreatePackageVersion("9.0.11.0"))
+                                new PackageDependencyInfo("System.Text.Encodings.Web", CreatePackageVersion("9.0.11.0")),
                             ]),
                             new DependencySet("net9.0", []),
                             new DependencySet("netstandard2.0",
@@ -1781,7 +1700,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("System.Buffers", CreatePackageVersion("4.5.1.0")),
                                 new PackageDependencyInfo("System.Memory", CreatePackageVersion("4.5.5.0")),
                                 new PackageDependencyInfo("System.Runtime.CompilerServices.Unsafe", CreatePackageVersion("6.0.0.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.5.4.0")),
                             ])
                         ),
                     },
@@ -1797,17 +1716,17 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("System.Memory", CreatePackageVersion("4.6.3.0")),
                                 new PackageDependencyInfo("System.Runtime.CompilerServices.Unsafe", CreatePackageVersion("6.1.2.0")),
                                 new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
-                                new PackageDependencyInfo("System.ValueTuple", CreatePackageVersion("4.6.1.0"))
+                                new PackageDependencyInfo("System.ValueTuple", CreatePackageVersion("4.6.1.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
                                 new PackageDependencyInfo("System.IO.Pipelines", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Text.Encodings.Web", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("System.Text.Encodings.Web", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net9.0",
                             [
                                 new PackageDependencyInfo("System.IO.Pipelines", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Text.Encodings.Web", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("System.Text.Encodings.Web", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net10.0", []),
                             new DependencySet("netstandard2.0",
@@ -1818,7 +1737,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("System.Buffers", CreatePackageVersion("4.6.1.0")),
                                 new PackageDependencyInfo("System.Memory", CreatePackageVersion("4.6.3.0")),
                                 new PackageDependencyInfo("System.Runtime.CompilerServices.Unsafe", CreatePackageVersion("6.1.2.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ])
                         ),
                     },
@@ -1857,7 +1776,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("System.Runtime.CompilerServices.Unsafe", CreatePackageVersion("6.1.2.0")),
                                 new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -1881,17 +1800,17 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("System.Memory", CreatePackageVersion("4.6.3.0")),
                                 new PackageDependencyInfo("System.Runtime.CompilerServices.Unsafe", CreatePackageVersion("6.1.2.0")),
                                 new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
-                                new PackageDependencyInfo("System.ValueTuple", CreatePackageVersion("4.6.1.0"))
+                                new PackageDependencyInfo("System.ValueTuple", CreatePackageVersion("4.6.1.0")),
                             ]),
                             new DependencySet("net8.0",
                             [
                                 new PackageDependencyInfo("System.IO.Pipelines", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Text.Encodings.Web", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("System.Text.Encodings.Web", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net9.0",
                             [
                                 new PackageDependencyInfo("System.IO.Pipelines", CreatePackageVersion("10.0.0.0")),
-                                new PackageDependencyInfo("System.Text.Encodings.Web", CreatePackageVersion("10.0.0.0"))
+                                new PackageDependencyInfo("System.Text.Encodings.Web", CreatePackageVersion("10.0.0.0")),
                             ]),
                             new DependencySet("net10.0", []),
                             new DependencySet("netstandard2.0",
@@ -1902,7 +1821,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("System.Buffers", CreatePackageVersion("4.6.1.0")),
                                 new PackageDependencyInfo("System.Memory", CreatePackageVersion("4.6.3.0")),
                                 new PackageDependencyInfo("System.Runtime.CompilerServices.Unsafe", CreatePackageVersion("6.1.2.0")),
-                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
+                                new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")),
                             ])
                         ),
                     },
@@ -1941,7 +1860,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                                 new PackageDependencyInfo("System.Runtime.CompilerServices.Unsafe", CreatePackageVersion("6.1.2.0")),
                                 new PackageDependencyInfo("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0"))
                             ])
-                        )
+                        ),
                     },
                 ]
             ),
@@ -1972,7 +1891,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                     new PackageVersionWithDependencySets(CreatePackageVersion("8.0.0.0"))
                     {
                         DependencySets = CreateDependencySets(
-                        )
+                        ),
                     },
                 ]
             ),
@@ -2034,4 +1953,29 @@ public sealed class FutureDependenciesClassData() : TheoryData<
 
         return packageFlags;
     }
+
+    private static IReadOnlyCollection<PackageVersionWithDependencySets> CreateMeziantou_Extensions_Logging_Xunit_v3DependencySets() =>
+    [
+        new(CreatePackageVersion("1.1.20.0"))
+        {
+            DependencySets = CreateDependencySets(
+                new DependencySet("net8.0", [
+                    new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
+                    new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0")),
+                ]),
+                new DependencySet("net9.0", [
+                    new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
+                    new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
+                ]),
+                new DependencySet("net10.0", [
+                    new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
+                    new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
+                ]),
+                new DependencySet("netstandard2.0", [
+                    new PackageDependencyInfo("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1.0")),
+                    new PackageDependencyInfo("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1.0"))
+                ])
+            ),
+        },
+    ];
 }
