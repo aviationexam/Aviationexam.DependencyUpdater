@@ -358,6 +358,7 @@ public sealed class DependencyUpdateProcessorTests
     [ClassData(typeof(FutureDependenciesClassData))]
     public void ProcessDependenciesToUpdate_WithRealWorldData_ProcessesAllDependencies(
         IReadOnlyCollection<KeyValuePair<NugetDependency, IReadOnlyCollection<PackageVersionWithDependencySets>>> dependencies,
+        DependencyProcessingResult expectedResult,
         IReadOnlyDictionary<string, PackageVersionWithDependencySets?> _
     )
     {
@@ -391,31 +392,17 @@ public sealed class DependencyUpdateProcessorTests
         Assert.NotEmpty(result.PackageFlags);
         Assert.NotEmpty(result.DependenciesToCheck);
 
-        // All packages should have flags for their respective target frameworks
-        foreach (var (nugetDependency, dependencySetsCollection) in dependencies)
+        // Verify the result matches the expected result
+        Assert.Equal(expectedResult.PackageFlags.Count, result.PackageFlags.Count);
+
+        foreach (var (expectedPackage, expectedFlags) in expectedResult.PackageFlags)
         {
-            // Get all packages from this dependency's dependency sets
-            var packagesFromDependency = dependencySetsCollection.AsValueEnumerable()
-                .SelectMany(pkgVersion => pkgVersion.DependencySets.TryGetValue(EPackageSource.Default, out var depSets)
-                    ? depSets
-                    : [])
-                .SelectMany(ds => ds.Packages)
-                .Where(p => p.MinVersion != null)
-                .ToList();
+            var actualFlags = Assert.Contains(expectedPackage, result.PackageFlags);
 
-            // Verify each package has flags for the target frameworks
-            foreach (var packageDep in packagesFromDependency)
+            Assert.Equal(expectedFlags.Count, actualFlags.Count);
+            foreach (var (framework, expectedFlag) in expectedFlags)
             {
-                var package = new Package(packageDep.Id, packageDep.MinVersion!);
-
-                if (result.PackageFlags.TryGetValue(package, out var frameworkFlags))
-                {
-                    // Verify it has flags for the dependency's target frameworks
-                    foreach (var targetFramework in nugetDependency.TargetFrameworks)
-                    {
-                        Assert.Contains(targetFramework, frameworkFlags.Keys);
-                    }
-                }
+                Assert.Equal(expectedFlag, Assert.Contains(framework, actualFlags));
             }
         }
     }
@@ -424,6 +411,7 @@ public sealed class DependencyUpdateProcessorTests
     [ClassData(typeof(FutureDependenciesClassData))]
     public void ProcessDependenciesToUpdate_WithRealWorldData_QueuesUnknownDependencies(
         IReadOnlyCollection<KeyValuePair<NugetDependency, IReadOnlyCollection<PackageVersionWithDependencySets>>> dependencies,
+        DependencyProcessingResult expectedResult,
         IReadOnlyDictionary<string, PackageVersionWithDependencySets?> _
     )
     {
@@ -455,15 +443,20 @@ public sealed class DependencyUpdateProcessorTests
 
         // Assert - Dependencies without current versions should be queued for checking
         Assert.NotEmpty(result.DependenciesToCheck);
+        Assert.Equal(expectedResult.DependenciesToCheck.Count, result.DependenciesToCheck.Count);
 
-        // All queued dependencies should have Unknown flag
-        foreach (var (package, _) in result.DependenciesToCheck)
+        // Verify the queued dependencies match expected (order doesn't matter)
+        var expectedList = expectedResult.DependenciesToCheck;
+        var actualList = result.DependenciesToCheck;
+
+        Assert.Equal(expectedList.Count, actualList.Count);
+
+        // Check that all expected packages are in the actual queue
+        foreach (var (expectedPackage, expectedFrameworks) in expectedList)
         {
-            Assert.Contains(package, result.PackageFlags.Keys);
-            var flags = result.PackageFlags[package];
-
-            // At least one framework should have Unknown flag
-            Assert.Contains(flags.Values, flag => flag == EDependencyFlag.Unknown);
+            var actualEntry = actualList.AsValueEnumerable().FirstOrDefault(x => x.Package.Equals(expectedPackage));
+            Assert.NotEqual(default, actualEntry);
+            Assert.Equal(expectedFrameworks.Count, actualEntry.NugetTargetFrameworks.Count);
         }
     }
 
@@ -471,6 +464,7 @@ public sealed class DependencyUpdateProcessorTests
     [ClassData(typeof(FutureDependenciesClassData))]
     public void ProcessDependenciesToUpdate_WithRealWorldData_CountsExpectedPackages(
         IReadOnlyCollection<KeyValuePair<NugetDependency, IReadOnlyCollection<PackageVersionWithDependencySets>>> dependencies,
+        DependencyProcessingResult expectedResult,
         IReadOnlyDictionary<string, PackageVersionWithDependencySets?> _
     )
     {
@@ -493,18 +487,6 @@ public sealed class DependencyUpdateProcessorTests
                     .ToList()
             );
 
-        // Calculate expected unique packages from ALL dependency sets
-        var expectedPackageIds = dependencies.AsValueEnumerable()
-            .SelectMany(kvp => kvp.Value.AsValueEnumerable())
-            .SelectMany(pkgVersion => pkgVersion.DependencySets.TryGetValue(EPackageSource.Default, out var depSets)
-                ? depSets
-                : [])
-            .SelectMany(ds => ds.Packages)
-            .Where(p => p.MinVersion != null)
-            .Select(p => p.Id)
-            .Distinct()
-            .ToHashSet();
-
         // Act
         var result = _processor.ProcessDependenciesToUpdate(
             ignoreResolver,
@@ -512,8 +494,13 @@ public sealed class DependencyUpdateProcessorTests
             dependenciesToUpdate
         );
 
-        // Assert - Should have processed all unique packages from ALL dependencies
-        var processedPackageIds = result.PackageFlags.AsValueEnumerable().Select(p => p.Key.Name).ToHashSet();
-        Assert.Equal(expectedPackageIds, processedPackageIds);
+        // Assert - Should have processed exactly the expected number of packages
+        Assert.Equal(expectedResult.PackageFlags.Count, result.PackageFlags.Count);
+
+        // Verify all expected packages are present
+        foreach (var expectedPackage in expectedResult.PackageFlags.Keys)
+        {
+            Assert.Contains(expectedPackage, result.PackageFlags.Keys);
+        }
     }
 }

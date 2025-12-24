@@ -10,6 +10,7 @@ namespace Aviationexam.DependencyUpdater.Nuget.Tests;
 
 public sealed class FutureDependenciesClassData() : TheoryData<
     IReadOnlyCollection<KeyValuePair<NugetDependency, IReadOnlyCollection<PackageVersionWithDependencySets>>>,
+    DependencyProcessingResult,
     IReadOnlyDictionary<string, PackageVersionWithDependencySets?>
 >(
     (
@@ -103,6 +104,35 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 ]
             )
         ],
+        new DependencyProcessingResult(
+            CreatePackageFlags(
+                (new Package("Aviationexam.Core.Common.SharedDTOs", CreatePackageVersion("0.1.2562.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("System.Text.Json", CreatePackageVersion("8.0.6.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("Microsoft.Bcl.AsyncInterfaces", CreatePackageVersion("8.0.0.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("System.Buffers", CreatePackageVersion("4.6.1.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("System.Memory", CreatePackageVersion("4.6.3.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("System.Numerics.Vectors", CreatePackageVersion("4.6.1.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("System.Runtime.CompilerServices.Unsafe", CreatePackageVersion("6.1.2.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("System.Text.Encodings.Web", CreatePackageVersion("8.0.0.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("Aviationexam.Core.Common.SharedInterfaces", CreatePackageVersion("0.1.2562.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("Aviationexam.Core.Common.Validation", CreatePackageVersion("0.1.2562.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("Microsoft.IdentityModel.JsonWebTokens", CreatePackageVersion("8.15.0.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("System.Collections.Immutable", CreatePackageVersion("8.0.0.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("Microsoft.Bcl.TimeProvider", CreatePackageVersion("8.0.1.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("Microsoft.CSharp", CreatePackageVersion("4.7.0.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("8.0.2.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions", CreatePackageVersion("8.0.22.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("8.0.3.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("Microsoft.IdentityModel.Abstractions", CreatePackageVersion("8.15.0.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("Microsoft.IdentityModel.Logging", CreatePackageVersion("8.15.0.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("Microsoft.IdentityModel.Tokens", CreatePackageVersion("8.15.0.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("System.Diagnostics.DiagnosticSource", CreatePackageVersion("8.0.1.0")), Net48, EDependencyFlag.Unknown),
+                (new Package("System.Security.Cryptography.Cng", CreatePackageVersion("5.0.0.0")), Net48, EDependencyFlag.Unknown)
+            ),
+            []
+        ),
         new Dictionary<string, PackageVersionWithDependencySets?>
         {
             ["Aviationexam.Core.Common.NameOfGenerator.Attributes=0.1.2562.0"] = new(CreatePackageVersion("0.1.2562.0"))
@@ -235,6 +265,8 @@ public sealed class FutureDependenciesClassData() : TheoryData<
     )
 )
 {
+    private static readonly NugetTargetFramework Net48 = new("net48");
+
     private static PackageVersion CreatePackageVersion(
         string version
     ) => new(new Version(version), false, [], NugetReleaseLabelComparer.Instance);
@@ -245,4 +277,23 @@ public sealed class FutureDependenciesClassData() : TheoryData<
     {
         [EPackageSource.Default] = dependencySets,
     };
+
+    private static IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> CreatePackageFlags(
+        params IReadOnlyCollection<(
+            Package, NugetTargetFramework, EDependencyFlag
+            )> flags
+    )
+    {
+        var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
+
+        foreach (var (package, targetFramework, dependencyFlag) in flags)
+        {
+            packageFlags.Add(package, new Dictionary<NugetTargetFramework, EDependencyFlag>
+            {
+                [targetFramework] = dependencyFlag,
+            });
+        }
+
+        return packageFlags;
+    }
 }
