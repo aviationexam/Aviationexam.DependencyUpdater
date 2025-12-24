@@ -294,7 +294,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Castle.Core", VersionRange.Parse("5.2.1")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
@@ -302,7 +302,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Meziantou.Analyzer", VersionRange.Parse("2.0.263")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -318,7 +318,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Meziantou.Extensions.Logging.Xunit.v3", VersionRange.Parse("1.1.19")),
-                    [new NugetTargetFramework("net8.0")]
+                    [Net80]
                 ),
                 CreateMeziantou_Extensions_Logging_Xunit_v3DependencySets()
             ),
@@ -326,7 +326,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Meziantou.Extensions.Logging.Xunit.v3", VersionRange.Parse("1.1.19")),
-                    [new NugetTargetFramework("net9.0")]
+                    [Net90]
                 ),
                 CreateMeziantou_Extensions_Logging_Xunit_v3DependencySets()
             ),
@@ -334,7 +334,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Meziantou.Extensions.Logging.Xunit.v3", VersionRange.Parse("1.1.19")),
-                    [new NugetTargetFramework("net10.0")]
+                    [Net100]
                 ),
                 CreateMeziantou_Extensions_Logging_Xunit_v3DependencySets()
             ),
@@ -342,7 +342,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.AspNetCore.WebUtilities", VersionRange.Parse("8.0.22")),
-                    [new NugetTargetFramework("net8.0")]
+                    [Net80]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -379,7 +379,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.AspNetCore.WebUtilities", VersionRange.Parse("9.0.11")),
-                    [new NugetTargetFramework("net9.0")]
+                    [Net90]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -407,7 +407,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.AspNetCore.WebUtilities", VersionRange.Parse("10.0.1")),
-                    [new NugetTargetFramework("net10.0")]
+                    [Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
@@ -415,7 +415,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Bcl.AsyncInterfaces", VersionRange.Parse("9.0.11")),
-                    [new NugetTargetFramework("net9.0")]
+                    [Net90]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -453,7 +453,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Bcl.AsyncInterfaces", VersionRange.Parse("10.0.1")),
-                    [new NugetTargetFramework("net10.0")]
+                    [Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
@@ -461,7 +461,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.Caching.Abstractions", VersionRange.Parse("8.0.0")),
-                    [new NugetTargetFramework("net8.0")]
+                    [Net80]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -548,7 +548,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.Caching.Abstractions", VersionRange.Parse("9.0.11")),
-                    [new NugetTargetFramework("net9.0")]
+                    [Net90]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -612,7 +612,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.Caching.Abstractions", VersionRange.Parse("10.0.1")),
-                    [new NugetTargetFramework("net10.0")]
+                    [Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
@@ -620,7 +620,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.DependencyInjection", VersionRange.Parse("8.0.1")),
-                    [new NugetTargetFramework("net8.0")]
+                    [Net80]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -725,7 +725,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.DependencyInjection", VersionRange.Parse("9.0.11")),
-                    [new NugetTargetFramework("net9.0")]
+                    [Net90]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -801,7 +801,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.DependencyInjection", VersionRange.Parse("10.0.1")),
-                    [new NugetTargetFramework("net10.0")]
+                    [Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
@@ -809,7 +809,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.DependencyInjection.Abstractions", VersionRange.Parse("8.0.2")),
-                    [new NugetTargetFramework("net8.0")]
+                    [Net80]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -875,7 +875,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.DependencyInjection.Abstractions", VersionRange.Parse("9.0.11")),
-                    [new NugetTargetFramework("net9.0")]
+                    [Net90]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -923,7 +923,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.DependencyInjection.Abstractions", VersionRange.Parse("10.0.1")),
-                    [new NugetTargetFramework("net10.0")]
+                    [Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
@@ -931,7 +931,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.Http", VersionRange.Parse("8.0.1")),
-                    [new NugetTargetFramework("net8.0")]
+                    [Net80]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -1076,7 +1076,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.Http", VersionRange.Parse("9.0.11")),
-                    [new NugetTargetFramework("net9.0")]
+                    [Net90]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -1182,7 +1182,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.Http", VersionRange.Parse("10.0.1")),
-                    [new NugetTargetFramework("net10.0")]
+                    [Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
@@ -1190,7 +1190,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.Options", VersionRange.Parse("8.0.2")),
-                    [new NugetTargetFramework("net8.0")]
+                    [Net80]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -1309,7 +1309,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.Options", VersionRange.Parse("9.0.11")),
-                    [new NugetTargetFramework("net9.0")]
+                    [Net90]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -1395,7 +1395,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.Options", VersionRange.Parse("10.0.1")),
-                    [new NugetTargetFramework("net10.0")]
+                    [Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
@@ -1403,7 +1403,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Kiota.Abstractions", VersionRange.Parse("1.21.0")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -1441,7 +1441,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Kiota.Http.HttpClientLibrary", VersionRange.Parse("1.21.0")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -1493,7 +1493,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Kiota.Serialization.Form", VersionRange.Parse("1.21.0")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -1528,7 +1528,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Kiota.Serialization.Json", VersionRange.Parse("1.21.0")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -1566,7 +1566,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Kiota.Serialization.Multipart", VersionRange.Parse("1.21.0")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -1601,7 +1601,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Kiota.Serialization.Text", VersionRange.Parse("1.21.0")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -1636,7 +1636,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Testing.Extensions.CodeCoverage", VersionRange.Parse("18.1.0")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
@@ -1644,7 +1644,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Testing.Extensions.TrxReport", VersionRange.Parse("2.0.2")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
@@ -1652,7 +1652,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("NSubstitute", VersionRange.Parse("5.3.0")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
@@ -1660,7 +1660,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("NSubstitute.Analyzers.CSharp", VersionRange.Parse("1.0.17")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
@@ -1668,7 +1668,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("System.Text.Json", VersionRange.Parse("8.0.6")),
-                    [new NugetTargetFramework("net8.0")]
+                    [Net80]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -1784,7 +1784,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("System.Text.Json", VersionRange.Parse("9.0.11")),
-                    [new NugetTargetFramework("net9.0")]
+                    [Net90]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -1868,7 +1868,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("System.Text.Json", VersionRange.Parse("10.0.1")),
-                    [new NugetTargetFramework("net10.0")]
+                    [Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
@@ -1876,7 +1876,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("ZLinq", VersionRange.Parse("1.5.4")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
@@ -1884,7 +1884,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("ZeroQL", VersionRange.Parse("8.0.0-preview.7")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
@@ -1899,7 +1899,7 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("xunit.v3.mtp-v2", VersionRange.Parse("3.2.1")),
-                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>) []
             ),
