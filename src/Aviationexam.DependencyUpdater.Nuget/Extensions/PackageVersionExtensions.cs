@@ -2,7 +2,6 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using NuGet.Versioning;
 using System.Collections.Generic;
-using System.Linq;
 using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
@@ -47,26 +46,39 @@ public static class PackageVersionExtensions
     )
     {
         var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
-        
+
         foreach (var (nugetDependency, _) in dependencies)
         {
-            if (nugetDependency.NugetPackage is NugetPackageReference packageRef)
+            if (
+                nugetDependency.NugetPackage is NugetPackageReference { Name: var packageReferenceName } packageRef
+                && packageRef.MapMinVersionToPackageVersion() is { } currentVersion
+            )
             {
-                var currentVersion = packageRef.MapMinVersionToPackageVersion();
-                if (currentVersion is not null)
+                if (!currentVersions.TryGetValue(packageReferenceName, out var frameworkVersions))
                 {
-                    var packageName = packageRef.Name;
+                    frameworkVersions = new Dictionary<string, PackageVersion>();
+                    currentVersions[packageReferenceName] = frameworkVersions;
+                }
 
-                    if (!currentVersions.TryGetValue(packageName, out var frameworkVersions))
-                    {
-                        frameworkVersions = new Dictionary<string, PackageVersion>();
-                        currentVersions[packageName] = frameworkVersions;
-                    }
+                foreach (var targetFramework in nugetDependency.TargetFrameworks)
+                {
+                    frameworkVersions[targetFramework.TargetFramework] = currentVersion;
+                }
+            }
+            else if (
+                nugetDependency.NugetPackage is NugetPackageVersion { Name: var packageName } packageVersion
+                && packageVersion.Version.MapToPackageVersion() is { } currentPackageVersion
+            )
+            {
+                if (!currentVersions.TryGetValue(packageName, out var frameworkVersions))
+                {
+                    frameworkVersions = new Dictionary<string, PackageVersion>();
+                    currentVersions[packageName] = frameworkVersions;
+                }
 
-                    foreach (var targetFramework in nugetDependency.TargetFrameworks)
-                    {
-                        frameworkVersions[targetFramework.TargetFramework] = currentVersion;
-                    }
+                foreach (var targetFramework in nugetDependency.TargetFrameworks)
+                {
+                    frameworkVersions[targetFramework.TargetFramework] = currentPackageVersion;
                 }
             }
         }
