@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 using ZLinq;
 
@@ -367,31 +366,9 @@ public sealed class DependencyUpdateProcessorTests
         // Arrange
         var logger = Substitute.For<ILogger>();
         var ignoreResolver = new IgnoreResolver([], logger);
-        
+
         // Populate current versions from the NugetDependency keys
-        var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
-        foreach (var (nugetDependency, _) in dependencies)
-        {
-            if (nugetDependency.NugetPackage is NugetPackageReference packageRef)
-            {
-                var currentVersion = packageRef.MapMinVersionToPackageVersion();
-                if (currentVersion is not null)
-                {
-                    var packageName = packageRef.Name;
-
-                    if (!currentVersions.TryGetValue(packageName, out var frameworkVersions))
-                    {
-                        frameworkVersions = new Dictionary<string, PackageVersion>();
-                        currentVersions[packageName] = frameworkVersions;
-                    }
-
-                    foreach (var targetFramework in nugetDependency.TargetFrameworks)
-                    {
-                        frameworkVersions[targetFramework.TargetFramework] = currentVersion;
-                    }
-                }
-            }
-        }
+        var currentVersions = dependencies.ToCurrentVersionsPerTargetFramework();
 
         // Convert ALL dependencies to the format expected by ProcessDependenciesToUpdate
         var dependenciesToUpdate = dependencies.ToPossiblePackageVersions();
@@ -433,31 +410,9 @@ public sealed class DependencyUpdateProcessorTests
         // Arrange
         var logger = Substitute.For<ILogger>();
         var ignoreResolver = new IgnoreResolver([], logger);
-        
+
         // Populate current versions from the NugetDependency keys
-        var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
-        foreach (var (nugetDependency, _) in dependencies)
-        {
-            if (nugetDependency.NugetPackage is NugetPackageReference packageRef)
-            {
-                var currentVersion = packageRef.MapMinVersionToPackageVersion();
-                if (currentVersion is not null)
-                {
-                    var packageName = packageRef.Name;
-
-                    if (!currentVersions.TryGetValue(packageName, out var frameworkVersions))
-                    {
-                        frameworkVersions = new Dictionary<string, PackageVersion>();
-                        currentVersions[packageName] = frameworkVersions;
-                    }
-
-                    foreach (var targetFramework in nugetDependency.TargetFrameworks)
-                    {
-                        frameworkVersions[targetFramework.TargetFramework] = currentVersion;
-                    }
-                }
-            }
-        }
+        var currentVersions = dependencies.ToCurrentVersionsPerTargetFramework();
 
         // Convert ALL dependencies to the format expected by ProcessDependenciesToUpdate
         var dependenciesToUpdate = dependencies.ToPossiblePackageVersions();
@@ -499,31 +454,9 @@ public sealed class DependencyUpdateProcessorTests
         // Arrange
         var logger = Substitute.For<ILogger>();
         var ignoreResolver = new IgnoreResolver([], logger);
-        
+
         // Populate current versions from the NugetDependency keys
-        var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
-        foreach (var (nugetDependency, _) in dependencies)
-        {
-            if (nugetDependency.NugetPackage is NugetPackageReference packageRef)
-            {
-                var currentVersion = packageRef.MapMinVersionToPackageVersion();
-                if (currentVersion is not null)
-                {
-                    var packageName = packageRef.Name;
-
-                    if (!currentVersions.TryGetValue(packageName, out var frameworkVersions))
-                    {
-                        frameworkVersions = new Dictionary<string, PackageVersion>();
-                        currentVersions[packageName] = frameworkVersions;
-                    }
-
-                    foreach (var targetFramework in nugetDependency.TargetFrameworks)
-                    {
-                        frameworkVersions[targetFramework.TargetFramework] = currentVersion;
-                    }
-                }
-            }
-        }
+        var currentVersions = dependencies.ToCurrentVersionsPerTargetFramework();
 
         // Convert ALL dependencies to the format expected by ProcessDependenciesToUpdate
         var dependenciesToUpdate = dependencies.ToPossiblePackageVersions();

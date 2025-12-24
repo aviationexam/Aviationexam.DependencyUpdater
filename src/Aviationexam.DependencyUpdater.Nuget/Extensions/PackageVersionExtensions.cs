@@ -2,6 +2,7 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using NuGet.Versioning;
 using System.Collections.Generic;
+using System.Linq;
 using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
@@ -34,4 +35,42 @@ public static class PackageVersionExtensions
                     )),
             ]
         );
+
+    /// <summary>
+    /// Converts a collection of NuGet dependencies to a dictionary of current package versions per target framework.
+    /// Extracts the MinVersion from each NugetPackageReference and maps it to the corresponding target frameworks.
+    /// </summary>
+    /// <param name="dependencies">Collection of NuGet dependencies with their available versions</param>
+    /// <returns>Dictionary mapping package names to their versions per target framework</returns>
+    public static IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> ToCurrentVersionsPerTargetFramework(
+        this IReadOnlyCollection<KeyValuePair<NugetDependency, IReadOnlyCollection<PackageVersionWithDependencySets>>> dependencies
+    )
+    {
+        var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
+        
+        foreach (var (nugetDependency, _) in dependencies)
+        {
+            if (nugetDependency.NugetPackage is NugetPackageReference packageRef)
+            {
+                var currentVersion = packageRef.MapMinVersionToPackageVersion();
+                if (currentVersion is not null)
+                {
+                    var packageName = packageRef.Name;
+
+                    if (!currentVersions.TryGetValue(packageName, out var frameworkVersions))
+                    {
+                        frameworkVersions = new Dictionary<string, PackageVersion>();
+                        currentVersions[packageName] = frameworkVersions;
+                    }
+
+                    foreach (var targetFramework in nugetDependency.TargetFrameworks)
+                    {
+                        frameworkVersions[targetFramework.TargetFramework] = currentVersion;
+                    }
+                }
+            }
+        }
+
+        return currentVersions;
+    }
 }
