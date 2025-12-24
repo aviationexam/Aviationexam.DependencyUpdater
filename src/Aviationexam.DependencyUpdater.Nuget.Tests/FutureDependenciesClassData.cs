@@ -287,10 +287,130 @@ public sealed class FutureDependenciesClassData() : TheoryData<
             ["System.Text.Json=8.0.6.0"] = null,
             ["System.Threading.Tasks.Extensions=4.6.3.0"] = null,
         }
+    ),
+    (
+        [
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Meziantou.Analyzer", VersionRange.Parse("2.0.263")),
+                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                ),
+                (IReadOnlyCollection<PackageVersionWithDependencySets>)
+                [
+                    new PackageVersionWithDependencySets(CreatePackageVersion("2.0.264.0"))
+                    {
+                        DependencySets = CreateDependencySets(
+                            new DependencySet("netstandard2.0", [])
+                        )
+                    }
+                ]
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.AspNetCore.WebUtilities", VersionRange.Parse("8.0.22")),
+                    [new NugetTargetFramework("net8.0")]
+                ),
+                (IReadOnlyCollection<PackageVersionWithDependencySets>)
+                [
+                    new PackageVersionWithDependencySets(CreatePackageVersion("9.0.10.0"))
+                    {
+                        DependencySets = CreateDependencySets(
+                            new DependencySet("net9.0", [
+                                new PackageDependencyInfo("Microsoft.Net.Http.Headers", CreatePackageVersion("9.0.10.0")),
+                            ])
+                        )
+                    },
+                    new PackageVersionWithDependencySets(CreatePackageVersion("9.0.11.0"))
+                    {
+                        DependencySets = CreateDependencySets(
+                            new DependencySet("net9.0", [
+                                new PackageDependencyInfo("Microsoft.Net.Http.Headers", CreatePackageVersion("9.0.11.0")),
+                            ])
+                        )
+                    },
+                    new PackageVersionWithDependencySets(CreatePackageVersion("10.0.1.0"))
+                    {
+                        DependencySets = CreateDependencySets(
+                            new DependencySet("net10.0", [
+                                new PackageDependencyInfo("Microsoft.Net.Http.Headers", CreatePackageVersion("10.0.1.0")),
+                            ])
+                        )
+                    }
+                ]
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.AspNetCore.WebUtilities", VersionRange.Parse("9.0.11")),
+                    [new NugetTargetFramework("net9.0")]
+                ),
+                (IReadOnlyCollection<PackageVersionWithDependencySets>)
+                [
+                    new PackageVersionWithDependencySets(CreatePackageVersion("10.0.1.0"))
+                    {
+                        DependencySets = CreateDependencySets(
+                            new DependencySet("net10.0", [
+                                new PackageDependencyInfo("Microsoft.Net.Http.Headers", CreatePackageVersion("10.0.1.0")),
+                            ])
+                        )
+                    }
+                ]
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Kiota.Abstractions", VersionRange.Parse("1.21.0")),
+                    [new NugetTargetFramework("net8.0"), new NugetTargetFramework("net9.0"), new NugetTargetFramework("net10.0")]
+                ),
+                (IReadOnlyCollection<PackageVersionWithDependencySets>)
+                [
+                    new PackageVersionWithDependencySets(CreatePackageVersion("1.21.1.0"))
+                    {
+                        DependencySets = CreateDependencySets(
+                            new DependencySet("net5.0", [
+                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("2.0.8.0")),
+                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("6.0.0.0")),
+                            ]),
+                            new DependencySet("net6.0", [
+                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("2.0.8.0")),
+                            ]),
+                            new DependencySet("net8.0", [
+                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("2.0.8.0")),
+                            ]),
+                            new DependencySet("netstandard2.0", [
+                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("2.0.8.0")),
+                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("6.0.0.0")),
+                            ]),
+                            new DependencySet("netstandard2.1", [
+                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("2.0.8.0")),
+                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("6.0.0.0")),
+                            ])
+                        )
+                    }
+                ]
+            )
+        ],
+        new DependencyProcessingResult(
+            new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>(),
+            new Queue<(Package, IReadOnlyCollection<NugetTargetFramework>)>()
+        ),
+        new Dictionary<string, PackageVersionWithDependencySets?>
+        {
+            ["Microsoft.Net.Http.Headers=9.0.10.0"] = null,
+            ["Microsoft.Net.Http.Headers=9.0.11.0"] = null,
+            ["Microsoft.Net.Http.Headers=10.0.1.0"] = null,
+            ["Std.UriTemplate=2.0.8.0"] = null,
+            ["System.Diagnostics.DiagnosticSource=6.0.0.0"] = null,
+        }
     )
 )
 {
     private static readonly NugetTargetFramework Net48 = new("net48");
+    private static readonly NugetTargetFramework Net80 = new("net8.0");
+    private static readonly NugetTargetFramework Net90 = new("net9.0");
+    private static readonly NugetTargetFramework Net100 = new("net10.0");
 
     private static PackageVersion CreatePackageVersion(
         string version
