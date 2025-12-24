@@ -131,7 +131,32 @@ public sealed class FutureDependenciesClassData() : TheoryData<
                 (new Package("System.Diagnostics.DiagnosticSource", CreatePackageVersion("8.0.1.0")), Net48, EDependencyFlag.Unknown),
                 (new Package("System.Security.Cryptography.Cng", CreatePackageVersion("5.0.0.0")), Net48, EDependencyFlag.Unknown)
             ),
-            []
+            new Queue<(Package, IReadOnlyCollection<NugetTargetFramework>)>([
+                (new Package("Aviationexam.Core.Common.SharedDTOs", CreatePackageVersion("0.1.2562.0")), [Net48]),
+                (new Package("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0.0")), [Net48]),
+                (new Package("System.Text.Json", CreatePackageVersion("8.0.6.0")), [Net48]),
+                (new Package("Microsoft.Bcl.AsyncInterfaces", CreatePackageVersion("8.0.0.0")), [Net48]),
+                (new Package("System.Buffers", CreatePackageVersion("4.6.1.0")), [Net48]),
+                (new Package("System.Memory", CreatePackageVersion("4.6.3.0")), [Net48]),
+                (new Package("System.Numerics.Vectors", CreatePackageVersion("4.6.1.0")), [Net48]),
+                (new Package("System.Runtime.CompilerServices.Unsafe", CreatePackageVersion("6.1.2.0")), [Net48]),
+                (new Package("System.Text.Encodings.Web", CreatePackageVersion("8.0.0.0")), [Net48]),
+                (new Package("System.Threading.Tasks.Extensions", CreatePackageVersion("4.6.3.0")), [Net48]),
+                (new Package("Aviationexam.Core.Common.SharedInterfaces", CreatePackageVersion("0.1.2562.0")), [Net48]),
+                (new Package("Aviationexam.Core.Common.Validation", CreatePackageVersion("0.1.2562.0")), [Net48]),
+                (new Package("Microsoft.IdentityModel.JsonWebTokens", CreatePackageVersion("8.15.0.0")), [Net48]),
+                (new Package("Microsoft.Extensions.DependencyInjection.Abstractions", CreatePackageVersion("8.0.2.0")), [Net48]),
+                (new Package("Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions", CreatePackageVersion("8.0.22.0")), [Net48]),
+                (new Package("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("8.0.3.0")), [Net48]),
+                (new Package("Microsoft.IdentityModel.Abstractions", CreatePackageVersion("8.15.0.0")), [Net48]),
+                (new Package("Microsoft.IdentityModel.Logging", CreatePackageVersion("8.15.0.0")), [Net48]),
+                (new Package("Microsoft.IdentityModel.Tokens", CreatePackageVersion("8.15.0.0")), [Net48]),
+                (new Package("System.Collections.Immutable", CreatePackageVersion("8.0.0.0")), [Net48]),
+                (new Package("Microsoft.Bcl.TimeProvider", CreatePackageVersion("8.0.1.0")), [Net48]),
+                (new Package("Microsoft.CSharp", CreatePackageVersion("4.7.0.0")), [Net48]),
+                (new Package("System.Diagnostics.DiagnosticSource", CreatePackageVersion("8.0.1.0")), [Net48]),
+                (new Package("System.Security.Cryptography.Cng", CreatePackageVersion("5.0.0.0")), [Net48])
+            ])
         ),
         new Dictionary<string, PackageVersionWithDependencySets?>
         {

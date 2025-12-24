@@ -357,7 +357,7 @@ public sealed class DependencyUpdateProcessorTests
 
     [Theory]
     [ClassData(typeof(FutureDependenciesClassData))]
-    public void ProcessDependenciesToUpdate_WithRealWorldData_ProcessesAllDependencies(
+    public void ProcessDependenciesToUpdateWorks(
         IReadOnlyCollection<KeyValuePair<NugetDependency, IReadOnlyCollection<PackageVersionWithDependencySets>>> dependencies,
         DependencyProcessingResult expectedResult,
         IReadOnlyDictionary<string, PackageVersionWithDependencySets?> _
@@ -384,63 +384,22 @@ public sealed class DependencyUpdateProcessorTests
         Assert.NotEmpty(result.PackageFlags);
         Assert.NotEmpty(result.DependenciesToCheck);
 
-        // Verify the result matches the expected result
+        Assert.All(expectedResult.PackageFlags, expectedPackageFlag => Assert.All(
+            expectedPackageFlag.Value,
+            expectedFrameworkFlag => Assert.Equal(
+                expectedFrameworkFlag.Value,
+                Assert.Contains(expectedFrameworkFlag.Key, Assert.Contains(expectedPackageFlag.Key, result.PackageFlags))
+            )
+        ));
+
+        foreach (var (dependencyToCheck, expectedDependencyToCheck) in result.DependenciesToCheck.AsValueEnumerable().Zip(expectedResult.DependenciesToCheck))
+        {
+            Assert.Equal(expectedDependencyToCheck.Package, dependencyToCheck.Package);
+            Assert.Equal(expectedDependencyToCheck.NugetTargetFrameworks, dependencyToCheck.NugetTargetFrameworks);
+        }
+
         Assert.Equal(expectedResult.PackageFlags.Count, result.PackageFlags.Count);
-
-        foreach (var (expectedPackage, expectedFlags) in expectedResult.PackageFlags)
-        {
-            var actualFlags = Assert.Contains(expectedPackage, result.PackageFlags);
-
-            Assert.Equal(expectedFlags.Count, actualFlags.Count);
-            foreach (var (framework, expectedFlag) in expectedFlags)
-            {
-                Assert.Equal(expectedFlag, Assert.Contains(framework, actualFlags));
-            }
-        }
-    }
-
-    [Theory]
-    [ClassData(typeof(FutureDependenciesClassData))]
-    public void ProcessDependenciesToUpdate_WithRealWorldData_QueuesUnknownDependencies(
-        IReadOnlyCollection<KeyValuePair<NugetDependency, IReadOnlyCollection<PackageVersionWithDependencySets>>> dependencies,
-        DependencyProcessingResult expectedResult,
-        IReadOnlyDictionary<string, PackageVersionWithDependencySets?> _
-    )
-    {
-        // Arrange
-        var logger = Substitute.For<ILogger>();
-        var ignoreResolver = new IgnoreResolver([], logger);
-
-        // Populate current versions from the NugetDependency keys
-        var currentVersions = dependencies.ToCurrentVersionsPerTargetFramework();
-
-        // Convert ALL dependencies to the format expected by ProcessDependenciesToUpdate
-        var dependenciesToUpdate = dependencies.ToPossiblePackageVersions();
-
-        // Act
-        var result = _processor.ProcessDependenciesToUpdate(
-            ignoreResolver,
-            currentVersions,
-            dependenciesToUpdate
-        );
-
-        // Assert - Dependencies without current versions should be queued for checking
-        Assert.NotEmpty(result.DependenciesToCheck);
         Assert.Equal(expectedResult.DependenciesToCheck.Count, result.DependenciesToCheck.Count);
-
-        // Verify the queued dependencies match expected (order doesn't matter)
-        var expectedList = expectedResult.DependenciesToCheck;
-        var actualList = result.DependenciesToCheck;
-
-        Assert.Equal(expectedList.Count, actualList.Count);
-
-        // Check that all expected packages are in the actual queue
-        foreach (var (expectedPackage, expectedFrameworks) in expectedList)
-        {
-            var actualEntry = actualList.AsValueEnumerable().FirstOrDefault(x => x.Package.Equals(expectedPackage));
-            Assert.NotEqual(default, actualEntry);
-            Assert.Equal(expectedFrameworks.Count, actualEntry.NugetTargetFrameworks.Count);
-        }
     }
 
     [Theory]
