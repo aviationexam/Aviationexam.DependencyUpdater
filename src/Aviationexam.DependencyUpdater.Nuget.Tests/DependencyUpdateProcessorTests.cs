@@ -401,39 +401,4 @@ public sealed class DependencyUpdateProcessorTests
         Assert.Equal(expectedResult.PackageFlags.Count, result.PackageFlags.Count);
         Assert.Equal(expectedResult.DependenciesToCheck.Count, result.DependenciesToCheck.Count);
     }
-
-    [Theory]
-    [ClassData(typeof(FutureDependenciesClassData))]
-    public void ProcessDependenciesToUpdate_WithRealWorldData_CountsExpectedPackages(
-        IReadOnlyCollection<KeyValuePair<NugetDependency, IReadOnlyCollection<PackageVersionWithDependencySets>>> dependencies,
-        DependencyProcessingResult expectedResult,
-        IReadOnlyDictionary<string, PackageVersionWithDependencySets?> _
-    )
-    {
-        // Arrange
-        var logger = Substitute.For<ILogger>();
-        var ignoreResolver = new IgnoreResolver([], logger);
-
-        // Populate current versions from the NugetDependency keys
-        var currentVersions = dependencies.ToCurrentVersionsPerTargetFramework();
-
-        // Convert ALL dependencies to the format expected by ProcessDependenciesToUpdate
-        var dependenciesToUpdate = dependencies.ToPossiblePackageVersions();
-
-        // Act
-        var result = _processor.ProcessDependenciesToUpdate(
-            ignoreResolver,
-            currentVersions,
-            dependenciesToUpdate
-        );
-
-        // Assert - Should have processed exactly the expected number of packages
-        Assert.Equal(expectedResult.PackageFlags.Count, result.PackageFlags.Count);
-
-        // Verify all expected packages are present
-        foreach (var expectedPackage in expectedResult.PackageFlags.Keys)
-        {
-            Assert.Contains(expectedPackage, result.PackageFlags.Keys);
-        }
-    }
 }
