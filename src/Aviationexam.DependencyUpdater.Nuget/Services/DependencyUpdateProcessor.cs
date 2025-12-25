@@ -1,6 +1,9 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
+using NuGet.Frameworks;
 using System.Collections.Generic;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
@@ -26,6 +29,17 @@ public sealed class DependencyUpdateProcessor(
 
         foreach (var (dependency, possiblePackageVersions) in dependencyToUpdate)
         {
+            if (dependency.NugetPackage.GetVersion() is { } currentVersion)
+            {
+                var currentPackage = new Package(dependency.NugetPackage.GetPackageName(), currentVersion);
+                var frameworkFlags = GetOrInitializeFrameworkFlags(packageFlags, currentPackage);
+
+                foreach (var targetFrameworks in dependency.TargetFrameworks)
+                {
+                    frameworkFlags[targetFrameworks] = EDependencyFlag.Valid;
+                }
+            }
+
             foreach (var possiblePackageVersion in possiblePackageVersions)
             {
                 foreach (var compatibleDependencySet in possiblePackageVersion.CompatibleDependencySets)
@@ -58,6 +72,17 @@ public sealed class DependencyUpdateProcessor(
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks
     )
     {
+        var nuGetFramework = NuGetFramework.Parse(compatibleDependencySet.TargetFramework, DefaultFrameworkNameProvider.Instance);
+
+        var isGroupCompatible = targetFrameworks.AsValueEnumerable().Any(x => DefaultCompatibilityProvider.Instance.IsCompatible(
+            NuGetFramework.Parse(x.TargetFramework, DefaultFrameworkNameProvider.Instance), nuGetFramework
+        ));
+
+        if (!isGroupCompatible)
+        {
+            return [];
+        }
+
         var dependentPackages = new List<Package>();
 
         foreach (var packageDependency in compatibleDependencySet.Packages)
@@ -70,12 +95,7 @@ public sealed class DependencyUpdateProcessor(
             var dependentPackage = new Package(packageDependency.Id, minVersion);
             dependentPackages.Add(dependentPackage);
 
-            // Initialize per-framework flags for this package if needed
-            if (!packageFlags.TryGetValue(dependentPackage, out var frameworkFlags))
-            {
-                frameworkFlags = new Dictionary<NugetTargetFramework, EDependencyFlag>();
-                packageFlags[dependentPackage] = frameworkFlags;
-            }
+            var frameworkFlags = GetOrInitializeFrameworkFlags(packageFlags, dependentPackage);
 
             var shouldCheckDependency = ProcessTargetFrameworks(
                 ignoreResolver,
@@ -93,6 +113,21 @@ public sealed class DependencyUpdateProcessor(
         }
 
         return dependentPackages;
+    }
+
+    private static IDictionary<NugetTargetFramework, EDependencyFlag> GetOrInitializeFrameworkFlags(
+        IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags,
+        Package dependentPackage
+    )
+    {
+        // Initialize per-framework flags for this package if needed
+        if (!packageFlags.TryGetValue(dependentPackage, out var frameworkFlags))
+        {
+            frameworkFlags = new Dictionary<NugetTargetFramework, EDependencyFlag>();
+            packageFlags[dependentPackage] = frameworkFlags;
+        }
+
+        return frameworkFlags;
     }
 
     /// <summary>
@@ -149,11 +184,14 @@ public sealed class DependencyUpdateProcessor(
     )
     {
         // Check if this package is already at the correct version for this target framework
-        if (IsAtCorrectVersion(
-            currentPackageVersionsPerTargetFramework,
-            packageDependency.Id,
-            dependentPackage.Version,
-            targetFramework))
+        if (
+            IsAtCorrectVersion(
+                currentPackageVersionsPerTargetFramework,
+                packageDependency.Id,
+                dependentPackage.Version,
+                targetFramework
+            )
+        )
         {
             return EDependencyFlag.Valid;
         }
@@ -181,7 +219,7 @@ public sealed class DependencyUpdateProcessor(
     )
     {
         return currentPackageVersionsPerTargetFramework.TryGetValue(packageId, out var frameworkVersions)
-            && frameworkVersions.TryGetValue(targetFramework.TargetFramework, out var currentVersion)
-            && currentVersion == expectedVersion;
+               && frameworkVersions.TryGetValue(targetFramework.TargetFramework, out var currentVersion)
+               && currentVersion == expectedVersion;
     }
 }

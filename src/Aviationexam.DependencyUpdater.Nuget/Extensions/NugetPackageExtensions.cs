@@ -23,4 +23,12 @@ public static class NugetPackageExtensions
         NugetPackageVersion nugetPackageVersion => nugetPackageVersion.Version.MapToPackageVersion(),
         _ => throw new ArgumentOutOfRangeException(nameof(nugetPackage), nugetPackage, null),
     };
+
+    /// <summary>
+    /// Maps the MinVersion from a NugetPackageReference's VersionRange to a PackageVersion.
+    /// Returns null if VersionRange or MinVersion is null.
+    /// </summary>
+    public static PackageVersion? MapMinVersionToPackageVersion(
+        this NugetPackageReference? packageReference
+    ) => packageReference?.VersionRange?.MinVersion?.MapToPackageVersion();
 }
