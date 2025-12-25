@@ -420,12 +420,10 @@ public sealed class DependencyUpdateProcessorTests
             // language=cs
             $"""
              (new Package("{x.Key.Name}", CreatePackageVersion("{x.Key.Version.GetSerializedVersion()}")),
-                 TfF({
-                     x.Value
-                         .AsValueEnumerable()
-                         .Select(tff => $"({LoggingDependencyVersionsFetcher.GetNugetTargetFramework(tff.Key.TargetFramework)}, {nameof(EDependencyFlag)}.{tff.Value.ToString()})")
-                         .JoinToString(", ")
-                 }))
+                 TfF({x.Value
+                     .AsValueEnumerable()
+                     .Select(tff => $"({LoggingDependencyVersionsFetcher.GetNugetTargetFramework(tff.Key.TargetFramework)}, {nameof(EDependencyFlag)}.{tff.Value.ToString()})")
+                     .JoinToString(", ")}))
              """)
         .JoinToString(",\n");
 

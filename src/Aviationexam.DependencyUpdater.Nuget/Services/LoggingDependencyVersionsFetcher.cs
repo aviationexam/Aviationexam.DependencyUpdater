@@ -171,8 +171,7 @@ public sealed class LoggingDependencyVersionsFetcher(
                  {x.Packages
                      .AsValueEnumerable()
                      .Select(p => $"new PackageDependencyInfo(\"{p.Id}\", CreatePackageVersion(\"{p.MinVersion?.GetSerializedVersion()}\"))")
-                     .JoinToString(",\n")
-                 }
+                     .JoinToString(",\n")}
              ])
              """
         )
@@ -235,19 +234,19 @@ public sealed class LoggingDependencyVersionsFetcher(
             cachingConfiguration,
             cancellationToken
         );
-/*
+
         if (result is not null)
         {
-            await LogResultAsync($"FetchPackageMetadata.{package.Name}={package.Version.GetSerializedVersion()}.json", [result]);
+            // await LogResultAsync($"FetchPackageMetadata.{package.Name}={package.Version.GetSerializedVersion()}.json", [result]);
         }
         else
         {
-            await LogResultAsync($"FetchPackageMetadata.{package.Name}={package.Version.GetSerializedVersion()}.json");
+            // await LogResultAsync($"FetchPackageMetadata.{package.Name}={package.Version.GetSerializedVersion()}.json");
         }
-*/
+
         return result;
     }
-/*
+    /*
     private async Task LogResultAsync(
         string baseFileName,
         params IEnumerable<PackageVersionWithDependencySets> results
