@@ -293,44 +293,23 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.AspNetCore.WebUtilities", VersionRange.Parse("9.0.11")),
-                    [Net90]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_AspNetCore_WebUtilities()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Testing.Extensions.TrxReport", VersionRange.Parse("2.0.2")),
+                    new NugetPackageReference("Castle.Core", VersionRange.Parse("5.2.1")),
                     [Net100]
                 ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Testing_Extensions_TrxReport()
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsCastle_Core()
             ),
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Kiota.Serialization.Text", VersionRange.Parse("1.21.0")),
-                    [Net80, Net90, Net100]
+                    new NugetPackageReference("Meziantou.Analyzer", VersionRange.Parse("2.0.263")),
+                    [Net100, Net80, Net90]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
-                    new PackageVersionWithDependencySets(CreatePackageVersion("1.21.1"))
+                    new PackageVersionWithDependencySets(CreatePackageVersion("2.0.264"))
                     {
                         DependencySets = CreateDependencySets(
-                            new DependencySet("net5.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
-                            ]),
-                            new DependencySet("net6.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
-                            ]),
-                            new DependencySet("net8.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
-                            ]),
                             new DependencySet("netstandard2.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
-                            ]),
-                            new DependencySet("netstandard2.1", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
                             ])
                         ),
                     }
@@ -339,26 +318,50 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.DependencyInjection", VersionRange.Parse("9.0.11")),
+                    new NugetPackageReference("Meziantou.Extensions.Logging.Xunit.v3", VersionRange.Parse("1.1.19")),
+                    [Net80]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMeziantou_Extensions_Logging_Xunit_v3()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.AspNetCore.WebUtilities", VersionRange.Parse("8.0.22")),
+                    [Net80]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_AspNetCore_WebUtilities()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.AspNetCore.WebUtilities", VersionRange.Parse("9.0.11")),
                     [Net90]
                 ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_DependencyInjection()
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_AspNetCore_WebUtilities()
             ),
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("NSubstitute", VersionRange.Parse("5.3.0")),
+                    new NugetPackageReference("Microsoft.AspNetCore.WebUtilities", VersionRange.Parse("10.0.1")),
                     [Net100]
                 ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsNSubstitute()
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_AspNetCore_WebUtilities()
             ),
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.Http", VersionRange.Parse("10.0.1")),
+                    new NugetPackageReference("Microsoft.Bcl.AsyncInterfaces", VersionRange.Parse("10.0.1")),
                     [Net100]
                 ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_Http()
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Bcl_AsyncInterfaces()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Bcl.AsyncInterfaces", VersionRange.Parse("9.0.11")),
+                    [Net90]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Bcl_AsyncInterfaces()
             ),
             KeyValuePair.Create(
                 new NugetDependency(
@@ -371,6 +374,102 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Extensions.Caching.Abstractions", VersionRange.Parse("10.0.1")),
+                    [Net100]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_Caching_Abstractions()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Extensions.Caching.Abstractions", VersionRange.Parse("9.0.11")),
+                    [Net90]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_Caching_Abstractions()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Extensions.DependencyInjection", VersionRange.Parse("8.0.1")),
+                    [Net80]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_DependencyInjection()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Extensions.DependencyInjection", VersionRange.Parse("9.0.11")),
+                    [Net90]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_DependencyInjection()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Extensions.DependencyInjection", VersionRange.Parse("10.0.1")),
+                    [Net100]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_DependencyInjection()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Extensions.DependencyInjection.Abstractions", VersionRange.Parse("10.0.1")),
+                    [Net100]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_DependencyInjection_Abstractions()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Extensions.DependencyInjection.Abstractions", VersionRange.Parse("9.0.11")),
+                    [Net90]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_DependencyInjection_Abstractions()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Extensions.DependencyInjection.Abstractions", VersionRange.Parse("8.0.2")),
+                    [Net80]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_DependencyInjection_Abstractions()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Extensions.Http", VersionRange.Parse("8.0.1")),
+                    [Net80]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_Http()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Extensions.Http", VersionRange.Parse("10.0.1")),
+                    [Net100]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_Http()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Extensions.Http", VersionRange.Parse("9.0.11")),
+                    [Net90]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_Http()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Extensions.Options", VersionRange.Parse("8.0.2")),
+                    [Net80]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_Options()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
                     new NugetPackageReference("Microsoft.Extensions.Options", VersionRange.Parse("9.0.11")),
                     [Net90]
                 ),
@@ -379,36 +478,88 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("ZLinq", VersionRange.Parse("1.5.4")),
-                    [Net100, Net80, Net90]
+                    new NugetPackageReference("Microsoft.Extensions.Options", VersionRange.Parse("10.0.1")),
+                    [Net100]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_Options()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Kiota.Abstractions", VersionRange.Parse("1.21.0")),
+                    [Net80, Net90, Net100]
                 ),
                 (IReadOnlyCollection<PackageVersionWithDependencySets>)
                 [
+                    new PackageVersionWithDependencySets(CreatePackageVersion("1.21.1"))
+                    {
+                        DependencySets = CreateDependencySets(
+                            new DependencySet("net5.0", [
+                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("2.0.8")),
+                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("6.0.0"))
+                            ]),
+                            new DependencySet("net6.0", [
+                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("2.0.8"))
+                            ]),
+                            new DependencySet("net8.0", [
+                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("2.0.8"))
+                            ]),
+                            new DependencySet("netstandard2.0", [
+                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("2.0.8")),
+                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("6.0.0"))
+                            ]),
+                            new DependencySet("netstandard2.1", [
+                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("2.0.8")),
+                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("6.0.0"))
+                            ])
+                        ),
+                    }
                 ]
             ),
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("NSubstitute.Analyzers.CSharp", VersionRange.Parse("1.0.17")),
-                    [Net100]
+                    new NugetPackageReference("Microsoft.Kiota.Http.HttpClientLibrary", VersionRange.Parse("1.21.0")),
+                    [Net80, Net90, Net100]
                 ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsNSubstitute_Analyzers_CSharp()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("zeroql.cli", VersionRange.Parse("8.0.0-preview.7")),
-                    [Net100]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetszeroql_cli()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Bcl.AsyncInterfaces", VersionRange.Parse("10.0.1")),
-                    [Net100]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Bcl_AsyncInterfaces()
+                (IReadOnlyCollection<PackageVersionWithDependencySets>)
+                [
+                    new PackageVersionWithDependencySets(CreatePackageVersion("1.21.1"))
+                    {
+                        DependencySets = CreateDependencySets(
+                            new DependencySet("net462", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1")),
+                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("6.0.0")),
+                                new PackageDependencyInfo("System.Net.Http.WinHttpHandler", CreatePackageVersion("6.0.0")),
+                                new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("6.0.10"))
+                            ]),
+                            new DependencySet("net5.0", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1")),
+                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("6.0.0")),
+                                new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("6.0.10"))
+                            ]),
+                            new DependencySet("net6.0", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
+                            ]),
+                            new DependencySet("net8.0", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
+                            ]),
+                            new DependencySet("net8.0-browser1.0", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
+                            ]),
+                            new DependencySet("netstandard2.0", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1")),
+                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("6.0.0")),
+                                new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("6.0.10"))
+                            ]),
+                            new DependencySet("netstandard2.1", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1")),
+                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("6.0.0")),
+                                new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("6.0.10"))
+                            ])
+                        ),
+                    }
+                ]
             ),
             KeyValuePair.Create(
                 new NugetDependency(
@@ -422,19 +573,19 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
                     {
                         DependencySets = CreateDependencySets(
                             new DependencySet("net5.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
                             ]),
                             new DependencySet("net6.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
                             ]),
                             new DependencySet("net8.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
                             ]),
                             new DependencySet("netstandard2.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
                             ]),
                             new DependencySet("netstandard2.1", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
                             ])
                         ),
                     }
@@ -443,18 +594,35 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.DependencyInjection", VersionRange.Parse("8.0.1")),
-                    [Net80]
+                    new NugetPackageReference("Microsoft.Kiota.Serialization.Json", VersionRange.Parse("1.21.0")),
+                    [Net80, Net90, Net100]
                 ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_DependencyInjection()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("System.Text.Json", VersionRange.Parse("9.0.11")),
-                    [Net90]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsSystem_Text_Json()
+                (IReadOnlyCollection<PackageVersionWithDependencySets>)
+                [
+                    new PackageVersionWithDependencySets(CreatePackageVersion("1.21.1"))
+                    {
+                        DependencySets = CreateDependencySets(
+                            new DependencySet("net5.0", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1")),
+                                new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("6.0.10"))
+                            ]),
+                            new DependencySet("net6.0", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
+                            ]),
+                            new DependencySet("net8.0", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
+                            ]),
+                            new DependencySet("netstandard2.0", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1")),
+                                new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("6.0.10"))
+                            ]),
+                            new DependencySet("netstandard2.1", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1")),
+                                new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("6.0.10"))
+                            ])
+                        ),
+                    }
+                ]
             ),
             KeyValuePair.Create(
                 new NugetDependency(
@@ -468,19 +636,19 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
                     {
                         DependencySets = CreateDependencySets(
                             new DependencySet("net5.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
                             ]),
                             new DependencySet("net6.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
                             ]),
                             new DependencySet("net8.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
                             ]),
                             new DependencySet("netstandard2.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
                             ]),
                             new DependencySet("netstandard2.1", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
                             ])
                         ),
                     }
@@ -489,18 +657,64 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.DependencyInjection.Abstractions", VersionRange.Parse("9.0.11")),
-                    [Net90]
+                    new NugetPackageReference("Microsoft.Kiota.Serialization.Text", VersionRange.Parse("1.21.0")),
+                    [Net80, Net90, Net100]
                 ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_DependencyInjection_Abstractions()
+                (IReadOnlyCollection<PackageVersionWithDependencySets>)
+                [
+                    new PackageVersionWithDependencySets(CreatePackageVersion("1.21.1"))
+                    {
+                        DependencySets = CreateDependencySets(
+                            new DependencySet("net5.0", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
+                            ]),
+                            new DependencySet("net6.0", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
+                            ]),
+                            new DependencySet("net8.0", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
+                            ]),
+                            new DependencySet("netstandard2.0", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
+                            ]),
+                            new DependencySet("netstandard2.1", [
+                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("1.21.1"))
+                            ])
+                        ),
+                    }
+                ]
             ),
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.Caching.Abstractions", VersionRange.Parse("9.0.11")),
-                    [Net90]
+                    new NugetPackageReference("Microsoft.Testing.Extensions.CodeCoverage", VersionRange.Parse("18.1.0")),
+                    [Net100]
                 ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_Caching_Abstractions()
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Testing_Extensions_CodeCoverage()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("Microsoft.Testing.Extensions.TrxReport", VersionRange.Parse("2.0.2")),
+                    [Net100]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Testing_Extensions_TrxReport()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("NSubstitute", VersionRange.Parse("5.3.0")),
+                    [Net100]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsNSubstitute()
+            ),
+            KeyValuePair.Create(
+                new NugetDependency(
+                    new NugetFile("", ENugetFileType.Csproj),
+                    new NugetPackageReference("NSubstitute.Analyzers.CSharp", VersionRange.Parse("1.0.17")),
+                    [Net100]
+                ),
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsNSubstitute_Analyzers_CSharp()
             ),
             KeyValuePair.Create(
                 new NugetDependency(
@@ -513,26 +727,28 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.DependencyInjection", VersionRange.Parse("10.0.1")),
-                    [Net100]
+                    new NugetPackageReference("System.Text.Json", VersionRange.Parse("8.0.6")),
+                    [Net80]
                 ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_DependencyInjection()
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsSystem_Text_Json()
             ),
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.Options", VersionRange.Parse("10.0.1")),
-                    [Net100]
+                    new NugetPackageReference("System.Text.Json", VersionRange.Parse("9.0.11")),
+                    [Net90]
                 ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_Options()
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsSystem_Text_Json()
             ),
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.DependencyInjection.Abstractions", VersionRange.Parse("10.0.1")),
-                    [Net100]
+                    new NugetPackageReference("ZLinq", VersionRange.Parse("1.5.4")),
+                    [Net100, Net80, Net90]
                 ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_DependencyInjection_Abstractions()
+                (IReadOnlyCollection<PackageVersionWithDependencySets>)
+                [
+                ]
             ),
             KeyValuePair.Create(
                 new NugetDependency(
@@ -557,108 +773,10 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.AspNetCore.WebUtilities", VersionRange.Parse("10.0.1")),
+                    new NugetPackageReference("microsoft.openapi.kiota", VersionRange.Parse("1.29.0")),
                     [Net100]
                 ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_AspNetCore_WebUtilities()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Kiota.Abstractions", VersionRange.Parse("1.21.0")),
-                    [Net80, Net90, Net100]
-                ),
-                (IReadOnlyCollection<PackageVersionWithDependencySets>)
-                [
-                    new PackageVersionWithDependencySets(CreatePackageVersion("1.21.1"))
-                    {
-                        DependencySets = CreateDependencySets(
-                            new DependencySet("net5.0", [
-                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("[2.0.8, )")),
-                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("[6.0.0, )"))
-                            ]),
-                            new DependencySet("net6.0", [
-                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("[2.0.8, )"))
-                            ]),
-                            new DependencySet("net8.0", [
-                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("[2.0.8, )"))
-                            ]),
-                            new DependencySet("netstandard2.0", [
-                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("[2.0.8, )")),
-                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("[6.0.0, )"))
-                            ]),
-                            new DependencySet("netstandard2.1", [
-                                new PackageDependencyInfo("Std.UriTemplate", CreatePackageVersion("[2.0.8, )")),
-                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("[6.0.0, )"))
-                            ])
-                        ),
-                    }
-                ]
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Kiota.Serialization.Json", VersionRange.Parse("1.21.0")),
-                    [Net80, Net90, Net100]
-                ),
-                (IReadOnlyCollection<PackageVersionWithDependencySets>)
-                [
-                    new PackageVersionWithDependencySets(CreatePackageVersion("1.21.1"))
-                    {
-                        DependencySets = CreateDependencySets(
-                            new DependencySet("net5.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )")),
-                                new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("[6.0.10, )"))
-                            ]),
-                            new DependencySet("net6.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
-                            ]),
-                            new DependencySet("net8.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
-                            ]),
-                            new DependencySet("netstandard2.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )")),
-                                new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("[6.0.10, )"))
-                            ]),
-                            new DependencySet("netstandard2.1", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )")),
-                                new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("[6.0.10, )"))
-                            ])
-                        ),
-                    }
-                ]
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.Caching.Abstractions", VersionRange.Parse("10.0.1")),
-                    [Net100]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_Caching_Abstractions()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Meziantou.Extensions.Logging.Xunit.v3", VersionRange.Parse("1.1.19")),
-                    [Net80]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMeziantou_Extensions_Logging_Xunit_v3()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.DependencyInjection.Abstractions", VersionRange.Parse("8.0.2")),
-                    [Net80]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_DependencyInjection_Abstractions()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Castle.Core", VersionRange.Parse("5.2.1")),
-                    [Net100]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsCastle_Core()
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsmicrosoft_openapi_kiota()
             ),
             KeyValuePair.Create(
                 new NugetDependency(
@@ -671,128 +789,10 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
             KeyValuePair.Create(
                 new NugetDependency(
                     new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.Options", VersionRange.Parse("8.0.2")),
-                    [Net80]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_Options()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Kiota.Http.HttpClientLibrary", VersionRange.Parse("1.21.0")),
-                    [Net80, Net90, Net100]
-                ),
-                (IReadOnlyCollection<PackageVersionWithDependencySets>)
-                [
-                    new PackageVersionWithDependencySets(CreatePackageVersion("1.21.1"))
-                    {
-                        DependencySets = CreateDependencySets(
-                            new DependencySet("net462", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )")),
-                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("[6.0.0, )")),
-                                new PackageDependencyInfo("System.Net.Http.WinHttpHandler", CreatePackageVersion("[6.0.0, )")),
-                                new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("[6.0.10, )"))
-                            ]),
-                            new DependencySet("net5.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )")),
-                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("[6.0.0, )")),
-                                new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("[6.0.10, )"))
-                            ]),
-                            new DependencySet("net6.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
-                            ]),
-                            new DependencySet("net8.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
-                            ]),
-                            new DependencySet("net8.0-browser1.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )"))
-                            ]),
-                            new DependencySet("netstandard2.0", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )")),
-                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("[6.0.0, )")),
-                                new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("[6.0.10, )"))
-                            ]),
-                            new DependencySet("netstandard2.1", [
-                                new PackageDependencyInfo("Microsoft.Kiota.Abstractions", CreatePackageVersion("[1.21.1, )")),
-                                new PackageDependencyInfo("System.Diagnostics.DiagnosticSource", CreatePackageVersion("[6.0.0, )")),
-                                new PackageDependencyInfo("System.Text.Json", CreatePackageVersion("[6.0.10, )"))
-                            ])
-                        ),
-                    }
-                ]
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Testing.Extensions.CodeCoverage", VersionRange.Parse("18.1.0")),
+                    new NugetPackageReference("zeroql.cli", VersionRange.Parse("8.0.0-preview.7")),
                     [Net100]
                 ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Testing_Extensions_CodeCoverage()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.Http", VersionRange.Parse("9.0.11")),
-                    [Net90]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_Http()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Bcl.AsyncInterfaces", VersionRange.Parse("9.0.11")),
-                    [Net90]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Bcl_AsyncInterfaces()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.Extensions.Http", VersionRange.Parse("8.0.1")),
-                    [Net80]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_Extensions_Http()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Microsoft.AspNetCore.WebUtilities", VersionRange.Parse("8.0.22")),
-                    [Net80]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsMicrosoft_AspNetCore_WebUtilities()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("System.Text.Json", VersionRange.Parse("8.0.6")),
-                    [Net80]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsSystem_Text_Json()
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("Meziantou.Analyzer", VersionRange.Parse("2.0.263")),
-                    [Net100, Net80, Net90]
-                ),
-                (IReadOnlyCollection<PackageVersionWithDependencySets>)
-                [
-                    new PackageVersionWithDependencySets(CreatePackageVersion("2.0.264"))
-                    {
-                        DependencySets = CreateDependencySets(
-                            new DependencySet("netstandard2.0", [
-                            ])
-                        ),
-                    }
-                ]
-            ),
-            KeyValuePair.Create(
-                new NugetDependency(
-                    new NugetFile("", ENugetFileType.Csproj),
-                    new NugetPackageReference("microsoft.openapi.kiota", VersionRange.Parse("1.29.0")),
-                    [Net100]
-                ),
-                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetsmicrosoft_openapi_kiota()
+                FactoryClass_e9e439747fbd44678abb709f9dc169a2.CreateDependencySetszeroql_cli()
             ),
         ],
         new DependencyProcessingResult(
