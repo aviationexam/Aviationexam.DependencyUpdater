@@ -8,6 +8,8 @@ namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
 public interface IDependencyVersionsFetcher
 {
+    public const string Real = "Real";
+
     Task<IReadOnlyCollection<PackageVersionWithDependencySets>> FetchDependencyVersionsAsync(
         NugetDependency dependency,
         IReadOnlyCollection<NugetSource> sources,

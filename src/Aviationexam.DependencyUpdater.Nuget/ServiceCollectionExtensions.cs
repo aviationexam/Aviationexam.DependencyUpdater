@@ -5,8 +5,8 @@ using Aviationexam.DependencyUpdater.Nuget.Parsers;
 using Aviationexam.DependencyUpdater.Nuget.Services;
 using Aviationexam.DependencyUpdater.Nuget.Writers;
 using Microsoft.Extensions.DependencyInjection;
-using NuGet.Common;
 using NuGet.Protocol.Core.Types;
+using ILogger = NuGet.Common.ILogger;
 
 namespace Aviationexam.DependencyUpdater.Nuget;
 
@@ -33,7 +33,12 @@ public static class ServiceCollectionExtensions
         .AddScoped<ILogger, NuGetLoggerAdapter>()
         .AddScoped<NugetVersionFetcherFactory>()
         .AddScoped<INugetVersionFetcher, NugetVersionFetcher>()
-        .AddScoped<IDependencyVersionsFetcher, DependencyVersionsFetcher>()
+#if DEBUG
+        .AddScoped<IDependencyVersionsFetcher, LoggingDependencyVersionsFetcher>()
+#else
+        .AddScoped<IDependencyVersionsFetcher>(x => x.GetRequiredKeyedService<IDependencyVersionsFetcher>(IDependencyVersionsFetcher.Real))
+#endif
+        .AddKeyedScoped<IDependencyVersionsFetcher, DependencyVersionsFetcher>(IDependencyVersionsFetcher.Real)
         .AddScoped<TargetFrameworksResolver>()
         .AddScoped<IgnoredDependenciesResolver>()
         .AddScoped<NugetVersionWriter>()
