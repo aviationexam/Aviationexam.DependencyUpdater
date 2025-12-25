@@ -384,6 +384,9 @@ public sealed class DependencyUpdateProcessorTests
         Assert.NotEmpty(result.PackageFlags);
         Assert.NotEmpty(result.DependenciesToCheck);
 
+        TestContext.Current.AddAttachment(nameof(result.PackageFlags), SerializePackageFlags(result.PackageFlags));
+        TestContext.Current.AddAttachment(nameof(result.DependenciesToCheck), SerializeDependenciesToCheck(result.DependenciesToCheck));
+
         Assert.All(expectedResult.PackageFlags, expectedPackageFlag => Assert.All(
             expectedPackageFlag.Value,
             expectedFrameworkFlag => Assert.Equal(
@@ -398,12 +401,16 @@ public sealed class DependencyUpdateProcessorTests
             Assert.Equal(expectedDependencyToCheck.NugetTargetFrameworks, dependencyToCheck.NugetTargetFrameworks);
         }
 
-        TestContext.Current.AddAttachment(nameof(result.PackageFlags), SerializePackageFlags(result.PackageFlags));
-        TestContext.Current.AddAttachment(nameof(result.DependenciesToCheck), SerializeDependenciesToCheck(result.DependenciesToCheck));
-
         Assert.Equal(expectedResult.PackageFlags.Count, result.PackageFlags.Count);
         Assert.Equal(expectedResult.DependenciesToCheck.Count, result.DependenciesToCheck.Count);
     }
+
+    private static string SerializeTargetFramework(
+        IEnumerable<NugetTargetFramework> targetFrameworks
+    ) => targetFrameworks
+        .AsValueEnumerable()
+        .Select(x => LoggingDependencyVersionsFetcher.GetNugetTargetFramework(x.TargetFramework))
+        .JoinToString(", ");
 
     private static string SerializePackageFlags(
         IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags
@@ -412,16 +419,24 @@ public sealed class DependencyUpdateProcessorTests
         .Select(x =>
             // language=cs
             $"""
-             (new Package("{x.Key.Name}", CreatePackageVersion("{x.Key.Version.GetSerializedVersion()}")), TfF({
-                 x.Value
-                     .AsValueEnumerable()
-                     .Select(tff => $"({LoggingDependencyVersionsFetcher.GetNugetTargetFramework(tff.Key.TargetFramework)}, {nameof(EDependencyFlag)}.{tff.Value.ToString()})")
-                     .JoinToString(", ")
-             }))
+             (new Package("{x.Key.Name}", CreatePackageVersion("{x.Key.Version.GetSerializedVersion()}")),
+                 TfF({
+                     x.Value
+                         .AsValueEnumerable()
+                         .Select(tff => $"({LoggingDependencyVersionsFetcher.GetNugetTargetFramework(tff.Key.TargetFramework)}, {nameof(EDependencyFlag)}.{tff.Value.ToString()})")
+                         .JoinToString(", ")
+                 }))
              """)
         .JoinToString(",\n");
 
     private static string SerializeDependenciesToCheck(
         Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck
-    ) => "";
+    ) => dependenciesToCheck
+        .AsValueEnumerable()
+        .Select(x =>
+            // language=cs
+            $"""
+             (new Package("{x.Package.Name}", CreatePackageVersion("{x.Package.Version.GetSerializedVersion()}")), [{SerializeTargetFramework(x.NugetTargetFrameworks)}])
+             """)
+        .JoinToString(",\n");
 }
