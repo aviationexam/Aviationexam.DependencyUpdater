@@ -398,7 +398,30 @@ public sealed class DependencyUpdateProcessorTests
             Assert.Equal(expectedDependencyToCheck.NugetTargetFrameworks, dependencyToCheck.NugetTargetFrameworks);
         }
 
+        TestContext.Current.AddAttachment(nameof(result.PackageFlags), SerializePackageFlags(result.PackageFlags));
+        TestContext.Current.AddAttachment(nameof(result.DependenciesToCheck), SerializeDependenciesToCheck(result.DependenciesToCheck));
+
         Assert.Equal(expectedResult.PackageFlags.Count, result.PackageFlags.Count);
         Assert.Equal(expectedResult.DependenciesToCheck.Count, result.DependenciesToCheck.Count);
     }
+
+    private static string SerializePackageFlags(
+        IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags
+    ) => packageFlags
+        .AsValueEnumerable()
+        .Select(x =>
+            // language=cs
+            $"""
+             (new Package("{x.Key.Name}", CreatePackageVersion("{x.Key.Version.GetSerializedVersion()}")), TfF({
+                 x.Value
+                     .AsValueEnumerable()
+                     .Select(tff => $"({LoggingDependencyVersionsFetcher.GetNugetTargetFramework(tff.Key.TargetFramework)}, {nameof(EDependencyFlag)}.{tff.Value.ToString()})")
+                     .JoinToString(", ")
+             }))
+             """)
+        .JoinToString(",\n");
+
+    private static string SerializeDependenciesToCheck(
+        Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck
+    ) => "";
 }
