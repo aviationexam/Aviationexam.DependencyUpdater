@@ -73,7 +73,7 @@ public sealed class LoggingDependencyVersionsFetcher(
               """
         );
 
-        foreach (var ((dependencyName, version), nugetTargetFrameworks) in _storedDependencyVersionTarget)
+        foreach (var ((dependencyName, version), nugetTargetFrameworks) in _storedDependencyVersionTarget.AsValueEnumerable().OrderBy(x => x.Key.Item1).ToList())
         {
             var minVersion = _storedDependency[dependencyName];
             var dependencySetsCollection = _storedDependencyData[dependencyName];
