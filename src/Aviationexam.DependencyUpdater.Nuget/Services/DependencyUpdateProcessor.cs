@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using NuGet.Frameworks;
 using System.Collections.Generic;
@@ -28,6 +29,18 @@ public sealed class DependencyUpdateProcessor(
 
         foreach (var (dependency, possiblePackageVersions) in dependencyToUpdate)
         {
+            if (dependency.NugetPackage.GetVersion() is { } currentVersion)
+            {
+                // mark current version as valid
+                packageFlags[new Package(dependency.NugetPackage.GetPackageName(), currentVersion)] = dependency
+                    .TargetFrameworks
+                    .AsValueEnumerable()
+                    .ToDictionary(
+                        x => x,
+                        _ => EDependencyFlag.Valid
+                    );
+            }
+
             foreach (var possiblePackageVersion in possiblePackageVersions)
             {
                 foreach (var compatibleDependencySet in possiblePackageVersion.CompatibleDependencySets)
@@ -162,11 +175,14 @@ public sealed class DependencyUpdateProcessor(
     )
     {
         // Check if this package is already at the correct version for this target framework
-        if (IsAtCorrectVersion(
+        if (
+            IsAtCorrectVersion(
                 currentPackageVersionsPerTargetFramework,
                 packageDependency.Id,
                 dependentPackage.Version,
-                targetFramework))
+                targetFramework
+            )
+        )
         {
             return EDependencyFlag.Valid;
         }
