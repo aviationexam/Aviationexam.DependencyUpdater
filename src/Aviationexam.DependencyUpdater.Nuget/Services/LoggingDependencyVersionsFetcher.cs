@@ -165,7 +165,7 @@ public sealed class LoggingDependencyVersionsFetcher(
              new DependencySet("{x.TargetFramework}", [
                  {x.Packages
                      .AsValueEnumerable()
-                     .Select(p => $"new PackageDependencyInfo(\"{p.Id}\", CreatePackageVersion(\"{p.OriginalVersionString}\"))")
+                     .Select(p => $"new PackageDependencyInfo(\"{p.Id}\", CreatePackageVersion(\"{p.MinVersion?.GetSerializedVersion()}\"))")
                      .JoinToString(",\n")
                  }
              ])
