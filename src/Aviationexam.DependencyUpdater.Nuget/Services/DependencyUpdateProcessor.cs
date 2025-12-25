@@ -1,6 +1,8 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Models;
+using NuGet.Frameworks;
 using System.Collections.Generic;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
@@ -58,6 +60,17 @@ public sealed class DependencyUpdateProcessor(
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks
     )
     {
+        var nuGetFramework = NuGetFramework.Parse(compatibleDependencySet.TargetFramework, DefaultFrameworkNameProvider.Instance);
+
+        var isGroupCompatible = targetFrameworks.AsValueEnumerable().Any(x => DefaultCompatibilityProvider.Instance.IsCompatible(
+            NuGetFramework.Parse(x.TargetFramework, DefaultFrameworkNameProvider.Instance), nuGetFramework
+        ));
+
+        if (!isGroupCompatible)
+        {
+            return [];
+        }
+
         var dependentPackages = new List<Package>();
 
         foreach (var packageDependency in compatibleDependencySet.Packages)
@@ -150,10 +163,10 @@ public sealed class DependencyUpdateProcessor(
     {
         // Check if this package is already at the correct version for this target framework
         if (IsAtCorrectVersion(
-            currentPackageVersionsPerTargetFramework,
-            packageDependency.Id,
-            dependentPackage.Version,
-            targetFramework))
+                currentPackageVersionsPerTargetFramework,
+                packageDependency.Id,
+                dependentPackage.Version,
+                targetFramework))
         {
             return EDependencyFlag.Valid;
         }
@@ -181,7 +194,7 @@ public sealed class DependencyUpdateProcessor(
     )
     {
         return currentPackageVersionsPerTargetFramework.TryGetValue(packageId, out var frameworkVersions)
-            && frameworkVersions.TryGetValue(targetFramework.TargetFramework, out var currentVersion)
-            && currentVersion == expectedVersion;
+               && frameworkVersions.TryGetValue(targetFramework.TargetFramework, out var currentVersion)
+               && currentVersion == expectedVersion;
     }
 }
