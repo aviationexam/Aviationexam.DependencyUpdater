@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
@@ -21,17 +22,90 @@ public sealed class LoggingDependencyVersionsFetcher(
     [FromKeyedServices(IDependencyVersionsFetcher.Real)]
     IDependencyVersionsFetcher inner,
     ILogger<LoggingDependencyVersionsFetcher> logger
-) : IDependencyVersionsFetcher
+) : IDependencyVersionsFetcher, IAsyncDisposable
 {
     private static readonly string OutputDirectory = Path.Combine(
         "/opt/asp.net/Aviationexam.DependencyUpdater/src/Aviationexam.DependencyUpdater.Nuget.Tests/Assets",
         $"captured-{Guid.NewGuid():N}"
     );
 
+    private readonly IDictionary<string, PackageVersion> _storedDependency = new Dictionary<string, PackageVersion>();
+
+    private readonly IDictionary<string, (PackageVersion, IReadOnlyCollection<NugetTargetFramework>, IReadOnlyCollection<PackageVersionWithDependencySets>)> _storedDependencyData =
+        new Dictionary<string, (PackageVersion, IReadOnlyCollection<NugetTargetFramework>, IReadOnlyCollection<PackageVersionWithDependencySets>)>();
+
     static LoggingDependencyVersionsFetcher()
     {
         Directory.CreateDirectory(OutputDirectory);
     }
+
+    public async ValueTask DisposeAsync()
+    {
+        var filePath = Path.Combine(OutputDirectory, nameof(FetchDependencyVersionsAsync));
+
+        await using var fileStream = new FileStream(
+            filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None
+        );
+        await using var streamWriter = new StreamWriter(fileStream);
+        foreach (var (dependencyName, (version, nugetTargetFrameworks, dependencySetsCollection)) in _storedDependencyData)
+        {
+            await streamWriter.WriteAsync(
+                // language=cs
+                $$"""
+                  KeyValuePair.Create(
+                      new NugetDependency(
+                          new NugetFile("", ENugetFileType.Csproj),
+                          new NugetPackageReference("{{dependencyName}}", VersionRange.Parse("{{version.GetSerializedVersion()}}")),
+                          [{{nugetTargetFrameworks.AsValueEnumerable().Select(x => $"new NugetTargetFramework(\"{x.TargetFramework}\")").JoinToString(", ")}}]
+                      ),
+                      (IReadOnlyCollection<PackageVersionWithDependencySets>)
+                      [
+                          {{DependencySetsAsCSharp(dependencySetsCollection, version)}}
+                      ]
+                  ),
+                  """);
+        }
+
+        await streamWriter.FlushAsync();
+        await fileStream.FlushAsync();
+
+        logger.LogInformation("Captured package data to {FilePath}", filePath);
+    }
+
+    private static string DependencySetsAsCSharp(
+        IReadOnlyCollection<PackageVersionWithDependencySets> dependencySets,
+        PackageVersion packageVersion
+    ) => dependencySets.AsValueEnumerable()
+        .Where(x => x > packageVersion)
+        .Select(x =>
+            // language=cs
+            $$"""
+              new PackageVersionWithDependencySets(CreatePackageVersion("{{x.GetSerializedVersion()}}"))
+              {
+                  DependencySets = CreateDependencySets(
+                      {{DependencySetsAsCSharp(x.DependencySets.Values.AsValueEnumerable().First())}}
+                  ),
+              },
+              """
+        )
+        .JoinToString(",\n");
+
+    private static string DependencySetsAsCSharp(
+        IReadOnlyCollection<DependencySet> dependencySets
+    ) => dependencySets.AsValueEnumerable()
+        .Select(x =>
+            // language=cs
+            $"""
+             new DependencySet("{x.TargetFramework}", [
+                 {x.Packages
+                     .AsValueEnumerable()
+                     .Select(p => $"new PackageDependencyInfo(\"{p.Id}\", CreatePackageVersion(\"{p.OriginalVersionString}\"))")
+                     .JoinToString(",\n")
+                 }
+             ])
+             """
+        )
+        .JoinToString(",\n");
 
     public async Task<IReadOnlyCollection<PackageVersionWithDependencySets>> FetchDependencyVersionsAsync(
         NugetDependency dependency,
@@ -49,7 +123,18 @@ public sealed class LoggingDependencyVersionsFetcher(
             cancellationToken
         );
 
-        await LogResultAsync($"FetchDependencyVersions.{dependency.NugetPackage.GetPackageName()}.json", result);
+        var packageName = dependency.NugetPackage.GetPackageName();
+        if (
+            dependency.NugetPackage.GetVersion() is { } version
+            && (
+                !_storedDependency.TryGetValue(packageName, out var storedVersion)
+                || storedVersion > version
+            )
+        )
+        {
+            _storedDependency[packageName] = version;
+            _storedDependencyData[packageName] = (version, dependency.TargetFrameworks, result);
+        }
 
         return result;
     }
