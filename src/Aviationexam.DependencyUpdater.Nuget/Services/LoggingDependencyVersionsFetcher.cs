@@ -235,37 +235,6 @@ public sealed class LoggingDependencyVersionsFetcher(
             cancellationToken
         );
 
-        if (result is not null)
-        {
-            // await LogResultAsync($"FetchPackageMetadata.{package.Name}={package.Version.GetSerializedVersion()}.json", [result]);
-        }
-        else
-        {
-            // await LogResultAsync($"FetchPackageMetadata.{package.Name}={package.Version.GetSerializedVersion()}.json");
-        }
-
         return result;
     }
-    /*
-    private async Task LogResultAsync(
-        string baseFileName,
-        params IEnumerable<PackageVersionWithDependencySets> results
-    )
-    {
-        try
-        {
-            var filePath = Path.Combine(OutputDirectory, baseFileName);
-
-            var resultsList = results.ToList();
-            var json = JsonSerializer.Serialize(resultsList, NugetJsonSerializerContext.Default.IReadOnlyCollectionPackageVersionWithDependencySets);
-
-            await File.WriteAllTextAsync(filePath, json);
-
-            logger.LogInformation("Captured package data to {FilePath}", filePath);
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Failed to log package data to {FileName}", baseFileName);
-        }
-    }*/
 }
