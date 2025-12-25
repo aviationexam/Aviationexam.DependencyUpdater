@@ -24,7 +24,7 @@ public sealed class LoggingDependencyVersionsFetcher(
     ILogger<LoggingDependencyVersionsFetcher> logger
 ) : IDependencyVersionsFetcher, IAsyncDisposable
 {
-    private readonly string _currentRunKey = "e9e439747fbd44678abb709f9dc169a2"; //Guid.NewGuid().ToString("N");
+    private readonly string _currentRunKey = Guid.NewGuid().ToString("N");
 
     private readonly IDictionary<string, PackageVersion> _storedDependency = new ConcurrentDictionary<string, PackageVersion>();
 
