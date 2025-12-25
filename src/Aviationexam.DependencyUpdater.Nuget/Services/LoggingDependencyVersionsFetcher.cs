@@ -235,16 +235,16 @@ public sealed class LoggingDependencyVersionsFetcher(
             cachingConfiguration,
             cancellationToken
         );
-
+/*
         if (result is not null)
         {
-            // await LogResultAsync($"FetchPackageMetadata.{package.Name}={package.Version.GetSerializedVersion()}.json", [result]);
+            await LogResultAsync($"FetchPackageMetadata.{package.Name}={package.Version.GetSerializedVersion()}.json", [result]);
         }
         else
         {
-            // await LogResultAsync($"FetchPackageMetadata.{package.Name}={package.Version.GetSerializedVersion()}.json");
+            await LogResultAsync($"FetchPackageMetadata.{package.Name}={package.Version.GetSerializedVersion()}.json");
         }
-
+*/
         return result;
     }
 /*
