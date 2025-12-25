@@ -31,14 +31,13 @@ public sealed class DependencyUpdateProcessor(
         {
             if (dependency.NugetPackage.GetVersion() is { } currentVersion)
             {
-                // mark current version as valid
-                packageFlags[new Package(dependency.NugetPackage.GetPackageName(), currentVersion)] = dependency
-                    .TargetFrameworks
-                    .AsValueEnumerable()
-                    .ToDictionary(
-                        x => x,
-                        _ => EDependencyFlag.Valid
-                    );
+                var currentPackage = new Package(dependency.NugetPackage.GetPackageName(), currentVersion);
+                var frameworkFlags = GetOrInitializeFrameworkFlags(packageFlags, currentPackage);
+
+                foreach (var targetFrameworks in dependency.TargetFrameworks)
+                {
+                    frameworkFlags[targetFrameworks] = EDependencyFlag.Valid;
+                }
             }
 
             foreach (var possiblePackageVersion in possiblePackageVersions)
@@ -96,12 +95,7 @@ public sealed class DependencyUpdateProcessor(
             var dependentPackage = new Package(packageDependency.Id, minVersion);
             dependentPackages.Add(dependentPackage);
 
-            // Initialize per-framework flags for this package if needed
-            if (!packageFlags.TryGetValue(dependentPackage, out var frameworkFlags))
-            {
-                frameworkFlags = new Dictionary<NugetTargetFramework, EDependencyFlag>();
-                packageFlags[dependentPackage] = frameworkFlags;
-            }
+            var frameworkFlags = GetOrInitializeFrameworkFlags(packageFlags, dependentPackage);
 
             var shouldCheckDependency = ProcessTargetFrameworks(
                 ignoreResolver,
@@ -119,6 +113,21 @@ public sealed class DependencyUpdateProcessor(
         }
 
         return dependentPackages;
+    }
+
+    private static IDictionary<NugetTargetFramework, EDependencyFlag> GetOrInitializeFrameworkFlags(
+        IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags,
+        Package dependentPackage
+    )
+    {
+        // Initialize per-framework flags for this package if needed
+        if (!packageFlags.TryGetValue(dependentPackage, out var frameworkFlags))
+        {
+            frameworkFlags = new Dictionary<NugetTargetFramework, EDependencyFlag>();
+            packageFlags[dependentPackage] = frameworkFlags;
+        }
+
+        return frameworkFlags;
     }
 
     /// <summary>
