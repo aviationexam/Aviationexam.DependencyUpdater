@@ -41,4 +41,14 @@ public interface IRepositoryClient
         PullRequest pullRequest,
         CancellationToken cancellationToken
     );
+
+    Task ClosePullRequestAsync(
+        string pullRequestId,
+        CancellationToken cancellationToken
+    );
+
+    Task ReopenPullRequestAsync(
+        string pullRequestId,
+        CancellationToken cancellationToken
+    );
 }

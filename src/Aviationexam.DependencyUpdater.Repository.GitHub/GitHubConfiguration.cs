@@ -21,4 +21,11 @@ public sealed class GitHubConfiguration : IRepositoryPlatformConfiguration
     /// The GitHub personal access token (PAT) used for authentication.
     /// </summary>
     public required string Token { get; set; }
+
+    /// <summary>
+    /// Close and reopen pull request after creation to trigger CI workflows.
+    /// This is a workaround for GitHub Actions GITHUB_TOKEN limitation where
+    /// workflows do not trigger on pull requests created by the token.
+    /// </summary>
+    public bool CyclePullRequestOnCreation { get; set; } = true;
 }

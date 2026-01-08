@@ -6,7 +6,8 @@ namespace Aviationexam.DependencyUpdater;
 public sealed class GitHubConfigurationBinder(
     Option<string> owner,
     Option<string> repository,
-    Option<string> token
+    Option<string> token,
+    Option<bool> cyclePullRequestOnCreation
 ) : IBinder<GitHubConfiguration>
 {
     public GitHubConfiguration CreateValue(
@@ -16,5 +17,6 @@ public sealed class GitHubConfigurationBinder(
         Owner = parseResult.GetRequiredValue(owner),
         Repository = parseResult.GetRequiredValue(repository),
         Token = parseResult.GetRequiredValue(token),
+        CyclePullRequestOnCreation = parseResult.GetValue(cyclePullRequestOnCreation),
     };
 }
