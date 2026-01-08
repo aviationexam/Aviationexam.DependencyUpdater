@@ -239,7 +239,28 @@ public class RepositoryGitHubClient(
             }
         }
 
-        return pullRequest.Number.ToString();
+        var pullRequestId = pullRequest.Number.ToString();
+
+        // Cycle PR to trigger CI workflows if enabled
+        // This is a workaround for GitHub Actions GITHUB_TOKEN limitation where
+        // workflows do not trigger on pull requests created by the token
+        if (gitHubConfiguration.CyclePullRequestOnCreation)
+        {
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation("Cycling pull request {pullRequestId} (close and reopen) to trigger CI workflows", pullRequestId);
+            }
+
+            await ClosePullRequestAsync(pullRequestId, cancellationToken);
+            await ReopenPullRequestAsync(pullRequestId, cancellationToken);
+
+            if (logger.IsEnabled(LogLevel.Trace))
+            {
+                logger.LogTrace("Successfully cycled pull request {pullRequestId}", pullRequestId);
+            }
+        }
+
+        return pullRequestId;
     }
 
     public async Task UpdatePullRequestAsync(
@@ -322,6 +343,56 @@ public class RepositoryGitHubClient(
             {
                 logger.LogWarning(ex, "Failed to delete remote branch {Branch}", pullRequest.BranchName);
             }
+        }
+    }
+
+    public async Task ClosePullRequestAsync(
+        string pullRequestId,
+        CancellationToken cancellationToken
+    )
+    {
+        var pullRequestNumber = int.Parse(pullRequestId);
+
+        var pullRequestUpdate = new PullRequestUpdate
+        {
+            State = ItemState.Closed,
+        };
+
+        await gitHubClient.PullRequest.Update(
+            gitHubConfiguration.Owner,
+            gitHubConfiguration.Repository,
+            pullRequestNumber,
+            pullRequestUpdate
+        );
+
+        if (logger.IsEnabled(LogLevel.Trace))
+        {
+            logger.LogTrace("Closed pull request {PullRequestId}", pullRequestId);
+        }
+    }
+
+    public async Task ReopenPullRequestAsync(
+        string pullRequestId,
+        CancellationToken cancellationToken
+    )
+    {
+        var pullRequestNumber = int.Parse(pullRequestId);
+
+        var pullRequestUpdate = new PullRequestUpdate
+        {
+            State = ItemState.Open,
+        };
+
+        await gitHubClient.PullRequest.Update(
+            gitHubConfiguration.Owner,
+            gitHubConfiguration.Repository,
+            pullRequestNumber,
+            pullRequestUpdate
+        );
+
+        if (logger.IsEnabled(LogLevel.Trace))
+        {
+            logger.LogTrace("Reopened pull request {PullRequestId}", pullRequestId);
         }
     }
 
