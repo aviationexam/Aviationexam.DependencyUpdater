@@ -27,5 +27,5 @@ public sealed class GitHubConfiguration : IRepositoryPlatformConfiguration
     /// This is a workaround for GitHub Actions GITHUB_TOKEN limitation where
     /// workflows do not trigger on pull requests created by the token.
     /// </summary>
-    public bool CyclePullRequestOnCreation { get; set; } = true;
+    public bool CyclePullRequestOnCreation { get; set; }
 }
