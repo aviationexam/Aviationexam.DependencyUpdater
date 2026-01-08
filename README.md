@@ -163,8 +163,38 @@ Required when using the `AzureDevOps` subcommand:
 
 Required when using the `GitHub` subcommand:
 
-| Argument     | Required | Description                                                 |
-|--------------|:--------:|-------------------------------------------------------------|
-| --owner      |    Y     | GitHub repository owner (organization or user account name) |
-| --repository |    Y     | GitHub repository name                                      |
-| --token      |    Y     | GitHub personal access token (requires `repo` scope)        |
+| Argument                          | Required | Default | Description                                                                          |
+|-----------------------------------|:--------:|:-------:|--------------------------------------------------------------------------------------|
+| --owner                           |    Y     |         | GitHub repository owner (organization or user account name)                          |
+| --repository                      |    Y     |         | GitHub repository name                                                               |
+| --token                           |    Y     |         | GitHub personal access token (requires `repo` scope)                                 |
+| --cycle-pull-request-on-creation  |    N     |  true   | Close and reopen PRs after creation to trigger CI workflows (workaround for GITHUB_TOKEN limitation) |
+
+#### GitHub Token Limitations and Workarounds
+
+When using GitHub Actions' default `GITHUB_TOKEN`, workflows do not automatically trigger on pull requests created by the token. This is a [known limitation](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow) designed to prevent accidental workflow loops.
+
+**Workaround 1: PR Cycling (Default)**
+
+By default, the tool automatically closes and reopens newly created pull requests to trigger CI workflows. This behavior is controlled by the `--cycle-pull-request-on-creation` parameter (default: `true`).
+
+To disable this behavior:
+```sh
+dotnet dependency-updater \
+  GitHub \
+  --owner "<owner>" \
+  --repository "<repo>" \
+  --token "<token>" \
+  --cycle-pull-request-on-creation false
+```
+
+**Workaround 2: Custom PAT**
+
+Alternatively, use a custom Personal Access Token (PAT) with `repo` scope instead of `GITHUB_TOKEN`. PRs created with a custom PAT will trigger workflows normally, and you can disable PR cycling:
+
+```yaml
+- uses: aviationexam/Aviationexam.DependencyUpdater@v1
+  with:
+    github-token: ${{ secrets.CUSTOM_PAT }}
+    cycle-pull-request-on-creation: false
+```
