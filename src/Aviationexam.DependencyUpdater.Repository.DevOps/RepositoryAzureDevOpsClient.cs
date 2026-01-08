@@ -241,4 +241,20 @@ public class RepositoryAzureDevOpsClient(
 
         logger.LogTrace("Deleted remote branch {Branch}", pullRequest.BranchName);
     }
+
+    public Task ClosePullRequestAsync(
+        string pullRequestId,
+        CancellationToken cancellationToken
+    )
+    {
+        throw new System.NotImplementedException("Pull request cycling is not supported for Azure DevOps. This is a GitHub-specific workaround.");
+    }
+
+    public Task ReopenPullRequestAsync(
+        string pullRequestId,
+        CancellationToken cancellationToken
+    )
+    {
+        throw new System.NotImplementedException("Pull request cycling is not supported for Azure DevOps. This is a GitHub-specific workaround.");
+    }
 }
