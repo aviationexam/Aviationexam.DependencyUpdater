@@ -29,14 +29,6 @@ public sealed class GitHubCommand : Command
         Arity = ArgumentArity.ExactlyOne,
     };
 
-    private readonly Option<bool> _cyclePullRequestOnCreation = new("--cycle-pull-request-on-creation")
-    {
-        Description = "Close and reopen pull request after creation to trigger CI workflows (workaround for GITHUB_TOKEN limitation).",
-        Required = false,
-        Arity = ArgumentArity.ZeroOrOne,
-        DefaultValueFactory = _ => true,
-    };
-
     public GitHubCommand() : base(
         nameof(EPlatformSelection.GitHub), "Updates dependencies in GitHub repositories."
     )
@@ -44,13 +36,12 @@ public sealed class GitHubCommand : Command
         Options.Add(_owner);
         Options.Add(_repository);
         Options.Add(_token);
-        Options.Add(_cyclePullRequestOnCreation);
     }
 
     public IServiceCollection ConfigureServices(
         IServiceCollection serviceCollection,
         ParseResult parseResult
     ) => serviceCollection
-        .AddBinder(parseResult, new GitHubConfigurationBinder(_owner, _repository, _token, _cyclePullRequestOnCreation))
+        .AddBinder(parseResult, new GitHubConfigurationBinder(_owner, _repository, _token))
         .AddSingleton<IRepositoryPlatformConfiguration>(x => x.GetRequiredService<GitHubConfiguration>());
 }
