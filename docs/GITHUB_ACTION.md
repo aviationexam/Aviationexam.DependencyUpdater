@@ -141,91 +141,28 @@ All inputs are optional and have sensible defaults:
 | `repository`                       | GitHub repository name                                                               | `${{ github.event.repository.name }}` | No       |
 | `dotnet-version`                   | .NET SDK version to use (use `skip` to skip .NET setup)                              | `10.0.x`                              | No       |
 | `tool-version`                     | Tool version to install (`latest` or specific version like `0.4.0`)                  | `latest`                              | No       |
-| `cycle-pull-request-on-creation`   | Close and reopen PRs after creation to trigger CI workflows (workaround for GITHUB_TOKEN limitation) | `true`                                | No       |
 
 **Notes:**
 
 - Configuration files are automatically discovered. No need to specify the path.
 - The `tool-version` defaults to `latest` which installs the newest stable release. You can pin to a specific version (e.g., `0.4.0`) for reproducibility.
-- The `cycle-pull-request-on-creation` parameter defaults to `true` to work around GitHub's GITHUB_TOKEN limitation (see below).
 
-### GitHub Token Limitations and Workarounds
-
-#### Understanding the GITHUB_TOKEN Limitation
+### GitHub Token Limitations
 
 When using GitHub Actions' default `GITHUB_TOKEN`, workflows do not automatically trigger on pull requests created by the token. This is a [known GitHub limitation](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow) designed to prevent accidental workflow loops.
 
-This means that when the Dependency Updater creates a PR using `GITHUB_TOKEN`, your CI workflows (tests, builds, etc.) won't run automatically on that PR.
+To have CI workflows trigger on PRs created by the Dependency Updater, use a custom Personal Access Token (PAT) with `repo` scope:
 
-#### Workaround 1: PR Cycling (Default - Recommended)
-
-By default, the action automatically closes and reopens newly created pull requests to trigger CI workflows. This is controlled by the `cycle-pull-request-on-creation` input (default: `true`).
-
-**How it works:**
-1. The tool creates a new pull request
-2. Immediately closes the pull request
-3. Immediately reopens the pull request
-4. GitHub treats the reopen as a new event and triggers workflows
-
-**Benefits:**
-- No additional setup required
-- Works with the default `GITHUB_TOKEN`
-- No need to manage additional secrets
-
-**Example (using default behavior):**
-```yaml
-- name: Update dependencies
-  uses: aviationexam/Aviationexam.DependencyUpdater@v1
-  with:
-    github-token: ${{ secrets.GITHUB_TOKEN }}
-    # cycle-pull-request-on-creation defaults to true
-```
-
-**To disable PR cycling:**
-```yaml
-- name: Update dependencies
-  uses: aviationexam/Aviationexam.DependencyUpdater@v1
-  with:
-    github-token: ${{ secrets.GITHUB_TOKEN }}
-    cycle-pull-request-on-creation: false
-```
-
-#### Workaround 2: Custom Personal Access Token (Alternative)
-
-Alternatively, you can use a custom Personal Access Token (PAT) with `repo` scope instead of `GITHUB_TOKEN`. PRs created with a custom PAT will trigger workflows normally.
-
-**Steps:**
 1. Create a Personal Access Token with `repo` scope in GitHub Settings
 2. Add the token as a repository secret (e.g., `CUSTOM_PAT`)
-3. Use the custom PAT in your workflow and disable PR cycling:
+3. Use the custom PAT in your workflow:
 
 ```yaml
 - name: Update dependencies
   uses: aviationexam/Aviationexam.DependencyUpdater@v1
   with:
-    github-token: ${{ secrets.CUSTOM_PAT }}  # Use custom PAT instead of GITHUB_TOKEN
-    cycle-pull-request-on-creation: false     # Disable cycling since it's not needed
+    github-token: ${{ secrets.CUSTOM_PAT }}
 ```
-
-**Benefits:**
-- Workflows trigger normally without cycling
-- More straightforward behavior
-
-**Drawbacks:**
-- Requires creating and managing an additional secret
-- Token needs to be rotated periodically for security
-
-#### Which Workaround Should I Use?
-
-**Use PR Cycling (Default)** if:
-- You want the simplest setup with no additional secrets
-- You're okay with the PR appearing in the activity log as closed/reopened
-- You want to use GitHub's built-in `GITHUB_TOKEN`
-
-**Use Custom PAT** if:
-- You prefer cleaner PR history without close/reopen events
-- You already have a PAT for other purposes
-- You're comfortable managing additional secrets
 
 ### Advanced Examples
 
