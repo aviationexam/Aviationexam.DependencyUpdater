@@ -41,11 +41,6 @@ inputs:
     description: 'Version of Aviationexam.DependencyUpdater tool to install (use "latest" for latest stable version, or specify version like "0.4.0")'
     required: false
     default: 'latest'
-  
-  cycle-pull-request-on-creation:
-    description: 'Close and reopen pull request after creation to trigger CI workflows (workaround for GITHUB_TOKEN limitation)'
-    required: false
-    default: 'true'
 
 runs:
   using: 'composite'
@@ -90,9 +85,5 @@ runs:
           "--repository" "${{ inputs.repository }}"
           "--token" "${{ inputs.github-token }}"
         )
-        
-        if [ "${{ inputs.cycle-pull-request-on-creation }}" = "true" ]; then
-          ARGS+=("--cycle-pull-request-on-creation")
-        fi
-        
+
         dotnet dependency-updater "${ARGS[@]}"
