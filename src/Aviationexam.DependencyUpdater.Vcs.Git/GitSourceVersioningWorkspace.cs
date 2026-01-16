@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Threading;
 using ZLinq;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Aviationexam.DependencyUpdater.Vcs.Git;
 
@@ -166,7 +167,10 @@ public sealed class GitSourceVersioningWorkspace(
     {
         if (GetWorkspaceDirectory() is { } dir && !Directory.Exists(dir))
         {
-            logger.LogWarning("Workspace Directory {WorkspaceDirectory} does not exists", dir);
+            if (logger.IsEnabled(LogLevel.Warning))
+            {
+                logger.LogWarning("Workspace Directory {WorkspaceDirectory} does not exists", dir);
+            }
             return;
         }
 
@@ -175,7 +179,10 @@ public sealed class GitSourceVersioningWorkspace(
         {
             lock (gitRepositoryLock)
             {
-                logger.LogWarning("Unstaged changes exist in workdir, skipping rebase for branch {Branch}", _worktreeRepository.Head.FriendlyName);
+                if (logger.IsEnabled(LogLevel.Warning))
+                {
+                    logger.LogWarning("Unstaged changes exist in workdir, skipping rebase for branch {Branch}", _worktreeRepository.Head.FriendlyName);
+                }
             }
 
             return;
@@ -209,11 +216,17 @@ public sealed class GitSourceVersioningWorkspace(
             var sourceBranch = _worktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{sourceBranchName}"];
             if (sourceBranch is null)
             {
-                logger.LogWarning("Target branch {SourceBranchName} not found locally", sourceBranchName);
+                if (logger.IsEnabled(LogLevel.Warning))
+                {
+                    logger.LogWarning("Target branch {SourceBranchName} not found locally", sourceBranchName);
+                }
                 return; // remote branch doesn't exist
             }
 
-            logger.LogInformation("Rebasing {CurrentBranch} onto {SourceBranch}", branch.FriendlyName, sourceBranchName);
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation("Rebasing {CurrentBranch} onto {SourceBranch}", branch.FriendlyName, sourceBranchName);
+            }
 
             try
             {
@@ -229,7 +242,10 @@ public sealed class GitSourceVersioningWorkspace(
                 );
 
                 var rebaseResult = _worktreeRepository.Rebase.Start(_worktreeRepository.Head, sourceBranch, sourceBranch, identity, options);
-                logger.LogInformation("Rebase status: {RebaseResult}", rebaseResult.Status);
+                if (logger.IsEnabled(LogLevel.Information))
+                {
+                    logger.LogInformation("Rebase status: {RebaseResult}", rebaseResult.Status);
+                }
 
                 if (rebaseResult.Status is RebaseStatus.Conflicts)
                 {
@@ -240,7 +256,10 @@ public sealed class GitSourceVersioningWorkspace(
             }
             catch (Exception exception)
             {
-                logger.LogWarning(exception, "Rebase failed — restoring HEAD and workspace");
+                if (logger.IsEnabled(LogLevel.Warning))
+                {
+                    logger.LogWarning(exception, "Rebase failed — restoring HEAD and workspace");
+                }
 
                 ResetToOriginalHead(_worktreeRepository, originalHead, branch);
                 _worktreeRepository = worktree.WorktreeRepository;
@@ -289,7 +308,10 @@ public sealed class GitSourceVersioningWorkspace(
                 && sourceBranch.Tip.Equals(pushedBranch.Tip)
             )
             {
-                logger.LogInformation("Branch {BranchName} is empty, skipping push", canonicalName);
+                if (logger.IsEnabled(LogLevel.Information))
+                {
+                    logger.LogInformation("Branch {BranchName} is empty, skipping push", canonicalName);
+                }
 
                 return false;
             }
@@ -299,15 +321,21 @@ public sealed class GitSourceVersioningWorkspace(
                 && AreBranchesEquivalent(pushedBranch, remotePushedBranch, sourceBranch)
             )
             {
-                logger.LogInformation(
-                    "Branch {BranchName} has identical content and base as remote, skipping push",
-                    canonicalName
-                );
+                if (logger.IsEnabled(LogLevel.Information))
+                {
+                    logger.LogInformation(
+                        "Branch {BranchName} has identical content and base as remote, skipping push",
+                        canonicalName
+                    );
+                }
 
                 return false;
             }
 
-            logger.LogInformation("Push {BranchName}", canonicalName);
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation("Push {BranchName}", canonicalName);
+            }
 
             _worktreeRepository.Network.Push(
                 remote: _worktreeRepository.Network.Remotes[GitConstants.DefaultRemote],
@@ -352,12 +380,15 @@ public sealed class GitSourceVersioningWorkspace(
 
         using var changes = _worktreeRepository.Diff.Compare<TreeChanges>(localTip.Tree, remoteTip.Tree);
 
-        logger.LogInformation(
-            "Branch diff: {ChangeCount} file(s) changed between local {LocalCommit} and remote {RemoteCommit}",
-            changes.Count,
-            localTip.Id.Sha[..7],
-            remoteTip.Id.Sha[..7]
-        );
+        if (logger.IsEnabled(LogLevel.Information))
+        {
+            logger.LogInformation(
+                "Branch diff: {ChangeCount} file(s) changed between local {LocalCommit} and remote {RemoteCommit}",
+                changes.Count,
+                localTip.Id.Sha[..7],
+                remoteTip.Id.Sha[..7]
+            );
+        }
 
         return changes.Count == 0;
     }

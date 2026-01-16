@@ -28,7 +28,10 @@ public class NugetDirectoryPackagesPropsParser(
         // Check if file exists
         if (!fileSystem.Exists(directoryPackagesPropsFilePath))
         {
-            logger.LogError("csproj file not found at {path}", directoryPackagesPropsFilePath);
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError("csproj file not found at {path}", directoryPackagesPropsFilePath);
+            }
 
             return [];
         }

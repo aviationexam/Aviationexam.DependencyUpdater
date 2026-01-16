@@ -199,22 +199,28 @@ public sealed class PackageUpdater(
                     .JoinToString(", ")
                 : "unknown";
 
-            logger.LogError(
-                "Cannot update '{PackageName}' to version '{Version}': it depends on '{ConflictingPackageName}' version '{ConflictingPackageVersionRequired}', but the current solution uses version '{ConflictingPackageVersionCurrent}'",
-                nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
-                nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion(),
-                conflictingPackageVersion.Name,
-                conflictingPackageVersion.Version.GetSerializedVersion(),
-                conflictingVersionStr
-            );
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError(
+                    "Cannot update '{PackageName}' to version '{Version}': it depends on '{ConflictingPackageName}' version '{ConflictingPackageVersionRequired}', but the current solution uses version '{ConflictingPackageVersionCurrent}'",
+                    nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
+                    nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion(),
+                    conflictingPackageVersion.Name,
+                    conflictingPackageVersion.Version.GetSerializedVersion(),
+                    conflictingVersionStr
+                );
+            }
         }
         else
         {
-            logger.LogError(
-                "Cannot set version '{Version}' for package '{PackageName}' due to conflicting version constraints from other packages",
-                nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion(),
-                nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName()
-            );
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError(
+                    "Cannot set version '{Version}' for package '{PackageName}' due to conflicting version constraints from other packages",
+                    nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion(),
+                    nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName()
+                );
+            }
         }
     }
 

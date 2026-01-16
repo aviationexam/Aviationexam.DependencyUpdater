@@ -38,7 +38,7 @@ public sealed class GitSourceVersioning(
 
         process.OutputDataReceived += (_, args) =>
         {
-            if (!string.IsNullOrWhiteSpace(args.Data))
+            if (!string.IsNullOrWhiteSpace(args.Data) && logger.IsEnabled(Microsoft.Extensions.Logging.LogLevel.Trace))
             {
                 logger.LogTrace("[worktree prune] {Line}", args.Data);
             }
@@ -46,7 +46,7 @@ public sealed class GitSourceVersioning(
 
         process.ErrorDataReceived += (_, args) =>
         {
-            if (!string.IsNullOrWhiteSpace(args.Data))
+            if (!string.IsNullOrWhiteSpace(args.Data) && logger.IsEnabled(Microsoft.Extensions.Logging.LogLevel.Error))
             {
                 logger.LogError("[worktree prune] {Line}", args.Data);
             }
@@ -57,7 +57,7 @@ public sealed class GitSourceVersioning(
         process.BeginErrorReadLine();
         process.WaitForExit();
 
-        if (process.ExitCode != 0)
+        if (process.ExitCode != 0 && logger.IsEnabled(Microsoft.Extensions.Logging.LogLevel.Error))
         {
             logger.LogError("[worktree prune] failed with exit code {ExitCode}", process.ExitCode);
         }
@@ -134,7 +134,10 @@ public sealed class GitSourceVersioning(
             }
             catch (Exception e)
             {
-                logger.LogError(e, "Failed to create Git worktree '{WorktreeName}' in '{TargetDirectory}'", worktreeName, targetDirectory);
+                if (logger.IsEnabled(Microsoft.Extensions.Logging.LogLevel.Error))
+                {
+                    logger.LogError(e, "Failed to create Git worktree '{WorktreeName}' in '{TargetDirectory}'", worktreeName, targetDirectory);
+                }
 
                 throw;
             }

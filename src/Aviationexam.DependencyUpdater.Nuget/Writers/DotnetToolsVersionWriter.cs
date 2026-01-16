@@ -44,14 +44,20 @@ public sealed class DotnetToolsVersionWriter(
         }
         catch (JsonException e)
         {
-            logger.LogError(e, "Unable to parse in dotnet-tools.json: {path}", fullPath);
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError(e, "Unable to parse in dotnet-tools.json: {path}", fullPath);
+            }
 
             return ESetVersion.VersionNotSet;
         }
 
         if (jsonNode is null)
         {
-            logger.LogWarning("Unable to parse in dotnet-tools.json: {path}", fullPath);
+            if (logger.IsEnabled(LogLevel.Warning))
+            {
+                logger.LogWarning("Unable to parse in dotnet-tools.json: {path}", fullPath);
+            }
 
             return ESetVersion.VersionNotSet;
         }
@@ -61,7 +67,10 @@ public sealed class DotnetToolsVersionWriter(
             || tools is null
         )
         {
-            logger.LogWarning("No tools found in dotnet-tools.json: {path}", fullPath);
+            if (logger.IsEnabled(LogLevel.Warning))
+            {
+                logger.LogWarning("No tools found in dotnet-tools.json: {path}", fullPath);
+            }
 
             return ESetVersion.VersionNotSet;
         }

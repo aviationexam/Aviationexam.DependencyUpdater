@@ -38,11 +38,17 @@ public class IgnoreResolver(
 
                     if (isIgnored is null)
                     {
-                        logger.LogError("The {DependencyName}:{PackageVersion}, unknown ignoreRule {IgnoreRule}", dependencyName, proposedVersion, updateType);
+                        if (logger.IsEnabled(LogLevel.Error))
+                        {
+                            logger.LogError("The {DependencyName}:{PackageVersion}, unknown ignoreRule {IgnoreRule}", dependencyName, proposedVersion, updateType);
+                        }
                     }
                     else if (isIgnored is true)
                     {
-                        logger.LogDebug("The {DependencyName}:{PackageVersion} is ignored", dependencyName, proposedVersion);
+                        if (logger.IsEnabled(LogLevel.Debug))
+                        {
+                            logger.LogDebug("The {DependencyName}:{PackageVersion} is ignored", dependencyName, proposedVersion);
+                        }
                         return true;
                     }
                 }

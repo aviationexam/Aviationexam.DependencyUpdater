@@ -34,18 +34,27 @@ public sealed class TemporaryDirectoryProvider : IDisposable
         {
             if (Directory.Exists(TemporaryDirectory))
             {
-                _logger.LogTrace("Deleting temporary directory: {TemporaryDirectory}", TemporaryDirectory);
+                if (_logger.IsEnabled(LogLevel.Trace))
+                {
+                    _logger.LogTrace("Deleting temporary directory: {TemporaryDirectory}", TemporaryDirectory);
+                }
 
                 Directory.Delete(TemporaryDirectory, recursive: true);
             }
             else
             {
-                _logger.LogInformation("Unable to delete temporary directory: {TemporaryDirectory}. It does not exists anymore.", TemporaryDirectory);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Unable to delete temporary directory: {TemporaryDirectory}. It does not exists anymore.", TemporaryDirectory);
+                }
             }
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to delete temporary directory: {TemporaryDirectory}", TemporaryDirectory);
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError(e, "Unable to delete temporary directory: {TemporaryDirectory}", TemporaryDirectory);
+            }
         }
     }
 }

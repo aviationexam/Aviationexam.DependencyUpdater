@@ -82,11 +82,17 @@ public class RepositoryAzureDevOpsClient(
 
         if (pullRequestId is not null)
         {
-            logger.LogTrace("Found existing pull request: {pullRequestId} for branch {BranchName}", pullRequestId, branchName);
+            if (logger.IsEnabled(LogLevel.Trace))
+            {
+                logger.LogTrace("Found existing pull request: {pullRequestId} for branch {BranchName}", pullRequestId, branchName);
+            }
         }
         else
         {
-            logger.LogTrace("No pull request found for branch {BranchName}", branchName);
+            if (logger.IsEnabled(LogLevel.Trace))
+            {
+                logger.LogTrace("No pull request found for branch {BranchName}", branchName);
+            }
         }
 
         return pullRequestId;
@@ -142,7 +148,10 @@ public class RepositoryAzureDevOpsClient(
             cancellationToken: context.CancellationToken
         ), ResilienceContextPool.Shared.Get(branchName.Replace('/', '-'), cancellationToken), new { gitClient, devOpsConfiguration, pullRequestRequest });
 
-        logger.LogTrace("Created pull request {pullRequestId} for branch {BranchName}", pullRequest.PullRequestId, branchName);
+        if (logger.IsEnabled(LogLevel.Trace))
+        {
+            logger.LogTrace("Created pull request {pullRequestId} for branch {BranchName}", pullRequest.PullRequestId, branchName);
+        }
 
         var updated = new GitPullRequest
         {
@@ -202,7 +211,10 @@ public class RepositoryAzureDevOpsClient(
             cancellationToken: cancellationToken
         );
 
-        logger.LogTrace("Update pull request {pullRequestId}", pullRequestId);
+        if (logger.IsEnabled(LogLevel.Trace))
+        {
+            logger.LogTrace("Update pull request {pullRequestId}", pullRequestId);
+        }
     }
 
     public async Task AbandonPullRequestAsync(
@@ -223,7 +235,10 @@ public class RepositoryAzureDevOpsClient(
             cancellationToken
         );
 
-        logger.LogTrace("Abandoned pull request {PullRequestId}", pullRequest.PullRequestId);
+        if (logger.IsEnabled(LogLevel.Trace))
+        {
+            logger.LogTrace("Abandoned pull request {PullRequestId}", pullRequest.PullRequestId);
+        }
 
         await gitClient.UpdateRefsAsync(
             [
@@ -239,7 +254,10 @@ public class RepositoryAzureDevOpsClient(
             cancellationToken: cancellationToken
         );
 
-        logger.LogTrace("Deleted remote branch {Branch}", pullRequest.BranchName);
+        if (logger.IsEnabled(LogLevel.Trace))
+        {
+            logger.LogTrace("Deleted remote branch {Branch}", pullRequest.BranchName);
+        }
     }
 
     public Task ClosePullRequestAsync(

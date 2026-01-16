@@ -122,7 +122,10 @@ public sealed class DependencyAnalyzer(
 
                 if (futureVersions.Count == 0)
                 {
-                    logger.LogDebug("The dependency {DependencyName} with version {Version} is up to date", dependencyName, dependencyVersion);
+                    if (logger.IsEnabled(LogLevel.Debug))
+                    {
+                        logger.LogDebug("The dependency {DependencyName} with version {Version} is up to date", dependencyName, dependencyVersion);
+                    }
                     return;
                 }
 
@@ -132,7 +135,10 @@ public sealed class DependencyAnalyzer(
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error processing dependency {DependencyName} with version {Version}", dependencyName, dependencyVersion);
+                if (logger.IsEnabled(LogLevel.Error))
+                {
+                    logger.LogError(ex, "Error processing dependency {DependencyName} with version {Version}", dependencyName, dependencyVersion);
+                }
             }
         });
 

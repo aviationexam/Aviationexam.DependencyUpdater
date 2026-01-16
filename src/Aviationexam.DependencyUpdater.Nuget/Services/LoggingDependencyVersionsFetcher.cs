@@ -129,7 +129,10 @@ public sealed class LoggingDependencyVersionsFetcher(
         await fetchDependencyVersionsFactoryMethodsStreamWriter.FlushAsync();
         await fetchDependencyVersionsFactoryMethodsFileStream.FlushAsync();
 
-        logger.LogInformation("Captured package data to {FilePath}", fetchDependencyVersionsFilePath);
+        if (logger.IsEnabled(LogLevel.Information))
+        {
+            logger.LogInformation("Captured package data to {FilePath}", fetchDependencyVersionsFilePath);
+        }
     }
 
     public static string GetNugetTargetFramework(

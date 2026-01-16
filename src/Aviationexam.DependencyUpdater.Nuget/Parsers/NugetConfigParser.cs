@@ -24,7 +24,10 @@ public class NugetConfigParser(
 
         if (!fileSystem.Exists(configFilePath))
         {
-            logger.LogError("NuGet config file not found: {path}", configFilePath);
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError("NuGet config file not found: {path}", configFilePath);
+            }
 
             yield break;
         }
@@ -42,7 +45,10 @@ public class NugetConfigParser(
 
         if (packageSourcesElement is null)
         {
-            logger.LogWarning("No <packageSources> section found in: {path}", configFilePath);
+            if (logger.IsEnabled(LogLevel.Warning))
+            {
+                logger.LogWarning("No <packageSources> section found in: {path}", configFilePath);
+            }
 
             yield break;
         }

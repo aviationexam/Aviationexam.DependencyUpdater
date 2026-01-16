@@ -28,7 +28,10 @@ public class NugetCsprojParser(
 
         if (!fileSystem.Exists(csprojFilePath))
         {
-            logger.LogError("File not found: {path}", csprojFilePath);
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError("File not found: {path}", csprojFilePath);
+            }
             yield break;
         }
 
@@ -87,7 +90,10 @@ public class NugetCsprojParser(
 
             if (!fileSystem.Exists(Path.Join(repositoryPath, importedPath)))
             {
-                logger.LogError("Imported file not found: {path}", importedPath);
+                if (logger.IsEnabled(LogLevel.Error))
+                {
+                    logger.LogError("Imported file not found: {path}", importedPath);
+                }
                 continue;
             }
 
