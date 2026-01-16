@@ -294,6 +294,19 @@ public sealed class GitSourceVersioningWorkspace(
                 return false;
             }
 
+            if (
+                remotePushedBranch is not null
+                && AreBranchesEquivalent(pushedBranch, remotePushedBranch, sourceBranch)
+            )
+            {
+                logger.LogInformation(
+                    "Branch {BranchName} has identical content and base as remote, skipping push",
+                    canonicalName
+                );
+
+                return false;
+            }
+
             logger.LogInformation("Push {BranchName}", canonicalName);
 
             _worktreeRepository.Network.Push(
@@ -308,5 +321,44 @@ public sealed class GitSourceVersioningWorkspace(
 
 
         return true;
+    }
+
+    /// <summary>
+    /// Checks if local and remote branches have identical content and share the same merge base.
+    /// Used to skip redundant force pushes after rebase (rebase changes commit IDs via committer timestamp).
+    /// </summary>
+    private bool AreBranchesEquivalent(Branch localBranch, Branch remoteBranch, Branch sourceBranch)
+    {
+        var localTip = localBranch.Tip;
+        var remoteTip = remoteBranch.Tip;
+
+        if (localTip.Id.Equals(remoteTip.Id))
+        {
+            return true;
+        }
+
+        var localMergeBase = _worktreeRepository.ObjectDatabase.FindMergeBase(localTip, sourceBranch.Tip);
+        var remoteMergeBase = _worktreeRepository.ObjectDatabase.FindMergeBase(remoteTip, sourceBranch.Tip);
+
+        if (localMergeBase is null || remoteMergeBase is null)
+        {
+            return false;
+        }
+
+        if (!localMergeBase.Id.Equals(remoteMergeBase.Id))
+        {
+            return false;
+        }
+
+        using var changes = _worktreeRepository.Diff.Compare<TreeChanges>(localTip.Tree, remoteTip.Tree);
+
+        logger.LogInformation(
+            "Branch diff: {ChangeCount} file(s) changed between local {LocalCommit} and remote {RemoteCommit}",
+            changes.Count,
+            localTip.Id.Sha[..7],
+            remoteTip.Id.Sha[..7]
+        );
+
+        return changes.Count == 0;
     }
 }
