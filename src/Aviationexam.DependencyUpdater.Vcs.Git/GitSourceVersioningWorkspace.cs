@@ -332,9 +332,9 @@ public sealed class GitSourceVersioningWorkspace(
         var localTip = localBranch.Tip;
         var remoteTip = remoteBranch.Tip;
 
-        if (!localTip.Tree.Id.Equals(remoteTip.Tree.Id))
+        if (localTip.Id.Equals(remoteTip.Id))
         {
-            return false;
+            return true;
         }
 
         var localMergeBase = _worktreeRepository.ObjectDatabase.FindMergeBase(localTip, sourceBranch.Tip);
@@ -345,6 +345,11 @@ public sealed class GitSourceVersioningWorkspace(
             return false;
         }
 
-        return localMergeBase.Id.Equals(remoteMergeBase.Id);
+        if (!localMergeBase.Id.Equals(remoteMergeBase.Id))
+        {
+            return false;
+        }
+
+        return localTip.Tree.Id.Equals(remoteTip.Tree.Id);
     }
 }
