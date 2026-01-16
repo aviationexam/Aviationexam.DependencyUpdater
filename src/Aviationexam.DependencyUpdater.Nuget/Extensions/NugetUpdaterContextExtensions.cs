@@ -96,10 +96,7 @@ public static class NugetUpdaterContextExtensions
 
             if (logger.IsEnabled(LogLevel.Warning))
             {
-                if (logger.IsEnabled(LogLevel.Warning))
-                {
-                    logger.LogWarning("Unable to find packageSource for dependency {dependencyName}", packageName);
-                }
+                logger.LogWarning("Unable to find packageSource for dependency {dependencyName}", packageName);
             }
         }
     }
