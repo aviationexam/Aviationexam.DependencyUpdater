@@ -3,11 +3,11 @@ using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Vcs.Git.Extensions;
 using LibGit2Sharp;
 using Microsoft.Extensions.Logging;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 using System;
 using System.IO;
 using System.Threading;
 using ZLinq;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Aviationexam.DependencyUpdater.Vcs.Git;
 
