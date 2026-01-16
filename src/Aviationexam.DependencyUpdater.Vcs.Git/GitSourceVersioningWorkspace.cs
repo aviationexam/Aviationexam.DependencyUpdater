@@ -324,7 +324,7 @@ public sealed class GitSourceVersioningWorkspace(
     }
 
     /// <summary>
-    /// Checks if local and remote branches have identical tree content and share the same merge base.
+    /// Checks if local and remote branches have identical content and share the same merge base.
     /// Used to skip redundant force pushes after rebase (rebase changes commit IDs via committer timestamp).
     /// </summary>
     private bool AreBranchesEquivalent(Branch localBranch, Branch remoteBranch, Branch sourceBranch)
@@ -350,6 +350,8 @@ public sealed class GitSourceVersioningWorkspace(
             return false;
         }
 
-        return localTip.Tree.Id.Equals(remoteTip.Tree.Id);
+        using var changes = _worktreeRepository.Diff.Compare<TreeChanges>(localTip.Tree, remoteTip.Tree);
+
+        return changes.Count == 0;
     }
 }
