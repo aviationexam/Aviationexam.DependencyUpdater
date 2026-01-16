@@ -294,6 +294,19 @@ public sealed class GitSourceVersioningWorkspace(
                 return false;
             }
 
+            if (
+                remotePushedBranch is not null
+                && AreBranchesEquivalent(pushedBranch, remotePushedBranch, sourceBranch)
+            )
+            {
+                logger.LogInformation(
+                    "Branch {BranchName} has identical content and base as remote, skipping push",
+                    canonicalName
+                );
+
+                return false;
+            }
+
             logger.LogInformation("Push {BranchName}", canonicalName);
 
             _worktreeRepository.Network.Push(
@@ -308,5 +321,30 @@ public sealed class GitSourceVersioningWorkspace(
 
 
         return true;
+    }
+
+    /// <summary>
+    /// Checks if local and remote branches have identical tree content and share the same merge base.
+    /// Used to skip redundant force pushes after rebase (rebase changes commit IDs via committer timestamp).
+    /// </summary>
+    private bool AreBranchesEquivalent(Branch localBranch, Branch remoteBranch, Branch sourceBranch)
+    {
+        var localTip = localBranch.Tip;
+        var remoteTip = remoteBranch.Tip;
+
+        if (!localTip.Tree.Id.Equals(remoteTip.Tree.Id))
+        {
+            return false;
+        }
+
+        var localMergeBase = _worktreeRepository.ObjectDatabase.FindMergeBase(localTip, sourceBranch.Tip);
+        var remoteMergeBase = _worktreeRepository.ObjectDatabase.FindMergeBase(remoteTip, sourceBranch.Tip);
+
+        if (localMergeBase is null || remoteMergeBase is null)
+        {
+            return false;
+        }
+
+        return localMergeBase.Id.Equals(remoteMergeBase.Id);
     }
 }
