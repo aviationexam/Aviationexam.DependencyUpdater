@@ -59,7 +59,10 @@ public class AzureDevOpsUndocumentedClient(
 
         _tokenCache[azureDevopsResourceId] = accessToken;
 
-        logger.LogTrace("Created AccessToken for {ResourceId}", azureDevopsResourceId);
+        if (logger.IsEnabled(LogLevel.Trace))
+        {
+            logger.LogTrace("Created AccessToken for {ResourceId}", azureDevopsResourceId);
+        }
 
         return accessToken.Token;
     }
@@ -100,13 +103,16 @@ public class AzureDevOpsUndocumentedClient(
 
             if (azSideCarResponse.StatusCode is not HttpStatusCode.OK)
             {
-                logger.LogError(
-                    "AZ side car request for {ResourceId} failed with status code {StatusCode} ({StatusCodeNumber}), and response:\n{Response}",
-                    azureDevopsResourceId,
-                    azSideCarResponse.StatusCode,
-                    (int) azSideCarResponse.StatusCode,
-                    await azSideCarResponse.Content.ReadAsStringAsync(cancellationToken)
-                );
+                if (logger.IsEnabled(LogLevel.Error))
+                {
+                    logger.LogError(
+                        "AZ side car request for {ResourceId} failed with status code {StatusCode} ({StatusCodeNumber}), and response:\n{Response}",
+                        azureDevopsResourceId,
+                        azSideCarResponse.StatusCode,
+                        (int) azSideCarResponse.StatusCode,
+                        await azSideCarResponse.Content.ReadAsStringAsync(cancellationToken)
+                    );
+                }
 
                 return null;
             }
@@ -120,7 +126,10 @@ public class AzureDevOpsUndocumentedClient(
 
             if (response is null)
             {
-                logger.LogError("Failed to deserialize AZ side car response for {ResourceId}.", azureDevopsResourceId);
+                if (logger.IsEnabled(LogLevel.Error))
+                {
+                    logger.LogError("Failed to deserialize AZ side car response for {ResourceId}.", azureDevopsResourceId);
+                }
 
                 return null;
             }
@@ -129,7 +138,10 @@ public class AzureDevOpsUndocumentedClient(
         }
         catch (HttpRequestException e)
         {
-            logger.LogError(e, "Failed to connect to the AZ side car: {RequestUri}.", requestUri);
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError(e, "Failed to connect to the AZ side car: {RequestUri}.", requestUri);
+            }
 
             return null;
         }
@@ -151,7 +163,10 @@ public class AzureDevOpsUndocumentedClient(
         }
         catch (CredentialUnavailableException e)
         {
-            logger.LogError(e, "Failed to obtain AccessToken for {ResourceId}", azureDevopsResourceId);
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError(e, "Failed to obtain AccessToken for {ResourceId}", azureDevopsResourceId);
+            }
             return null;
         }
     }
@@ -220,12 +235,15 @@ public class AzureDevOpsUndocumentedClient(
 
         if (hierarchyResponse.StatusCode is not HttpStatusCode.OK)
         {
-            logger.LogError(
-                "HierarchyQuery failed with status code {StatusCode} ({StatusCodeNumber}), and response:\n{Response}",
-                hierarchyResponse.StatusCode,
-                (int) hierarchyResponse.StatusCode,
-                await hierarchyResponse.Content.ReadAsStringAsync(cancellationToken)
-            );
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError(
+                    "HierarchyQuery failed with status code {StatusCode} ({StatusCodeNumber}), and response:\n{Response}",
+                    hierarchyResponse.StatusCode,
+                    (int) hierarchyResponse.StatusCode,
+                    await hierarchyResponse.Content.ReadAsStringAsync(cancellationToken)
+                );
+            }
 
             return null;
         }
@@ -283,11 +301,14 @@ public class AzureDevOpsUndocumentedClient(
 
         if (manualUpstreamIngestionResponse.StatusCode is not HttpStatusCode.NoContent)
         {
-            logger.LogError(
-                "ManualUpstreamIngestion failed with status code {StatusCode}, and response:\n{Response}",
-                manualUpstreamIngestionResponse.StatusCode,
-                await manualUpstreamIngestionResponse.Content.ReadAsStringAsync(cancellationToken)
-            );
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError(
+                    "ManualUpstreamIngestion failed with status code {StatusCode}, and response:\n{Response}",
+                    manualUpstreamIngestionResponse.StatusCode,
+                    await manualUpstreamIngestionResponse.Content.ReadAsStringAsync(cancellationToken)
+                );
+            }
         }
     }
 }

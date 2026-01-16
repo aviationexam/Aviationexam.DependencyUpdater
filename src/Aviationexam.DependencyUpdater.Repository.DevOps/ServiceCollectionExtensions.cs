@@ -57,12 +57,15 @@ public static class ServiceCollectionExtensions
                     {
                         var logger = context.ServiceProvider.GetRequiredService<ILogger<GitHttpClient>>();
 
-                        logger.LogWarning(
-                            args.Outcome.Exception,
-                            "Error creating pull request (Attempt: {RetryCount}). Retrying in {RetryTimeSpan}...",
-                            args.AttemptNumber,
-                            args.RetryDelay
-                        );
+                        if (logger.IsEnabled(LogLevel.Warning))
+                        {
+                            logger.LogWarning(
+                                args.Outcome.Exception,
+                                "Error creating pull request (Attempt: {RetryCount}). Retrying in {RetryTimeSpan}...",
+                                args.AttemptNumber,
+                                args.RetryDelay
+                            );
+                        }
 
                         return default;
                     },
