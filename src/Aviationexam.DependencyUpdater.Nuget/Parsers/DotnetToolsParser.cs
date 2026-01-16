@@ -23,7 +23,10 @@ public class DotnetToolsParser(
 
         if (!fileSystem.Exists(dotnetToolFullPath))
         {
-            logger.LogError("File not found: {path}", dotnetToolFullPath);
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError("File not found: {path}", dotnetToolFullPath);
+            }
             yield break;
         }
 
@@ -39,7 +42,10 @@ public class DotnetToolsParser(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to parse dotnet-tools.json: {path}", dotnetToolFullPath);
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError(ex, "Failed to parse dotnet-tools.json: {path}", dotnetToolFullPath);
+            }
         }
 
         if (manifest?.Tools is null)

@@ -58,11 +58,15 @@ public class NugetCli(
 
         process.Exited += [SuppressMessage("ReSharper", "AccessToDisposedClosure")] (_, _) =>
         {
-            logger.Log(
-                process.ExitCode is 0 ? LogLevel.Trace : LogLevel.Error,
-                "The dotnet restore exit code is: {ExitCode}",
-                process.ExitCode
-            );
+            var logLevel = process.ExitCode is 0 ? LogLevel.Trace : LogLevel.Error;
+            if (logger.IsEnabled(logLevel))
+            {
+                logger.Log(
+                    logLevel,
+                    "The dotnet restore exit code is: {ExitCode}",
+                    process.ExitCode
+                );
+            }
 
             tcs.TrySetResult(process.ExitCode == 0);
         };
@@ -74,7 +78,7 @@ public class NugetCli(
         {
             while (await process.StandardOutput.ReadLineAsync(cancellationToken) is { } line)
             {
-                if (!string.IsNullOrWhiteSpace(line))
+                if (!string.IsNullOrWhiteSpace(line) && logger.IsEnabled(LogLevel.Trace))
                 {
                     logger.LogTrace("[restore] {Line}", line);
                 }
@@ -85,7 +89,7 @@ public class NugetCli(
         {
             while (await process.StandardError.ReadLineAsync(cancellationToken) is { } line)
             {
-                if (!string.IsNullOrWhiteSpace(line))
+                if (!string.IsNullOrWhiteSpace(line) && logger.IsEnabled(LogLevel.Error))
                 {
                     logger.LogError("[restore] {Line}", line);
                 }
@@ -94,7 +98,10 @@ public class NugetCli(
 
         await using var register = cancellationToken.Register([SuppressMessage("ReSharper", "AccessToDisposedClosure")] () =>
         {
-            logger.LogError("The dotnet restore killed");
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError("The dotnet restore killed");
+            }
 
             process.Kill(entireProcessTree: true);
         });

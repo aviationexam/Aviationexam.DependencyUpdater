@@ -10,19 +10,61 @@ public class NuGetLoggerAdapter(
     ILogger<NuGetLoggerAdapter> logger
 ) : ILogger
 {
-    public void LogDebug(string data) => logger.LogDebug(data);
+    public void LogDebug(string data)
+    {
+        if (logger.IsEnabled(Microsoft.Extensions.Logging.LogLevel.Debug))
+        {
+            logger.LogDebug(data);
+        }
+    }
 
-    public void LogVerbose(string data) => logger.LogTrace(data);
+    public void LogVerbose(string data)
+    {
+        if (logger.IsEnabled(Microsoft.Extensions.Logging.LogLevel.Trace))
+        {
+            logger.LogTrace(data);
+        }
+    }
 
-    public void LogInformation(string data) => logger.LogInformation(data);
+    public void LogInformation(string data)
+    {
+        if (logger.IsEnabled(Microsoft.Extensions.Logging.LogLevel.Information))
+        {
+            logger.LogInformation(data);
+        }
+    }
 
-    public void LogMinimal(string data) => logger.LogInformation(data);
+    public void LogMinimal(string data)
+    {
+        if (logger.IsEnabled(Microsoft.Extensions.Logging.LogLevel.Information))
+        {
+            logger.LogInformation(data);
+        }
+    }
 
-    public void LogWarning(string data) => logger.LogWarning(data);
+    public void LogWarning(string data)
+    {
+        if (logger.IsEnabled(Microsoft.Extensions.Logging.LogLevel.Warning))
+        {
+            logger.LogWarning(data);
+        }
+    }
 
-    public void LogError(string data) => logger.LogError(data);
+    public void LogError(string data)
+    {
+        if (logger.IsEnabled(Microsoft.Extensions.Logging.LogLevel.Error))
+        {
+            logger.LogError(data);
+        }
+    }
 
-    public void LogInformationSummary(string data) => logger.LogInformation(data);
+    public void LogInformationSummary(string data)
+    {
+        if (logger.IsEnabled(Microsoft.Extensions.Logging.LogLevel.Information))
+        {
+            logger.LogInformation(data);
+        }
+    }
 
     public void Log(LogLevel level, string data)
     {
@@ -36,7 +78,11 @@ public class NuGetLoggerAdapter(
             LogLevel.Error => Microsoft.Extensions.Logging.LogLevel.Error,
             _ => Microsoft.Extensions.Logging.LogLevel.None
         };
-        logger.Log(mappedLevel, data);
+
+        if (logger.IsEnabled(mappedLevel))
+        {
+            logger.Log(mappedLevel, data);
+        }
     }
 
     public Task LogAsync(LogLevel level, string data)
