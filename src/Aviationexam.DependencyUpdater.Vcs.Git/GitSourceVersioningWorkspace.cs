@@ -352,6 +352,13 @@ public sealed class GitSourceVersioningWorkspace(
 
         using var changes = _worktreeRepository.Diff.Compare<TreeChanges>(localTip.Tree, remoteTip.Tree);
 
+        logger.LogInformation(
+            "Branch diff: {ChangeCount} file(s) changed between local {LocalCommit} and remote {RemoteCommit}",
+            changes.Count,
+            localTip.Id.Sha[..7],
+            remoteTip.Id.Sha[..7]
+        );
+
         return changes.Count == 0;
     }
 }
