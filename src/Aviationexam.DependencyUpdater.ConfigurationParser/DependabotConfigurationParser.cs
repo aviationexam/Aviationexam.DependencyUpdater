@@ -15,7 +15,10 @@ public class DependabotConfigurationParser(
     {
         if (!fileSystem.Exists(path))
         {
-            logger.LogError("File not found: {path}", path);
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError("File not found: {path}", path);
+            }
             return null;
         }
 
@@ -28,7 +31,10 @@ public class DependabotConfigurationParser(
         var dependabotAsJson = stream.ToJsonNode().SingleOrDefault();
         if (dependabotAsJson is null)
         {
-            logger.LogError("Failed to convert YAML to JSON of the {path}.", path);
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError("Failed to convert YAML to JSON of the {path}.", path);
+            }
             return null;
         }
 
