@@ -54,7 +54,8 @@ public class NugetDirectoryPackagesPropsParser(
                 nugetFile,
                 new NugetPackageVersion(
                     x.Include!,
-                    new NuGetVersion(x.Version!)
+                    new NuGetVersion(x.Version!),
+                    x.Condition
                 ),
                 GetEffectiveTargetFrameworks(
                     x.Condition,

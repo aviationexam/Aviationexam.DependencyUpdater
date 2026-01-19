@@ -65,7 +65,7 @@ public class NugetCsprojParser(
 
                 yield return new NugetDependency(
                     nugetFile,
-                    new NugetPackageReference(packageId, version),
+                    new NugetPackageReference(packageId, version, condition),
                     effectiveTargetFrameworks
                 );
             }
