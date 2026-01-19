@@ -119,20 +119,20 @@ public sealed class PackageUpdater(
         // Process pull request based on update status
         return await HandlePullRequestAsync(
             gitWorkspace,
-            updatedPackages.GetCommitMessage(currentPackageVersions),
+            updatedPackages.GetCommitMessage(),
             pullRequestId,
             repositoryConfig,
             authConfig,
             gitMetadataConfig,
             executeRestore,
             restoreDirectory,
-            groupEntry.GetTitle(nugetUpdateCandidates, currentPackageVersions),
+            groupEntry.GetTitle(updatedPackages),
             updater,
             cancellationToken
         );
     }
 
-    private async IAsyncEnumerable<NugetUpdateCandidate> UpdatePackageVersionsAsync(
+    private async IAsyncEnumerable<NugetUpdateResult> UpdatePackageVersionsAsync(
         ISourceVersioningWorkspace gitWorkspace,
         IReadOnlyCollection<NugetUpdateCandidate> packagesToUpdate,
         Dictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions,
@@ -152,6 +152,13 @@ public sealed class PackageUpdater(
                 continue;
             }
 
+            var packageName = packageToUpdate.NugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName();
+            var fromVersionsPerFramework = CaptureFromVersionsPerFramework(
+                packageName,
+                packageToUpdate.NugetUpdateCandidate.NugetDependency.TargetFrameworks,
+                groupPackageVersions
+            );
+
             var trySetVersion = await nugetVersionWriter.TrySetVersion(
                 packageToUpdate.NugetUpdateCandidate,
                 gitWorkspace,
@@ -163,7 +170,10 @@ public sealed class PackageUpdater(
             {
                 case ESetVersion.VersionSet:
                     epoch++;
-                    yield return packageToUpdate.NugetUpdateCandidate;
+                    yield return new NugetUpdateResult(
+                        packageToUpdate.NugetUpdateCandidate,
+                        fromVersionsPerFramework
+                    );
                     break;
                 case ESetVersion.VersionNotSet:
                     packagesToUpdateQueue.Enqueue(packageToUpdate with { Epoch = epoch });
@@ -174,6 +184,28 @@ public sealed class PackageUpdater(
                     throw new ArgumentOutOfRangeException(nameof(trySetVersion), trySetVersion, null);
             }
         }
+    }
+
+    private static Dictionary<string, PackageVersion> CaptureFromVersionsPerFramework(
+        string packageName,
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
+        Dictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions
+    )
+    {
+        var fromVersions = new Dictionary<string, PackageVersion>();
+
+        if (groupPackageVersions.TryGetValue(packageName, out var frameworkVersions))
+        {
+            foreach (var targetFramework in targetFrameworks)
+            {
+                if (frameworkVersions.TryGetValue(targetFramework.TargetFramework, out var version))
+                {
+                    fromVersions[targetFramework.TargetFramework] = version;
+                }
+            }
+        }
+
+        return fromVersions;
     }
 
     private void LogVersionConflict(

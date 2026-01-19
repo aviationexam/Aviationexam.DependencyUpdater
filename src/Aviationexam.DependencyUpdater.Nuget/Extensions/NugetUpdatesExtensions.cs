@@ -10,23 +10,23 @@ namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 public static class NugetUpdatesExtensions
 {
     public static string? GetCommitMessage<T>(
-        this T updatedPackages,
-        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersions
-    ) where T : IReadOnlyCollection<NugetUpdateCandidate>
+        this T updatedPackages
+    ) where T : IReadOnlyCollection<NugetUpdateResult>
     {
         var stringBuilder = new StringBuilder();
 
         stringBuilder.AppendLine($"Updates {updatedPackages.Count} packages:");
         stringBuilder.AppendLine();
 
-        foreach (var updatedPackage in updatedPackages)
+        foreach (var updateResult in updatedPackages)
         {
-            var packageName = updatedPackage.NugetDependency.NugetPackage.GetPackageName();
-            var fromVersion = GetMinimumVersionBeingUpdated(updatedPackage, currentPackageVersions)?.GetSerializedVersion();
-            var toVersion = updatedPackage.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
+            var packageName = updateResult.UpdateCandidate.NugetDependency.NugetPackage.GetPackageName();
+            var toVersion = updateResult.UpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
+            
+            var (fromVersion, frameworkSuffix) = GetFromVersionAndFrameworkSuffix(updateResult);
             
             stringBuilder.AppendLine(
-                $"- Update {packageName} from {fromVersion} to {toVersion}"
+                $"- Update {packageName} from {fromVersion} to {toVersion}{frameworkSuffix}"
             );
         }
 
@@ -38,30 +38,36 @@ public static class NugetUpdatesExtensions
         return stringBuilder.ToString();
     }
 
-    private static PackageVersion? GetMinimumVersionBeingUpdated(
-        NugetUpdateCandidate candidate,
-        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersions
+    private static (string FromVersion, string FrameworkSuffix) GetFromVersionAndFrameworkSuffix(
+        NugetUpdateResult updateResult
     )
     {
-        var packageName = candidate.NugetDependency.NugetPackage.GetPackageName();
-        var fallbackVersion = candidate.NugetDependency.NugetPackage.GetVersion();
-        
-        if (!currentPackageVersions.TryGetValue(packageName, out var frameworkVersions))
+        if (updateResult.FromVersionsPerFramework.Count == 0)
         {
-            return fallbackVersion;
+            var fallbackVersion = updateResult.UpdateCandidate.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
+            return (fallbackVersion, string.Empty);
         }
 
-        var versionsAcrossTargetFrameworks = candidate.NugetDependency.TargetFrameworks
+        var uniqueVersions = updateResult.FromVersionsPerFramework.Values
             .AsValueEnumerable()
-            .Where(tf => frameworkVersions.ContainsKey(tf.TargetFramework))
-            .Select(tf => frameworkVersions[tf.TargetFramework])
+            .Distinct()
             .ToList();
 
-        if (versionsAcrossTargetFrameworks.Count == 0)
+        if (uniqueVersions.Count == 1)
         {
-            return fallbackVersion;
+            var fromVersion = uniqueVersions[0].GetSerializedVersion();
+            
+            if (updateResult.FromVersionsPerFramework.Count == 1)
+            {
+                var framework = updateResult.FromVersionsPerFramework.Keys.Single();
+                return (fromVersion, $" for {framework}");
+            }
+            
+            return (fromVersion, string.Empty);
         }
 
-        return versionsAcrossTargetFrameworks.AsValueEnumerable().Min();
+        var minVersion = uniqueVersions.AsValueEnumerable().Min()!.GetSerializedVersion();
+        var maxVersion = uniqueVersions.AsValueEnumerable().Max()!.GetSerializedVersion();
+        return ($"{minVersion}-{maxVersion}", string.Empty);
     }
 }

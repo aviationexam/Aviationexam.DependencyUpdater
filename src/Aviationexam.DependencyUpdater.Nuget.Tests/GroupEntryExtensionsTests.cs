@@ -11,130 +11,116 @@ namespace Aviationexam.DependencyUpdater.Nuget.Tests;
 public class GroupEntryExtensionsTests
 {
     [Fact]
-    public void GetTitle_SinglePackageSingleFramework_GeneratesCorrectTitle()
+    public void GetTitle_SinglePackageSingleFramework_IncludesFrameworkSuffix()
     {
-        var currentPackageVersions = new Dictionary<string, IDictionary<string, PackageVersion>>
+        var fromVersions = new Dictionary<string, PackageVersion>
         {
-            ["TestPackage"] = new Dictionary<string, PackageVersion>
-            {
-                ["net10.0"] = new NuGetVersion("1.0.0").MapToPackageVersion()
-            }
+            ["net10.0"] = new NuGetVersion("1.0.0").MapToPackageVersion()
         };
 
         var groupEntry = new GroupEntry("TestPackage", []);
-        var nugetUpdateCandidates = new List<NugetUpdateCandidate>
+        var updateResults = new List<NugetUpdateResult>
         {
-            CreateUpdateCandidate("TestPackage", "1.0.0", ["net10.0"])
+            CreateUpdateResult("TestPackage", fromVersions, "2.0.0", ["net10.0"])
         };
 
-        var result = groupEntry.GetTitle(nugetUpdateCandidates, currentPackageVersions);
+        var result = groupEntry.GetTitle(updateResults);
 
-        Assert.Equal("Bump TestPackage from 1.0.0 to 2.0.0", result);
+        Assert.Equal("Bump TestPackage from 1.0.0 to 2.0.0 for net10.0", result);
     }
 
     [Fact]
-    public void GetTitle_SinglePackageMultipleFrameworksSameVersion_UsesCommonVersion()
+    public void GetTitle_SinglePackageMultipleFrameworksSameVersion_NoFrameworkSuffix()
     {
-        var currentPackageVersions = new Dictionary<string, IDictionary<string, PackageVersion>>
+        var fromVersions = new Dictionary<string, PackageVersion>
         {
-            ["TestPackage"] = new Dictionary<string, PackageVersion>
-            {
-                ["net9.0"] = new NuGetVersion("1.5.0").MapToPackageVersion(),
-                ["net10.0"] = new NuGetVersion("1.5.0").MapToPackageVersion()
-            }
+            ["net9.0"] = new NuGetVersion("1.5.0").MapToPackageVersion(),
+            ["net10.0"] = new NuGetVersion("1.5.0").MapToPackageVersion()
         };
 
         var groupEntry = new GroupEntry("TestPackage", []);
-        var nugetUpdateCandidates = new List<NugetUpdateCandidate>
+        var updateResults = new List<NugetUpdateResult>
         {
-            CreateUpdateCandidate("TestPackage", "1.5.0", ["net9.0", "net10.0"])
+            CreateUpdateResult("TestPackage", fromVersions, "2.0.0", ["net9.0", "net10.0"])
         };
 
-        var result = groupEntry.GetTitle(nugetUpdateCandidates, currentPackageVersions);
+        var result = groupEntry.GetTitle(updateResults);
 
         Assert.Equal("Bump TestPackage from 1.5.0 to 2.0.0", result);
     }
 
     [Fact]
-    public void GetTitle_SinglePackageMultipleFrameworksDifferentVersions_UsesMinimumVersion()
+    public void GetTitle_SinglePackageMultipleFrameworksDifferentVersions_ShowsVersionRange()
     {
-        var currentPackageVersions = new Dictionary<string, IDictionary<string, PackageVersion>>
+        var fromVersions = new Dictionary<string, PackageVersion>
         {
-            ["Meziantou.Extensions.Logging.Xunit.v3"] = new Dictionary<string, PackageVersion>
-            {
-                ["net9.0"] = new NuGetVersion("1.1.17").MapToPackageVersion(),
-                ["net10.0"] = new NuGetVersion("1.1.21").MapToPackageVersion()
-            }
+            ["net9.0"] = new NuGetVersion("1.1.17").MapToPackageVersion(),
+            ["net10.0"] = new NuGetVersion("1.1.21").MapToPackageVersion()
         };
 
         var groupEntry = new GroupEntry("Meziantou.Extensions.Logging.Xunit.v3", []);
-        var nugetUpdateCandidates = new List<NugetUpdateCandidate>
+        var updateResults = new List<NugetUpdateResult>
         {
-            CreateUpdateCandidate("Meziantou.Extensions.Logging.Xunit.v3", "1.1.21", ["net9.0", "net10.0"])
+            CreateUpdateResult("Meziantou.Extensions.Logging.Xunit.v3", fromVersions, "1.1.22", ["net9.0", "net10.0"])
         };
 
-        var result = groupEntry.GetTitle(nugetUpdateCandidates, currentPackageVersions);
+        var result = groupEntry.GetTitle(updateResults);
 
-        Assert.Equal("Bump Meziantou.Extensions.Logging.Xunit.v3 from 1.1.17 to 2.0.0", result);
+        Assert.Equal("Bump Meziantou.Extensions.Logging.Xunit.v3 from 1.1.17-1.1.21 to 1.1.22", result);
     }
 
     [Fact]
-    public void GetTitle_SinglePackageOnlyOneFrameworkUpdating_UsesCorrectVersion()
+    public void GetTitle_SinglePackageOnlyOneFrameworkUpdating_ShowsFrameworkSuffix()
     {
-        var currentPackageVersions = new Dictionary<string, IDictionary<string, PackageVersion>>
+        var fromVersions = new Dictionary<string, PackageVersion>
         {
-            ["TestPackage"] = new Dictionary<string, PackageVersion>
-            {
-                ["net9.0"] = new NuGetVersion("1.0.0").MapToPackageVersion(),
-                ["net10.0"] = new NuGetVersion("2.0.0").MapToPackageVersion()
-            }
+            ["net10.0"] = new NuGetVersion("2.0.0").MapToPackageVersion()
         };
 
         var groupEntry = new GroupEntry("TestPackage", []);
-        var nugetUpdateCandidates = new List<NugetUpdateCandidate>
+        var updateResults = new List<NugetUpdateResult>
         {
-            CreateUpdateCandidate("TestPackage", "2.0.0", ["net10.0"])
+            CreateUpdateResult("TestPackage", fromVersions, "3.0.0", ["net10.0"])
         };
 
-        var result = groupEntry.GetTitle(nugetUpdateCandidates, currentPackageVersions);
+        var result = groupEntry.GetTitle(updateResults);
 
-        Assert.Equal("Bump TestPackage from 2.0.0 to 2.0.0", result);
+        Assert.Equal("Bump TestPackage from 2.0.0 to 3.0.0 for net10.0", result);
     }
 
     [Fact]
     public void GetTitle_MultiplePackages_GeneratesGroupTitle()
     {
-        var currentPackageVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
         var groupEntry = new GroupEntry("TestGroup", []);
-        var nugetUpdateCandidates = new List<NugetUpdateCandidate>
+        var updateResults = new List<NugetUpdateResult>
         {
-            CreateUpdateCandidate("Package1", "1.0.0", ["net10.0"]),
-            CreateUpdateCandidate("Package2", "2.0.0", ["net10.0"])
+            CreateUpdateResult("Package1", new Dictionary<string, PackageVersion> { ["net10.0"] = new NuGetVersion("1.0.0").MapToPackageVersion() }, "1.5.0", ["net10.0"]),
+            CreateUpdateResult("Package2", new Dictionary<string, PackageVersion> { ["net10.0"] = new NuGetVersion("2.0.0").MapToPackageVersion() }, "2.5.0", ["net10.0"])
         };
 
-        var result = groupEntry.GetTitle(nugetUpdateCandidates, currentPackageVersions);
+        var result = groupEntry.GetTitle(updateResults);
 
         Assert.Equal("Bump TestGroup group – 2 updates", result);
     }
 
     [Fact]
-    public void GetTitle_PackageNotInDictionary_FallsBackToNugetPackageVersion()
+    public void GetTitle_PackageWithNoFromVersions_FallsBackToCurrentVersion()
     {
-        var currentPackageVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
         var groupEntry = new GroupEntry("NewPackage", []);
-        var nugetUpdateCandidates = new List<NugetUpdateCandidate>
+        var updateResults = new List<NugetUpdateResult>
         {
-            CreateUpdateCandidate("NewPackage", "1.0.0", ["net10.0"])
+            CreateUpdateResult("NewPackage", new Dictionary<string, PackageVersion>(), "2.0.0", ["net10.0"])
         };
 
-        var result = groupEntry.GetTitle(nugetUpdateCandidates, currentPackageVersions);
+        var result = groupEntry.GetTitle(updateResults);
 
         Assert.Equal("Bump NewPackage from 1.0.0 to 2.0.0", result);
     }
 
-    private static NugetUpdateCandidate CreateUpdateCandidate(
+    private static NugetUpdateResult CreateUpdateResult(
         string packageName,
-        string currentVersion,
+        Dictionary<string, PackageVersion> fromVersionsPerFramework,
+        string toVersion,
         string[] targetFrameworks
     )
     {
@@ -144,15 +130,15 @@ public class GroupEntryExtensionsTests
             targetFrameworkList.Add(new NugetTargetFramework(tf));
         }
 
-        return new NugetUpdateCandidate(
+        var candidate = new NugetUpdateCandidate(
             new NugetDependency(
                 new NugetFile("Test.csproj", ENugetFileType.Csproj),
-                new NugetPackageReference(packageName, new VersionRange(new NuGetVersion(currentVersion))),
+                new NugetPackageReference(packageName, new VersionRange(new NuGetVersion("1.0.0"))),
                 targetFrameworkList
             ),
             new PossiblePackageVersion(
                 new PackageVersionWithDependencySets(
-                    new NuGetVersion("2.0.0").MapToPackageVersion()
+                    new NuGetVersion(toVersion).MapToPackageVersion()
                 )
                 {
                     DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>()
@@ -160,5 +146,7 @@ public class GroupEntryExtensionsTests
                 []
             )
         );
+
+        return new NugetUpdateResult(candidate, fromVersionsPerFramework);
     }
 }
