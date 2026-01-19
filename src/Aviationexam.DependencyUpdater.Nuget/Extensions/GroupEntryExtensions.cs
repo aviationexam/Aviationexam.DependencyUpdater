@@ -49,15 +49,19 @@ public static class GroupEntryExtensions
                 ? singleToVersion.GetSerializedVersion()
                 : $"{allToVersions.AsValueEnumerable().Min()!.GetSerializedVersion()}-{allToVersions.AsValueEnumerable().Max()!.GetSerializedVersion()}";
 
-            var allFrameworks = updateResults
-                .AsValueEnumerable()
-                .SelectMany(x => x.FromVersionsPerFramework.Keys)
-                .Distinct()
-                .ToList();
-
-            if (allFrameworks is [var framework])
+            var condition = updateResults.First().UpdateCandidate.NugetDependency.NugetPackage.GetCondition();
+            if (!string.IsNullOrWhiteSpace(condition))
             {
-                return $"Bump {packageName} from {fromVersionRange} to {toVersionRange} for {framework}";
+                var allFrameworks = updateResults
+                    .AsValueEnumerable()
+                    .SelectMany(x => x.FromVersionsPerFramework.Keys)
+                    .Distinct()
+                    .ToList();
+
+                if (allFrameworks is [var framework])
+                {
+                    return $"Bump {packageName} from {fromVersionRange} to {toVersionRange} for {framework}";
+                }
             }
 
             return $"Bump {packageName} from {fromVersionRange} to {toVersionRange}";

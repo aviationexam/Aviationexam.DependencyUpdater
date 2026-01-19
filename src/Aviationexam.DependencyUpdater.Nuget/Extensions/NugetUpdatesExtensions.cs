@@ -63,11 +63,13 @@ public static class NugetUpdatesExtensions
             .Distinct()
             .ToList();
 
+        var condition = updateResult.UpdateCandidate.NugetDependency.NugetPackage.GetCondition();
+
         if (uniqueVersions is [var singleVersion])
         {
             var fromVersion = singleVersion.GetSerializedVersion();
 
-            if (updateResult.FromVersionsPerFramework.Count == 1)
+            if (!string.IsNullOrWhiteSpace(condition) && updateResult.FromVersionsPerFramework.Count == 1)
             {
                 var framework = updateResult.FromVersionsPerFramework.Keys.Single();
                 yield return $"Update {packageName} from {fromVersion} to {toVersion} for {framework}";
