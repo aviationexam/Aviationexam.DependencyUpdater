@@ -15,7 +15,8 @@ namespace Aviationexam.DependencyUpdater.Nuget.Parsers;
 
 public class NugetCsprojParser(
     IFileSystem fileSystem,
-    ILogger<NugetCsprojParser> logger
+    ILogger<NugetCsprojParser> logger,
+    ConditionalTargetFrameworkResolver conditionalTargetFrameworkResolver
 )
 {
     public IEnumerable<NugetDependency> Parse(
@@ -56,30 +57,8 @@ public class NugetCsprojParser(
                     version = new VersionRange(new NuGetVersion(versionValue));
                 }
 
-                // Check for conditional PackageReference (element or parent ItemGroup condition)
                 var condition = packageReference.GetConditionIncludingParent();
-                if (TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTargetFramework))
-                {
-                    if (logger.IsEnabled(LogLevel.Debug))
-                    {
-                        logger.LogDebug(
-                            "Found conditional target framework {TargetFramework} for package {PackageName}",
-                            conditionalTargetFramework,
-                            packageId
-                        );
-                    }
-                }
-                else
-                {
-                    if (!string.IsNullOrWhiteSpace(condition) && logger.IsEnabled(LogLevel.Warning))
-                    {
-                        logger.LogWarning(
-                            "Package {PackageName} has a Condition attribute that could not be parsed: {Condition}",
-                            packageId,
-                            condition
-                        );
-                    }
-                }
+                var conditionalTargetFramework = conditionalTargetFrameworkResolver.Resolve(condition, packageId);
 
                 var effectiveTargetFrameworks = GetEffectiveTargetFrameworks(
                     conditionalTargetFramework,

@@ -1,5 +1,6 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Nuget.Helpers;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Parsers;
 using Aviationexam.DependencyUpdater.TestsInfrastructure;
@@ -76,7 +77,8 @@ public class NugetCsprojParserTests
 
         var csprojParser = new NugetCsprojParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
@@ -133,7 +135,8 @@ public class NugetCsprojParserTests
 
         var csprojParser = new NugetCsprojParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
@@ -165,7 +168,8 @@ public class NugetCsprojParserTests
 
         var csprojParser = new NugetCsprojParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var response = csprojParser.Parse(directoryPath, new NugetFile("project/Project.csproj", ENugetFileType.Csproj));
@@ -217,7 +221,8 @@ public class NugetCsprojParserTests
 
         var csprojParser = new NugetCsprojParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
@@ -274,7 +279,8 @@ public class NugetCsprojParserTests
 
         var csprojParser = new NugetCsprojParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
@@ -338,7 +344,8 @@ public class NugetCsprojParserTests
 
         var csprojParser = new NugetCsprojParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
@@ -401,7 +408,8 @@ public class NugetCsprojParserTests
 
         var csprojParser = new NugetCsprojParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);

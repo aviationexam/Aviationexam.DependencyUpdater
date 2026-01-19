@@ -1,6 +1,7 @@
 using Aviationexam.DependencyUpdater.Nuget.Factories;
 using Aviationexam.DependencyUpdater.Nuget.Filtering;
 using Aviationexam.DependencyUpdater.Nuget.Grouping;
+using Aviationexam.DependencyUpdater.Nuget.Helpers;
 using Aviationexam.DependencyUpdater.Nuget.Parsers;
 using Aviationexam.DependencyUpdater.Nuget.Services;
 using Aviationexam.DependencyUpdater.Nuget.Writers;
@@ -17,6 +18,7 @@ public static class ServiceCollectionExtensions
     ) => services
         .AddScoped<NugetFinder>()
         .AddScoped<NugetConfigParser>()
+        .AddScoped<ConditionalTargetFrameworkResolver>()
         .AddScoped<NugetCsprojParser>()
         .AddScoped<NugetDirectoryPackagesPropsParser>()
         .AddScoped<DotnetToolsParser>()

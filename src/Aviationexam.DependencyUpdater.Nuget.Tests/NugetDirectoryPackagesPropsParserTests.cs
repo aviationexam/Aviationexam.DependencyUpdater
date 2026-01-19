@@ -1,6 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
+using Aviationexam.DependencyUpdater.Nuget.Helpers;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Parsers;
 using Aviationexam.DependencyUpdater.TestsInfrastructure;
@@ -62,9 +63,10 @@ public class NugetDirectoryPackagesPropsParserTests
             .FileOpen(temporaryDirectoryProvider.GetPath("Directory.Packages.props"), FileMode.Open, FileAccess.Read, FileShare.Read)
             .Returns(directoryPackagesPropsStream);
 
-        var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
+var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks = [new("net9.0")];
@@ -105,9 +107,10 @@ public class NugetDirectoryPackagesPropsParserTests
             .Exists($"{directoryPath}/Directory.Packages.props")
             .Returns(false);
 
-        var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
+var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var response = directoryPackagesPropsParser.Parse(
@@ -160,9 +163,10 @@ public class NugetDirectoryPackagesPropsParserTests
             .FileOpen(temporaryDirectoryProvider.GetPath("Directory.Packages.props"), FileMode.Open, FileAccess.Read, FileShare.Read)
             .Returns(directoryPackagesPropsStream);
 
-        var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
+var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks = [new("net8.0"), new("net9.0")];
@@ -241,9 +245,10 @@ public class NugetDirectoryPackagesPropsParserTests
             .FileOpen(temporaryDirectoryProvider.GetPath("Directory.Packages.props"), FileMode.Open, FileAccess.Read, FileShare.Read)
             .Returns(directoryPackagesPropsStream);
 
-        var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
+var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks = [new("net8.0"), new("net9.0")];
@@ -327,9 +332,10 @@ public class NugetDirectoryPackagesPropsParserTests
             .FileOpen(temporaryDirectoryProvider.GetPath("Directory.Packages.props"), FileMode.Open, FileAccess.Read, FileShare.Read)
             .Returns(directoryPackagesPropsStream);
 
-        var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
+var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks = [new("net8.0"), new("net9.0"), new("net10.0")];
@@ -438,9 +444,10 @@ public class NugetDirectoryPackagesPropsParserTests
             .FileOpen(temporaryDirectoryProvider.GetPath("Directory.Packages.props"), FileMode.Open, FileAccess.Read, FileShare.Read)
             .Returns(directoryPackagesPropsStream);
 
-        var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
+var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var nugetFile = new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps);

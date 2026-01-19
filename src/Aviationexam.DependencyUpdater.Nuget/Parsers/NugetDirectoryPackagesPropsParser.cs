@@ -13,7 +13,8 @@ namespace Aviationexam.DependencyUpdater.Nuget.Parsers;
 
 public class NugetDirectoryPackagesPropsParser(
     IFileSystem fileSystem,
-    ILogger<NugetDirectoryPackagesPropsParser> logger
+    ILogger<NugetDirectoryPackagesPropsParser> logger,
+    ConditionalTargetFrameworkResolver conditionalTargetFrameworkResolver
 )
 {
     public IEnumerable<NugetDependency> Parse(
@@ -50,7 +51,7 @@ public class NugetDirectoryPackagesPropsParser(
                 {
                     Include = packageName,
                     Version = x.Attribute("Version")?.Value,
-                    Condition = GetConditionalTargetFramework(x.GetConditionIncludingParent(), packageName),
+                    Condition = conditionalTargetFrameworkResolver.Resolve(x.GetConditionIncludingParent(), packageName),
                 };
             })
             .Where(x => x.Include is not null && x.Version is not null)
@@ -69,37 +70,6 @@ public class NugetDirectoryPackagesPropsParser(
                 )
             ))
             .ToList();
-    }
-
-    private string? GetConditionalTargetFramework(
-        string? condition,
-        string? packageName
-    )
-    {
-        if (TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTargetFramework))
-        {
-            if (logger.IsEnabled(LogLevel.Debug))
-            {
-                logger.LogDebug(
-                    "Found conditional target framework {TargetFramework} for package {PackageName}",
-                    conditionalTargetFramework,
-                    packageName
-                );
-            }
-
-            return conditionalTargetFramework;
-        }
-
-        if (!string.IsNullOrWhiteSpace(condition) && logger.IsEnabled(LogLevel.Warning))
-        {
-            logger.LogWarning(
-                "Unable to parse condition '{Condition}' for package {PackageName}",
-                condition,
-                packageName
-            );
-        }
-
-        return null;
     }
 
     private IReadOnlyCollection<NugetTargetFramework> GetEffectiveTargetFrameworks(
