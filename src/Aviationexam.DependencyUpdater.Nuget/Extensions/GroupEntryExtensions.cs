@@ -19,9 +19,8 @@ public static class GroupEntryExtensions
             .Distinct()
             .ToList();
 
-        if (distinctPackages.Count == 1)
+        if (distinctPackages is [var packageName])
         {
-            var packageName = distinctPackages[0];
             var allFromVersions = updateResults
                 .AsValueEnumerable()
                 .SelectMany(x => x.FromVersionsPerFramework.Values)
@@ -36,18 +35,18 @@ public static class GroupEntryExtensions
             if (allFromVersions.Count == 0)
             {
                 var fallbackVersion = updateResults.First().UpdateCandidate.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
-                var toVersion = allToVersions.Count == 1 
-                    ? allToVersions[0].GetSerializedVersion() 
+                var toVersion = allToVersions is [var version]
+                    ? version.GetSerializedVersion() 
                     : $"{allToVersions.AsValueEnumerable().Min()!.GetSerializedVersion()}-{allToVersions.AsValueEnumerable().Max()!.GetSerializedVersion()}";
                 return $"Bump {packageName} from {fallbackVersion} to {toVersion}";
             }
 
-            var fromVersionRange = allFromVersions.Count == 1
-                ? allFromVersions[0].GetSerializedVersion()
+            var fromVersionRange = allFromVersions is [var singleFromVersion]
+                ? singleFromVersion.GetSerializedVersion()
                 : $"{allFromVersions.AsValueEnumerable().Min()!.GetSerializedVersion()}-{allFromVersions.AsValueEnumerable().Max()!.GetSerializedVersion()}";
 
-            var toVersionRange = allToVersions.Count == 1
-                ? allToVersions[0].GetSerializedVersion()
+            var toVersionRange = allToVersions is [var singleToVersion]
+                ? singleToVersion.GetSerializedVersion()
                 : $"{allToVersions.AsValueEnumerable().Min()!.GetSerializedVersion()}-{allToVersions.AsValueEnumerable().Max()!.GetSerializedVersion()}";
 
             var allFrameworks = updateResults
@@ -56,9 +55,9 @@ public static class GroupEntryExtensions
                 .Distinct()
                 .ToList();
 
-            if (allFrameworks.Count == 1)
+            if (allFrameworks is [var framework])
             {
-                return $"Bump {packageName} from {fromVersionRange} to {toVersionRange} for {allFrameworks[0]}";
+                return $"Bump {packageName} from {fromVersionRange} to {toVersionRange} for {framework}";
             }
 
             return $"Bump {packageName} from {fromVersionRange} to {toVersionRange}";
@@ -85,9 +84,9 @@ public static class GroupEntryExtensions
             .Distinct()
             .ToList();
 
-        if (uniqueVersions.Count == 1)
+        if (uniqueVersions is [var singleVersion])
         {
-            var fromVersion = uniqueVersions[0].GetSerializedVersion();
+            var fromVersion = singleVersion.GetSerializedVersion();
             
             if (updateResult.FromVersionsPerFramework.Count == 1)
             {

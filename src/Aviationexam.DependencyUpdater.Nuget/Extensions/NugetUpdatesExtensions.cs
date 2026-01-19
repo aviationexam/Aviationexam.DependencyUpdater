@@ -63,9 +63,9 @@ public static class NugetUpdatesExtensions
             .Distinct()
             .ToList();
 
-        if (uniqueVersions.Count == 1)
+        if (uniqueVersions is [var singleVersion])
         {
-            var fromVersion = uniqueVersions[0].GetSerializedVersion();
+            var fromVersion = singleVersion.GetSerializedVersion();
             
             if (updateResult.FromVersionsPerFramework.Count == 1)
             {
