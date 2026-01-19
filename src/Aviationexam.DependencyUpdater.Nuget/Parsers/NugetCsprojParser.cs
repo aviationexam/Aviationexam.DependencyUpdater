@@ -32,6 +32,7 @@ public class NugetCsprojParser(
             {
                 logger.LogError("File not found: {path}", csprojFilePath);
             }
+
             yield break;
         }
 
@@ -57,15 +58,39 @@ public class NugetCsprojParser(
 
                 // Check for conditional PackageReference (element or parent ItemGroup condition)
                 var condition = packageReference.GetConditionIncludingParent();
+                if (!TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTargetFramework))
+                {
+                    if (logger.IsEnabled(LogLevel.Debug))
+                    {
+                        logger.LogDebug(
+                            "Found conditional target framework {TargetFramework} for package {PackageName}",
+                            conditionalTargetFramework,
+                            packageId
+                        );
+                    }
+                }
+                else
+                {
+                    conditionalTargetFramework = null;
+
+                    if (!string.IsNullOrWhiteSpace(condition) && logger.IsEnabled(LogLevel.Warning))
+                    {
+                        logger.LogWarning(
+                            "Package {PackageName} has a Condition attribute that could not be parsed: {Condition}",
+                            packageId,
+                            condition
+                        );
+                    }
+                }
+
                 var effectiveTargetFrameworks = GetEffectiveTargetFrameworks(
-                    condition,
-                    packageId,
+                    conditionalTargetFramework,
                     targetFrameworks
                 );
 
                 yield return new NugetDependency(
                     nugetFile,
-                    new NugetPackageReference(packageId, version, condition),
+                    new NugetPackageReference(packageId, version, conditionalTargetFramework),
                     effectiveTargetFrameworks
                 );
             }
@@ -94,6 +119,7 @@ public class NugetCsprojParser(
                 {
                     logger.LogError("Imported file not found: {path}", importedPath);
                 }
+
                 continue;
             }
 
@@ -105,37 +131,13 @@ public class NugetCsprojParser(
     }
 
     private IReadOnlyCollection<NugetTargetFramework> GetEffectiveTargetFrameworks(
-        string? condition,
-        string packageId,
+        string? conditionalTargetFramework,
         IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks
-    )
-    {
+    ) => !string.IsNullOrEmpty(conditionalTargetFramework)
         // If there's a condition, try to extract the target framework
-        if (TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTargetFramework))
-        {
-            if (logger.IsEnabled(LogLevel.Debug))
-            {
-                logger.LogDebug(
-                    "Found conditional target framework {TargetFramework} for package {PackageName}",
-                    conditionalTargetFramework,
-                    packageId
-                );
-            }
-            return [new NugetTargetFramework(conditionalTargetFramework)];
-        }
-
-        if (!string.IsNullOrWhiteSpace(condition) && logger.IsEnabled(LogLevel.Warning))
-        {
-            logger.LogWarning(
-                "Package {PackageName} has a Condition attribute that could not be parsed: {Condition}",
-                packageId,
-                condition
-            );
-        }
-
+        ? [new NugetTargetFramework(conditionalTargetFramework)]
         // No condition or condition not recognized - use default target frameworks
-        return defaultTargetFrameworks;
-    }
+        : defaultTargetFrameworks;
 
     private IEnumerable<NugetTargetFramework> ParseTargetFrameworks(XDocument doc)
     {

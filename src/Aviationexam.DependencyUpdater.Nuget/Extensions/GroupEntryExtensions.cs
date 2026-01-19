@@ -1,7 +1,6 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
-using System.Linq;
 using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
@@ -28,13 +27,13 @@ public static class GroupEntryExtensions
                 .ToList();
             var allToVersions = updateResults
                 .AsValueEnumerable()
-                .Select( (x) => new PackageVersion(x.UpdateCandidate.PossiblePackageVersion.PackageVersion))
+                .Select(x => new PackageVersion(x.UpdateCandidate.PossiblePackageVersion.PackageVersion))
                 .Distinct()
                 .ToList();
 
             if (allFromVersions.Count == 0)
             {
-                var fallbackVersion = updateResults.First().UpdateCandidate.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
+                var fallbackVersion = updateResults.AsValueEnumerable().First().UpdateCandidate.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
                 var toVersion = allToVersions is [var version]
                     ? version.GetSerializedVersion()
                     : $"{allToVersions.AsValueEnumerable().Min()!.GetSerializedVersion()}-{allToVersions.AsValueEnumerable().Max()!.GetSerializedVersion()}";
@@ -49,19 +48,14 @@ public static class GroupEntryExtensions
                 ? singleToVersion.GetSerializedVersion()
                 : $"{allToVersions.AsValueEnumerable().Min()!.GetSerializedVersion()}-{allToVersions.AsValueEnumerable().Max()!.GetSerializedVersion()}";
 
-            var condition = updateResults.First().UpdateCandidate.NugetDependency.NugetPackage.GetCondition();
-            if (!string.IsNullOrWhiteSpace(condition))
-            {
-                var allFrameworks = updateResults
-                    .AsValueEnumerable()
-                    .SelectMany(x => x.FromVersionsPerFramework.Keys)
-                    .Distinct()
-                    .ToList();
+            var conditions = updateResults.AsValueEnumerable()
+                .Select(x => x.UpdateCandidate.NugetDependency.NugetPackage.GetCondition())
+                .Distinct()
+                .ToList();
 
-                if (allFrameworks is [var framework])
-                {
-                    return $"Bump {packageName} from {fromVersionRange} to {toVersionRange} for {framework}";
-                }
+            if (conditions is [var framework] && !string.IsNullOrEmpty(framework))
+            {
+                return $"Bump {packageName} from {fromVersionRange} to {toVersionRange} for {framework}";
             }
 
             return $"Bump {packageName} from {fromVersionRange} to {toVersionRange}";
