@@ -1,7 +1,5 @@
-using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using ZLinq;
 
@@ -71,7 +69,7 @@ public static class NugetUpdatesExtensions
 
             if (!string.IsNullOrWhiteSpace(condition) && updateResult.FromVersionsPerFramework.Count == 1)
             {
-                var framework = updateResult.FromVersionsPerFramework.Keys.Single();
+                var framework = updateResult.FromVersionsPerFramework.AsValueEnumerable().Single().Key;
                 yield return $"Update {packageName} from {fromVersion} to {toVersion} for {framework}";
             }
             else
