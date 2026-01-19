@@ -36,7 +36,7 @@ public static class GroupEntryExtensions
             {
                 var fallbackVersion = updateResults.First().UpdateCandidate.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
                 var toVersion = allToVersions is [var version]
-                    ? version.GetSerializedVersion() 
+                    ? version.GetSerializedVersion()
                     : $"{allToVersions.AsValueEnumerable().Min()!.GetSerializedVersion()}-{allToVersions.AsValueEnumerable().Max()!.GetSerializedVersion()}";
                 return $"Bump {packageName} from {fallbackVersion} to {toVersion}";
             }
@@ -87,13 +87,13 @@ public static class GroupEntryExtensions
         if (uniqueVersions is [var singleVersion])
         {
             var fromVersion = singleVersion.GetSerializedVersion();
-            
+
             if (updateResult.FromVersionsPerFramework.Count == 1)
             {
                 var framework = updateResult.FromVersionsPerFramework.Keys.Single();
                 return ($"Bump {packageName} from {fromVersion} to {toVersion} for {framework}", false);
             }
-            
+
             return ($"Bump {packageName} from {fromVersion} to {toVersion}", false);
         }
 

@@ -28,9 +28,9 @@ public static class NugetUpdatesExtensions
         {
             var packageName = updateResult.UpdateCandidate.NugetDependency.NugetPackage.GetPackageName();
             var toVersion = updateResult.UpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
-            
+
             var updateLines = GetUpdateLines(packageName, toVersion, updateResult);
-            
+
             foreach (var line in updateLines)
             {
                 stringBuilder.AppendLine($"- {line}");
@@ -66,7 +66,7 @@ public static class NugetUpdatesExtensions
         if (uniqueVersions is [var singleVersion])
         {
             var fromVersion = singleVersion.GetSerializedVersion();
-            
+
             if (updateResult.FromVersionsPerFramework.Count == 1)
             {
                 var framework = updateResult.FromVersionsPerFramework.Keys.Single();
@@ -76,7 +76,7 @@ public static class NugetUpdatesExtensions
             {
                 yield return $"Update {packageName} from {fromVersion} to {toVersion}";
             }
-            
+
             yield break;
         }
 
