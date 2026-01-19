@@ -9,29 +9,31 @@ public static class NugetUpdatesExtensions
 {
     public static string? GetCommitMessage<T>(
         this T updatedPackages
-    ) where T : IReadOnlyCollection<NugetUpdateResult>
+    ) where T : IReadOnlyCollection<NugetUpdateCandidate>
     {
         var stringBuilder = new StringBuilder();
 
         var distinctPackageCount = updatedPackages
             .AsValueEnumerable()
-            .Select(x => x.UpdateCandidate.NugetDependency.NugetPackage.GetPackageName())
+            .Select(x => x.NugetDependency.NugetPackage.GetPackageName())
             .Distinct()
             .Count();
 
         stringBuilder.AppendLine($"Updates {distinctPackageCount} packages:");
         stringBuilder.AppendLine();
 
-        foreach (var updateResult in updatedPackages)
+        foreach (var grouping in updatedPackages.AsValueEnumerable().GroupBy(x => x.NugetDependency.NugetPackage.GetPackageName()))
         {
-            var packageName = updateResult.UpdateCandidate.NugetDependency.NugetPackage.GetPackageName();
-            var toVersion = updateResult.UpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
+            var packageName = grouping.Key;
 
-            var updateLines = GetUpdateLines(packageName, toVersion, updateResult);
-
-            foreach (var line in updateLines)
+            foreach (var nugetUpdateResult in grouping)
             {
-                stringBuilder.AppendLine($"- {line}");
+                var updateLines = GetUpdateLines(packageName, nugetUpdateResult);
+
+                foreach (var line in updateLines)
+                {
+                    stringBuilder.AppendLine($"- {line}");
+                }
             }
         }
 
@@ -45,44 +47,21 @@ public static class NugetUpdatesExtensions
 
     private static IEnumerable<string> GetUpdateLines(
         string packageName,
-        string toVersion,
-        NugetUpdateResult updateResult
+        NugetUpdateCandidate updateResult
     )
     {
-        if (updateResult.FromVersionsPerFramework.Count == 0)
+        var fromVersion = updateResult.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
+        var toVersion = updateResult.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
+
+        var condition = updateResult.NugetDependency.NugetPackage.GetCondition();
+
+        if (!string.IsNullOrWhiteSpace(condition))
         {
-            var fallbackVersion = updateResult.UpdateCandidate.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
-            yield return $"Update {packageName} from {fallbackVersion} to {toVersion}";
-            yield break;
+            yield return $"Update {packageName} from {fromVersion} to {toVersion} for {condition}";
         }
-
-        var uniqueVersions = updateResult.FromVersionsPerFramework.Values
-            .AsValueEnumerable()
-            .Distinct()
-            .ToList();
-
-        var condition = updateResult.UpdateCandidate.NugetDependency.NugetPackage.GetCondition();
-
-        if (uniqueVersions is [var singleVersion])
+        else
         {
-            var fromVersion = singleVersion.GetSerializedVersion();
-
-            if (!string.IsNullOrWhiteSpace(condition) && updateResult.FromVersionsPerFramework.Count == 1)
-            {
-                var framework = updateResult.FromVersionsPerFramework.AsValueEnumerable().Single().Key;
-                yield return $"Update {packageName} from {fromVersion} to {toVersion} for {framework}";
-            }
-            else
-            {
-                yield return $"Update {packageName} from {fromVersion} to {toVersion}";
-            }
-
-            yield break;
-        }
-
-        foreach (var (framework, fromVersion) in updateResult.FromVersionsPerFramework)
-        {
-            yield return $"Update {packageName} from {fromVersion.GetSerializedVersion()} to {toVersion} for {framework}";
+            yield return $"Update {packageName} from {fromVersion} to {toVersion}";
         }
     }
 }

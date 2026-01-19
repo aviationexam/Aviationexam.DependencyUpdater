@@ -132,7 +132,7 @@ public sealed class PackageUpdater(
         );
     }
 
-    private async IAsyncEnumerable<NugetUpdateResult> UpdatePackageVersionsAsync(
+    private async IAsyncEnumerable<NugetUpdateCandidate> UpdatePackageVersionsAsync(
         ISourceVersioningWorkspace gitWorkspace,
         IReadOnlyCollection<NugetUpdateCandidate> packagesToUpdate,
         Dictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions,
@@ -152,13 +152,6 @@ public sealed class PackageUpdater(
                 continue;
             }
 
-            var packageName = packageToUpdate.NugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName();
-            var fromVersionsPerFramework = CaptureFromVersionsPerFramework(
-                packageName,
-                packageToUpdate.NugetUpdateCandidate.NugetDependency.TargetFrameworks,
-                groupPackageVersions
-            );
-
             var trySetVersion = await nugetVersionWriter.TrySetVersion(
                 packageToUpdate.NugetUpdateCandidate,
                 gitWorkspace,
@@ -170,10 +163,7 @@ public sealed class PackageUpdater(
             {
                 case ESetVersion.VersionSet:
                     epoch++;
-                    yield return new NugetUpdateResult(
-                        packageToUpdate.NugetUpdateCandidate,
-                        fromVersionsPerFramework
-                    );
+                    yield return packageToUpdate.NugetUpdateCandidate;
                     break;
                 case ESetVersion.VersionNotSet:
                     packagesToUpdateQueue.Enqueue(packageToUpdate with { Epoch = epoch });

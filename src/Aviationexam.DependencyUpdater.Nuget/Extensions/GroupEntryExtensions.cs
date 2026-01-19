@@ -9,39 +9,30 @@ public static class GroupEntryExtensions
 {
     public static string GetTitle(
         this GroupEntry groupEntry,
-        IReadOnlyCollection<NugetUpdateResult> updateResults
+        IReadOnlyCollection<NugetUpdateCandidate> updateResults
     )
     {
         var distinctPackages = updateResults
             .AsValueEnumerable()
-            .Select(x => x.UpdateCandidate.NugetDependency.NugetPackage.GetPackageName())
+            .Select(x => x.NugetDependency.NugetPackage.GetPackageName())
             .Distinct()
             .ToList();
 
         var allFromVersions = updateResults
             .AsValueEnumerable()
-            .SelectMany(x => x.FromVersionsPerFramework.Values)
+            .Select(x => x.NugetDependency.NugetPackage.GetVersion())
             .Distinct()
             .ToList();
         var allToVersions = updateResults
             .AsValueEnumerable()
-            .Select(x => new PackageVersion(x.UpdateCandidate.PossiblePackageVersion.PackageVersion))
+            .Select(x => new PackageVersion(x.PossiblePackageVersion.PackageVersion))
             .Distinct()
             .ToList();
 
         if (distinctPackages is [var packageName])
         {
-            if (allFromVersions.Count == 0)
-            {
-                var fallbackVersion = updateResults.AsValueEnumerable().First().UpdateCandidate.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
-                var toVersion = allToVersions is [var version]
-                    ? version.GetSerializedVersion()
-                    : $"{allToVersions.AsValueEnumerable().Min()!.GetSerializedVersion()}-{allToVersions.AsValueEnumerable().Max()!.GetSerializedVersion()}";
-                return $"Bump {packageName} from {fallbackVersion} to {toVersion}";
-            }
-
             var fromVersionRange = allFromVersions is [var singleFromVersion]
-                ? singleFromVersion.GetSerializedVersion()
+                ? singleFromVersion?.GetSerializedVersion() ?? "unknown"
                 : $"{allFromVersions.AsValueEnumerable().Min()!.GetSerializedVersion()}-{allFromVersions.AsValueEnumerable().Max()!.GetSerializedVersion()}";
 
             var toVersionRange = allToVersions is [var singleToVersion]
@@ -49,7 +40,7 @@ public static class GroupEntryExtensions
                 : $"{allToVersions.AsValueEnumerable().Min()!.GetSerializedVersion()}-{allToVersions.AsValueEnumerable().Max()!.GetSerializedVersion()}";
 
             var conditions = updateResults.AsValueEnumerable()
-                .Select(x => x.UpdateCandidate.NugetDependency.NugetPackage.GetCondition())
+                .Select(x => x.NugetDependency.NugetPackage.GetCondition())
                 .Distinct()
                 .ToList();
 
@@ -67,7 +58,7 @@ public static class GroupEntryExtensions
             && allToVersions is [var groupToVersion]
         )
         {
-            suffix = $" from {groupFromVersion} to {groupToVersion}";
+            suffix = $" from {groupFromVersion?.GetSerializedVersion() ?? "unknown"} to {groupToVersion.GetSerializedVersion()}";
         }
 
         var pluralSuffix = updateResults.Count == 1 ? "" : "s";
