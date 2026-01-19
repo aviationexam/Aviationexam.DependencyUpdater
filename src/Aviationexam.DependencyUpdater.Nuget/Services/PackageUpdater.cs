@@ -119,14 +119,14 @@ public sealed class PackageUpdater(
         // Process pull request based on update status
         return await HandlePullRequestAsync(
             gitWorkspace,
-            updatedPackages.GetCommitMessage(),
+            updatedPackages.GetCommitMessage(currentPackageVersions),
             pullRequestId,
             repositoryConfig,
             authConfig,
             gitMetadataConfig,
             executeRestore,
             restoreDirectory,
-            groupEntry.GetTitle(nugetUpdateCandidates),
+            groupEntry.GetTitle(nugetUpdateCandidates, currentPackageVersions),
             updater,
             cancellationToken
         );
