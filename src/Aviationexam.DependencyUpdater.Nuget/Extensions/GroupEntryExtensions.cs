@@ -28,7 +28,7 @@ public static class GroupEntryExtensions
                 .ToList();
             var allToVersions = updateResults
                 .AsValueEnumerable()
-                .Select(x => x.UpdateCandidate.PossiblePackageVersion.PackageVersion)
+                .Select( (x) => new PackageVersion(x.UpdateCandidate.PossiblePackageVersion.PackageVersion))
                 .Distinct()
                 .ToList();
 

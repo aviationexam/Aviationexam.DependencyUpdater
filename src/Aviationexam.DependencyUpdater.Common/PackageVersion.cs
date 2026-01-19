@@ -13,6 +13,16 @@ public record PackageVersion(
     IComparer<IReadOnlyCollection<string>> ReleaseLabelsComparer
 ) : IComparable<PackageVersion>
 {
+    public PackageVersion(
+        PackageVersion packageVersion
+    )
+    {
+        Version = packageVersion.Version;
+        IsPrerelease = packageVersion.IsPrerelease;
+        ReleaseLabels = packageVersion.ReleaseLabels;
+        ReleaseLabelsComparer = packageVersion.ReleaseLabelsComparer;
+    }
+
     public int CompareTo(PackageVersion? other)
     {
         if (ReferenceEquals(this, other)) return 0;
