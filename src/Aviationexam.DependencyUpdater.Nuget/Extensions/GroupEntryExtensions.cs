@@ -18,19 +18,19 @@ public static class GroupEntryExtensions
             .Distinct()
             .ToList();
 
+        var allFromVersions = updateResults
+            .AsValueEnumerable()
+            .SelectMany(x => x.FromVersionsPerFramework.Values)
+            .Distinct()
+            .ToList();
+        var allToVersions = updateResults
+            .AsValueEnumerable()
+            .Select(x => new PackageVersion(x.UpdateCandidate.PossiblePackageVersion.PackageVersion))
+            .Distinct()
+            .ToList();
+
         if (distinctPackages is [var packageName])
         {
-            var allFromVersions = updateResults
-                .AsValueEnumerable()
-                .SelectMany(x => x.FromVersionsPerFramework.Values)
-                .Distinct()
-                .ToList();
-            var allToVersions = updateResults
-                .AsValueEnumerable()
-                .Select(x => new PackageVersion(x.UpdateCandidate.PossiblePackageVersion.PackageVersion))
-                .Distinct()
-                .ToList();
-
             if (allFromVersions.Count == 0)
             {
                 var fallbackVersion = updateResults.AsValueEnumerable().First().UpdateCandidate.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
@@ -61,7 +61,16 @@ public static class GroupEntryExtensions
             return $"Bump {packageName} from {fromVersionRange} to {toVersionRange}";
         }
 
+        var suffix = "";
+        if (
+            allFromVersions is [var groupFromVersion]
+            && allToVersions is [var groupToVersion]
+        )
+        {
+            suffix = $" from {groupFromVersion} to {groupToVersion}";
+        }
+
         var pluralSuffix = updateResults.Count == 1 ? "" : "s";
-        return $"Bump {groupEntry.GroupName} group – {updateResults.Count} update{pluralSuffix}";
+        return $"Bump {groupEntry.GroupName} group – {updateResults.Count} update{pluralSuffix}{suffix}";
     }
 }
