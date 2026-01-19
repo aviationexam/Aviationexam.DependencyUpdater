@@ -176,28 +176,6 @@ public sealed class PackageUpdater(
         }
     }
 
-    private static Dictionary<string, PackageVersion> CaptureFromVersionsPerFramework(
-        string packageName,
-        IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
-        Dictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions
-    )
-    {
-        var fromVersions = new Dictionary<string, PackageVersion>();
-
-        if (groupPackageVersions.TryGetValue(packageName, out var frameworkVersions))
-        {
-            foreach (var targetFramework in targetFrameworks)
-            {
-                if (frameworkVersions.TryGetValue(targetFramework.TargetFramework, out var version))
-                {
-                    fromVersions[targetFramework.TargetFramework] = version;
-                }
-            }
-        }
-
-        return fromVersions;
-    }
-
     private void LogVersionConflict(
         NugetUpdateCandidate nugetUpdateCandidate,
         Dictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions
