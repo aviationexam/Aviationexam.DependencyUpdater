@@ -58,7 +58,7 @@ public class NugetCsprojParser(
 
                 // Check for conditional PackageReference (element or parent ItemGroup condition)
                 var condition = packageReference.GetConditionIncludingParent();
-                if (!TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTargetFramework))
+                if (TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTargetFramework))
                 {
                     if (logger.IsEnabled(LogLevel.Debug))
                     {
@@ -71,8 +71,6 @@ public class NugetCsprojParser(
                 }
                 else
                 {
-                    conditionalTargetFramework = null;
-
                     if (!string.IsNullOrWhiteSpace(condition) && logger.IsEnabled(LogLevel.Warning))
                     {
                         logger.LogWarning(
