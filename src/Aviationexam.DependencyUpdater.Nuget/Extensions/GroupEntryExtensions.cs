@@ -67,6 +67,6 @@ public static class GroupEntryExtensions
             lines.Add($"Bump {packageName} from {fromVersion.GetSerializedVersion()} to {toVersion} for {framework}");
         }
         
-        return (string.Join("; ", lines), true);
+        return (string.Join("\n", lines), true);
     }
 }
