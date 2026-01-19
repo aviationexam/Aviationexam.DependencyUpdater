@@ -189,6 +189,44 @@ public class GroupEntryExtensionsTests
             """, result);
     }
 
+    [Fact]
+    public void GetTitleAndCommitMessage_RealWorldScenario_DifferentVersionTransitions()
+    {
+        // Arrange - net9.0 gets 1.1.17 (max supported), net10.0 gets 1.1.22
+        var fromVersionsNet9 = new Dictionary<string, PackageVersion>
+        {
+            ["net9.0"] = new NuGetVersion("1.1.16").MapToPackageVersion()
+        };
+
+        var fromVersionsNet10 = new Dictionary<string, PackageVersion>
+        {
+            ["net10.0"] = new NuGetVersion("1.1.17").MapToPackageVersion()
+        };
+
+        var groupEntry = new GroupEntry("Meziantou.Extensions.Logging.Xunit.v3", []);
+        var updateResults = new List<NugetUpdateResult>
+        {
+            CreateUpdateResult("Meziantou.Extensions.Logging.Xunit.v3", fromVersionsNet9, "1.1.17", ["net9.0"]),
+            CreateUpdateResult("Meziantou.Extensions.Logging.Xunit.v3", fromVersionsNet10, "1.1.22", ["net10.0"])
+        };
+
+        // Act
+        var title = groupEntry.GetTitle(updateResults);
+        var commitMessage = updateResults.GetCommitMessage();
+
+        // Assert - Title shows version range for both updates
+        Assert.Equal("Bump Meziantou.Extensions.Logging.Xunit.v3 from 1.1.16-1.1.17 to 1.1.17-1.1.22", title);
+
+        // Assert - Description shows detailed per-framework updates
+        Assert.Equal("""
+            Updates 1 packages:
+
+            - Update Meziantou.Extensions.Logging.Xunit.v3 from 1.1.16 to 1.1.17 for net9.0
+            - Update Meziantou.Extensions.Logging.Xunit.v3 from 1.1.17 to 1.1.22 for net10.0
+
+            """, commitMessage);
+    }
+
     private static NugetUpdateResult CreateUpdateResult(
         string packageName,
         Dictionary<string, PackageVersion> fromVersionsPerFramework,

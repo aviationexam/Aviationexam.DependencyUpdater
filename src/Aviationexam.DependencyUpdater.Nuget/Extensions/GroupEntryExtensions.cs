@@ -13,18 +13,55 @@ public static class GroupEntryExtensions
         IReadOnlyCollection<NugetUpdateResult> updateResults
     )
     {
-        if (
-            updateResults.Count == 1
-            && updateResults.AsValueEnumerable().Single() is { } updateResult
-        )
+        var distinctPackages = updateResults
+            .AsValueEnumerable()
+            .Select(x => x.UpdateCandidate.NugetDependency.NugetPackage.GetPackageName())
+            .Distinct()
+            .ToList();
+
+        if (distinctPackages.Count == 1)
         {
-            var candidate = updateResult.UpdateCandidate;
-            var packageName = candidate.NugetDependency.NugetPackage.GetPackageName();
-            var toVersion = candidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
-            
-            var (title, _) = GetTitleInfo(packageName, toVersion, updateResult);
-            
-            return title;
+            var packageName = distinctPackages[0];
+            var allFromVersions = updateResults
+                .AsValueEnumerable()
+                .SelectMany(x => x.FromVersionsPerFramework.Values)
+                .Distinct()
+                .ToList();
+            var allToVersions = updateResults
+                .AsValueEnumerable()
+                .Select(x => x.UpdateCandidate.PossiblePackageVersion.PackageVersion)
+                .Distinct()
+                .ToList();
+
+            if (allFromVersions.Count == 0)
+            {
+                var fallbackVersion = updateResults.First().UpdateCandidate.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
+                var toVersion = allToVersions.Count == 1 
+                    ? allToVersions[0].GetSerializedVersion() 
+                    : $"{allToVersions.AsValueEnumerable().Min()!.GetSerializedVersion()}-{allToVersions.AsValueEnumerable().Max()!.GetSerializedVersion()}";
+                return $"Bump {packageName} from {fallbackVersion} to {toVersion}";
+            }
+
+            var fromVersionRange = allFromVersions.Count == 1
+                ? allFromVersions[0].GetSerializedVersion()
+                : $"{allFromVersions.AsValueEnumerable().Min()!.GetSerializedVersion()}-{allFromVersions.AsValueEnumerable().Max()!.GetSerializedVersion()}";
+
+            var toVersionRange = allToVersions.Count == 1
+                ? allToVersions[0].GetSerializedVersion()
+                : $"{allToVersions.AsValueEnumerable().Min()!.GetSerializedVersion()}-{allToVersions.AsValueEnumerable().Max()!.GetSerializedVersion()}";
+
+            var allFrameworks = updateResults
+                .AsValueEnumerable()
+                .SelectMany(x => x.FromVersionsPerFramework.Keys)
+                .Distinct()
+                .ToList();
+
+            if (allFrameworks.Count == 1)
+            {
+                return $"Bump {packageName} from {fromVersionRange} to {toVersionRange} for {allFrameworks[0]}";
+            }
+
+            return $"Bump {packageName} from {fromVersionRange} to {toVersionRange}";
         }
 
         var pluralSuffix = updateResults.Count == 1 ? "" : "s";

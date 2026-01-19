@@ -15,7 +15,13 @@ public static class NugetUpdatesExtensions
     {
         var stringBuilder = new StringBuilder();
 
-        stringBuilder.AppendLine($"Updates {updatedPackages.Count} packages:");
+        var distinctPackageCount = updatedPackages
+            .AsValueEnumerable()
+            .Select(x => x.UpdateCandidate.NugetDependency.NugetPackage.GetPackageName())
+            .Distinct()
+            .Count();
+
+        stringBuilder.AppendLine($"Updates {distinctPackageCount} packages:");
         stringBuilder.AppendLine();
 
         foreach (var updateResult in updatedPackages)
