@@ -231,7 +231,8 @@ public class GroupEntryExtensionsTests
         string packageName,
         Dictionary<string, PackageVersion> fromVersionsPerFramework,
         string toVersion,
-        string[] targetFrameworks
+        string[] targetFrameworks,
+        string? condition = null
     )
     {
         var targetFrameworkList = new List<NugetTargetFramework>();
@@ -243,7 +244,7 @@ public class GroupEntryExtensionsTests
         var candidate = new NugetUpdateCandidate(
             new NugetDependency(
                 new NugetFile("Test.csproj", ENugetFileType.Csproj),
-                new NugetPackageReference(packageName, new VersionRange(new NuGetVersion("1.0.0"))),
+                new NugetPackageReference(packageName, new VersionRange(new NuGetVersion("1.0.0")), condition),
                 targetFrameworkList
             ),
             new PossiblePackageVersion(
