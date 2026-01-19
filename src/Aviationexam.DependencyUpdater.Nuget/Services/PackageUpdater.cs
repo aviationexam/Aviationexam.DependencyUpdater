@@ -126,7 +126,7 @@ public sealed class PackageUpdater(
             gitMetadataConfig,
             executeRestore,
             restoreDirectory,
-            groupEntry.GetTitle(nugetUpdateCandidates),
+            groupEntry.GetTitle(updatedPackages),
             updater,
             cancellationToken
         );

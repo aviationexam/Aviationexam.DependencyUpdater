@@ -1,11 +1,11 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
+using Aviationexam.DependencyUpdater.Nuget.Helpers;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Parsers;
 using Aviationexam.DependencyUpdater.TestsInfrastructure;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -15,13 +15,17 @@ using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Tests;
 
-public class NugetDirectoryPackagesPropsParserTests
+public class NugetDirectoryPackagesPropsParserTests(
+    ITestOutputHelper outputHelper
+)
 {
+    private readonly ILoggerFactory _loggerFactory = outputHelper.ToLoggerFactory();
+
     [Fact]
     public void ParseWorks()
     {
         using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
-            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+            _loggerFactory.CreateLogger<TemporaryDirectoryProvider>()
         );
 
         var fileSystem = Substitute.For<IFileSystem>();
@@ -64,7 +68,10 @@ public class NugetDirectoryPackagesPropsParserTests
 
         var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(
+                _loggerFactory.CreateLogger<ConditionalTargetFrameworkResolver>()
+            )
         );
 
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks = [new("net9.0")];
@@ -107,7 +114,10 @@ public class NugetDirectoryPackagesPropsParserTests
 
         var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(
+                _loggerFactory.CreateLogger<ConditionalTargetFrameworkResolver>()
+            )
         );
 
         var response = directoryPackagesPropsParser.Parse(
@@ -124,7 +134,7 @@ public class NugetDirectoryPackagesPropsParserTests
     public void ParseConditionalItemGroupWorks()
     {
         using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
-            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+            _loggerFactory.CreateLogger<TemporaryDirectoryProvider>()
         );
 
         var fileSystem = Substitute.For<IFileSystem>();
@@ -162,7 +172,10 @@ public class NugetDirectoryPackagesPropsParserTests
 
         var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(
+                _loggerFactory.CreateLogger<ConditionalTargetFrameworkResolver>()
+            )
         );
 
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks = [new("net8.0"), new("net9.0")];
@@ -211,7 +224,7 @@ public class NugetDirectoryPackagesPropsParserTests
     public void ParseConditionalPackageVersionElementWorks()
     {
         using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
-            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+            _loggerFactory.CreateLogger<TemporaryDirectoryProvider>()
         );
 
         var fileSystem = Substitute.For<IFileSystem>();
@@ -243,7 +256,10 @@ public class NugetDirectoryPackagesPropsParserTests
 
         var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(
+                _loggerFactory.CreateLogger<ConditionalTargetFrameworkResolver>()
+            )
         );
 
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks = [new("net8.0"), new("net9.0")];
@@ -282,7 +298,7 @@ public class NugetDirectoryPackagesPropsParserTests
     public void ParseMixedConditionalFormatsWorks()
     {
         using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
-            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+            _loggerFactory.CreateLogger<TemporaryDirectoryProvider>()
         );
 
         var fileSystem = Substitute.For<IFileSystem>();
@@ -329,7 +345,10 @@ public class NugetDirectoryPackagesPropsParserTests
 
         var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(
+                _loggerFactory.CreateLogger<ConditionalTargetFrameworkResolver>()
+            )
         );
 
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks = [new("net8.0"), new("net9.0"), new("net10.0")];
@@ -404,7 +423,7 @@ public class NugetDirectoryPackagesPropsParserTests
     public void ParseConditionalWithUnquotedVariableWorks()
     {
         using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
-            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+            _loggerFactory.CreateLogger<TemporaryDirectoryProvider>()
         );
 
         var fileSystem = Substitute.For<IFileSystem>();
@@ -440,7 +459,10 @@ public class NugetDirectoryPackagesPropsParserTests
 
         var directoryPackagesPropsParser = new NugetDirectoryPackagesPropsParser(
             fileSystem,
-            logger
+            logger,
+            new ConditionalTargetFrameworkResolver(
+                _loggerFactory.CreateLogger<ConditionalTargetFrameworkResolver>()
+            )
         );
 
         var nugetFile = new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps);

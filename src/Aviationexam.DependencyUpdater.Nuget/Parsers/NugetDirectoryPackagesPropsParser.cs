@@ -13,7 +13,8 @@ namespace Aviationexam.DependencyUpdater.Nuget.Parsers;
 
 public class NugetDirectoryPackagesPropsParser(
     IFileSystem fileSystem,
-    ILogger<NugetDirectoryPackagesPropsParser> logger
+    ILogger<NugetDirectoryPackagesPropsParser> logger,
+    ConditionalTargetFrameworkResolver conditionalTargetFrameworkResolver
 )
 {
     public IEnumerable<NugetDependency> Parse(
@@ -43,18 +44,23 @@ public class NugetDirectoryPackagesPropsParser(
             .Descendants()
             .AsValueEnumerable()
             .Where(e => e.Name.LocalName == "PackageVersion")
-            .Select(x => new
+            .Select(x =>
             {
-                Include = x.Attribute("Include")?.Value,
-                Version = x.Attribute("Version")?.Value,
-                Condition = x.GetConditionIncludingParent(),
+                var packageName = x.Attribute("Include")?.Value;
+                return new
+                {
+                    Include = packageName,
+                    Version = x.Attribute("Version")?.Value,
+                    Condition = conditionalTargetFrameworkResolver.Resolve(x.GetConditionIncludingParent(), packageName),
+                };
             })
             .Where(x => x.Include is not null && x.Version is not null)
             .Select(x => new NugetDependency(
                 nugetFile,
                 new NugetPackageVersion(
                     x.Include!,
-                    new NuGetVersion(x.Version!)
+                    new NuGetVersion(x.Version!),
+                    x.Condition
                 ),
                 GetEffectiveTargetFrameworks(
                     x.Condition,
@@ -67,33 +73,16 @@ public class NugetDirectoryPackagesPropsParser(
     }
 
     private IReadOnlyCollection<NugetTargetFramework> GetEffectiveTargetFrameworks(
-        string? condition,
+        string? conditionalTargetFramework,
         string packageName,
         IReadOnlyDictionary<string, IReadOnlyCollection<NugetTargetFramework>> packagesTargetFrameworks,
         IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks
     )
     {
         // If there's a condition, try to extract the target framework
-        if (TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTargetFramework))
+        if (!string.IsNullOrEmpty(conditionalTargetFramework))
         {
-            if (logger.IsEnabled(LogLevel.Debug))
-            {
-                logger.LogDebug(
-                    "Found conditional target framework {TargetFramework} for package {PackageName}",
-                    conditionalTargetFramework,
-                    packageName
-                );
-            }
             return [new NugetTargetFramework(conditionalTargetFramework)];
-        }
-
-        if (!string.IsNullOrWhiteSpace(condition) && logger.IsEnabled(LogLevel.Warning))
-        {
-            logger.LogWarning(
-                "Unable to parse condition '{Condition}' for package {PackageName}",
-                condition,
-                packageName
-            );
         }
 
         // Fall back to default behavior

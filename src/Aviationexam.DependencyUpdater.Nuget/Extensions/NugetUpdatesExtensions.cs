@@ -1,6 +1,7 @@
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
 using System.Text;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 
@@ -12,14 +13,28 @@ public static class NugetUpdatesExtensions
     {
         var stringBuilder = new StringBuilder();
 
-        stringBuilder.AppendLine($"Updates {updatedPackages.Count} packages:");
+        var distinctPackageCount = updatedPackages
+            .AsValueEnumerable()
+            .Select(x => x.NugetDependency.NugetPackage.GetPackageName())
+            .Distinct()
+            .Count();
+
+        stringBuilder.AppendLine($"Updates {distinctPackageCount} packages:");
         stringBuilder.AppendLine();
 
-        foreach (var updatedPackage in updatedPackages)
+        foreach (var grouping in updatedPackages.AsValueEnumerable().GroupBy(x => x.NugetDependency.NugetPackage.GetPackageName()))
         {
-            stringBuilder.AppendLine(
-                $"- Update {updatedPackage.NugetDependency.NugetPackage.GetPackageName()} from {updatedPackage.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion()} to {updatedPackage.PossiblePackageVersion.PackageVersion.GetSerializedVersion()}"
-            );
+            var packageName = grouping.Key;
+
+            foreach (var nugetUpdateResult in grouping)
+            {
+                var updateLines = GetUpdateLines(packageName, nugetUpdateResult);
+
+                foreach (var line in updateLines)
+                {
+                    stringBuilder.AppendLine($"- {line}");
+                }
+            }
         }
 
         if (stringBuilder.Length == 0)
@@ -28,5 +43,25 @@ public static class NugetUpdatesExtensions
         }
 
         return stringBuilder.ToString();
+    }
+
+    private static IEnumerable<string> GetUpdateLines(
+        string packageName,
+        NugetUpdateCandidate updateResult
+    )
+    {
+        var fromVersion = updateResult.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
+        var toVersion = updateResult.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
+
+        var condition = updateResult.NugetDependency.NugetPackage.GetCondition();
+
+        if (!string.IsNullOrWhiteSpace(condition))
+        {
+            yield return $"Update {packageName} from {fromVersion} to {toVersion} for {condition}";
+        }
+        else
+        {
+            yield return $"Update {packageName} from {fromVersion} to {toVersion}";
+        }
     }
 }

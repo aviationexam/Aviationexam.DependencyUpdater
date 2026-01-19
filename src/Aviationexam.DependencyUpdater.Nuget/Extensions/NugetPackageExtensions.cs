@@ -24,6 +24,15 @@ public static class NugetPackageExtensions
         _ => throw new ArgumentOutOfRangeException(nameof(nugetPackage), nugetPackage, null),
     };
 
+    public static string? GetCondition(
+        this INugetPackage nugetPackage
+    ) => nugetPackage switch
+    {
+        NugetPackageReference nugetPackageReference => nugetPackageReference.Condition,
+        NugetPackageVersion nugetPackageVersion => nugetPackageVersion.Condition,
+        _ => throw new ArgumentOutOfRangeException(nameof(nugetPackage), nugetPackage, null),
+    };
+
     /// <summary>
     /// Maps the MinVersion from a NugetPackageReference's VersionRange to a PackageVersion.
     /// Returns null if VersionRange or MinVersion is null.

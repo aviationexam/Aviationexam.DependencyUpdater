@@ -107,7 +107,7 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
         {
             var condition = element.GetConditionIncludingParent();
             if (
-                TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTfm)
+                ConditionalTargetFrameworkResolver.TryExtractTargetFramework(condition, out var conditionalTfm)
                 && targetFrameworkNames.Contains(conditionalTfm)
             )
             {

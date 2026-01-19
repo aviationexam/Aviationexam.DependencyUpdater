@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Tests;
 
-public class TargetFrameworkConditionHelperTests
+public class ConditionalTargetFrameworkResolverTests
 {
     [Theory]
     [InlineData("'$(TargetFramework)' == 'net9.0'", "net9.0")]
@@ -13,7 +13,7 @@ public class TargetFrameworkConditionHelperTests
     public void TryExtractTargetFramework_QuotedVariable_ReturnsTrue(string condition, string expectedTfm)
     {
         // Act
-        var result = TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var targetFramework);
+        var result = ConditionalTargetFrameworkResolver.TryExtractTargetFramework(condition, out var targetFramework);
 
         // Assert
         Assert.True(result);
@@ -26,7 +26,7 @@ public class TargetFrameworkConditionHelperTests
     public void TryExtractTargetFramework_QuotedVariable_NoSpaces_ReturnsTrue(string condition, string expectedTfm)
     {
         // Act
-        var result = TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var targetFramework);
+        var result = ConditionalTargetFrameworkResolver.TryExtractTargetFramework(condition, out var targetFramework);
 
         // Assert
         Assert.True(result);
@@ -42,7 +42,7 @@ public class TargetFrameworkConditionHelperTests
     public void TryExtractTargetFramework_UnquotedVariable_ReturnsTrue(string condition, string expectedTfm)
     {
         // Act
-        var result = TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var targetFramework);
+        var result = ConditionalTargetFrameworkResolver.TryExtractTargetFramework(condition, out var targetFramework);
 
         // Assert
         Assert.True(result);
@@ -55,7 +55,7 @@ public class TargetFrameworkConditionHelperTests
     public void TryExtractTargetFramework_UnquotedVariable_NoSpaces_ReturnsTrue(string condition, string expectedTfm)
     {
         // Act
-        var result = TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var targetFramework);
+        var result = ConditionalTargetFrameworkResolver.TryExtractTargetFramework(condition, out var targetFramework);
 
         // Assert
         Assert.True(result);
@@ -69,7 +69,7 @@ public class TargetFrameworkConditionHelperTests
     public void TryExtractTargetFramework_NullOrWhitespace_ReturnsFalse(string? condition)
     {
         // Act
-        var result = TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var targetFramework);
+        var result = ConditionalTargetFrameworkResolver.TryExtractTargetFramework(condition, out var targetFramework);
 
         // Assert
         Assert.False(result);
@@ -84,7 +84,7 @@ public class TargetFrameworkConditionHelperTests
     public void TryExtractTargetFramework_InvalidCondition_ReturnsFalse(string condition)
     {
         // Act
-        var result = TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var targetFramework);
+        var result = ConditionalTargetFrameworkResolver.TryExtractTargetFramework(condition, out var targetFramework);
 
         // Assert
         Assert.False(result);
@@ -98,7 +98,7 @@ public class TargetFrameworkConditionHelperTests
     public void TryExtractTargetFramework_CaseInsensitive_ReturnsTrue(string condition, string expectedTfm)
     {
         // Act
-        var result = TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var targetFramework);
+        var result = ConditionalTargetFrameworkResolver.TryExtractTargetFramework(condition, out var targetFramework);
 
         // Assert
         Assert.True(result);
