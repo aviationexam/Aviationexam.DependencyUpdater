@@ -194,28 +194,28 @@ public class NugetDirectoryPackagesPropsParserTests(
 
         // First package - no condition, should have all target frameworks
         Assert.Equal("Meziantou.Analyzer", actualList[0].NugetPackage.GetPackageName());
-        Assert.Equal("2.0.195", ((NugetPackageVersion)actualList[0].NugetPackage).Version.ToString());
+        Assert.Equal("2.0.195", ((NugetPackageVersion) actualList[0].NugetPackage).Version.ToString());
         Assert.Equal(2, actualList[0].TargetFrameworks.Count);
 
         // Conditional packages for net8.0
         Assert.Equal("Microsoft.AspNetCore.WebUtilities", actualList[1].NugetPackage.GetPackageName());
-        Assert.Equal("8.0.22", ((NugetPackageVersion)actualList[1].NugetPackage).Version.ToString());
+        Assert.Equal("8.0.22", ((NugetPackageVersion) actualList[1].NugetPackage).Version.ToString());
         Assert.Single(actualList[1].TargetFrameworks);
         Assert.Equal("net8.0", actualList[1].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
 
         Assert.Equal("Microsoft.Extensions.DependencyInjection", actualList[2].NugetPackage.GetPackageName());
-        Assert.Equal("8.0.1", ((NugetPackageVersion)actualList[2].NugetPackage).Version.ToString());
+        Assert.Equal("8.0.1", ((NugetPackageVersion) actualList[2].NugetPackage).Version.ToString());
         Assert.Single(actualList[2].TargetFrameworks);
         Assert.Equal("net8.0", actualList[2].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
 
         // Conditional packages for net9.0
         Assert.Equal("Microsoft.AspNetCore.WebUtilities", actualList[3].NugetPackage.GetPackageName());
-        Assert.Equal("9.0.11", ((NugetPackageVersion)actualList[3].NugetPackage).Version.ToString());
+        Assert.Equal("9.0.11", ((NugetPackageVersion) actualList[3].NugetPackage).Version.ToString());
         Assert.Single(actualList[3].TargetFrameworks);
         Assert.Equal("net9.0", actualList[3].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
 
         Assert.Equal("Microsoft.Extensions.DependencyInjection", actualList[4].NugetPackage.GetPackageName());
-        Assert.Equal("9.0.11", ((NugetPackageVersion)actualList[4].NugetPackage).Version.ToString());
+        Assert.Equal("9.0.11", ((NugetPackageVersion) actualList[4].NugetPackage).Version.ToString());
         Assert.Single(actualList[4].TargetFrameworks);
         Assert.Equal("net9.0", actualList[4].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
     }
@@ -278,18 +278,18 @@ public class NugetDirectoryPackagesPropsParserTests(
 
         // First package - no condition, should have all target frameworks
         Assert.Equal("Meziantou.Analyzer", actualList[0].NugetPackage.GetPackageName());
-        Assert.Equal("2.0.195", ((NugetPackageVersion)actualList[0].NugetPackage).Version.ToString());
+        Assert.Equal("2.0.195", ((NugetPackageVersion) actualList[0].NugetPackage).Version.ToString());
         Assert.Equal(2, actualList[0].TargetFrameworks.Count);
 
         // Conditional package for net8.0
         Assert.Equal("Microsoft.Extensions.Hosting", actualList[1].NugetPackage.GetPackageName());
-        Assert.Equal("8.0.0", ((NugetPackageVersion)actualList[1].NugetPackage).Version.ToString());
+        Assert.Equal("8.0.0", ((NugetPackageVersion) actualList[1].NugetPackage).Version.ToString());
         Assert.Single(actualList[1].TargetFrameworks);
         Assert.Equal("net8.0", actualList[1].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
 
         // Conditional package for net9.0
         Assert.Equal("Microsoft.Extensions.Hosting", actualList[2].NugetPackage.GetPackageName());
-        Assert.Equal("9.0.4", ((NugetPackageVersion)actualList[2].NugetPackage).Version.ToString());
+        Assert.Equal("9.0.4", ((NugetPackageVersion) actualList[2].NugetPackage).Version.ToString());
         Assert.Single(actualList[2].TargetFrameworks);
         Assert.Equal("net9.0", actualList[2].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
     }
@@ -367,55 +367,55 @@ public class NugetDirectoryPackagesPropsParserTests(
 
         // First package - no condition, should have all target frameworks
         Assert.Equal("Meziantou.Analyzer", actualList[0].NugetPackage.GetPackageName());
-        Assert.Equal("2.0.257", ((NugetPackageVersion)actualList[0].NugetPackage).Version.ToString());
+        Assert.Equal("2.0.257", ((NugetPackageVersion) actualList[0].NugetPackage).Version.ToString());
         Assert.Equal(3, actualList[0].TargetFrameworks.Count);
 
         // net8.0 conditional packages
         Assert.Equal("Microsoft.AspNetCore.WebUtilities", actualList[1].NugetPackage.GetPackageName());
-        Assert.Equal("8.0.22", ((NugetPackageVersion)actualList[1].NugetPackage).Version.ToString());
+        Assert.Equal("8.0.22", ((NugetPackageVersion) actualList[1].NugetPackage).Version.ToString());
         Assert.Single(actualList[1].TargetFrameworks);
         Assert.Equal("net8.0", actualList[1].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
 
         Assert.Equal("Microsoft.Extensions.Caching.Abstractions", actualList[2].NugetPackage.GetPackageName());
-        Assert.Equal("8.0.0", ((NugetPackageVersion)actualList[2].NugetPackage).Version.ToString());
+        Assert.Equal("8.0.0", ((NugetPackageVersion) actualList[2].NugetPackage).Version.ToString());
         Assert.Single(actualList[2].TargetFrameworks);
         Assert.Equal("net8.0", actualList[2].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
 
         Assert.Equal("System.Text.Json", actualList[3].NugetPackage.GetPackageName());
-        Assert.Equal("8.0.6", ((NugetPackageVersion)actualList[3].NugetPackage).Version.ToString());
+        Assert.Equal("8.0.6", ((NugetPackageVersion) actualList[3].NugetPackage).Version.ToString());
         Assert.Single(actualList[3].TargetFrameworks);
         Assert.Equal("net8.0", actualList[3].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
 
         // net9.0 conditional packages
         Assert.Equal("Microsoft.AspNetCore.WebUtilities", actualList[4].NugetPackage.GetPackageName());
-        Assert.Equal("9.0.11", ((NugetPackageVersion)actualList[4].NugetPackage).Version.ToString());
+        Assert.Equal("9.0.11", ((NugetPackageVersion) actualList[4].NugetPackage).Version.ToString());
         Assert.Single(actualList[4].TargetFrameworks);
         Assert.Equal("net9.0", actualList[4].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
 
         Assert.Equal("Microsoft.Extensions.Caching.Abstractions", actualList[5].NugetPackage.GetPackageName());
-        Assert.Equal("9.0.11", ((NugetPackageVersion)actualList[5].NugetPackage).Version.ToString());
+        Assert.Equal("9.0.11", ((NugetPackageVersion) actualList[5].NugetPackage).Version.ToString());
         Assert.Single(actualList[5].TargetFrameworks);
         Assert.Equal("net9.0", actualList[5].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
 
         Assert.Equal("System.Text.Json", actualList[6].NugetPackage.GetPackageName());
-        Assert.Equal("9.0.11", ((NugetPackageVersion)actualList[6].NugetPackage).Version.ToString());
+        Assert.Equal("9.0.11", ((NugetPackageVersion) actualList[6].NugetPackage).Version.ToString());
         Assert.Single(actualList[6].TargetFrameworks);
         Assert.Equal("net9.0", actualList[6].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
 
         // net10.0 conditional packages
         Assert.Equal("Microsoft.AspNetCore.WebUtilities", actualList[7].NugetPackage.GetPackageName());
-        Assert.Equal("10.0.1", ((NugetPackageVersion)actualList[7].NugetPackage).Version.ToString());
+        Assert.Equal("10.0.1", ((NugetPackageVersion) actualList[7].NugetPackage).Version.ToString());
         Assert.Single(actualList[7].TargetFrameworks);
         Assert.Equal("net10.0", actualList[7].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
 
         Assert.Equal("System.Text.Json", actualList[8].NugetPackage.GetPackageName());
-        Assert.Equal("10.0.1", ((NugetPackageVersion)actualList[8].NugetPackage).Version.ToString());
+        Assert.Equal("10.0.1", ((NugetPackageVersion) actualList[8].NugetPackage).Version.ToString());
         Assert.Single(actualList[8].TargetFrameworks);
         Assert.Equal("net10.0", actualList[8].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
 
         // Last package - no condition, should have all target frameworks
         Assert.Equal("ZLinq", actualList[9].NugetPackage.GetPackageName());
-        Assert.Equal("1.5.4", ((NugetPackageVersion)actualList[9].NugetPackage).Version.ToString());
+        Assert.Equal("1.5.4", ((NugetPackageVersion) actualList[9].NugetPackage).Version.ToString());
         Assert.Equal(3, actualList[9].TargetFrameworks.Count);
     }
 
@@ -486,19 +486,19 @@ public class NugetDirectoryPackagesPropsParserTests(
 
         // First package - conditional ItemGroup with unquoted variable
         Assert.Equal("Microsoft.Bcl.AsyncInterfaces", actualList[0].NugetPackage.GetPackageName());
-        Assert.Equal("9.0.0", ((NugetPackageVersion)actualList[0].NugetPackage).Version.ToString());
+        Assert.Equal("9.0.0", ((NugetPackageVersion) actualList[0].NugetPackage).Version.ToString());
         Assert.Single(actualList[0].TargetFrameworks);
         Assert.Equal("netstandard2.0", actualList[0].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
 
         // Second package - conditional element with unquoted variable
         Assert.Equal("System.Text.Json", actualList[1].NugetPackage.GetPackageName());
-        Assert.Equal("9.0.1", ((NugetPackageVersion)actualList[1].NugetPackage).Version.ToString());
+        Assert.Equal("9.0.1", ((NugetPackageVersion) actualList[1].NugetPackage).Version.ToString());
         Assert.Single(actualList[1].TargetFrameworks);
         Assert.Equal("netstandard2.0", actualList[1].TargetFrameworks.AsValueEnumerable().Single().TargetFramework);
 
         // Third package - no condition, should have all target frameworks
         Assert.Equal("Microsoft.Extensions.Hosting", actualList[2].NugetPackage.GetPackageName());
-        Assert.Equal("9.0.4", ((NugetPackageVersion)actualList[2].NugetPackage).Version.ToString());
+        Assert.Equal("9.0.4", ((NugetPackageVersion) actualList[2].NugetPackage).Version.ToString());
         Assert.Equal(2, actualList[2].TargetFrameworks.Count);
     }
 }
