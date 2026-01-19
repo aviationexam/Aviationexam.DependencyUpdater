@@ -61,12 +61,8 @@ public static class GroupEntryExtensions
             return ($"Bump {packageName} from {fromVersion} to {toVersion}", false);
         }
 
-        var lines = new List<string>();
-        foreach (var (framework, fromVersion) in updateResult.FromVersionsPerFramework)
-        {
-            lines.Add($"Bump {packageName} from {fromVersion.GetSerializedVersion()} to {toVersion} for {framework}");
-        }
-        
-        return (string.Join("\n", lines), true);
+        var minVersion = uniqueVersions.AsValueEnumerable().Min()!.GetSerializedVersion();
+        var maxVersion = uniqueVersions.AsValueEnumerable().Max()!.GetSerializedVersion();
+        return ($"Bump {packageName} from {minVersion}-{maxVersion} to {toVersion}", false);
     }
 }

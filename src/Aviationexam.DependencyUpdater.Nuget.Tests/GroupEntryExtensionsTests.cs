@@ -50,7 +50,7 @@ public class GroupEntryExtensionsTests
     }
 
     [Fact]
-    public void GetTitle_SinglePackageMultipleFrameworksDifferentVersions_ShowsMultipleLines()
+    public void GetTitle_SinglePackageMultipleFrameworksDifferentVersions_ShowsVersionRange()
     {
         var fromVersions = new Dictionary<string, PackageVersion>
         {
@@ -66,10 +66,7 @@ public class GroupEntryExtensionsTests
 
         var result = groupEntry.GetTitle(updateResults);
 
-        Assert.Equal("""
-            Bump Meziantou.Extensions.Logging.Xunit.v3 from 1.1.17 to 1.1.22 for net9.0
-            Bump Meziantou.Extensions.Logging.Xunit.v3 from 1.1.21 to 1.1.22 for net10.0
-            """, result);
+        Assert.Equal("Bump Meziantou.Extensions.Logging.Xunit.v3 from 1.1.17-1.1.21 to 1.1.22", result);
     }
 
     [Fact]
@@ -118,6 +115,78 @@ public class GroupEntryExtensionsTests
         var result = groupEntry.GetTitle(updateResults);
 
         Assert.Equal("Bump NewPackage from 1.0.0 to 2.0.0", result);
+    }
+
+    [Fact]
+    public void GetCommitMessage_SinglePackageMultipleFrameworksDifferentVersions_ShowsMultipleLines()
+    {
+        var fromVersions = new Dictionary<string, PackageVersion>
+        {
+            ["net9.0"] = new NuGetVersion("1.1.17").MapToPackageVersion(),
+            ["net10.0"] = new NuGetVersion("1.1.21").MapToPackageVersion()
+        };
+
+        var updateResults = new List<NugetUpdateResult>
+        {
+            CreateUpdateResult("Meziantou.Extensions.Logging.Xunit.v3", fromVersions, "1.1.22", ["net9.0", "net10.0"])
+        };
+
+        var result = updateResults.GetCommitMessage();
+
+        Assert.Equal("""
+            Updates 1 packages:
+
+            - Update Meziantou.Extensions.Logging.Xunit.v3 from 1.1.17 to 1.1.22 for net9.0
+            - Update Meziantou.Extensions.Logging.Xunit.v3 from 1.1.21 to 1.1.22 for net10.0
+
+            """, result);
+    }
+
+    [Fact]
+    public void GetCommitMessage_SinglePackageSingleFramework_ShowsFrameworkSuffix()
+    {
+        var fromVersions = new Dictionary<string, PackageVersion>
+        {
+            ["net10.0"] = new NuGetVersion("1.0.0").MapToPackageVersion()
+        };
+
+        var updateResults = new List<NugetUpdateResult>
+        {
+            CreateUpdateResult("TestPackage", fromVersions, "2.0.0", ["net10.0"])
+        };
+
+        var result = updateResults.GetCommitMessage();
+
+        Assert.Equal("""
+            Updates 1 packages:
+
+            - Update TestPackage from 1.0.0 to 2.0.0 for net10.0
+
+            """, result);
+    }
+
+    [Fact]
+    public void GetCommitMessage_SinglePackageMultipleFrameworksSameVersion_NoFrameworkSuffix()
+    {
+        var fromVersions = new Dictionary<string, PackageVersion>
+        {
+            ["net9.0"] = new NuGetVersion("1.5.0").MapToPackageVersion(),
+            ["net10.0"] = new NuGetVersion("1.5.0").MapToPackageVersion()
+        };
+
+        var updateResults = new List<NugetUpdateResult>
+        {
+            CreateUpdateResult("TestPackage", fromVersions, "2.0.0", ["net9.0", "net10.0"])
+        };
+
+        var result = updateResults.GetCommitMessage();
+
+        Assert.Equal("""
+            Updates 1 packages:
+
+            - Update TestPackage from 1.5.0 to 2.0.0
+
+            """, result);
     }
 
     private static NugetUpdateResult CreateUpdateResult(
