@@ -5,21 +5,24 @@ using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Parsers;
 using Aviationexam.DependencyUpdater.TestsInfrastructure;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using System.IO;
 using Xunit;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Tests;
 
-public class NugetCsprojParserTests
+public class NugetCsprojParserTests(
+    ITestOutputHelper outputHelper
+)
 {
+    private readonly ILoggerFactory _loggerFactory = outputHelper.ToLoggerFactory();
+
     [Fact]
     public void ParseWorks()
     {
         using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
-            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
-            );
+            _loggerFactory.CreateLogger<TemporaryDirectoryProvider>()
+        );
 
         var fileSystem = Substitute.For<IFileSystem>();
         var logger = Substitute.For<ILogger<NugetCsprojParser>>();
@@ -78,7 +81,7 @@ public class NugetCsprojParserTests
         var csprojParser = new NugetCsprojParser(
             fileSystem,
             logger,
-            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
+            new ConditionalTargetFrameworkResolver(_loggerFactory.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
@@ -102,8 +105,8 @@ public class NugetCsprojParserTests
     public void ParseWorks_MultipleTargetFrameworks()
     {
         using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
-            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
-            );
+            _loggerFactory.CreateLogger<TemporaryDirectoryProvider>()
+        );
 
         var fileSystem = Substitute.For<IFileSystem>();
         var logger = Substitute.For<ILogger<NugetCsprojParser>>();
@@ -136,7 +139,7 @@ public class NugetCsprojParserTests
         var csprojParser = new NugetCsprojParser(
             fileSystem,
             logger,
-            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
+            new ConditionalTargetFrameworkResolver(_loggerFactory.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
@@ -169,7 +172,7 @@ public class NugetCsprojParserTests
         var csprojParser = new NugetCsprojParser(
             fileSystem,
             logger,
-            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
+            new ConditionalTargetFrameworkResolver(_loggerFactory.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var response = csprojParser.Parse(directoryPath, new NugetFile("project/Project.csproj", ENugetFileType.Csproj));
@@ -181,7 +184,7 @@ public class NugetCsprojParserTests
     public void ParseConditionalItemGroupWorks()
     {
         using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
-            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+            _loggerFactory.CreateLogger<TemporaryDirectoryProvider>()
         );
 
         var fileSystem = Substitute.For<IFileSystem>();
@@ -222,7 +225,7 @@ public class NugetCsprojParserTests
         var csprojParser = new NugetCsprojParser(
             fileSystem,
             logger,
-            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
+            new ConditionalTargetFrameworkResolver(_loggerFactory.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
@@ -246,7 +249,7 @@ public class NugetCsprojParserTests
     public void ParseConditionalPackageReferenceElementWorks()
     {
         using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
-            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+            _loggerFactory.CreateLogger<TemporaryDirectoryProvider>()
         );
 
         var fileSystem = Substitute.For<IFileSystem>();
@@ -280,7 +283,7 @@ public class NugetCsprojParserTests
         var csprojParser = new NugetCsprojParser(
             fileSystem,
             logger,
-            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
+            new ConditionalTargetFrameworkResolver(_loggerFactory.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
@@ -300,7 +303,7 @@ public class NugetCsprojParserTests
     public void ParseMixedConditionalFormatsWorks()
     {
         using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
-            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+            _loggerFactory.CreateLogger<TemporaryDirectoryProvider>()
         );
 
         var fileSystem = Substitute.For<IFileSystem>();
@@ -345,7 +348,7 @@ public class NugetCsprojParserTests
         var csprojParser = new NugetCsprojParser(
             fileSystem,
             logger,
-            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
+            new ConditionalTargetFrameworkResolver(_loggerFactory.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
@@ -372,7 +375,7 @@ public class NugetCsprojParserTests
     public void ParseConditionalWithUnquotedVariableWorks()
     {
         using var temporaryDirectoryProvider = new TemporaryDirectoryProvider(
-            NullLoggerFactory.Instance.CreateLogger<TemporaryDirectoryProvider>()
+            _loggerFactory.CreateLogger<TemporaryDirectoryProvider>()
         );
 
         var fileSystem = Substitute.For<IFileSystem>();
@@ -409,14 +412,15 @@ public class NugetCsprojParserTests
         var csprojParser = new NugetCsprojParser(
             fileSystem,
             logger,
-            new ConditionalTargetFrameworkResolver(NullLoggerFactory.Instance.CreateLogger<ConditionalTargetFrameworkResolver>())
+            new ConditionalTargetFrameworkResolver(_loggerFactory.CreateLogger<ConditionalTargetFrameworkResolver>())
         );
 
         var nugetFile = new NugetFile("project/Project.csproj", ENugetFileType.Csproj);
         var response = csprojParser.Parse(temporaryDirectoryProvider.TemporaryDirectory, nugetFile);
 
         Assert.Equal([
-            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Bcl.AsyncInterfaces", new NuGet.Versioning.VersionRange(new NuGet.Versioning.NuGetVersion("9.0.0")), "netstandard2.0"), [
+            new NugetDependency(nugetFile, new NugetPackageReference("Microsoft.Bcl.AsyncInterfaces", new NuGet.Versioning.VersionRange(new NuGet.Versioning.NuGetVersion("9.0.0")), "netstandard2.0"),
+            [
                 new NugetTargetFramework("netstandard2.0"),
             ]),
             new NugetDependency(nugetFile, new NugetPackageReference("System.Text.Json", new NuGet.Versioning.VersionRange(new NuGet.Versioning.NuGetVersion("9.0.1")), "netstandard2.0"), [
