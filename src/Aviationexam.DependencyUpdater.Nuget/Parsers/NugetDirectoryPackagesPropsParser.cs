@@ -43,11 +43,15 @@ public class NugetDirectoryPackagesPropsParser(
             .Descendants()
             .AsValueEnumerable()
             .Where(e => e.Name.LocalName == "PackageVersion")
-            .Select(x => new
+            .Select(x =>
             {
-                Include = x.Attribute("Include")?.Value,
-                Version = x.Attribute("Version")?.Value,
-                Condition = x.GetConditionIncludingParent(),
+                var packageName = x.Attribute("Include")?.Value;
+                return new
+                {
+                    Include = packageName,
+                    Version = x.Attribute("Version")?.Value,
+                    Condition = GetConditionalTargetFramework(x.GetConditionIncludingParent(), packageName),
+                };
             })
             .Where(x => x.Include is not null && x.Version is not null)
             .Select(x => new NugetDependency(
@@ -67,14 +71,11 @@ public class NugetDirectoryPackagesPropsParser(
             .ToList();
     }
 
-    private IReadOnlyCollection<NugetTargetFramework> GetEffectiveTargetFrameworks(
+    private string? GetConditionalTargetFramework(
         string? condition,
-        string packageName,
-        IReadOnlyDictionary<string, IReadOnlyCollection<NugetTargetFramework>> packagesTargetFrameworks,
-        IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks
+        string? packageName
     )
     {
-        // If there's a condition, try to extract the target framework
         if (TargetFrameworkConditionHelper.TryExtractTargetFramework(condition, out var conditionalTargetFramework))
         {
             if (logger.IsEnabled(LogLevel.Debug))
@@ -85,7 +86,8 @@ public class NugetDirectoryPackagesPropsParser(
                     packageName
                 );
             }
-            return [new NugetTargetFramework(conditionalTargetFramework)];
+
+            return conditionalTargetFramework;
         }
 
         if (!string.IsNullOrWhiteSpace(condition) && logger.IsEnabled(LogLevel.Warning))
@@ -95,6 +97,22 @@ public class NugetDirectoryPackagesPropsParser(
                 condition,
                 packageName
             );
+        }
+
+        return null;
+    }
+
+    private IReadOnlyCollection<NugetTargetFramework> GetEffectiveTargetFrameworks(
+        string? conditionalTargetFramework,
+        string packageName,
+        IReadOnlyDictionary<string, IReadOnlyCollection<NugetTargetFramework>> packagesTargetFrameworks,
+        IReadOnlyCollection<NugetTargetFramework> defaultTargetFrameworks
+    )
+    {
+        // If there's a condition, try to extract the target framework
+        if (!string.IsNullOrEmpty(conditionalTargetFramework))
+        {
+            return [new NugetTargetFramework(conditionalTargetFramework)];
         }
 
         // Fall back to default behavior
