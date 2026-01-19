@@ -19,26 +19,28 @@ public static class GroupEntryExtensions
         )
         {
             var candidate = updateResult.UpdateCandidate;
-            var name = candidate.NugetDependency.NugetPackage.GetPackageName();
-            var to = candidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
+            var packageName = candidate.NugetDependency.NugetPackage.GetPackageName();
+            var toVersion = candidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
             
-            var (from, frameworkSuffix) = GetFromVersionAndFrameworkSuffix(updateResult);
+            var (title, _) = GetTitleInfo(packageName, toVersion, updateResult);
             
-            return $"Bump {name} from {from} to {to}{frameworkSuffix}";
+            return title;
         }
 
         var pluralSuffix = updateResults.Count == 1 ? "" : "s";
         return $"Bump {groupEntry.GroupName} group – {updateResults.Count} update{pluralSuffix}";
     }
 
-    private static (string FromVersion, string FrameworkSuffix) GetFromVersionAndFrameworkSuffix(
+    private static (string Title, bool IsMultiLine) GetTitleInfo(
+        string packageName,
+        string toVersion,
         NugetUpdateResult updateResult
     )
     {
         if (updateResult.FromVersionsPerFramework.Count == 0)
         {
             var fallbackVersion = updateResult.UpdateCandidate.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
-            return (fallbackVersion, string.Empty);
+            return ($"Bump {packageName} from {fallbackVersion} to {toVersion}", false);
         }
 
         var uniqueVersions = updateResult.FromVersionsPerFramework.Values
@@ -53,14 +55,18 @@ public static class GroupEntryExtensions
             if (updateResult.FromVersionsPerFramework.Count == 1)
             {
                 var framework = updateResult.FromVersionsPerFramework.Keys.Single();
-                return (fromVersion, $" for {framework}");
+                return ($"Bump {packageName} from {fromVersion} to {toVersion} for {framework}", false);
             }
             
-            return (fromVersion, string.Empty);
+            return ($"Bump {packageName} from {fromVersion} to {toVersion}", false);
         }
 
-        var minVersion = uniqueVersions.AsValueEnumerable().Min()!.GetSerializedVersion();
-        var maxVersion = uniqueVersions.AsValueEnumerable().Max()!.GetSerializedVersion();
-        return ($"{minVersion}-{maxVersion}", string.Empty);
+        var lines = new List<string>();
+        foreach (var (framework, fromVersion) in updateResult.FromVersionsPerFramework)
+        {
+            lines.Add($"Bump {packageName} from {fromVersion.GetSerializedVersion()} to {toVersion} for {framework}");
+        }
+        
+        return (string.Join("; ", lines), true);
     }
 }

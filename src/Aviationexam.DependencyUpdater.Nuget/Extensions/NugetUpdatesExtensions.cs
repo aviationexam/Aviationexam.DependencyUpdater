@@ -23,11 +23,12 @@ public static class NugetUpdatesExtensions
             var packageName = updateResult.UpdateCandidate.NugetDependency.NugetPackage.GetPackageName();
             var toVersion = updateResult.UpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
             
-            var (fromVersion, frameworkSuffix) = GetFromVersionAndFrameworkSuffix(updateResult);
+            var updateLines = GetUpdateLines(packageName, toVersion, updateResult);
             
-            stringBuilder.AppendLine(
-                $"- Update {packageName} from {fromVersion} to {toVersion}{frameworkSuffix}"
-            );
+            foreach (var line in updateLines)
+            {
+                stringBuilder.AppendLine($"- {line}");
+            }
         }
 
         if (stringBuilder.Length == 0)
@@ -38,14 +39,17 @@ public static class NugetUpdatesExtensions
         return stringBuilder.ToString();
     }
 
-    private static (string FromVersion, string FrameworkSuffix) GetFromVersionAndFrameworkSuffix(
+    private static IEnumerable<string> GetUpdateLines(
+        string packageName,
+        string toVersion,
         NugetUpdateResult updateResult
     )
     {
         if (updateResult.FromVersionsPerFramework.Count == 0)
         {
             var fallbackVersion = updateResult.UpdateCandidate.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
-            return (fallbackVersion, string.Empty);
+            yield return $"Update {packageName} from {fallbackVersion} to {toVersion}";
+            yield break;
         }
 
         var uniqueVersions = updateResult.FromVersionsPerFramework.Values
@@ -60,14 +64,19 @@ public static class NugetUpdatesExtensions
             if (updateResult.FromVersionsPerFramework.Count == 1)
             {
                 var framework = updateResult.FromVersionsPerFramework.Keys.Single();
-                return (fromVersion, $" for {framework}");
+                yield return $"Update {packageName} from {fromVersion} to {toVersion} for {framework}";
+            }
+            else
+            {
+                yield return $"Update {packageName} from {fromVersion} to {toVersion}";
             }
             
-            return (fromVersion, string.Empty);
+            yield break;
         }
 
-        var minVersion = uniqueVersions.AsValueEnumerable().Min()!.GetSerializedVersion();
-        var maxVersion = uniqueVersions.AsValueEnumerable().Max()!.GetSerializedVersion();
-        return ($"{minVersion}-{maxVersion}", string.Empty);
+        foreach (var (framework, fromVersion) in updateResult.FromVersionsPerFramework)
+        {
+            yield return $"Update {packageName} from {fromVersion.GetSerializedVersion()} to {toVersion} for {framework}";
+        }
     }
 }

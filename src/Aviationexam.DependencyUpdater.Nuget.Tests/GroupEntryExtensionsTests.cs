@@ -50,7 +50,7 @@ public class GroupEntryExtensionsTests
     }
 
     [Fact]
-    public void GetTitle_SinglePackageMultipleFrameworksDifferentVersions_ShowsVersionRange()
+    public void GetTitle_SinglePackageMultipleFrameworksDifferentVersions_ShowsMultipleLines()
     {
         var fromVersions = new Dictionary<string, PackageVersion>
         {
@@ -66,7 +66,7 @@ public class GroupEntryExtensionsTests
 
         var result = groupEntry.GetTitle(updateResults);
 
-        Assert.Equal("Bump Meziantou.Extensions.Logging.Xunit.v3 from 1.1.17-1.1.21 to 1.1.22", result);
+        Assert.Equal("Bump Meziantou.Extensions.Logging.Xunit.v3 from 1.1.17 to 1.1.22 for net9.0; Bump Meziantou.Extensions.Logging.Xunit.v3 from 1.1.21 to 1.1.22 for net10.0", result);
     }
 
     [Fact]
