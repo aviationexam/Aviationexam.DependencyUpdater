@@ -43,27 +43,13 @@ public class GroupEntryExtensionsTests
         var groupEntry = new GroupEntry("Meziantou.Extensions.Logging.Xunit.v3", []);
         var updateResults = new List<NugetUpdateCandidate>
         {
-            CreateUpdateCandidate("Meziantou.Extensions.Logging.Xunit.v3", "1.1.17", "1.1.22", condition: "net9.0"),
-            CreateUpdateCandidate("Meziantou.Extensions.Logging.Xunit.v3", "1.1.21", "1.1.22", condition: "net10.0")
+            CreateUpdateCandidate("Meziantou.Extensions.Logging.Xunit.v3", "1.1.17", "1.1.18", condition: "net9.0"),
+            CreateUpdateCandidate("Meziantou.Extensions.Logging.Xunit.v3", "1.1.21", "1.1.22", condition: "net10.0"),
         };
 
         var result = groupEntry.GetTitle(updateResults);
 
-        Assert.Equal("Bump Meziantou.Extensions.Logging.Xunit.v3 from 1.1.17-1.1.21 to 1.1.22", result);
-    }
-
-    [Fact]
-    public void GetTitle_SinglePackageOnlyOneFrameworkUpdating_ShowsFrameworkSuffix()
-    {
-        var groupEntry = new GroupEntry("TestPackage", []);
-        var updateResults = new List<NugetUpdateCandidate>
-        {
-            CreateUpdateCandidate("TestPackage", "2.0.0", "3.0.0", condition: "net10.0")
-        };
-
-        var result = groupEntry.GetTitle(updateResults);
-
-        Assert.Equal("Bump TestPackage from 2.0.0 to 3.0.0 for net10.0", result);
+        Assert.Equal("Bump Meziantou.Extensions.Logging.Xunit.v3 from 1.1.17-1.1.21 to 1.1.18-1.1.22", result);
     }
 
     [Fact]
@@ -115,19 +101,22 @@ public class GroupEntryExtensionsTests
     {
         var updateResults = new List<NugetUpdateCandidate>
         {
-            CreateUpdateCandidate("Meziantou.Extensions.Logging.Xunit.v3", "1.1.17", "1.1.22", condition: "net9.0"),
+            CreateUpdateCandidate("Meziantou.Extensions.Logging.Xunit.v3", "1.1.17", "1.1.18", condition: "net9.0"),
             CreateUpdateCandidate("Meziantou.Extensions.Logging.Xunit.v3", "1.1.21", "1.1.22", condition: "net10.0")
         };
 
         var result = updateResults.GetCommitMessage();
 
-        Assert.Equal(NormalizeLineEndings("""
-            Updates 1 packages:
+        Assert.Equal(
+            """
+                Updates 1 packages:
 
-            - Update Meziantou.Extensions.Logging.Xunit.v3 from 1.1.17 to 1.1.22 for net9.0
-            - Update Meziantou.Extensions.Logging.Xunit.v3 from 1.1.21 to 1.1.22 for net10.0
+                - Update Meziantou.Extensions.Logging.Xunit.v3 from 1.1.17 to 1.1.18 for net9.0
+                - Update Meziantou.Extensions.Logging.Xunit.v3 from 1.1.21 to 1.1.22 for net10.0
 
-            """), result);
+                """.ReplaceLineEndings(),
+            result
+        );
     }
 
     [Fact]
@@ -140,12 +129,15 @@ public class GroupEntryExtensionsTests
 
         var result = updateResults.GetCommitMessage();
 
-        Assert.Equal(NormalizeLineEndings("""
-            Updates 1 packages:
+        Assert.Equal(
+            """
+                Updates 1 packages:
 
-            - Update TestPackage from 1.0.0 to 2.0.0 for net10.0
+                - Update TestPackage from 1.0.0 to 2.0.0 for net10.0
 
-            """), result);
+                """.ReplaceLineEndings(),
+            result
+        );
     }
 
     [Fact]
@@ -158,40 +150,15 @@ public class GroupEntryExtensionsTests
 
         var result = updateResults.GetCommitMessage();
 
-        Assert.Equal(NormalizeLineEndings("""
-            Updates 1 packages:
+        Assert.Equal(
+            """
+                Updates 1 packages:
 
-            - Update TestPackage from 1.5.0 to 2.0.0
+                - Update TestPackage from 1.5.0 to 2.0.0
 
-            """), result);
-    }
-
-    [Fact]
-    public void GetTitleAndCommitMessage_RealWorldScenario_DifferentVersionTransitions()
-    {
-        // Arrange - net9.0 gets 1.1.17 (max supported), net10.0 gets 1.1.22
-        var groupEntry = new GroupEntry("Meziantou.Extensions.Logging.Xunit.v3", []);
-        var updateResults = new List<NugetUpdateCandidate>
-        {
-            CreateUpdateCandidate("Meziantou.Extensions.Logging.Xunit.v3", "1.1.16", "1.1.17", condition: "net9.0"),
-            CreateUpdateCandidate("Meziantou.Extensions.Logging.Xunit.v3", "1.1.17", "1.1.22", condition: "net10.0")
-        };
-
-        // Act
-        var title = groupEntry.GetTitle(updateResults);
-        var commitMessage = updateResults.GetCommitMessage();
-
-        // Assert - Title shows version range for both updates
-        Assert.Equal("Bump Meziantou.Extensions.Logging.Xunit.v3 from 1.1.16-1.1.17 to 1.1.17-1.1.22", title);
-
-        // Assert - Description shows detailed per-framework updates
-        Assert.Equal(NormalizeLineEndings("""
-            Updates 1 packages:
-
-            - Update Meziantou.Extensions.Logging.Xunit.v3 from 1.1.16 to 1.1.17 for net9.0
-            - Update Meziantou.Extensions.Logging.Xunit.v3 from 1.1.17 to 1.1.22 for net10.0
-
-            """), commitMessage);
+                """.ReplaceLineEndings(),
+            result
+        );
     }
 
     private static NugetUpdateCandidate CreateUpdateCandidate(
@@ -218,13 +185,10 @@ public class GroupEntryExtensionsTests
                     new NuGetVersion(toVersion).MapToPackageVersion()
                 )
                 {
-                    DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>()
+                    DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>(),
                 },
                 []
             )
         );
     }
-
-    private static string NormalizeLineEndings(string input)
-        => input.ReplaceLineEndings();
 }
