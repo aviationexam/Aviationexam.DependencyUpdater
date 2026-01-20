@@ -18,15 +18,8 @@ public partial class ConditionalTargetFrameworkResolver(
 
     public string? Resolve(IReadOnlyList<string> conditions, string? packageName)
     {
-        var filteredConditions = FilterConditionsByAllowList(conditions, packageName);
-
-        if (filteredConditions.Count == 0)
-        {
-            return null;
-        }
-
         var resolvedConditions = new List<(string Condition, string TargetFramework)>();
-        foreach (var condition in filteredConditions)
+        foreach (var condition in FilterConditionsByAllowList(conditions, packageName))
         {
             if (TryExtractTargetFramework(condition, out var targetFramework))
             {
@@ -52,11 +45,11 @@ public partial class ConditionalTargetFrameworkResolver(
             var conditionDescriptions = resolvedConditions
                 .AsValueEnumerable()
                 .Select(c => $"'{c.Condition}' -> '{c.TargetFramework}'")
-                .ToArray();
+                .JoinToString(", ");
 
             throw new InvalidOperationException(
                 $"Multiple target framework conditions found for package '{packageName}': " +
-                $"[{string.Join(", ", conditionDescriptions)}]. " +
+                $"[{conditionDescriptions}]. " +
                 "Expected at most one condition after filtering."
             );
         }
@@ -76,15 +69,13 @@ public partial class ConditionalTargetFrameworkResolver(
         return conditionalTargetFramework;
     }
 
-    private List<string> FilterConditionsByAllowList(IReadOnlyList<string> conditions, string? packageName)
+    private IEnumerable<string> FilterConditionsByAllowList(IReadOnlyList<string> conditions, string? packageName)
     {
-        var filtered = new List<string>();
-
         foreach (var condition in conditions)
         {
             if (condition.Contains(TargetFrameworkAllowListKeyword, StringComparison.OrdinalIgnoreCase))
             {
-                filtered.Add(condition);
+                yield return condition;
             }
             else if (logger.IsEnabled(LogLevel.Trace))
             {
@@ -96,8 +87,6 @@ public partial class ConditionalTargetFrameworkResolver(
                 );
             }
         }
-
-        return filtered;
     }
 
     public static bool TryExtractTargetFramework(string? condition, [NotNullWhen(true)] out string? targetFramework)
