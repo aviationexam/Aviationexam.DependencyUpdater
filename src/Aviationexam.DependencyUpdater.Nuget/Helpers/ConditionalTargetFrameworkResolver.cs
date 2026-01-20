@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 namespace Aviationexam.DependencyUpdater.Nuget.Helpers;
 
 public partial class ConditionalTargetFrameworkResolver(
-    ILogger logger
+    ILogger<ConditionalTargetFrameworkResolver> logger
 )
 {
     [GeneratedRegex(@"\'?\$\(TargetFramework\)\'?\s*==\s*\'(?<tfm>[^\']+)\'", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 100)]
