@@ -14,16 +14,16 @@ public static class XElementExtensions
     {
         var conditions = new List<string>();
 
-        var elementCondition = element.GetCondition();
-        if (!string.IsNullOrWhiteSpace(elementCondition))
+        var current = element;
+        while (current is not null)
         {
-            conditions.Add(elementCondition);
-        }
+            var condition = current.GetCondition();
+            if (!string.IsNullOrWhiteSpace(condition))
+            {
+                conditions.Add(condition);
+            }
 
-        var parentCondition = element.Parent?.GetCondition();
-        if (!string.IsNullOrWhiteSpace(parentCondition))
-        {
-            conditions.Add(parentCondition);
+            current = current.Parent;
         }
 
         return conditions;
