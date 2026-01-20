@@ -143,6 +143,7 @@ public async Task<Result> ProcessDataAsync(
   - `AddKeyedScoped` for platform-specific implementations
 - Use `TryAddScoped` for default implementations that can be overridden
 - Use primary constructors for dependency injection
+- **CRITICAL**: Always use generic `ILogger<T>` in constructors - NEVER use non-generic `ILogger` (breaks IoC container resolution)
 
 Example:
 ```csharp
@@ -154,6 +155,18 @@ public static class ServiceCollectionExtensions
         .AddScoped<DependencyAnalyzer>()
         .AddScoped<NugetUpdater>()
         .AddKeyedScoped<IRepositoryClient, RepositoryGitHubClient>(EPlatformSelection.GitHub);
+}
+
+// ✅ Correct - use generic ILogger<T>
+public sealed class MyService(ILogger<MyService> logger)
+{
+    // ...
+}
+
+// ❌ Wrong - non-generic ILogger breaks IoC
+public sealed class MyService(ILogger logger)
+{
+    // ...
 }
 ```
 
