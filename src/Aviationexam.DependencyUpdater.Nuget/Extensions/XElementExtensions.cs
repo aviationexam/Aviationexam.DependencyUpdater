@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
@@ -9,8 +10,22 @@ public static class XElementExtensions
         return element.Attribute("Condition")?.Value;
     }
 
-    public static string? GetConditionIncludingParent(this XElement element)
+    public static IReadOnlyList<string> GetConditionsIncludingParents(this XElement element)
     {
-        return element.GetCondition() ?? element.Parent?.GetCondition();
+        var conditions = new List<string>();
+
+        var current = element;
+        while (current is not null)
+        {
+            var condition = current.GetCondition();
+            if (!string.IsNullOrWhiteSpace(condition))
+            {
+                conditions.Add(condition);
+            }
+
+            current = current.Parent;
+        }
+
+        return conditions;
     }
 }

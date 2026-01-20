@@ -102,24 +102,25 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
 
         var targetFrameworkNames = targetFrameworks.AsValueEnumerable().Select(tf => tf.TargetFramework).ToHashSet();
 
-        // First, try to find a conditional match for the target frameworks
         foreach (var element in packageVersionElements)
         {
-            var condition = element.GetConditionIncludingParent();
-            if (
-                ConditionalTargetFrameworkResolver.TryExtractTargetFramework(condition, out var conditionalTfm)
-                && targetFrameworkNames.Contains(conditionalTfm)
-            )
+            var conditions = element.GetConditionsIncludingParents();
+            foreach (var condition in conditions)
             {
-                return element.Attribute("Version");
+                if (
+                    ConditionalTargetFrameworkResolver.TryExtractTargetFramework(condition, out var conditionalTfm)
+                    && targetFrameworkNames.Contains(conditionalTfm)
+                )
+                {
+                    return element.Attribute("Version");
+                }
             }
         }
 
-        // If no conditional match found, return the first unconditional one
         foreach (var element in packageVersionElements)
         {
-            var condition = element.GetConditionIncludingParent();
-            if (string.IsNullOrWhiteSpace(condition))
+            var conditions = element.GetConditionsIncludingParents();
+            if (conditions.Count == 0)
             {
                 return element.Attribute("Version");
             }
