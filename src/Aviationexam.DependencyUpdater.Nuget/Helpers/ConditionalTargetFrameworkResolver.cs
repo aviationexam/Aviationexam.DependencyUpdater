@@ -11,7 +11,7 @@ public partial class ConditionalTargetFrameworkResolver(
     ILogger<ConditionalTargetFrameworkResolver> logger
 )
 {
-    private const string TargetFrameworkAllowListKeyword = "TargetFramework";
+    private static readonly string[] AllowListKeywords = ["TargetFramework"];
 
     [GeneratedRegex(@"\'?\$\(TargetFramework\)\'?\s*==\s*\'(?<tfm>[^\']+)\'", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 100)]
     private static partial Regex TargetFrameworkConditionRegex();
@@ -73,17 +73,17 @@ public partial class ConditionalTargetFrameworkResolver(
     {
         foreach (var condition in conditions)
         {
-            if (condition.Contains(TargetFrameworkAllowListKeyword, StringComparison.OrdinalIgnoreCase))
+            if (AllowListKeywords.AsValueEnumerable().Any(keyword => condition.Contains(keyword, StringComparison.OrdinalIgnoreCase)))
             {
                 yield return condition;
             }
             else if (logger.IsEnabled(LogLevel.Trace))
             {
                 logger.LogTrace(
-                    "Condition '{Condition}' for package {PackageName} filtered out (does not contain '{AllowListKeyword}')",
+                    "Condition '{Condition}' for package {PackageName} filtered out (does not contain any of [{AllowListKeywords}])",
                     condition,
                     packageName,
-                    TargetFrameworkAllowListKeyword
+                    AllowListKeywords.AsValueEnumerable().JoinToString(", ")
                 );
             }
         }
