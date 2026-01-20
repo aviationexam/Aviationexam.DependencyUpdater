@@ -57,8 +57,8 @@ public class NugetCsprojParser(
                     version = new VersionRange(new NuGetVersion(versionValue));
                 }
 
-                var condition = packageReference.GetConditionIncludingParent();
-                var conditionalTargetFramework = conditionalTargetFrameworkResolver.Resolve(condition, packageId);
+                var conditions = packageReference.GetConditionsIncludingParents();
+                var conditionalTargetFramework = conditionalTargetFrameworkResolver.Resolve(conditions, packageId);
 
                 var effectiveTargetFrameworks = GetEffectiveTargetFrameworks(
                     conditionalTargetFramework,

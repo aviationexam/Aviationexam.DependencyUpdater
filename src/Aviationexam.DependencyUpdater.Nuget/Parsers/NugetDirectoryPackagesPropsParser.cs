@@ -51,7 +51,7 @@ public class NugetDirectoryPackagesPropsParser(
                 {
                     Include = packageName,
                     Version = x.Attribute("Version")?.Value,
-                    Condition = conditionalTargetFrameworkResolver.Resolve(x.GetConditionIncludingParent(), packageName),
+                    Condition = conditionalTargetFrameworkResolver.Resolve(x.GetConditionsIncludingParents(), packageName),
                 };
             })
             .Where(x => x.Include is not null && x.Version is not null)
