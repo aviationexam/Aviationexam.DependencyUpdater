@@ -116,8 +116,7 @@ public sealed class DependencyAnalyzer(
                     .AsValueEnumerable()
                     .Select(x => new PossiblePackageVersion(
                         x,
-                        GetPreferredDependencySets(x.DependencySets),
-                        dependencyVersion is not null && dependencyVersion == x
+                        GetPreferredDependencySets(x.DependencySets)
                     ))
                     .Where(x => x.CompatibleDependencySets.Count > 0)
                     .ToList();
@@ -130,6 +129,19 @@ public sealed class DependencyAnalyzer(
                     }
 
                     return;
+                }
+
+                if (versions.SingleOrDefault(x => dependencyVersion is not null && dependencyVersion == x) is { } currentVersion)
+                {
+                    results.Add(KeyValuePair.Create<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>>(
+                        dependency with
+                        {
+                            TargetFrameworks = GetPreferredDependencySets(currentVersion.DependencySets)
+                                .AsValueEnumerable()
+                                .Select(x => new NugetTargetFramework(x.TargetFramework))
+                                .ToList(),
+                        }, futureVersions
+                    ));
                 }
 
                 results.Add(KeyValuePair.Create<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>>(

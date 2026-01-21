@@ -15,7 +15,6 @@ public sealed class PackageFilterer
         {
             var newPossiblePackageVersions = possiblePackageVersions
                 .AsValueEnumerable()
-                .Where(x => !x.IsCurrentVersion)
                 .Select(possiblePackageVersion => possiblePackageVersion with
                 {
                     CompatibleDependencySets =

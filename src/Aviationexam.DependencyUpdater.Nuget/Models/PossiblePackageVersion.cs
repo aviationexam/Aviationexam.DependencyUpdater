@@ -5,6 +5,5 @@ namespace Aviationexam.DependencyUpdater.Nuget.Models;
 
 public record PossiblePackageVersion(
     PackageVersionWithDependencySets PackageVersion,
-    IReadOnlyCollection<DependencySet> CompatibleDependencySets,
-    bool IsCurrentVersion
+    IReadOnlyCollection<DependencySet> CompatibleDependencySets
 );

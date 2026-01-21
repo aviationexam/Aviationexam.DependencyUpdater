@@ -31,8 +31,7 @@ public static class PackageVersionExtensions
                             pkgVersion,
                             pkgVersion.DependencySets.TryGetValue(EPackageSource.Default, out var depSets)
                                 ? depSets
-                                : [],
-                            IsCurrentVersion: false
+                                : []
                         )),
                 ]
             );
