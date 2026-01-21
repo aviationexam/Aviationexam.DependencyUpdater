@@ -253,14 +253,14 @@ public sealed class DependencyAnalyzer(
             // Update flags for each target framework
             foreach (var (targetFramework, flag) in frameworkFlags)
             {
-                if (flag != EDependencyFlag.Unknown)
+                if (flag is not EDependencyFlag.Unknown)
                 {
                     continue;
                 }
 
                 var isIgnored = dependencies.AsValueEnumerable().Any(dependency =>
                     packageFlags.TryGetValue(dependency, out var dependencyFrameworkFlags)
-                    && dependencyFrameworkFlags.TryGetValue(targetFramework, out var dependencyFlag)
+                    && dependencyFrameworkFlags.TryGetCompatibleFramework(targetFramework, out var dependencyFlag)
                     && dependencyFlag is EDependencyFlag.ContainsIgnoredDependency
                 );
 

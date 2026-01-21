@@ -1,18 +1,29 @@
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using NuGet.Frameworks;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Extensions;
 
 public static class FrameworkFlagsExtensions
 {
-    public static bool TryGetCompatibleFramework(
-        this IDictionary<NugetTargetFramework, EDependencyFlag> frameworkFlags,
+    public static bool TryGetCompatibleFramework<T>(
+        this IDictionary<NugetTargetFramework, T> targetFrameworkDict,
         NugetTargetFramework targetFramework,
-        out EDependencyFlag dependencyFlag
+        [MaybeNullWhen(false)] out T dependencyFlag
+    ) => targetFrameworkDict.AsValueEnumerable().ToDictionary(
+        x => x.Key.TargetFramework,
+        x => x.Value
+    ).TryGetCompatibleFramework(targetFramework, out dependencyFlag);
+
+    public static bool TryGetCompatibleFramework<T>(
+        this IDictionary<string, T> targetFrameworkDict,
+        NugetTargetFramework targetFramework,
+        [MaybeNullWhen(false)] out T dependencyFlag
     )
     {
-        if (frameworkFlags.TryGetValue(targetFramework, out dependencyFlag))
+        if (targetFrameworkDict.TryGetValue(targetFramework.TargetFramework, out dependencyFlag))
         {
             return true;
         }
@@ -21,10 +32,10 @@ public static class FrameworkFlagsExtensions
             targetFramework.TargetFramework,
             DefaultFrameworkNameProvider.Instance
         );
-        foreach (var (nugetTargetFramework, flag) in frameworkFlags)
+        foreach (var (nugetTargetFramework, flag) in targetFrameworkDict)
         {
             var nugetFramework = NuGetFramework.Parse(
-                nugetTargetFramework.TargetFramework,
+                nugetTargetFramework,
                 DefaultFrameworkNameProvider.Instance
             );
 

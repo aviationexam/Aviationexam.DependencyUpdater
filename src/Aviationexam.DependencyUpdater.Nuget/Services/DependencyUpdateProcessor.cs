@@ -229,10 +229,7 @@ public sealed class DependencyUpdateProcessor(
         string packageId,
         PackageVersion expectedVersion,
         NugetTargetFramework targetFramework
-    )
-    {
-        return currentPackageVersionsPerTargetFramework.TryGetValue(packageId, out var frameworkVersions)
-               && frameworkVersions.TryGetValue(targetFramework.TargetFramework, out var currentVersion)
-               && currentVersion == expectedVersion;
-    }
+    ) => currentPackageVersionsPerTargetFramework.TryGetValue(packageId, out var frameworkVersions)
+         && frameworkVersions.TryGetCompatibleFramework(targetFramework, out var currentVersion)
+         && currentVersion == expectedVersion;
 }
