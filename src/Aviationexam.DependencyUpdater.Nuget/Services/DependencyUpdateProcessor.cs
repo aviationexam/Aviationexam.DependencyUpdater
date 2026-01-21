@@ -38,10 +38,23 @@ public sealed class DependencyUpdateProcessor(
                 {
                     frameworkFlags[targetFrameworks] = EDependencyFlag.Valid;
                 }
+
+                if (possiblePackageVersions.AsValueEnumerable().SingleOrDefault(x => x.IsCurrentVersion) is { } currentVersionPossiblePackageVersion)
+                {
+                    foreach (var compatibleDependencySet in currentVersionPossiblePackageVersion.CompatibleDependencySets)
+                    {
+                        frameworkFlags[new NugetTargetFramework(compatibleDependencySet.TargetFramework)] = EDependencyFlag.Valid;
+                    }
+                }
             }
 
             foreach (var possiblePackageVersion in possiblePackageVersions)
             {
+                if (possiblePackageVersion.IsCurrentVersion)
+                {
+                    continue;
+                }
+
                 foreach (var compatibleDependencySet in possiblePackageVersion.CompatibleDependencySets)
                 {
                     ProcessDependencySet(

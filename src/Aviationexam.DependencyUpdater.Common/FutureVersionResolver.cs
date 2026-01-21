@@ -17,7 +17,7 @@ public class FutureVersionResolver
             return versions
                 .AsValueEnumerable()
                 .Where(x => x.IsPrerelease == version.IsPrerelease || x.IsPrerelease is false)
-                .Where(x => x > version)
+                .Where(x => x >= version)
                 .Where(x => !ignoreResolver.IsIgnored(
                     dependencyName,
                     version,

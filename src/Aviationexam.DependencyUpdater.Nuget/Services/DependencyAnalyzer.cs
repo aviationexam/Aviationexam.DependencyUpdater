@@ -116,7 +116,8 @@ public sealed class DependencyAnalyzer(
                     .AsValueEnumerable()
                     .Select(x => new PossiblePackageVersion(
                         x,
-                        GetPreferredDependencySets(x.DependencySets)
+                        GetPreferredDependencySets(x.DependencySets),
+                        dependencyVersion is not null && x == dependencyVersion
                     ))
                     .Where(x => x.CompatibleDependencySets.Count > 0)
                     .ToList();
@@ -127,6 +128,7 @@ public sealed class DependencyAnalyzer(
                     {
                         logger.LogDebug("The dependency {DependencyName} with version {Version} is up to date", dependencyName, dependencyVersion);
                     }
+
                     return;
                 }
 
@@ -161,7 +163,6 @@ public sealed class DependencyAnalyzer(
         })
         .Select(x => x.Value)
         .FirstOrDefault() ?? [];
-
 
 
     private async Task ProcessDependenciesToCheckAsync(
