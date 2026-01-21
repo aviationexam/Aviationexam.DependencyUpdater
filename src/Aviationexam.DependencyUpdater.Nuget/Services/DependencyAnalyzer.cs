@@ -117,7 +117,7 @@ public sealed class DependencyAnalyzer(
                     .Select(x => new PossiblePackageVersion(
                         x,
                         GetPreferredDependencySets(x.DependencySets),
-                        dependencyVersion is not null && x == dependencyVersion
+                        dependencyVersion is not null && dependencyVersion == x
                     ))
                     .Where(x => x.CompatibleDependencySets.Count > 0)
                     .ToList();

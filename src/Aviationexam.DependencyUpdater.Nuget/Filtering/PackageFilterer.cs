@@ -15,6 +15,7 @@ public sealed class PackageFilterer
         {
             var newPossiblePackageVersions = possiblePackageVersions
                 .AsValueEnumerable()
+                .Where(x => !x.IsCurrentVersion)
                 .Select(possiblePackageVersion => possiblePackageVersion with
                 {
                     CompatibleDependencySets =
@@ -26,7 +27,7 @@ public sealed class PackageFilterer
                                 // Check if all target frameworks have valid flags for this package
                                 dependencyAnalysisResult.PackageFlags.TryGetValue(new Package(package.Id, package.MinVersion!), out var frameworkFlags)
                                 // Ensure all target frameworks for this dependency have valid flags
-                                && frameworkFlags.TryGetValue(new NugetTargetFramework(group.TargetFramework), out var flag)
+                                && frameworkFlags.TryGetCompatibleFramework(new NugetTargetFramework(group.TargetFramework), out var flag)
                                 && flag is EDependencyFlag.Valid
                             )),
                     ],
