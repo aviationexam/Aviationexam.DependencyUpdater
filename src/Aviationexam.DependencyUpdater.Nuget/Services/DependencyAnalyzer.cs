@@ -130,10 +130,12 @@ public sealed class DependencyAnalyzer(
                 {
                     currentVersions.Add(KeyValuePair.Create<string, IDictionary<string, PackageVersion>>(
                         dependencyName,
-                        dependencySets.AsValueEnumerable()
-                            .SelectMany(x => x.Value)
+                        GetPreferredDependencySets(
+                                dependencySets,
+                                dependency.TargetFrameworks
+                            )
+                            .AsValueEnumerable()
                             .Select(x => x.TargetFramework)
-                            .Distinct()
                             .ToDictionary(
                                 x => x,
                                 _ => dependencyVersion!
@@ -176,9 +178,8 @@ public sealed class DependencyAnalyzer(
         );
     }
 
-
     private IReadOnlyCollection<DependencySet> GetPreferredDependencySets(
-        IReadOnlyDictionary<EPackageSource, IReadOnlyCollection<DependencySet>> dependencySets,
+        IEnumerable<KeyValuePair<EPackageSource, IReadOnlyCollection<DependencySet>>> dependencySets,
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks
     ) => dependencySets
         .AsValueEnumerable()
