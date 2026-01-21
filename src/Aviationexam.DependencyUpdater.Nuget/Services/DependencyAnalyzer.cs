@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ZLinq;
@@ -131,7 +130,7 @@ public sealed class DependencyAnalyzer(
                     return;
                 }
 
-                if (versions.SingleOrDefault(x => dependencyVersion is not null && dependencyVersion == x) is { } currentVersion)
+                if (versions.AsValueEnumerable().SingleOrDefault(x => dependencyVersion is not null && dependencyVersion == x) is { } currentVersion)
                 {
                     results.Add(KeyValuePair.Create<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>>(
                         dependency with
@@ -158,7 +157,8 @@ public sealed class DependencyAnalyzer(
         });
 
         return results.AsValueEnumerable()
-            .OrderBy(r => r.Key.NugetPackage.GetPackageName())
+            .GroupBy(r => r.Key.NugetPackage.GetPackageName())
+            .Select(x => x.AsValueEnumerable().First())
             .ToDictionary();
     }
 
@@ -234,17 +234,17 @@ public sealed class DependencyAnalyzer(
         );
 
         dependenciesToRevisit.Push((package, [
-            .. compatiblePackageDependencyGroups.AsValueEnumerable().Aggregate(
-                [],
-                (IEnumerable<Package> acc, DependencySet compatiblePackageDependencyGroup) => acc.Concat(dependencyUpdateProcessor.ProcessDependencySet(
-                    ignoreResolver,
-                    currentPackageVersionsPerTargetFramework,
-                    packageFlags,
-                    dependenciesToCheck,
-                    compatiblePackageDependencyGroup,
-                    targetFrameworks
-                ))
-            ),
+            .. compatiblePackageDependencyGroups
+                .AsValueEnumerable()
+                .SelectMany(compatiblePackageDependencyGroup => dependencyUpdateProcessor.ProcessDependencySet(
+                        ignoreResolver,
+                        currentPackageVersionsPerTargetFramework,
+                        packageFlags,
+                        dependenciesToCheck,
+                        compatiblePackageDependencyGroup,
+                        targetFrameworks
+                    )
+                ),
         ]));
     }
 
