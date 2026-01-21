@@ -35,7 +35,6 @@ public sealed class DependencyUpdateProcessorTests
         var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
         var dependenciesToCheck = new Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
-        var targetFramework = new NugetTargetFramework("net8.0");
 
         var packageDependency = new PackageDependencyInfo(
             Id: "TestPackage",
@@ -53,8 +52,7 @@ public sealed class DependencyUpdateProcessorTests
             currentVersions,
             packageFlags,
             dependenciesToCheck,
-            dependencySet,
-            [targetFramework]
+            dependencySet
         );
 
         // Assert
@@ -97,8 +95,7 @@ public sealed class DependencyUpdateProcessorTests
             currentVersions,
             packageFlags,
             dependenciesToCheck,
-            dependencySet,
-            [targetFramework]
+            dependencySet
         );
 
         // Assert
@@ -159,8 +156,7 @@ public sealed class DependencyUpdateProcessorTests
             currentVersions,
             packageFlags,
             dependenciesToCheck,
-            dependencySet,
-            [targetFramework]
+            dependencySet
         );
 
         // Assert
@@ -233,8 +229,7 @@ public sealed class DependencyUpdateProcessorTests
             currentVersions,
             packageFlags,
             dependenciesToCheck,
-            dependencySet,
-            [targetFramework]
+            dependencySet
         );
 
         // Assert
@@ -289,8 +284,7 @@ public sealed class DependencyUpdateProcessorTests
             currentVersions,
             packageFlags,
             dependenciesToCheck,
-            dependencySet,
-            [targetFramework]
+            dependencySet
         );
 
         // Assert
@@ -311,7 +305,6 @@ public sealed class DependencyUpdateProcessorTests
         var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
         var dependenciesToCheck = new Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
-        var targetFramework = new NugetTargetFramework("net8.0");
 
         var packageVersion = new PackageVersion(
             Version: new Version(1, 0, 0),
@@ -336,8 +329,7 @@ public sealed class DependencyUpdateProcessorTests
             currentVersions,
             packageFlags,
             dependenciesToCheck,
-            dependencySet,
-            [targetFramework]
+            dependencySet
         );
 
         var initialCheckCount = dependenciesToCheck.Count;
@@ -347,8 +339,7 @@ public sealed class DependencyUpdateProcessorTests
             currentVersions,
             packageFlags,
             dependenciesToCheck,
-            dependencySet,
-            [targetFramework]
+            dependencySet
         );
 
         // Assert - Should not queue again since framework is already processed

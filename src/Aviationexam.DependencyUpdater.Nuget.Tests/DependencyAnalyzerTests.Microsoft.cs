@@ -126,7 +126,6 @@ public partial class DependencyAnalyzerTests
             .Returns(Task.FromResult<IPackageSearchMetadata?>(null));
 
         var analyzer = CreateDependencyAnalyzer(mockVersionFetcher);
-        var currentPackageVersionsPerTargetFramework = context.GetCurrentPackageVersionsPerTargetFramework();
         var cachingConfiguration = new CachingConfiguration { MaxCacheAge = null };
 
         // Act
@@ -137,7 +136,6 @@ public partial class DependencyAnalyzerTests
                 new IgnoreEntry("Microsoft.*", ["version-update:semver-major"]),
                 new IgnoreEntry("System.*", ["version-update:semver-major"]),
             ],
-            currentPackageVersionsPerTargetFramework,
             cachingConfiguration,
             TestContext.Current.CancellationToken
         );
@@ -148,7 +146,7 @@ public partial class DependencyAnalyzerTests
 
         // Verify only net9.0 packages have updates
         var net90Updates = result.DependenciesToUpdate
-            .Where(kvp => kvp.Key.TargetFrameworks.Any(tf => tf.TargetFramework is "net9.0"))
+            .Where(kvp => kvp.Key.NugetDependency.TargetFrameworks.Any(tf => tf.TargetFramework is "net9.0"))
             .ToList();
 
         Assert.Equal(3, net90Updates.Count); // 3 net9.0 packages should have updates
@@ -157,7 +155,7 @@ public partial class DependencyAnalyzerTests
         // Verify specific packages - with ignore rules for semver-major, only minor/patch updates within same major version
         var aspNetCoreUpdate = Assert.Single(
             net90Updates,
-            u => u.Key.NugetPackage.GetPackageName() is "Microsoft.AspNetCore.WebUtilities"
+            u => u.Key.NugetDependency.NugetPackage.GetPackageName() is "Microsoft.AspNetCore.WebUtilities"
         );
         // Only 9.x updates (9.0.11, 9.0.10, 9.0.1), no 10.x due to semver-major ignore
         Assert.Equal(
@@ -167,7 +165,7 @@ public partial class DependencyAnalyzerTests
 
         var dependencyInjectionUpdate = Assert.Single(
             net90Updates,
-            u => u.Key.NugetPackage.GetPackageName() is "Microsoft.Extensions.DependencyInjection"
+            u => u.Key.NugetDependency.NugetPackage.GetPackageName() is "Microsoft.Extensions.DependencyInjection"
         );
         // Only 9.x updates (9.0.11, 9.0.1), no 8.x or 10.x due to semver-major ignore
         Assert.Equal(
@@ -177,7 +175,7 @@ public partial class DependencyAnalyzerTests
 
         var textJsonUpdate = Assert.Single(
             net90Updates,
-            u => u.Key.NugetPackage.GetPackageName() is "System.Text.Json"
+            u => u.Key.NugetDependency.NugetPackage.GetPackageName() is "System.Text.Json"
         );
         // Only 9.x updates (9.0.11, 9.0.5), no 10.x due to semver-major ignore
         Assert.Equal(
@@ -187,20 +185,20 @@ public partial class DependencyAnalyzerTests
 
         // Verify net8.0 and net10.0 packages have NO updates (they're already at latest for their framework)
         var net80Updates = result.DependenciesToUpdate
-            .Where(kvp => kvp.Key.TargetFrameworks.Any(tf => tf.TargetFramework is "net8.0"))
+            .Where(kvp => kvp.Key.NugetDependency.TargetFrameworks.Any(tf => tf.TargetFramework is "net8.0"))
             .ToList();
 
         var net100Updates = result.DependenciesToUpdate
-            .Where(kvp => kvp.Key.TargetFrameworks.Any(tf => tf.TargetFramework is "net10.0"))
+            .Where(kvp => kvp.Key.NugetDependency.TargetFrameworks.Any(tf => tf.TargetFramework is "net10.0"))
             .ToList();
 
         Assert.Empty(net80Updates);
         Assert.Empty(net100Updates);
 
         // Verify Meziantou.Analyzer has no updates
-        var mezianiauUpdates = result.DependenciesToUpdate
-            .Where(kvp => kvp.Key.NugetPackage.GetPackageName() == "Meziantou.Analyzer")
+        var meziantouUpdates = result.DependenciesToUpdate
+            .Where(kvp => kvp.Key.NugetDependency.NugetPackage.GetPackageName() == "Meziantou.Analyzer")
             .ToList();
-        Assert.Empty(mezianiauUpdates);
+        Assert.Empty(meziantouUpdates);
     }
 }

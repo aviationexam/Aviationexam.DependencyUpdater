@@ -20,10 +20,17 @@ public static class PackageVersionExtensions
         /// Extracts the default package source dependency sets for each package version.
         /// </summary>
         /// <returns>Dictionary mapping NuGet dependencies to collections of possible package versions with their compatible dependency sets</returns>
-        public IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>> ToPossiblePackageVersions() => dependencies
+        public IReadOnlyDictionary<UpdateCandidate, IReadOnlyCollection<PossiblePackageVersion>> ToPossiblePackageVersions() => dependencies
             .AsValueEnumerable()
             .ToDictionary(
-                kvp => kvp.Key,
+                kvp => new UpdateCandidate(
+                    kvp.Key, new PackageVersionWithDependencySets(
+                        kvp.Key.NugetPackage.GetVersion()!
+                    )
+                    {
+                        DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>()
+                    }
+                ),
                 IReadOnlyCollection<PossiblePackageVersion> (kvp) =>
                 [
                     .. kvp.Value.AsValueEnumerable()

@@ -25,7 +25,6 @@ public sealed class DependencyAnalyzer(
         NugetUpdaterContext nugetUpdaterContext,
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
         IReadOnlyCollection<IgnoreEntry> ignoreEntries,
-        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
         CachingConfiguration cachingConfiguration,
         CancellationToken cancellationToken
     )
@@ -33,7 +32,7 @@ public sealed class DependencyAnalyzer(
         var ignoreResolver = ignoreResolverFactory.Create(ignoreEntries);
 
         // Resolve possible package versions
-        var dependencyToUpdate = await ResolvePossiblePackageVersionsAsync(
+        var possiblePackageVersionsResult = await ResolvePossiblePackageVersionsAsync(
             nugetUpdaterContext,
             sourceRepositories,
             ignoreResolver,
@@ -44,8 +43,8 @@ public sealed class DependencyAnalyzer(
         // Process dependencies to update
         var processingResult = dependencyUpdateProcessor.ProcessDependenciesToUpdate(
             ignoreResolver,
-            currentPackageVersionsPerTargetFramework,
-            dependencyToUpdate
+            possiblePackageVersionsResult.CurrentPackageVersions,
+            possiblePackageVersionsResult.DependencyToUpdate
         );
 
         var packageFlags = processingResult.PackageFlags;
@@ -55,7 +54,7 @@ public sealed class DependencyAnalyzer(
         // Process dependencies to check
         await ProcessDependenciesToCheckAsync(
             ignoreResolver,
-            currentPackageVersionsPerTargetFramework,
+            possiblePackageVersionsResult.CurrentPackageVersions,
             packageFlags,
             dependenciesToCheck,
             sourceRepositories,
@@ -68,10 +67,14 @@ public sealed class DependencyAnalyzer(
         // Process dependencies to revisit
         ProcessDependenciesToRevisit(dependenciesToRevisit, packageFlags);
 
-        return new DependencyAnalysisResult(dependencyToUpdate, packageFlags);
+        return new DependencyAnalysisResult(
+            possiblePackageVersionsResult.DependencyToUpdate,
+            possiblePackageVersionsResult.CurrentPackageVersions,
+            packageFlags
+        );
     }
 
-    private async Task<IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>>> ResolvePossiblePackageVersionsAsync(
+    private async Task<ResolvePossiblePackageVersionsResult> ResolvePossiblePackageVersionsAsync(
         NugetUpdaterContext nugetUpdaterContext,
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
         IgnoreResolver ignoreResolver,
@@ -80,7 +83,8 @@ public sealed class DependencyAnalyzer(
     )
     {
         var dependencies = nugetUpdaterContext.MapSourceToDependency(logger);
-        var results = new ConcurrentBag<KeyValuePair<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>>>();
+        var results = new ConcurrentBag<KeyValuePair<UpdateCandidate, IReadOnlyCollection<PossiblePackageVersion>>>();
+        var currentVersions = new ConcurrentBag<KeyValuePair<string, IDictionary<string, PackageVersion>>>();
 
         // Limit parallelism to avoid overwhelming system resources
         var parallelOptions = new ParallelOptions
@@ -115,10 +119,27 @@ public sealed class DependencyAnalyzer(
                     .AsValueEnumerable()
                     .Select(x => new PossiblePackageVersion(
                         x,
-                        GetPreferredDependencySets(x.DependencySets)
+                        GetPreferredDependencySets(x.DependencySets, dependency.TargetFrameworks)
                     ))
                     .Where(x => x.CompatibleDependencySets.Count > 0)
                     .ToList();
+
+                var currentVersion = versions.AsValueEnumerable().SingleOrDefault(x => dependencyVersion is not null && dependencyVersion == x);
+
+                if (currentVersion?.DependencySets is { } dependencySets)
+                {
+                    currentVersions.Add(KeyValuePair.Create<string, IDictionary<string, PackageVersion>>(
+                        dependencyName,
+                        dependencySets.AsValueEnumerable()
+                            .SelectMany(x => x.Value)
+                            .Select(x => x.TargetFramework)
+                            .Distinct()
+                            .ToDictionary(
+                                x => x,
+                                _ => dependencyVersion!
+                            )
+                    ));
+                }
 
                 if (futureVersions.Count == 0)
                 {
@@ -130,21 +151,12 @@ public sealed class DependencyAnalyzer(
                     return;
                 }
 
-                if (versions.AsValueEnumerable().SingleOrDefault(x => dependencyVersion is not null && dependencyVersion == x) is { } currentVersion)
-                {
-                    results.Add(KeyValuePair.Create<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>>(
-                        dependency with
-                        {
-                            TargetFrameworks = GetPreferredDependencySets(currentVersion.DependencySets)
-                                .AsValueEnumerable()
-                                .Select(x => new NugetTargetFramework(x.TargetFramework))
-                                .ToList(),
-                        }, futureVersions
-                    ));
-                }
-
-                results.Add(KeyValuePair.Create<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>>(
-                    dependency, futureVersions
+                results.Add(KeyValuePair.Create<UpdateCandidate, IReadOnlyCollection<PossiblePackageVersion>>(
+                    new UpdateCandidate(
+                        dependency,
+                        currentVersion
+                    ),
+                    futureVersions
                 ));
             }
             catch (Exception ex)
@@ -156,15 +168,18 @@ public sealed class DependencyAnalyzer(
             }
         });
 
-        return results.AsValueEnumerable()
-            .GroupBy(r => r.Key.NugetPackage.GetPackageName())
-            .Select(x => x.AsValueEnumerable().First())
-            .ToDictionary();
+        return new ResolvePossiblePackageVersionsResult(
+            results.AsValueEnumerable()
+                .OrderBy(r => r.Key.NugetDependency.NugetPackage.GetPackageName())
+                .ToDictionary(),
+            currentVersions.AsValueEnumerable().ToDictionary()
+        );
     }
 
 
     private IReadOnlyCollection<DependencySet> GetPreferredDependencySets(
-        IReadOnlyDictionary<EPackageSource, IReadOnlyCollection<DependencySet>> dependencySets
+        IReadOnlyDictionary<EPackageSource, IReadOnlyCollection<DependencySet>> dependencySets,
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks
     ) => dependencySets
         .AsValueEnumerable()
         .OrderBy(x => x.Key switch
@@ -173,7 +188,10 @@ public sealed class DependencyAnalyzer(
             EPackageSource.Fallback => 1,
             _ => throw new ArgumentOutOfRangeException(nameof(x.Key), x.Key, null),
         })
-        .Select(x => x.Value)
+        .Select(x => targetFrameworksResolver.GetCompatibleDependencySets(
+            x.Value,
+            targetFrameworks
+        ).AsValueEnumerable().ToList())
         .FirstOrDefault() ?? [];
 
 
@@ -228,23 +246,20 @@ public sealed class DependencyAnalyzer(
         Stack<(Package Package, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit
     )
     {
-        var compatiblePackageDependencyGroups = targetFrameworksResolver.GetCompatibleDependencySets(
-            GetPreferredDependencySets(packageVersion.DependencySets),
-            targetFrameworks
+        var compatiblePackageDependencyGroups = GetPreferredDependencySets(
+            packageVersion.DependencySets, targetFrameworks
         );
 
         dependenciesToRevisit.Push((package, [
             .. compatiblePackageDependencyGroups
                 .AsValueEnumerable()
                 .SelectMany(compatiblePackageDependencyGroup => dependencyUpdateProcessor.ProcessDependencySet(
-                        ignoreResolver,
-                        currentPackageVersionsPerTargetFramework,
-                        packageFlags,
-                        dependenciesToCheck,
-                        compatiblePackageDependencyGroup,
-                        targetFrameworks
-                    )
-                ),
+                    ignoreResolver,
+                    currentPackageVersionsPerTargetFramework,
+                    packageFlags,
+                    dependenciesToCheck,
+                    compatiblePackageDependencyGroup
+                )),
         ]));
     }
 
