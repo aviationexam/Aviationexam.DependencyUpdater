@@ -1,5 +1,6 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
+using Aviationexam.DependencyUpdater.Nuget.Helpers;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
 using System;
@@ -90,7 +91,7 @@ public sealed class DependencyAnalyzer(
         };
 
         // Process dependencies in parallel
-        await Parallel.ForEachAsync(dependencies, parallelOptions, async (dependencyPair, token) =>
+        await ProcessCollectionHelper.ForEachAsync(dependencies, parallelOptions, async (dependencyPair, token) =>
         {
             var (dependency, sources) = dependencyPair;
             var dependencyName = dependency.NugetPackage.GetPackageName();

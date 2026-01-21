@@ -2,6 +2,7 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Interfaces.Repository;
 using Aviationexam.DependencyUpdater.Nuget.Configurations;
+using Aviationexam.DependencyUpdater.Nuget.Helpers;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
@@ -40,7 +41,7 @@ public sealed class SubmoduleUpdater(
         };
 
         // Process dependencies in parallel
-        await Parallel.ForEachAsync(sourceVersioning.GetSubmodules(), parallelOptions, async (submodule, token) =>
+        await ProcessCollectionHelper.ForEachAsync(sourceVersioning.GetSubmodules(), parallelOptions, async (submodule, token) =>
         {
             var submoduleEntry = gitMetadataConfig.UpdateSubmodules.AsValueEnumerable().SingleOrDefault(x => x.Path == submodule);
             if (submoduleEntry is null)
