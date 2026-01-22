@@ -24,41 +24,46 @@ function createHeaders(token: string): Record<string, string> {
   };
 }
 
-interface GitHubRepositoryWithPermissions extends GitHubRepository {
-  permissions?: {
-    admin: boolean;
-    maintain?: boolean;
-    push: boolean;
-    triage?: boolean;
-    pull: boolean;
-  };
-}
-
 export async function validateCallerHasRepoAccess(
   callerToken: string,
   owner: string,
   repository: string
 ): Promise<Result<GitHubRepository, GitHubApiError>> {
-  const response = await fetch(
+  // First, verify the token can access the repository at all
+  const repoResponse = await fetch(
     `${GITHUB_API_BASE}/repos/${owner}/${repository}`,
     { headers: createHeaders(callerToken) }
   );
 
-  if (!response.ok) {
+  if (!repoResponse.ok) {
     return {
       success: false,
       error: {
-        status: response.status,
+        status: repoResponse.status,
         message: `Token does not have access to ${owner}/${repository}`,
       },
     };
   }
 
-  const data = (await response.json()) as GitHubRepositoryWithPermissions;
+  const repoData = (await repoResponse.json()) as GitHubRepository;
 
-  console.trace(data);
+  // For GITHUB_TOKEN (installation tokens), the permissions object returns all false
+  // even when the token has actual write access. The only reliable way to check
+  // write permission is to attempt a write operation.
+  // Creating an empty blob is safe (doesn't affect repo) and requires contents:write.
+  const blobResponse = await fetch(
+    `${GITHUB_API_BASE}/repos/${owner}/${repository}/git/blobs`,
+    {
+      method: "POST",
+      headers: {
+        ...createHeaders(callerToken),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ content: "", encoding: "utf-8" }),
+    }
+  );
 
-  if (!data.permissions?.push) {
+  if (!blobResponse.ok) {
     return {
       success: false,
       error: {
@@ -68,7 +73,7 @@ export async function validateCallerHasRepoAccess(
     };
   }
 
-  return { success: true, data };
+  return { success: true, data: repoData };
 }
 
 export async function getInstallationForRepo(
