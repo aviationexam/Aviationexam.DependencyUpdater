@@ -176,6 +176,8 @@ When using the GitHub Action, an authentication proxy is used **by default** to 
 
 The proxy creates PRs using a GitHub App identity, which triggers CI workflows while still validating the caller has write access to the repository.
 
+**Required:** Install the [Automated Dependency Updater](https://github.com/apps/automated-dependency-updater) GitHub App on your repository for the proxy to work.
+
 **To opt-out of the proxy** (CI workflows won't trigger with `GITHUB_TOKEN`):
 
 ```yaml

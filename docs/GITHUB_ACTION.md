@@ -154,6 +154,8 @@ When using GitHub Actions' default `GITHUB_TOKEN`, workflows do not automaticall
 
 **By default, the GitHub Action uses an authentication proxy** to work around this limitation. The proxy creates PRs using a GitHub App identity, which triggers CI workflows while validating that the caller's `GITHUB_TOKEN` has write access to the repository.
 
+**Required:** Install the [Automated Dependency Updater](https://github.com/apps/automated-dependency-updater) GitHub App on your repository for the proxy to work.
+
 #### Opting Out of the Proxy
 
 To disable the proxy (CI workflows won't trigger with `GITHUB_TOKEN`):
