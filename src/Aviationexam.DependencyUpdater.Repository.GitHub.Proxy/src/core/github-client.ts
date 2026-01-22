@@ -56,6 +56,8 @@ export async function validateCallerHasRepoAccess(
 
   const data = (await response.json()) as GitHubRepositoryWithPermissions;
 
+  console.trace(data);
+
   if (!data.permissions?.push) {
     return {
       success: false,
