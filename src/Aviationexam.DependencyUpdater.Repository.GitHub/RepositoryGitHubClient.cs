@@ -18,6 +18,8 @@ namespace Aviationexam.DependencyUpdater.Repository.GitHub;
 public class RepositoryGitHubClient(
     GitHubConfiguration gitHubConfiguration,
     IGitHubClient gitHubClient,
+    [FromKeyedServices(ServiceCollectionExtensions.AuthenticationProxy)]
+    IGitHubClient gitHubProxyClient,
     [FromKeyedServices($"{nameof(IGitHubClient.PullRequest.Create)}-pipeline")]
     ResiliencePipeline<Octokit.PullRequest> createPullRequestAsyncResiliencePipeline,
     ILogger<RepositoryGitHubClient> logger
@@ -145,7 +147,7 @@ public class RepositoryGitHubClient(
                 state.newPullRequest
             ),
             ResilienceContextPool.Shared.Get(branchName.Replace('/', '-'), cancellationToken),
-            new { gitHubClient, gitHubConfiguration, newPullRequest }
+            new { gitHubClient = gitHubProxyClient, gitHubConfiguration, newPullRequest }
         );
 
         if (logger.IsEnabled(LogLevel.Trace))
