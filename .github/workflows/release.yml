@@ -50,3 +50,20 @@ jobs:
         run: dotnet nuget push 'nuget-packages/*.nupkg' --api-key ${{ secrets.GITHUB_TOKEN  }} --source github
       - name: Push package to Nuget
         run: dotnet nuget push 'nuget-packages/*.nupkg' --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+
+  deploy-proxy:
+    runs-on: ubuntu-latest
+    # Skip if release tag starts with 'action/'
+    if: ${{ !startsWith(github.event.release.tag_name, 'action/') }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        working-directory: src/Aviationexam.DependencyUpdater.Repository.GitHub.Proxy
+        run: bun install --frozen-lockfile
+      - name: Deploy to Cloudflare Workers
+        working-directory: src/Aviationexam.DependencyUpdater.Repository.GitHub.Proxy
+        run: bun run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
