@@ -141,20 +141,34 @@ All inputs are optional and have sensible defaults:
 | `repository`                       | GitHub repository name                                                               | `${{ github.event.repository.name }}` | No       |
 | `dotnet-version`                   | .NET SDK version to use (use `skip` to skip .NET setup)                              | `10.0.x`                              | No       |
 | `tool-version`                     | Tool version to install (`latest` or specific version like `0.4.0`)                  | `latest`                              | No       |
-| `authentication-proxy-address`     | HTTP(S) proxy address for PR creation to enable CI triggers                          | (none)                                | No       |
+| `authentication-proxy-address`     | HTTP(S) proxy address for PR creation to enable CI triggers (set to `''` to disable) | (proxy enabled by default)            | No       |
 
 **Notes:**
 
 - Configuration files are automatically discovered. No need to specify the path.
 - The `tool-version` defaults to `latest` which installs the newest stable release. You can pin to a specific version (e.g., `0.4.0`) for reproducibility.
 
-### GitHub Token Limitations
+### GitHub Token and CI Triggers
 
 When using GitHub Actions' default `GITHUB_TOKEN`, workflows do not automatically trigger on pull requests created by the token. This is a [known GitHub limitation](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow) designed to prevent accidental workflow loops.
 
-To have CI workflows trigger on PRs created by the Dependency Updater, you have two options:
+**By default, the GitHub Action uses an authentication proxy** to work around this limitation. The proxy creates PRs using a GitHub App identity, which triggers CI workflows while validating that the caller's `GITHUB_TOKEN` has write access to the repository.
 
-#### Option 1: Use a Personal Access Token (PAT)
+#### Opting Out of the Proxy
+
+To disable the proxy (CI workflows won't trigger with `GITHUB_TOKEN`):
+
+```yaml
+- name: Update dependencies
+  uses: aviationexam/Aviationexam.DependencyUpdater@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    authentication-proxy-address: ''  # Disable proxy
+```
+
+#### Alternative: Use a Personal Access Token (PAT)
+
+If you prefer not to use the proxy, you can use a PAT which triggers CI workflows:
 
 1. Create a Personal Access Token with `repo` scope in GitHub Settings
 2. Add the token as a repository secret (e.g., `CUSTOM_PAT`)
@@ -165,21 +179,8 @@ To have CI workflows trigger on PRs created by the Dependency Updater, you have 
   uses: aviationexam/Aviationexam.DependencyUpdater@v1
   with:
     github-token: ${{ secrets.CUSTOM_PAT }}
+    authentication-proxy-address: ''  # Not needed with PAT
 ```
-
-#### Option 2: Use the Authentication Proxy
-
-Deploy the [GitHub App Proxy](../src/Aviationexam.DependencyUpdater.Repository.GitHub.Proxy/README.md) to a Cloudflare Worker and configure your workflow to use it:
-
-```yaml
-- name: Update dependencies
-  uses: aviationexam/Aviationexam.DependencyUpdater@v1
-  with:
-    github-token: ${{ secrets.GITHUB_TOKEN }}
-    authentication-proxy-address: 'https://your-proxy.workers.dev'
-```
-
-The proxy creates PRs using a GitHub App identity, which triggers CI workflows. It validates that the caller's `GITHUB_TOKEN` has write access to the repository before creating the PR.
 
 ### Advanced Examples
 
