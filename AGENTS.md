@@ -50,7 +50,8 @@ dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyU
 # GitHub (proxy is used by default in the GitHub Action)
 dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- \
   --directory "/path/to/repo" --git-password "<token>" \
-  GitHub --owner "<owner>" --repository "<repo>" --token "<token>"
+  GitHub --owner "<owner>" --repository "<repo>" --token "<token>" \
+  --authentication-proxy-address "https://your-proxy.workers.dev"  # Optional
 ```
 
 ## Code Style Guidelines
