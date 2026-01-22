@@ -41,7 +41,8 @@ async function handleCreatePullRequest(
   repository: string
 ): Promise<Response> {
   const authHeader = request.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ") && !authHeader?.startsWith("token ")) {
+  const callerToken = extractToken(authHeader);
+  if (!callerToken) {
     return jsonResponse(
       {
         error: "unauthorized",
@@ -50,9 +51,6 @@ async function handleCreatePullRequest(
       401
     );
   }
-  const callerToken = authHeader.startsWith("Bearer ")
-    ? authHeader.slice(7)
-    : authHeader.slice(6);
 
   let body: GitHubPullRequestBody;
   try {
@@ -103,6 +101,16 @@ function validateGitHubPullRequestBody(
   if (!input.title) return "title is required";
   if (!input.head) return "head is required";
   if (!input.base) return "base is required";
+  return null;
+}
+
+function extractToken(authHeader: string | null): string | null {
+  if (authHeader?.startsWith("Bearer ")) {
+    return authHeader.slice(7);
+  }
+  if (authHeader?.startsWith("token ")) {
+    return authHeader.slice(6);
+  }
   return null;
 }
 
