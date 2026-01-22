@@ -58,8 +58,8 @@ describe("JWT Generation", () => {
     const payload = decodeJwtPayloadWithoutVerification(jwt);
 
     expect(payload["iss"]).toBe(TEST_APP_ID);
-    expect(typeof payload["iat"]).toBe("number");
-    expect(typeof payload["exp"]).toBe("number");
+    expect(payload["iat"]).toBeTypeOf("number");
+    expect(payload["exp"]).toBeTypeOf("number");
 
     const iat = payload["iat"] as number;
     const exp = payload["exp"] as number;
