@@ -1,7 +1,20 @@
 import { describe, expect, it } from "bun:test";
 import { readFileSync } from "fs";
 import { join } from "path";
-import { generateJwt, decodeJwtPayload } from "../../src/core/jwt.ts";
+import { generateJwt } from "../../src/core/jwt.ts";
+
+function decodeJwtPayloadWithoutVerification(jwt: string): Record<string, unknown> {
+  const parts = jwt.split(".");
+  if (parts.length !== 3) {
+    throw new Error("Invalid JWT format");
+  }
+  const payload = parts[1];
+  if (!payload) {
+    throw new Error("Invalid JWT: missing payload");
+  }
+  const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
+  return JSON.parse(decoded) as Record<string, unknown>;
+}
 
 const TEST_KEY_PATH = join(import.meta.dir, "../fixtures/test-key.pem");
 const TEST_PRIVATE_KEY = readFileSync(TEST_KEY_PATH, "utf-8");
@@ -42,7 +55,7 @@ describe("JWT Generation", () => {
     });
 
     const afterGeneration = Math.floor(Date.now() / 1000);
-    const payload = decodeJwtPayload(jwt);
+    const payload = decodeJwtPayloadWithoutVerification(jwt);
 
     expect(payload["iss"]).toBe(TEST_APP_ID);
     expect(typeof payload["iat"]).toBe("number");
@@ -70,8 +83,8 @@ describe("JWT Generation", () => {
 
     expect(jwt1).not.toBe(jwt2);
 
-    const payload1 = decodeJwtPayload(jwt1);
-    const payload2 = decodeJwtPayload(jwt2);
+    const payload1 = decodeJwtPayloadWithoutVerification(jwt1);
+    const payload2 = decodeJwtPayloadWithoutVerification(jwt2);
 
     expect(payload1["iss"]).toBe("11111");
     expect(payload2["iss"]).toBe("22222");
@@ -87,7 +100,7 @@ describe("JWT Generation", () => {
   });
 });
 
-describe("JWT Payload Decoding", () => {
+describe("decodeJwtPayloadWithoutVerification", () => {
   it("decodes valid JWT payload", () => {
     const testPayload = { iss: "12345", iat: 1234567890, exp: 1234568490 };
     const encodedPayload = btoa(JSON.stringify(testPayload))
@@ -96,7 +109,7 @@ describe("JWT Payload Decoding", () => {
       .replace(/=+$/, "");
 
     const fakeJwt = `header.${encodedPayload}.signature`;
-    const decoded = decodeJwtPayload(fakeJwt);
+    const decoded = decodeJwtPayloadWithoutVerification(fakeJwt);
 
     expect(decoded["iss"]).toBe("12345");
     expect(decoded["iat"]).toBe(1234567890);
@@ -104,7 +117,7 @@ describe("JWT Payload Decoding", () => {
   });
 
   it("throws error for invalid JWT format", () => {
-    expect(() => decodeJwtPayload("invalid")).toThrow("Invalid JWT format");
-    expect(() => decodeJwtPayload("only.two")).toThrow("Invalid JWT format");
+    expect(() => decodeJwtPayloadWithoutVerification("invalid")).toThrow("Invalid JWT format");
+    expect(() => decodeJwtPayloadWithoutVerification("only.two")).toThrow("Invalid JWT format");
   });
 });

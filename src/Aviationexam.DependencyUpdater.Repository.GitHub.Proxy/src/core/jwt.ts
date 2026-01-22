@@ -105,15 +105,4 @@ function base64UrlEncode(input: string | ArrayBuffer): string {
   return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
-export function decodeJwtPayload(jwt: string): Record<string, unknown> {
-  const parts = jwt.split(".");
-  if (parts.length !== 3) {
-    throw new Error("Invalid JWT format");
-  }
-  const payload = parts[1];
-  if (!payload) {
-    throw new Error("Invalid JWT: missing payload");
-  }
-  const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
-  return JSON.parse(decoded) as Record<string, unknown>;
-}
+
