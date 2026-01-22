@@ -174,7 +174,15 @@ public sealed class DependencyAnalyzer(
             results.AsValueEnumerable()
                 .OrderBy(r => r.Key.NugetDependency.NugetPackage.GetPackageName())
                 .ToDictionary(),
-            currentVersions.AsValueEnumerable().ToDictionary()
+            currentVersions.AsValueEnumerable()
+                .GroupBy(x => x.Key)
+                .ToDictionary(
+                    g => g.Key,
+                    IDictionary<string, PackageVersion> (g) => g.AsValueEnumerable()
+                        .SelectMany(x => x.Value)
+                        .DistinctBy(x => x.Key)
+                        .ToDictionary(x => x.Key, x => x.Value)
+                )
         );
     }
 
