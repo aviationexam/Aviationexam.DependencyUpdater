@@ -1,5 +1,6 @@
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Interfaces.Repository;
+using System;
 
 namespace Aviationexam.DependencyUpdater.Repository.GitHub;
 
@@ -21,4 +22,10 @@ public sealed class GitHubConfiguration : IRepositoryPlatformConfiguration
     /// The GitHub personal access token (PAT) used for authentication.
     /// </summary>
     public required string Token { get; set; }
+
+    /// <summary>
+    /// Optional proxy address for GitHub API authentication.
+    /// When set, PR creation requests are routed through this proxy to enable CI triggers.
+    /// </summary>
+    public Uri? AuthenticationProxyAddress { get; set; }
 }

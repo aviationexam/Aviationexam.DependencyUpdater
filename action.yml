@@ -42,6 +42,11 @@ inputs:
     required: false
     default: 'latest'
 
+  authentication-proxy-address:
+    description: 'Optional HTTP(S) proxy address for GitHub API authentication. When set, PR creation requests are routed through this proxy to enable CI triggers.'
+    required: false
+    default: ''
+
 runs:
   using: 'composite'
   steps:
@@ -85,5 +90,9 @@ runs:
           "--repository" "${{ inputs.repository }}"
           "--token" "${{ inputs.github-token }}"
         )
+
+        if [ -n "${{ inputs.authentication-proxy-address }}" ]; then
+          ARGS+=("--authentication-proxy-address" "${{ inputs.authentication-proxy-address }}")
+        fi
 
         dotnet dependency-updater "${ARGS[@]}"
