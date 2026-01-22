@@ -36,6 +36,17 @@ export async function validateCallerHasRepoAccess(
   );
 
   if (!repoResponse.ok) {
+    const errorBody = await repoResponse.text();
+    logGitHubApiError({
+      operation: "validateCallerHasRepoAccess:repo",
+      owner,
+      repository,
+      status: repoResponse.status,
+      url: `${GITHUB_API_BASE}/repos/${owner}/${repository}`,
+      responseBody: errorBody,
+      requestId: repoResponse.headers.get("x-github-request-id"),
+      rateLimitRemaining: repoResponse.headers.get("x-ratelimit-remaining"),
+    });
     return {
       success: false,
       error: {
@@ -64,6 +75,18 @@ export async function validateCallerHasRepoAccess(
   );
 
   if (!blobResponse.ok) {
+    const errorBody = await blobResponse.text();
+    logGitHubApiError({
+      operation: "validateCallerHasRepoAccess:blob",
+      owner,
+      repository,
+      status: blobResponse.status,
+      url: `${GITHUB_API_BASE}/repos/${owner}/${repository}/git/blobs`,
+      responseBody: errorBody,
+      requestId: blobResponse.headers.get("x-github-request-id"),
+      rateLimitRemaining: blobResponse.headers.get("x-ratelimit-remaining"),
+      requestBody: { content: "", encoding: "utf-8" },
+    });
     return {
       success: false,
       error: {
@@ -88,6 +111,16 @@ export async function getInstallationForRepo(
 
   if (!response.ok) {
     const errorBody = await response.text();
+    logGitHubApiError({
+      operation: "getInstallationForRepo",
+      owner,
+      repository,
+      status: response.status,
+      url: `${GITHUB_API_BASE}/repos/${owner}/${repository}/installation`,
+      responseBody: errorBody,
+      requestId: response.headers.get("x-github-request-id"),
+      rateLimitRemaining: response.headers.get("x-ratelimit-remaining"),
+    });
     return {
       success: false,
       error: {
@@ -118,6 +151,17 @@ export async function createInstallationToken(
 
   if (!response.ok) {
     const errorBody = await response.text();
+    logGitHubApiError({
+      operation: "createInstallationToken",
+      owner: "",
+      repository: "",
+      status: response.status,
+      url: `${GITHUB_API_BASE}/app/installations/${installationId}/access_tokens`,
+      responseBody: errorBody,
+      requestId: response.headers.get("x-github-request-id"),
+      rateLimitRemaining: response.headers.get("x-ratelimit-remaining"),
+      requestBody: { installationId },
+    });
     return {
       success: false,
       error: {
@@ -151,6 +195,17 @@ export async function createPullRequest(
 
   if (!response.ok) {
     const errorBody = await response.text();
+    logGitHubApiError({
+      operation: "createPullRequest",
+      owner,
+      repository,
+      status: response.status,
+      url: `${GITHUB_API_BASE}/repos/${owner}/${repository}/pulls`,
+      responseBody: errorBody,
+      requestId: response.headers.get("x-github-request-id"),
+      rateLimitRemaining: response.headers.get("x-ratelimit-remaining"),
+      requestBody: summarizePullRequestBody(body),
+    });
     return {
       success: false,
       error: {
@@ -162,4 +217,53 @@ export async function createPullRequest(
 
   const data = (await response.json()) as GitHubPullRequest;
   return { success: true, data };
+}
+
+type GitHubApiErrorLogContext = {
+  operation: string;
+  owner: string;
+  repository: string;
+  status: number;
+  url: string;
+  responseBody: string;
+  requestId: string | null;
+  rateLimitRemaining: string | null;
+  requestBody?: Record<string, unknown>;
+};
+
+function logGitHubApiError(context: GitHubApiErrorLogContext): void {
+  const payload: Record<string, unknown> = {
+    operation: context.operation,
+    owner: context.owner || undefined,
+    repository: context.repository || undefined,
+    status: context.status,
+    url: context.url,
+    requestId: context.requestId,
+    rateLimitRemaining: context.rateLimitRemaining,
+    responseBody: context.responseBody,
+  };
+
+  if (context.requestBody) {
+    payload.requestBody = context.requestBody;
+  }
+
+  if (context.status >= 500) {
+    console.error("GitHub API request failed", payload);
+  } else {
+    console.warn("GitHub API request failed", payload);
+  }
+}
+
+function summarizePullRequestBody(
+  body: GitHubPullRequestBody
+): Record<string, unknown> {
+  return {
+    titleLength: body.title?.length ?? 0,
+    hasBody: Boolean(body.body),
+    bodyLength: body.body?.length ?? 0,
+    head: body.head,
+    base: body.base,
+    draft: body.draft ?? false,
+    maintainerCanModify: body.maintainer_can_modify ?? false,
+  };
 }
