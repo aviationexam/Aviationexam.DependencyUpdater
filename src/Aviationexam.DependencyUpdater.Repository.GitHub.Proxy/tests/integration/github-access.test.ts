@@ -50,7 +50,7 @@ describe.skipIf(!GITHUB_TOKEN)("GitHub Access Validation", () => {
   });
 
   describe("Negative flow - unauthorized access", () => {
-    it("rejects access to microsoft/vscode (no access)", async () => {
+    it("rejects access to microsoft/vscode (no write access)", async () => {
       const result = await validateCallerHasRepoAccess(
         GITHUB_TOKEN!,
         "microsoft",
@@ -59,8 +59,8 @@ describe.skipIf(!GITHUB_TOKEN)("GitHub Access Validation", () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.status).toBe(404);
-        expect(result.error.message).toContain("microsoft/vscode");
+        expect(result.error.status).toBe(403);
+        expect(result.error.message).toContain("write access");
       }
     });
 

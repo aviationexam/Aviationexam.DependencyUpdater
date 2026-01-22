@@ -24,6 +24,16 @@ function createHeaders(token: string): Record<string, string> {
   };
 }
 
+interface GitHubRepositoryWithPermissions extends GitHubRepository {
+  permissions?: {
+    admin: boolean;
+    maintain?: boolean;
+    push: boolean;
+    triage?: boolean;
+    pull: boolean;
+  };
+}
+
 export async function validateCallerHasRepoAccess(
   callerToken: string,
   owner: string,
@@ -44,7 +54,18 @@ export async function validateCallerHasRepoAccess(
     };
   }
 
-  const data = (await response.json()) as GitHubRepository;
+  const data = (await response.json()) as GitHubRepositoryWithPermissions;
+
+  if (!data.permissions?.push) {
+    return {
+      success: false,
+      error: {
+        status: 403,
+        message: `Token does not have write access to ${owner}/${repository}`,
+      },
+    };
+  }
+
   return { success: true, data };
 }
 
