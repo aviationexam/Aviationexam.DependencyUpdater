@@ -6,3 +6,18 @@ compatibility_date = "2024-01-01"
 # GITHUB_APP_ID and GITHUB_APP_KEY should be set via secrets, not here
 # Use: wrangler secret put GITHUB_APP_ID
 # Use: wrangler secret put GITHUB_APP_KEY
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+persist = false
+invocation_logs = false
+
+[observability.traces]
+enabled = false
+persist = true
+head_sampling_rate = 1
