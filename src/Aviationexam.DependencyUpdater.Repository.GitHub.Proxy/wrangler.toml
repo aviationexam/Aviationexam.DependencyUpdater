@@ -1,0 +1,8 @@
+name = "aviationexam-dependency-updater-proxy"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[vars]
+# GITHUB_APP_ID and GITHUB_APP_KEY should be set via secrets, not here
+# Use: wrangler secret put GITHUB_APP_ID
+# Use: wrangler secret put GITHUB_APP_KEY

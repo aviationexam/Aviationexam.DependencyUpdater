@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Octokit;
+using Octokit.Internal;
 using Polly;
 using Polly.Retry;
 using System;
@@ -12,6 +13,8 @@ namespace Aviationexam.DependencyUpdater.Repository.GitHub;
 
 public static class ServiceCollectionExtensions
 {
+    public const string AuthenticationProxy = "AuthenticationProxy";
+
     public static IServiceCollection AddRepositoryGitHub(
         this IServiceCollection serviceCollection,
         bool shouldRedactHeaderValue = true
@@ -28,17 +31,23 @@ public static class ServiceCollectionExtensions
         }
 
         return serviceCollection
-            .AddScoped<IGitHubClient>(static serviceProvider =>
-            {
-                var gitHubConfiguration = serviceProvider.GetRequiredService<GitHubConfiguration>();
-
-                var client = new GitHubClient(new ProductHeaderValue("Aviationexam.DependencyUpdater"))
-                {
-                    Credentials = new Credentials(gitHubConfiguration.Token),
-                };
-
-                return client;
-            })
+            .AddScoped<ICredentialStore>(static serviceProvider => new InMemoryCredentialStore(
+                new Credentials(serviceProvider.GetRequiredService<GitHubConfiguration>().Token)
+            ))
+            .AddScoped<IGitHubClient>(static serviceProvider => new GitHubClient(
+                new ProductHeaderValue("Aviationexam.DependencyUpdater"),
+                serviceProvider.GetRequiredService<ICredentialStore>()
+            ))
+            .AddKeyedScoped<IGitHubClient>(AuthenticationProxy, static (
+                    serviceProvider, _
+                ) => serviceProvider.GetRequiredService<GitHubConfiguration>().AuthenticationProxyAddress is { } authenticationProxyAddress
+                    ? new GitHubClient(
+                        new ProductHeaderValue("Aviationexam.DependencyUpdater"),
+                        serviceProvider.GetRequiredService<ICredentialStore>(),
+                        baseAddress: authenticationProxyAddress
+                    )
+                    : serviceProvider.GetRequiredService<IGitHubClient>()
+            )
             .AddResiliencePipeline<string, Octokit.PullRequest>(
                 $"{nameof(IGitHubClient.PullRequest.Create)}-pipeline",
                 static (builder, context) => builder.AddRetry(new RetryStrategyOptions<Octokit.PullRequest>

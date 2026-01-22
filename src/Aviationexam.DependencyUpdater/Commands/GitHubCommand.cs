@@ -29,6 +29,13 @@ public sealed class GitHubCommand : Command
         Arity = ArgumentArity.ExactlyOne,
     };
 
+    private readonly Option<string?> _authenticationProxyAddress = new("--authentication-proxy-address")
+    {
+        Description = "Optional HTTP(S) proxy address for GitHub API authentication. When set, PR creation requests are routed through this proxy to overcome GitHub limitations.",
+        Required = false,
+        Arity = ArgumentArity.ExactlyOne,
+    };
+
     public GitHubCommand() : base(
         nameof(EPlatformSelection.GitHub), "Updates dependencies in GitHub repositories."
     )
@@ -36,12 +43,13 @@ public sealed class GitHubCommand : Command
         Options.Add(_owner);
         Options.Add(_repository);
         Options.Add(_token);
+        Options.Add(_authenticationProxyAddress);
     }
 
     public IServiceCollection ConfigureServices(
         IServiceCollection serviceCollection,
         ParseResult parseResult
     ) => serviceCollection
-        .AddBinder(parseResult, new GitHubConfigurationBinder(_owner, _repository, _token))
+        .AddBinder(parseResult, new GitHubConfigurationBinder(_owner, _repository, _token, _authenticationProxyAddress))
         .AddSingleton<IRepositoryPlatformConfiguration>(x => x.GetRequiredService<GitHubConfiguration>());
 }
