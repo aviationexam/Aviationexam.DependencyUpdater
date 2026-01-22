@@ -12,77 +12,83 @@ public static class PackageVersionExtensions
         this PackageVersion packageVersion
     ) => new(packageVersion.Version, string.Join('.', packageVersion.ReleaseLabels));
 
-    /// <summary>
-    /// Converts a collection of NuGet dependencies with version sets to a dictionary of possible package versions.
-    /// Extracts the default package source dependency sets for each package version.
-    /// </summary>
     /// <param name="dependencies">Collection of NuGet dependencies with their available versions</param>
-    /// <returns>Dictionary mapping NuGet dependencies to collections of possible package versions with their compatible dependency sets</returns>
-    public static IReadOnlyDictionary<NugetDependency, IReadOnlyCollection<PossiblePackageVersion>> ToPossiblePackageVersions(
-        this IReadOnlyCollection<KeyValuePair<NugetDependency, IReadOnlyCollection<PackageVersionWithDependencySets>>> dependencies
-    ) => dependencies.AsValueEnumerable()
-        .ToDictionary(
-            kvp => kvp.Key,
-            IReadOnlyCollection<PossiblePackageVersion> (kvp) =>
-            [
-                .. kvp.Value.AsValueEnumerable()
-                    .Select(pkgVersion => new PossiblePackageVersion(
-                        pkgVersion,
-                        pkgVersion.DependencySets.TryGetValue(EPackageSource.Default, out var depSets)
-                            ? depSets
-                            : []
-                    )),
-            ]
-        );
-
-    /// <summary>
-    /// Converts a collection of NuGet dependencies to a dictionary of current package versions per target framework.
-    /// Extracts the MinVersion from each NugetPackageReference and maps it to the corresponding target frameworks.
-    /// </summary>
-    /// <param name="dependencies">Collection of NuGet dependencies with their available versions</param>
-    /// <returns>Dictionary mapping package names to their versions per target framework</returns>
-    public static IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> ToCurrentVersionsPerTargetFramework(
-        this IReadOnlyCollection<KeyValuePair<NugetDependency, IReadOnlyCollection<PackageVersionWithDependencySets>>> dependencies
-    )
+    extension(IReadOnlyCollection<KeyValuePair<NugetDependency, IReadOnlyCollection<PackageVersionWithDependencySets>>> dependencies)
     {
-        var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
+        /// <summary>
+        /// Converts a collection of NuGet dependencies with version sets to a dictionary of possible package versions.
+        /// Extracts the default package source dependency sets for each package version.
+        /// </summary>
+        /// <returns>Dictionary mapping NuGet dependencies to collections of possible package versions with their compatible dependency sets</returns>
+        public IReadOnlyDictionary<UpdateCandidate, IReadOnlyCollection<PossiblePackageVersion>> ToPossiblePackageVersions() => dependencies
+            .AsValueEnumerable()
+            .ToDictionary(
+                kvp => new UpdateCandidate(
+                    kvp.Key, new PackageVersionWithDependencySets(
+                        kvp.Key.NugetPackage.GetVersion()!
+                    )
+                    {
+                        DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>()
+                    }
+                ),
+                IReadOnlyCollection<PossiblePackageVersion> (kvp) =>
+                [
+                    .. kvp.Value.AsValueEnumerable()
+                        .Select(pkgVersion => new PossiblePackageVersion(
+                            pkgVersion,
+                            pkgVersion.DependencySets.TryGetValue(EPackageSource.Default, out var depSets)
+                                ? depSets
+                                : []
+                        )),
+                ]
+            );
 
-        foreach (var (nugetDependency, _) in dependencies)
+        /// <summary>
+        /// Converts a collection of NuGet dependencies to a dictionary of current package versions per target framework.
+        /// Extracts the MinVersion from each NugetPackageReference and maps it to the corresponding target frameworks.
+        /// </summary>
+        /// <returns>Dictionary mapping package names to their versions per target framework</returns>
+        public IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> ToCurrentVersionsPerTargetFramework()
         {
-            if (
-                nugetDependency.NugetPackage is NugetPackageReference { Name: var packageReferenceName } packageRef
-                && packageRef.MapMinVersionToPackageVersion() is { } currentVersion
-            )
-            {
-                if (!currentVersions.TryGetValue(packageReferenceName, out var frameworkVersions))
-                {
-                    frameworkVersions = new Dictionary<string, PackageVersion>();
-                    currentVersions[packageReferenceName] = frameworkVersions;
-                }
+            var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
 
-                foreach (var targetFramework in nugetDependency.TargetFrameworks)
+            foreach (var (nugetDependency, _) in dependencies)
+            {
+                if (
+                    nugetDependency.NugetPackage is NugetPackageReference { Name: var packageReferenceName } packageRef
+                    && packageRef.MapMinVersionToPackageVersion() is { } currentVersion
+                )
                 {
-                    frameworkVersions[targetFramework.TargetFramework] = currentVersion;
+                    if (!currentVersions.TryGetValue(packageReferenceName, out var frameworkVersions))
+                    {
+                        frameworkVersions = new Dictionary<string, PackageVersion>();
+                        currentVersions[packageReferenceName] = frameworkVersions;
+                    }
+
+                    foreach (var targetFramework in nugetDependency.TargetFrameworks)
+                    {
+                        frameworkVersions[targetFramework.TargetFramework] = currentVersion;
+                    }
+                }
+                else if (
+                    nugetDependency.NugetPackage is NugetPackageVersion { Name: var packageName } packageVersion
+                    && packageVersion.Version.MapToPackageVersion() is { } currentPackageVersion
+                )
+                {
+                    if (!currentVersions.TryGetValue(packageName, out var frameworkVersions))
+                    {
+                        frameworkVersions = new Dictionary<string, PackageVersion>();
+                        currentVersions[packageName] = frameworkVersions;
+                    }
+
+                    foreach (var targetFramework in nugetDependency.TargetFrameworks)
+                    {
+                        frameworkVersions[targetFramework.TargetFramework] = currentPackageVersion;
+                    }
                 }
             }
-            else if (
-                nugetDependency.NugetPackage is NugetPackageVersion { Name: var packageName } packageVersion
-                && packageVersion.Version.MapToPackageVersion() is { } currentPackageVersion
-            )
-            {
-                if (!currentVersions.TryGetValue(packageName, out var frameworkVersions))
-                {
-                    frameworkVersions = new Dictionary<string, PackageVersion>();
-                    currentVersions[packageName] = frameworkVersions;
-                }
 
-                foreach (var targetFramework in nugetDependency.TargetFrameworks)
-                {
-                    frameworkVersions[targetFramework.TargetFramework] = currentPackageVersion;
-                }
-            }
+            return currentVersions;
         }
-
-        return currentVersions;
     }
 }

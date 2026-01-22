@@ -52,7 +52,6 @@ public sealed class NugetUpdater(
 
         var nugetUpdaterContext = contextFactory.CreateContext(repositoryConfig, packageConfig.TargetFrameworks);
 
-        var currentPackageVersionsPerTargetFramework = nugetUpdaterContext.GetCurrentPackageVersionsPerTargetFramework();
         var sourceRepositories = nugetUpdaterContext.GetSourceRepositories(
             authConfig.NugetFeedAuthentications,
             packageConfig.FallbackRegistries,
@@ -64,7 +63,6 @@ public sealed class NugetUpdater(
             nugetUpdaterContext,
             sourceRepositories,
             packageConfig.IgnoreEntries,
-            currentPackageVersionsPerTargetFramework,
             cachingConfiguration,
             cancellationToken
         );
@@ -85,7 +83,7 @@ public sealed class NugetUpdater(
             packageConfig.ExecuteRestore,
             packageConfig.RestoreDirectory,
             groupedPackagesToUpdate,
-            currentPackageVersionsPerTargetFramework,
+            dependencyAnalysisResult.CurrentPackageVersions,
             updater,
             cancellationToken
         );

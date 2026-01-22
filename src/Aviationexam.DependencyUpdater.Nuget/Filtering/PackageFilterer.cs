@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
 using ZLinq;
@@ -26,7 +27,7 @@ public sealed class PackageFilterer
                                 // Check if all target frameworks have valid flags for this package
                                 dependencyAnalysisResult.PackageFlags.TryGetValue(new Package(package.Id, package.MinVersion!), out var frameworkFlags)
                                 // Ensure all target frameworks for this dependency have valid flags
-                                && frameworkFlags.TryGetValue(new NugetTargetFramework(group.TargetFramework), out var flag)
+                                && frameworkFlags.TryGetCompatibleFramework(new NugetTargetFramework(group.TargetFramework), out var flag)
                                 && flag is EDependencyFlag.Valid
                             )),
                     ],
@@ -42,7 +43,7 @@ public sealed class PackageFilterer
                     .First();
 
                 yield return new NugetUpdateCandidate(
-                    dependency,
+                    dependency.NugetDependency,
                     possiblePackageVersion
                 );
             }
