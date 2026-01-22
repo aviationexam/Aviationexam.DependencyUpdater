@@ -1,14 +1,24 @@
 # GitHub App Proxy for Aviationexam.DependencyUpdater
 
-A proxy service that creates Pull Requests using a GitHub App identity, allowing CI workflows to trigger on PRs created by the Dependency Updater.
+A transparent proxy service that creates Pull Requests using a GitHub App identity, allowing CI workflows to trigger on PRs created by the Dependency Updater.
 
 ## Why This Exists
 
 When using `GITHUB_TOKEN` from GitHub Actions, PRs created by the token don't trigger CI workflows (this is GitHub's design to prevent infinite loops). This proxy solves that by:
 
 1. Receiving PR creation requests authenticated with the caller's `GITHUB_TOKEN`
-2. Validating the caller has access to the target repository
+2. Validating the caller has write access to the target repository
 3. Creating the PR using a GitHub App identity (which triggers CI)
+
+## Transparent Proxy
+
+The proxy mimics GitHub's API endpoint exactly:
+
+```
+POST /repos/{owner}/{repo}/pulls
+```
+
+This means you can use it as a drop-in replacement by simply changing the base URL in your GitHub client (e.g., Octokit). The request/response format is identical to GitHub's API.
 
 ## Architecture
 
@@ -16,8 +26,8 @@ When using `GITHUB_TOKEN` from GitHub Actions, PRs created by the token don't tr
 ┌─────────────────────────────────────────────────────────────────┐
 │  User's GitHub Actions                                          │
 │  ┌───────────────────────────────────────────────────────────┐  │
-│  │  Aviationexam.DependencyUpdater                           │  │
-│  │  POST /api/pull-request                                   │  │
+│  │  Aviationexam.DependencyUpdater (Octokit)                 │  │
+│  │  POST /repos/{owner}/{repo}/pulls                         │  │
 │  │  Authorization: Bearer <GITHUB_TOKEN>                     │  │
 │  └─────────────────────────┬─────────────────────────────────┘  │
 └────────────────────────────┼────────────────────────────────────┘
@@ -25,11 +35,11 @@ When using `GITHUB_TOKEN` from GitHub Actions, PRs created by the token don't tr
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │  Proxy (Cloudflare Worker)                                      │
-│  1. Validate caller's token has repo access                     │
+│  1. Validate caller's token has write access (via blob create)  │
 │  2. Generate JWT for GitHub App                                 │
 │  3. Get installation token for the repo                         │
 │  4. Create PR using installation token                          │
-│  5. Return PR number and URL (never expose tokens)              │
+│  5. Return full GitHub PR response (never expose tokens)        │
 └─────────────────────────────────────────────────────────────────┘
                              │
                              ▼
@@ -39,20 +49,18 @@ When using `GITHUB_TOKEN` from GitHub Actions, PRs created by the token don't tr
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Modes
+## Usage
 
 ### HTTP Mode (Cloudflare Worker) - Production
 
-Creates PRs via HTTP API. Never exposes tokens.
+The proxy accepts the same request format as GitHub's API:
 
 ```bash
-POST https://your-worker.workers.dev/api/pull-request
+POST https://your-worker.workers.dev/repos/aviationexam/Aviationexam.DependencyUpdater/pulls
 Authorization: Bearer <GITHUB_TOKEN>
 Content-Type: application/json
 
 {
-  "owner": "aviationexam",
-  "repository": "Aviationexam.DependencyUpdater",
   "title": "Update dependencies",
   "body": "This PR updates...",
   "head": "feature/update-deps",
@@ -61,13 +69,7 @@ Content-Type: application/json
 }
 ```
 
-Response:
-```json
-{
-  "number": 123,
-  "url": "https://github.com/aviationexam/Aviationexam.DependencyUpdater/pull/123"
-}
-```
+Response: Full GitHub Pull Request object (same as GitHub API)
 
 ### CLI Mode - Local Testing
 
@@ -110,7 +112,7 @@ bun run typecheck
 ```bash
 # Set secrets (do this once)
 wrangler secret put GITHUB_APP_ID
-wrangler secret put GITHUB_APP_KEY
+wrangler secret put GITHUB_APP_KEY_BASE64
 
 # Deploy
 bun run deploy
@@ -119,34 +121,34 @@ bun run deploy
 ## Security
 
 - The proxy never returns or exposes installation tokens
-- All requests are validated against the caller's `GITHUB_TOKEN`
-- The caller can only create PRs in repositories their token has access to
+- All requests are validated by attempting a write operation (blob creation)
+- The caller can only create PRs in repositories their token has write access to
 - GitHub App credentials are stored as Cloudflare Worker secrets
 
 ## API Reference
 
-### POST /api/pull-request
+### POST /repos/{owner}/{repo}/pulls
 
 Creates a pull request using the GitHub App identity.
 
 **Headers:**
-- `Authorization: Bearer <GITHUB_TOKEN>` - Required
+- `Authorization: Bearer <GITHUB_TOKEN>` or `Authorization: token <GITHUB_TOKEN>` - Required
 
 **Body:**
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| owner | string | Yes | Repository owner |
-| repository | string | Yes | Repository name |
 | title | string | Yes | PR title |
 | body | string | No | PR description |
 | head | string | Yes | Branch with changes |
 | base | string | Yes | Target branch |
 | draft | boolean | No | Create as draft PR |
+| maintainer_can_modify | boolean | No | Allow maintainer edits |
 
 **Responses:**
 
-- `201 Created` - PR created successfully
+- `201 Created` - PR created successfully (returns full GitHub PR object)
 - `400 Bad Request` - Invalid request body
 - `401 Unauthorized` - Missing/invalid token or no repo access
+- `403 Forbidden` - Token does not have write access to repository
 - `404 Not Found` - GitHub App not installed on repository
 - `500 Internal Server Error` - Server configuration error

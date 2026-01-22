@@ -1,4 +1,4 @@
-import type { CreatePullRequestInput, ErrorResponse } from "./types.ts";
+import type { ErrorResponse, GitHubPullRequestBody } from "./types.ts";
 import { createPullRequestViaProxy } from "./core/proxy-service.ts";
 import { decodeBase64Key } from "./core/utils.ts";
 
@@ -7,6 +7,8 @@ interface Env {
   GITHUB_APP_KEY?: string;
   GITHUB_APP_KEY_BASE64?: string;
 }
+
+const REPOS_PULLS_REGEX = /^\/repos\/([^/]+)\/([^/]+)\/pulls$/;
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -22,9 +24,10 @@ export default {
     }
 
     const url = new URL(request.url);
+    const match = url.pathname.match(REPOS_PULLS_REGEX);
 
-    if (url.pathname === "/api/pull-request") {
-      return handleCreatePullRequest(request, env);
+    if (match && match[1] && match[2]) {
+      return handleCreatePullRequest(request, env, match[1], match[2]);
     }
 
     return jsonResponse({ error: "not_found", message: "Not found" }, 404);
@@ -33,10 +36,12 @@ export default {
 
 async function handleCreatePullRequest(
   request: Request,
-  env: Env
+  env: Env,
+  owner: string,
+  repository: string
 ): Promise<Response> {
   const authHeader = request.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
+  if (!authHeader?.startsWith("Bearer ") && !authHeader?.startsWith("token ")) {
     return jsonResponse(
       {
         error: "unauthorized",
@@ -45,11 +50,13 @@ async function handleCreatePullRequest(
       401
     );
   }
-  const callerToken = authHeader.slice(7);
+  const callerToken = authHeader.startsWith("Bearer ")
+    ? authHeader.slice(7)
+    : authHeader.slice(6);
 
-  let body: CreatePullRequestInput;
+  let body: GitHubPullRequestBody;
   try {
-    body = (await request.json()) as CreatePullRequestInput;
+    body = (await request.json()) as GitHubPullRequestBody;
   } catch {
     return jsonResponse(
       { error: "invalid_request", message: "Invalid JSON body" },
@@ -57,7 +64,7 @@ async function handleCreatePullRequest(
     );
   }
 
-  const validationError = validateCreatePullRequestInput(body);
+  const validationError = validateGitHubPullRequestBody(body);
   if (validationError) {
     return jsonResponse(
       { error: "invalid_request", message: validationError },
@@ -77,7 +84,7 @@ async function handleCreatePullRequest(
   const result = await createPullRequestViaProxy(
     { appId: env.GITHUB_APP_ID, privateKey: appKey },
     callerToken,
-    body
+    { owner, repository, ...body }
   );
 
   if (!result.success) {
@@ -90,11 +97,9 @@ async function handleCreatePullRequest(
   return jsonResponse(result.data, 201);
 }
 
-function validateCreatePullRequestInput(
-  input: CreatePullRequestInput
+function validateGitHubPullRequestBody(
+  input: GitHubPullRequestBody
 ): string | null {
-  if (!input.owner) return "owner is required";
-  if (!input.repository) return "repository is required";
   if (!input.title) return "title is required";
   if (!input.head) return "head is required";
   if (!input.base) return "base is required";
