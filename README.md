@@ -168,15 +168,31 @@ Required when using the `GitHub` subcommand:
 | --owner                           |    Y     |         | GitHub repository owner (organization or user account name)                          |
 | --repository                      |    Y     |         | GitHub repository name                                                               |
 | --token                           |    Y     |         | GitHub personal access token (requires `repo` scope)                                 |
+| --authentication-proxy-address    |    N     |         | Optional HTTP(S) proxy for PR creation to enable CI triggers (see below)             |
 
 #### GitHub Token Limitations
 
 When using GitHub Actions' default `GITHUB_TOKEN`, workflows do not automatically trigger on pull requests created by the token. This is a [known limitation](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow) designed to prevent accidental workflow loops.
 
-To have CI workflows trigger on PRs created by the Dependency Updater, use a custom Personal Access Token (PAT) with `repo` scope:
+To have CI workflows trigger on PRs created by the Dependency Updater, you have two options:
+
+**Option 1: Use a Personal Access Token (PAT)**
 
 ```yaml
 - uses: aviationexam/Aviationexam.DependencyUpdater@v1
   with:
     github-token: ${{ secrets.CUSTOM_PAT }}
 ```
+
+**Option 2: Use the Authentication Proxy**
+
+Deploy the included [GitHub App Proxy](src/Aviationexam.DependencyUpdater.Repository.GitHub.Proxy/README.md) and configure it:
+
+```yaml
+- uses: aviationexam/Aviationexam.DependencyUpdater@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    authentication-proxy-address: 'https://your-proxy.workers.dev'
+```
+
+The proxy creates PRs using a GitHub App identity, which triggers CI workflows while still validating the caller has write access to the repository.
