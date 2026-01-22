@@ -6,13 +6,13 @@ on:
       - main
     paths:
       - 'src/Aviationexam.DependencyUpdater.Repository.GitHub.Proxy/**'
-      - '.github/workflows/proxy-readonly-test.yml'
+      - '.github/workflows/proxy-*.yml'
   pull_request:
     branches:
       - main
     paths:
       - 'src/Aviationexam.DependencyUpdater.Repository.GitHub.Proxy/**'
-      - '.github/workflows/proxy-readonly-test.yml'
+      - '.github/workflows/proxy-*.yml'
 
 permissions:
   contents: read
