@@ -1,8 +1,8 @@
 import type {
-  CreatePullRequestInput,
   GitHubInstallation,
   GitHubInstallationToken,
   GitHubPullRequest,
+  GitHubPullRequestBody,
   GitHubRepository,
   Result,
 } from "../types.ts";
@@ -133,23 +133,19 @@ export async function createInstallationToken(
 
 export async function createPullRequest(
   installationToken: string,
-  input: CreatePullRequestInput
+  owner: string,
+  repository: string,
+  body: GitHubPullRequestBody
 ): Promise<Result<GitHubPullRequest, GitHubApiError>> {
   const response = await fetch(
-    `${GITHUB_API_BASE}/repos/${input.owner}/${input.repository}/pulls`,
+    `${GITHUB_API_BASE}/repos/${owner}/${repository}/pulls`,
     {
       method: "POST",
       headers: {
         ...createHeaders(installationToken),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        title: input.title,
-        body: input.body,
-        head: input.head,
-        base: input.base,
-        draft: input.draft ?? false,
-      }),
+      body: JSON.stringify(body),
     }
   );
 

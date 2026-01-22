@@ -1,8 +1,8 @@
 import type {
-  CreatePullRequestInput,
   ErrorResponse,
   GitHubAppConfig,
   GitHubPullRequest,
+  GitHubPullRequestBody,
   Result,
 } from "../types.ts";
 import {
@@ -19,12 +19,14 @@ export type ProxyServiceError = ErrorResponse & { statusCode: number };
 export async function createPullRequestViaProxy(
   appConfig: GitHubAppConfig,
   callerToken: string,
-  input: CreatePullRequestInput
+  owner: string,
+  repository: string,
+  body: GitHubPullRequestBody
 ): Promise<Result<GitHubPullRequest, ProxyServiceError>> {
   const accessResult = await validateCallerHasRepoAccess(
     callerToken,
-    input.owner,
-    input.repository
+    owner,
+    repository
   );
 
   if (!accessResult.success) {
@@ -38,8 +40,8 @@ export async function createPullRequestViaProxy(
 
   const installationResult = await getInstallationForRepo(
     appJwt,
-    input.owner,
-    input.repository
+    owner,
+    repository
   );
 
   if (!installationResult.success) {
@@ -64,7 +66,12 @@ export async function createPullRequestViaProxy(
     };
   }
 
-  const prResult = await createPullRequest(tokenResult.data.token, input);
+  const prResult = await createPullRequest(
+    tokenResult.data.token,
+    owner,
+    repository,
+    body
+  );
 
   if (!prResult.success) {
     return {

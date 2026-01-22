@@ -42,11 +42,6 @@ export interface GitHubPullRequestBody {
   maintainer_can_modify?: boolean;
 }
 
-export interface CreatePullRequestInput extends GitHubPullRequestBody {
-  owner: string;
-  repository: string;
-}
-
 export interface GitHubPullRequest {
   id: number;
   number: number;

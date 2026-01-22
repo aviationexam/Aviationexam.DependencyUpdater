@@ -82,7 +82,9 @@ async function handleCreatePullRequest(
   const result = await createPullRequestViaProxy(
     { appId: env.GITHUB_APP_ID, privateKey: appKey },
     callerToken,
-    { owner, repository, ...body }
+    owner,
+    repository,
+    body
   );
 
   if (!result.success) {
