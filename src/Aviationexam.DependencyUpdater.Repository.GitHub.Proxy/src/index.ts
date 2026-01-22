@@ -1,9 +1,11 @@
 import type { CreatePullRequestInput, ErrorResponse } from "./types.ts";
 import { createPullRequestViaProxy } from "./core/proxy-service.ts";
+import { decodeBase64Key } from "./core/utils.ts";
 
 interface Env {
   GITHUB_APP_ID: string;
-  GITHUB_APP_KEY: string;
+  GITHUB_APP_KEY?: string;
+  GITHUB_APP_KEY_BASE64?: string;
 }
 
 export default {
@@ -63,7 +65,9 @@ async function handleCreatePullRequest(
     );
   }
 
-  if (!env.GITHUB_APP_ID || !env.GITHUB_APP_KEY) {
+  const appKey = env.GITHUB_APP_KEY ?? (env.GITHUB_APP_KEY_BASE64 ? decodeBase64Key(env.GITHUB_APP_KEY_BASE64) : undefined);
+
+  if (!env.GITHUB_APP_ID || !appKey) {
     return jsonResponse(
       { error: "internal_error", message: "Server configuration error" },
       500
@@ -71,7 +75,7 @@ async function handleCreatePullRequest(
   }
 
   const result = await createPullRequestViaProxy(
-    { appId: env.GITHUB_APP_ID, privateKey: env.GITHUB_APP_KEY },
+    { appId: env.GITHUB_APP_ID, privateKey: appKey },
     callerToken,
     body
   );

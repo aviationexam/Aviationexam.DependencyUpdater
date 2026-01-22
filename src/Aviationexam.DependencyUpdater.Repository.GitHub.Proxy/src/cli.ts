@@ -1,5 +1,6 @@
 import { parseArgs } from "util";
 import { getInstallationAccessToken } from "./core/token-service.ts";
+import { decodeBase64Key } from "./core/utils.ts";
 
 interface CliArgs {
   appId: string;
@@ -24,7 +25,11 @@ function parseCliArgs(): CliArgs {
   });
 
   const appId = values["app-id"] ?? process.env["GITHUB_APP_ID"];
-  const appKey = values["app-key"] ?? process.env["GITHUB_APP_KEY"];
+  const appKey = resolveAppKey(
+    values["app-key"],
+    process.env["GITHUB_APP_KEY"],
+    process.env["GITHUB_APP_KEY_BASE64"]
+  );
   const githubToken = values["github-token"] ?? process.env["GITHUB_TOKEN"];
   const owner = values["owner"];
   const repository = values["repository"];
@@ -34,7 +39,9 @@ function parseCliArgs(): CliArgs {
     process.exit(1);
   }
   if (!appKey) {
-    console.error("Error: --app-key or GITHUB_APP_KEY is required");
+    console.error(
+      "Error: --app-key, GITHUB_APP_KEY, or GITHUB_APP_KEY_BASE64 is required"
+    );
     process.exit(1);
   }
   if (!githubToken) {
@@ -69,6 +76,17 @@ async function main(): Promise<void> {
 
   console.log(result.data.token);
   process.exit(0);
+}
+
+function resolveAppKey(
+  argValue: string | undefined,
+  envKey: string | undefined,
+  envKeyBase64: string | undefined
+): string | undefined {
+  if (argValue) return argValue;
+  if (envKey) return envKey;
+  if (envKeyBase64) return decodeBase64Key(envKeyBase64);
+  return undefined;
 }
 
 await main();
