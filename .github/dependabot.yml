@@ -6,6 +6,11 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/" # Location of package manifests
+    directory: "/"
     schedule:
       interval: "daily"
+
+  - package-ecosystem: "npm"
+    directory: "/src/Aviationexam.DependencyUpdater.Repository.GitHub.Proxy"
+    schedule:
+      interval: "weekly"
