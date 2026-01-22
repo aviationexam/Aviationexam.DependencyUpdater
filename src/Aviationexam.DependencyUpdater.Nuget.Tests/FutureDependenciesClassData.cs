@@ -1251,7 +1251,7 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
                 (new Package("xunit.v3.mtp-v2", CreatePackageVersion("3.2.1")),
                     TfF((Net100, EDependencyFlag.Valid))),
                 (new Package("zeroql.cli", CreatePackageVersion("8.0.0-preview.7")),
-                    TfF((Net100, EDependencyFlag.Valid)))            ),
+                    TfF((Net100, EDependencyFlag.Valid)))),
             new Queue<(Package, IReadOnlyCollection<NugetTargetFramework>)>([
                 (new Package("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1")), [Net80]),
                 (new Package("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1")), [Net80]),
