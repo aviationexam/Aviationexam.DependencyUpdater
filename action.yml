@@ -45,7 +45,7 @@ inputs:
   authentication-proxy-address:
     description: 'Optional HTTP(S) proxy address for GitHub API authentication. When set, PR creation requests are routed through this proxy to enable CI triggers.'
     required: false
-    default: ''
+    default: 'https://aviationexam-dependency-updater-proxy.jan-8a5.workers.dev'
 
 runs:
   using: 'composite'

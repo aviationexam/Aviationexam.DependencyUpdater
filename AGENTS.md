@@ -47,7 +47,7 @@ dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyU
   --nuget-feed-id "<feed-id>" --nuget-service-host "<service-host>" \
   --access-token-resource-id "499b84ac-1321-427f-aa17-267ca6975798"
 
-# GitHub
+# GitHub (proxy is used by default in the GitHub Action)
 dotnet run --project src/Aviationexam.DependencyUpdater/Aviationexam.DependencyUpdater.csproj -- \
   --directory "/path/to/repo" --git-password "<token>" \
   GitHub --owner "<owner>" --repository "<repo>" --token "<token>" \
