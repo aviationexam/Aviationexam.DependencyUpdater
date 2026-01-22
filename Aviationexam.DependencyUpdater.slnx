@@ -19,6 +19,7 @@
     <File Path=".github\workflows\dependency-updates.yml" />
     <File Path=".github\workflows\nightly-release.yml" />
     <File Path=".github\workflows\pr-build.yml" />
+    <File Path=".github\workflows\proxy-readonly-test.yml" />
     <File Path=".github\workflows\proxy-test.yml" />
     <File Path=".github\workflows\release.yml" />
   </Folder>
