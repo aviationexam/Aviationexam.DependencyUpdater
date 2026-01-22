@@ -84,13 +84,13 @@
       },
       "Microsoft.TeamFoundationServer.Client": {
         "type": "Direct",
-        "requested": "[19.225.1, )",
-        "resolved": "19.225.1",
-        "contentHash": "ky43eNIAf2Z2xzYNpL/FYQ8Y8e17/3vZYvrr7FYozga8Hm0uVAN3OuEth5qZ/wLVW1vF5/YWgjSKvH98q+Y33g==",
+        "requested": "[19.225.2, )",
+        "resolved": "19.225.2",
+        "contentHash": "9pIeFkNcKj1MFyE3RTnz+HD5iPdXSiCo5D9TL+Qxn+FMizpOeU7sI9pzCAyilhiUzpfD4jxp3R22H75feLevug==",
         "dependencies": {
           "Microsoft.AspNet.WebApi.Client": "5.2.7",
-          "Microsoft.TeamFoundation.DistributedTask.Common.Contracts": "[19.225.1]",
-          "Microsoft.VisualStudio.Services.Client": "[19.225.1]",
+          "Microsoft.TeamFoundation.DistributedTask.Common.Contracts": "[19.225.2]",
+          "Microsoft.VisualStudio.Services.Client": "[19.225.2]",
           "Newtonsoft.Json": "13.0.2",
           "System.ComponentModel.Annotations": "5.0.0"
         }
@@ -214,16 +214,16 @@
       },
       "Microsoft.TeamFoundation.DistributedTask.Common.Contracts": {
         "type": "Transitive",
-        "resolved": "19.225.1",
-        "contentHash": "mqh3vcsrGlFPNLiKH1gVT6LphRWI9jUFUYBGHuUFj8XapAE4hhlJdoNB0S09TuwgMDtO0v2c/TXhUZQkjJFVJQ==",
+        "resolved": "19.225.2",
+        "contentHash": "u4DpSuX6bxph4rQC69h9oMHsksRC4sUdyjbLpEviwgTUUwoswrL1GhOZvDTXgGCYGThHJLGVh0SHt34ZGxDKXA==",
         "dependencies": {
-          "Microsoft.VisualStudio.Services.Client": "[19.225.1]"
+          "Microsoft.VisualStudio.Services.Client": "[19.225.2]"
         }
       },
       "Microsoft.VisualStudio.Services.Client": {
         "type": "Transitive",
-        "resolved": "19.225.1",
-        "contentHash": "hfUkXEnTLS35rBwPuiEduLYpItWL+b7H8jb2VauXYZ5G35tiRvAvWGzb5fcoi6CxIk3u5FMXQTqxpi8fVgG9Zg==",
+        "resolved": "19.225.2",
+        "contentHash": "o4hndlWGpOhDCWL5zZ4v1tbsxGHf9NiiytlerKW8LS0jLASLv6hWH7neo5tUhygfPKS6Was8fXyxQOSsVVGTsg==",
         "dependencies": {
           "Microsoft.AspNet.WebApi.Client": "5.2.7",
           "Newtonsoft.Json": "13.0.2",
