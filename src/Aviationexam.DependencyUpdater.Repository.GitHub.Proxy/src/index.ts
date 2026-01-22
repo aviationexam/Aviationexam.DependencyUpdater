@@ -8,7 +8,7 @@ interface Env {
   GITHUB_APP_KEY_BASE64?: string;
 }
 
-const REPOS_PULLS_REGEX = /^\/repos\/([^/]+)\/([^/]+)\/pulls$/;
+const REPOS_PULLS_REGEX = /^(?:\/api\/v3)?\/repos\/([^/]+)\/([^/]+)\/pulls$/;
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -17,6 +17,7 @@ export default {
     }
 
     if (request.method !== "POST") {
+      logRequestWarning("invalid_method", request);
       return jsonResponse(
         { error: "invalid_request", message: "Method not allowed" },
         405
@@ -30,6 +31,7 @@ export default {
       return handleCreatePullRequest(request, env, match[1], match[2]);
     }
 
+    logRequestWarning("not_found", request);
     return jsonResponse({ error: "not_found", message: "Not found" }, 404);
   },
 };
@@ -43,6 +45,7 @@ async function handleCreatePullRequest(
   const authHeader = request.headers.get("Authorization");
   const callerToken = extractToken(authHeader);
   if (!callerToken) {
+    logAuthHeaderMinimal(request, authHeader);
     return jsonResponse(
       {
         error: "unauthorized",
@@ -107,11 +110,18 @@ function validateGitHubPullRequestBody(
 }
 
 function extractToken(authHeader: string | null): string | null {
-  if (authHeader?.startsWith("Bearer ")) {
-    return authHeader.slice(7);
-  }
-  if (authHeader?.startsWith("token ")) {
-    return authHeader.slice(6);
+  const trimmed = authHeader?.trim();
+  if (!trimmed) return null;
+
+  const firstSpaceIndex = trimmed.indexOf(" ");
+  if (firstSpaceIndex <= 0) return null;
+
+  const scheme = trimmed.slice(0, firstSpaceIndex).toLowerCase();
+  const token = trimmed.slice(firstSpaceIndex + 1).trim();
+  if (!token) return null;
+
+  if (scheme === "bearer" || scheme === "token") {
+    return token;
   }
   return null;
 }
@@ -125,6 +135,33 @@ function jsonResponse<T>(data: T | ErrorResponse, status: number): Response {
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers": "Authorization, Content-Type",
     },
+  });
+}
+
+function logRequestWarning(reason: string, request: Request): void {
+  const url = new URL(request.url);
+  console.warn("Proxy request rejected", {
+    reason,
+    method: request.method,
+    path: url.pathname,
+  });
+}
+
+function logAuthHeaderMinimal(
+  request: Request,
+  authHeader: string | null
+): void {
+  const hasAuthorizationHeader =
+    request.headers.has("authorization") ||
+    request.headers.has("Authorization");
+  const trimmed = authHeader?.trim() ?? "";
+  const spaceIndex = trimmed.indexOf(" ");
+  const scheme = spaceIndex > 0 ? trimmed.slice(0, spaceIndex) : trimmed;
+
+  console.warn("Authorization header invalid", {
+    hasAuthorizationHeader,
+    scheme: scheme ? scheme.toLowerCase() : null,
+    length: authHeader?.length ?? 0,
   });
 }
 
