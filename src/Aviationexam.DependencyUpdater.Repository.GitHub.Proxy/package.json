@@ -1,0 +1,24 @@
+{
+  "name": "aviationexam.dependencyupdater.repository.github.proxy",
+  "version": "1.0.0",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "cli": "bun run src/cli.ts",
+    "dev": "bun run --watch src/index.ts",
+    "test": "bun test",
+    "test:unit": "bun test tests/unit",
+    "test:integration": "bun test tests/integration",
+    "typecheck": "tsc --noEmit",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250109.0",
+    "@types/bun": "^1.3.6",
+    "wrangler": "^4.10.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
