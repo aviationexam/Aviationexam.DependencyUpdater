@@ -23,7 +23,7 @@ public sealed class DependencyUpdateProcessor(
     )
     {
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
-        var dependenciesToCheck = new Queue<(Package Package, NugetPackageCondition Condition,IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
+        var dependenciesToCheck = new Queue<DependencyToCheck>();
 
         foreach (var (dependency, possiblePackageVersions) in dependencyToUpdate)
         {
@@ -74,7 +74,7 @@ public sealed class DependencyUpdateProcessor(
         NugetPackageCondition condition,
         CurrentPackageVersions currentPackageVersions,
         IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags,
-        Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
+        Queue<DependencyToCheck> dependenciesToCheck,
         DependencySet compatibleDependencySet
     )
     {
@@ -104,7 +104,7 @@ public sealed class DependencyUpdateProcessor(
 
             if (shouldCheckDependency)
             {
-                dependenciesToCheck.Enqueue((dependentPackage, condition, [new NugetTargetFramework(compatibleDependencySet.TargetFramework)]));
+                dependenciesToCheck.Enqueue(new DependencyToCheck(dependentPackage, condition, [new NugetTargetFramework(compatibleDependencySet.TargetFramework)]));
             }
         }
 

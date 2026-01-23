@@ -1887,7 +1887,7 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
     /// Creates a queue of dependencies to check from simple tuple format.
     /// All entries use WithoutCondition since the test data doesn't have condition-specific entries.
     /// </summary>
-    private static Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> CreateDependenciesToCheck(
+    private static Queue<DependencyToCheck> CreateDependenciesToCheck(
         params IReadOnlyCollection<(Package Package, IReadOnlyCollection<NugetTargetFramework> TargetFrameworks)> entries
-    ) => new(entries.AsValueEnumerable().Select(e => (e.Package, NugetPackageCondition.WithoutCondition, e.TargetFrameworks)).ToList());
+    ) => new(entries.AsValueEnumerable().Select(e => new DependencyToCheck(e.Package, NugetPackageCondition.WithoutCondition, e.TargetFrameworks)).ToList());
 }

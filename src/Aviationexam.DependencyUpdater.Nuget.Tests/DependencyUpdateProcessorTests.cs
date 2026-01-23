@@ -36,7 +36,7 @@ public sealed class DependencyUpdateProcessorTests
         var ignoreResolver = new IgnoreResolver([], logger);
         var currentVersions = new CurrentPackageVersions();
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
-        var dependenciesToCheck = new Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
+        var dependenciesToCheck = new Queue<DependencyToCheck>();
 
         var packageDependency = new PackageDependencyInfo(
             Id: "TestPackage",
@@ -72,7 +72,7 @@ public sealed class DependencyUpdateProcessorTests
         var ignoreResolver = new IgnoreResolver([], logger);
         var currentVersions = new CurrentPackageVersions();
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
-        var dependenciesToCheck = new Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
+        var dependenciesToCheck = new Queue<DependencyToCheck>();
         var targetFramework = new NugetTargetFramework("net8.0");
 
         var packageVersion = new PackageVersion(
@@ -138,7 +138,7 @@ public sealed class DependencyUpdateProcessorTests
         currentVersions.SetVersion("TestPackage", NugetPackageCondition.WithoutCondition, targetFrameworkGroup, packageVersion);
 
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
-        var dependenciesToCheck = new Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
+        var dependenciesToCheck = new Queue<DependencyToCheck>();
 
         var packageDependency = new PackageDependencyInfo(
             Id: "TestPackage",
@@ -208,7 +208,7 @@ public sealed class DependencyUpdateProcessorTests
         var ignoreResolver = new IgnoreResolver(ignoreRules, logger);
 
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
-        var dependenciesToCheck = new Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
+        var dependenciesToCheck = new Queue<DependencyToCheck>();
 
         var packageDependency = new PackageDependencyInfo(
             Id: "TestPackage",
@@ -250,7 +250,7 @@ public sealed class DependencyUpdateProcessorTests
         var ignoreResolver = new IgnoreResolver([], logger);
         var currentVersions = new CurrentPackageVersions();
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
-        var dependenciesToCheck = new Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
+        var dependenciesToCheck = new Queue<DependencyToCheck>();
         var targetFramework = new NugetTargetFramework("net8.0");
 
         var version1 = new PackageVersion(
@@ -303,7 +303,7 @@ public sealed class DependencyUpdateProcessorTests
         var ignoreResolver = new IgnoreResolver([], logger);
         var currentVersions = new CurrentPackageVersions();
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
-        var dependenciesToCheck = new Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
+        var dependenciesToCheck = new Queue<DependencyToCheck>();
 
         var packageVersion = new PackageVersion(
             Version: new Version(1, 0, 0),
@@ -424,7 +424,7 @@ public sealed class DependencyUpdateProcessorTests
         .JoinToString(",\n");
 
     private static string SerializeDependenciesToCheck(
-        Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck
+        Queue<DependencyToCheck> dependenciesToCheck
     ) => dependenciesToCheck
         .AsValueEnumerable()
         .Select(x =>
