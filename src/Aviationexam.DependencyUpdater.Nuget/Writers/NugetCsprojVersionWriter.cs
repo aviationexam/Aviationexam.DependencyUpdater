@@ -26,6 +26,7 @@ public sealed class NugetCsprojVersionWriter(
     )
     {
         var packageName = nugetUpdateCandidate.NugetDependency.NugetDependency.NugetPackage.GetPackageName();
+        var condition = nugetUpdateCandidate.NugetDependency.NugetDependency.NugetPackage.GetCondition();
 
         await using var fileStream = fileSystem.FileOpen(fullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 
@@ -34,6 +35,7 @@ public sealed class NugetCsprojVersionWriter(
         var versionAttribute = FindMatchingPackageReferenceAttribute(
             doc,
             packageName,
+            condition,
             nugetUpdateCandidate.NugetDependency.NugetDependency.TargetFrameworks
         );
 
@@ -72,9 +74,10 @@ public sealed class NugetCsprojVersionWriter(
         return ESetVersion.VersionSet;
     }
 
-    private XAttribute? FindMatchingPackageReferenceAttribute(
+    private static XAttribute? FindMatchingPackageReferenceAttribute(
         XDocument doc,
         string packageName,
+        NugetPackageCondition condition,
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks
     )
     {
@@ -90,15 +93,28 @@ public sealed class NugetCsprojVersionWriter(
             return null;
         }
 
-        var targetFrameworkNames = targetFrameworks.AsValueEnumerable().Select(tf => tf.TargetFramework).ToHashSet();
+        // Try to find element matching the specific condition (if not WithoutCondition)
+        if (condition != NugetPackageCondition.WithoutCondition)
+        {
+            foreach (var element in packageReferenceElements)
+            {
+                var elementConditions = element.GetConditionsIncludingParents();
+                if (elementConditions.AsValueEnumerable().Any(c => c == condition.Condition))
+                {
+                    return element.Attribute("Version");
+                }
+            }
+        }
 
+        // Fallback: Try to find element matching the target framework (for TFM-based conditions)
+        var targetFrameworkNames = targetFrameworks.AsValueEnumerable().Select(tf => tf.TargetFramework).ToHashSet();
         foreach (var element in packageReferenceElements)
         {
-            var conditions = element.GetConditionsIncludingParents();
-            foreach (var condition in conditions)
+            var elementConditions = element.GetConditionsIncludingParents();
+            foreach (var elementCondition in elementConditions)
             {
                 if (
-                    ConditionalTargetFrameworkResolver.TryExtractTargetFramework(condition, out var conditionalTfm)
+                    ConditionalTargetFrameworkResolver.TryExtractTargetFramework(elementCondition, out var conditionalTfm)
                     && targetFrameworkNames.Contains(conditionalTfm)
                 )
                 {
@@ -107,10 +123,11 @@ public sealed class NugetCsprojVersionWriter(
             }
         }
 
+        // Fallback to element without condition
         foreach (var element in packageReferenceElements)
         {
-            var conditions = element.GetConditionsIncludingParents();
-            if (conditions.Count == 0)
+            var elementConditions = element.GetConditionsIncludingParents();
+            if (elementConditions.Count == 0)
             {
                 return element.Attribute("Version");
             }
