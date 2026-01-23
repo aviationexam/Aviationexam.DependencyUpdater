@@ -34,7 +34,7 @@ public sealed class PackageUpdater(
         bool executeRestore,
         string? restoreDirectory,
         Queue<(IReadOnlyCollection<NugetUpdateCandidate> NugetUpdateCandidates, GroupEntry GroupEntry)> groupedPackagesToUpdateQueue,
-        IReadOnlyDictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> currentPackageVersions,
+        CurrentPackageVersions currentPackageVersions,
         string updater,
         CancellationToken cancellationToken
     )
@@ -75,7 +75,7 @@ public sealed class PackageUpdater(
         string? restoreDirectory,
         GroupEntry groupEntry,
         IReadOnlyCollection<NugetUpdateCandidate> nugetUpdateCandidates,
-        IReadOnlyDictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> currentPackageVersions,
+        CurrentPackageVersions currentPackageVersions,
         ISourceVersioning sourceVersioning,
         string updater,
         CancellationToken cancellationToken
@@ -96,32 +96,20 @@ public sealed class PackageUpdater(
             authorEmail: gitMetadataConfig.CommitAuthorEmail
         );
 
-        // Create a mutable copy of the current package versions for tracking updates
-        var mutablePackageVersions = new Dictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>>();
-        foreach (var kvp in currentPackageVersions)
-        {
-            mutablePackageVersions[kvp.Key] = new Dictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>(
-                kvp.Value.AsValueEnumerable().ToDictionary(
-                    x => x.Key,
-                    x => x.Value
-                )
-            );
-        }
+        var mutablePackageVersions = currentPackageVersions.CreateMutableCopy();
 
         var updatedPackages = await UpdatePackageVersionsAsync(
             gitWorkspace,
             nugetUpdateCandidates,
-            groupPackageVersions: mutablePackageVersions,
+            mutablePackageVersions,
             cancellationToken
         ).ToListAsync(cancellationToken);
 
-        // Get existing pull request if it exists
         var pullRequestId = await repositoryClient.GetPullRequestForBranchAsync(
             branchName: gitWorkspace.GetBranchName(),
             cancellationToken
         );
 
-        // Process pull request based on update status
         return await HandlePullRequestAsync(
             gitWorkspace,
             updatedPackages.GetCommitMessage(),
@@ -140,7 +128,7 @@ public sealed class PackageUpdater(
     private async IAsyncEnumerable<NugetUpdateCandidate> UpdatePackageVersionsAsync(
         ISourceVersioningWorkspace gitWorkspace,
         IReadOnlyCollection<NugetUpdateCandidate> packagesToUpdate,
-        Dictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> groupPackageVersions,
+        CurrentPackageVersions groupPackageVersions,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
@@ -183,7 +171,7 @@ public sealed class PackageUpdater(
 
     private void LogVersionConflict(
         NugetUpdateCandidate nugetUpdateCandidate,
-        Dictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> groupPackageVersions
+        CurrentPackageVersions groupPackageVersions
     )
     {
         if (
@@ -195,12 +183,12 @@ public sealed class PackageUpdater(
             )
         )
         {
-            // Get the conflicting versions for all target frameworks
-            var conflictingVersionStr = groupPackageVersions.TryGetValue(conflictingPackageVersion.Name, out var frameworkVersions)
+            var conflictingVersionStr = groupPackageVersions.TryGetConditions(conflictingPackageVersion.Name, out var conditions)
                 ? nugetUpdateCandidate.NugetDependency.NugetDependency.TargetFrameworks
                     .AsValueEnumerable()
-                    .SelectMany(tf => frameworkVersions
+                    .SelectMany(tf => conditions
                         .AsValueEnumerable()
+                        .SelectMany(c => c.Value)
                         .Where(f => f.Key.CanBeUsedWith(tf.TargetFramework, out _))
                         .Select(f => f.Value.GetSerializedVersion())
                     )
@@ -251,7 +239,6 @@ public sealed class PackageUpdater(
             && pullRequestId is not null
         )
         {
-            // Just update PR title and description if already exists
             await repositoryClient.UpdatePullRequestAsync(
                 pullRequestId: pullRequestId,
                 title: title,
@@ -265,7 +252,6 @@ public sealed class PackageUpdater(
             && gitWorkspace.HasUncommitedChanges()
         )
         {
-            // Commit changes and create/update PR
             gitWorkspace.CommitChanges(
                 message: commitMessage,
                 authorName: gitMetadataConfig.CommitAuthor,

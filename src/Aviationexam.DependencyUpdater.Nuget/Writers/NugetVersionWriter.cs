@@ -3,13 +3,11 @@ using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Interfaces.Repository;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
-using Aviationexam.DependencyUpdater.Nuget.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using ZLinq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Writers;
 
@@ -17,14 +15,13 @@ public sealed class NugetVersionWriter(
     NugetDirectoryPackagesPropsVersionWriter directoryPackagesPropsVersionWriter,
     NugetCsprojVersionWriter csprojVersionWriter,
     DotnetToolsVersionWriter dotnetToolsVersionWriter,
-    Optional<IPackageFeedClient> optionalPackageFeedClient,
-    TargetFrameworksResolver targetFrameworksResolver
+    Optional<IPackageFeedClient> optionalPackageFeedClient
 )
 {
     public async Task<ESetVersion> TrySetVersion(
         NugetUpdateCandidate nugetUpdateCandidate,
         ISourceVersioningWorkspace gitWorkspace,
-        IDictionary<string, IDictionary<NugetTargetFrameworkGroup, PackageVersion>> groupPackageVersions,
+        CurrentPackageVersions groupPackageVersions,
         CancellationToken cancellationToken
     )
     {
@@ -63,7 +60,6 @@ public sealed class NugetVersionWriter(
             ENugetFileType.DirectoryPackagesProps => await directoryPackagesPropsVersionWriter.TrySetVersionAsync(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
             ENugetFileType.Csproj or ENugetFileType.Targets => await csprojVersionWriter.TrySetVersionAsync(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
             ENugetFileType.DotnetTools => await dotnetToolsVersionWriter.TrySetVersionAsync(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
-            // ENugetFileType.NugetConfig => false, // we should not update nuget.config
             _ => throw new ArgumentOutOfRangeException(nameof(nugetUpdateCandidate.NugetDependency.NugetDependency.NugetFile.Type), nugetUpdateCandidate.NugetDependency.NugetDependency.NugetFile.Type,
                 null),
         };
@@ -72,43 +68,31 @@ public sealed class NugetVersionWriter(
     public bool IsCompatibleWithCurrentVersions(
         PossiblePackageVersion possiblePackageVersion,
         UpdateCandidate updateCandidate,
-        IDictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> groupPackageVersions,
+        CurrentPackageVersions groupPackageVersions,
         [NotNullWhen(false)] out Package? conflictingPackageVersion
     )
     {
+        var targetFrameworks = updateCandidate.NugetDependency.TargetFrameworks;
+
         foreach (var dependencySet in possiblePackageVersion.CompatibleDependencySets)
         {
             foreach (var dependencyPackage in dependencySet.Packages)
             {
-                if (groupPackageVersions.TryGetValue(dependencyPackage.Id, out var frameworkVersions))
-                {
-                    // Get all compatible target frameworks for version checking
-                    var compatibleFrameworks = targetFrameworksResolver.GetCompatibleTargetFrameworks(
+                if (
+                    dependencyPackage.MinVersion is { } dependencyPackageVersion
+                    && !groupPackageVersions.IsVersionCompatibleAcrossConditions(
+                        dependencyPackage.Id,
+                        dependencyPackageVersion,
                         targetFrameworks,
-                        [
-                            .. frameworkVersions.Keys.AsValueEnumerable().Intersect(
-                                targetFrameworks.AsValueEnumerable().Select(x => x.TargetFramework)
-                            ),
-                        ]
+                        out _
+                    )
+                )
+                {
+                    conflictingPackageVersion = new Package(
+                        dependencyPackage.Id,
+                        dependencyPackageVersion
                     );
-
-                    foreach (var tfm in compatibleFrameworks)
-                    {
-                        if (frameworkVersions.TryGetValue(tfm, out var dependencyCurrentVersion))
-                        {
-                            if (
-                                dependencyPackage.MinVersion is { } dependencyPackageVersion
-                                && dependencyPackageVersion > dependencyCurrentVersion
-                            )
-                            {
-                                conflictingPackageVersion = new Package(
-                                    dependencyPackage.Id,
-                                    dependencyPackageVersion
-                                );
-                                return false;
-                            }
-                        }
-                    }
+                    return false;
                 }
             }
         }

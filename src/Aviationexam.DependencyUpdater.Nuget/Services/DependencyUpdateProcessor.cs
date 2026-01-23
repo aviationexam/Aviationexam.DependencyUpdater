@@ -18,7 +18,7 @@ public sealed class DependencyUpdateProcessor(
     /// </summary>
     public DependencyProcessingResult ProcessDependenciesToUpdate(
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> currentPackageVersionsPerTargetFramework,
+        CurrentPackageVersions currentPackageVersions,
         IReadOnlyDictionary<UpdateCandidate, IReadOnlyCollection<PossiblePackageVersion>> dependencyToUpdate
     )
     {
@@ -50,7 +50,7 @@ public sealed class DependencyUpdateProcessor(
                     ProcessDependencySet(
                         ignoreResolver,
                         dependency.NugetDependency.NugetPackage.GetCondition(),
-                        currentPackageVersionsPerTargetFramework,
+                        currentPackageVersions,
                         packageFlags,
                         dependenciesToCheck,
                         compatibleDependencySet
@@ -72,7 +72,7 @@ public sealed class DependencyUpdateProcessor(
     public IReadOnlyCollection<Package> ProcessDependencySet(
         IgnoreResolver ignoreResolver,
         NugetPackageCondition condition,
-        IReadOnlyDictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> currentPackageVersionsPerTargetFramework,
+        CurrentPackageVersions currentPackageVersions,
         IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags,
         Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
         DependencySet compatibleDependencySet
@@ -95,7 +95,7 @@ public sealed class DependencyUpdateProcessor(
             var shouldCheckDependency = ProcessTargetFrameworks(
                 ignoreResolver,
                 condition,
-                currentPackageVersionsPerTargetFramework,
+                currentPackageVersions,
                 packageDependency,
                 dependentPackage,
                 frameworkFlags,
@@ -116,7 +116,6 @@ public sealed class DependencyUpdateProcessor(
         Package dependentPackage
     )
     {
-        // Initialize per-framework flags for this package if needed
         if (!packageFlags.TryGetValue(dependentPackage, out var frameworkFlags))
         {
             frameworkFlags = new Dictionary<NugetTargetFramework, EDependencyFlag>();
@@ -133,7 +132,7 @@ public sealed class DependencyUpdateProcessor(
     private bool ProcessTargetFrameworks(
         IgnoreResolver ignoreResolver,
         NugetPackageCondition condition,
-        IReadOnlyDictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> currentPackageVersionsPerTargetFramework,
+        CurrentPackageVersions currentPackageVersions,
         PackageDependencyInfo packageDependency,
         Package dependentPackage,
         IDictionary<NugetTargetFramework, EDependencyFlag> frameworkFlags,
@@ -142,7 +141,6 @@ public sealed class DependencyUpdateProcessor(
     {
         if (frameworkFlags.ContainsKey(targetFramework))
         {
-            // Already processed for this target framework
             return false;
         }
 
@@ -151,7 +149,7 @@ public sealed class DependencyUpdateProcessor(
         var flag = DetermineFrameworkFlag(
             ignoreResolver,
             condition,
-            currentPackageVersionsPerTargetFramework,
+            currentPackageVersions,
             packageDependency,
             dependentPackage,
             targetFramework
@@ -173,22 +171,13 @@ public sealed class DependencyUpdateProcessor(
     private EDependencyFlag DetermineFrameworkFlag(
         IgnoreResolver ignoreResolver,
         NugetPackageCondition condition,
-        IReadOnlyDictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> currentPackageVersionsPerTargetFramework,
+        CurrentPackageVersions currentPackageVersions,
         PackageDependencyInfo packageDependency,
         Package dependentPackage,
         NugetTargetFramework targetFramework
     )
     {
-        // Check if this package is already at the correct version for this target framework
-        if (
-            IsAtCorrectVersion(
-                condition,
-                currentPackageVersionsPerTargetFramework,
-                packageDependency.Id,
-                dependentPackage.Version,
-                targetFramework
-            )
-        )
+        if (currentPackageVersions.IsAtVersion(packageDependency.Id, condition, targetFramework, dependentPackage.Version))
         {
             return EDependencyFlag.Valid;
         }
@@ -197,7 +186,7 @@ public sealed class DependencyUpdateProcessor(
             packageDependency,
             ignoreResolver,
             condition,
-            currentPackageVersionsPerTargetFramework,
+            currentPackageVersions,
             targetFramework
         );
 
@@ -205,18 +194,4 @@ public sealed class DependencyUpdateProcessor(
             ? EDependencyFlag.ContainsIgnoredDependency
             : EDependencyFlag.Unknown;
     }
-
-    /// <summary>
-    /// Checks if a package is already at the correct version for a target framework.
-    /// </summary>
-    private static bool IsAtCorrectVersion(
-        NugetPackageCondition condition,
-        IReadOnlyDictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> currentPackageVersionsPerTargetFramework,
-        string packageId,
-        PackageVersion expectedVersion,
-        NugetTargetFramework targetFramework
-    ) => currentPackageVersionsPerTargetFramework.TryGetValue(packageId, out var conditionFrameworkVersions)
-         && conditionFrameworkVersions.TryGetValue(condition, out var frameworkVersions)
-         && frameworkVersions.TryGetCompatibleFramework(targetFramework, out var currentVersion)
-         && currentVersion == expectedVersion;
 }

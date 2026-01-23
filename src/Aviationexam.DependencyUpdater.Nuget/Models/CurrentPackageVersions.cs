@@ -123,6 +123,38 @@ public sealed class CurrentPackageVersions
     }
 
     /// <summary>
+    /// Gets the version for a package across all conditions for a compatible target framework.
+    /// Used by writers that don't operate on specific conditions.
+    /// </summary>
+    public bool TryGetVersionAcrossConditions(
+        string packageName,
+        NugetTargetFramework targetFramework,
+        [MaybeNullWhen(false)] out PackageVersion version
+    )
+    {
+        version = null;
+
+        if (!_versions.TryGetValue(packageName, out var conditions))
+        {
+            return false;
+        }
+
+        foreach (var (_, frameworkVersions) in conditions)
+        {
+            foreach (var (frameworkGroup, packageVersion) in frameworkVersions)
+            {
+                if (frameworkGroup.CanBeUsedWith(targetFramework.TargetFramework, out _))
+                {
+                    version = packageVersion;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Sets the version for a specific package, condition, and target framework group.
     /// </summary>
     public void SetVersion(
@@ -148,6 +180,36 @@ public sealed class CurrentPackageVersions
     }
 
     /// <summary>
+    /// Updates version for a package across all its conditions for specific target frameworks.
+    /// Used by writers that update versions without condition context.
+    /// </summary>
+    public void UpdateVersionForTargetFrameworks(
+        string packageName,
+        IEnumerable<NugetTargetFramework> targetFrameworks,
+        PackageVersion newVersion
+    )
+    {
+        if (!_versions.TryGetValue(packageName, out var conditions))
+        {
+            return;
+        }
+
+        foreach (var (_, frameworkVersions) in conditions)
+        {
+            foreach (var targetFramework in targetFrameworks)
+            {
+                foreach (var (frameworkGroup, _) in frameworkVersions)
+                {
+                    if (frameworkGroup.CanBeUsedWith(targetFramework.TargetFramework, out _))
+                    {
+                        frameworkVersions[frameworkGroup] = newVersion;
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Checks if a package with the given name exists.
     /// </summary>
     public bool ContainsPackage(string packageName) => _versions.ContainsKey(packageName);
@@ -170,6 +232,45 @@ public sealed class CurrentPackageVersions
         string packageName,
         [MaybeNullWhen(false)] out IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>> conditions
     ) => _versions.TryGetValue(packageName, out conditions);
+
+    /// <summary>
+    /// Checks version compatibility for a dependency across all conditions.
+    /// Returns false if any condition has a version conflict.
+    /// </summary>
+    public bool IsVersionCompatibleAcrossConditions(
+        string packageName,
+        PackageVersion requiredMinVersion,
+        IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
+        [MaybeNullWhen(true)] out PackageVersion? conflictingVersion
+    )
+    {
+        conflictingVersion = null;
+
+        if (!_versions.TryGetValue(packageName, out var conditions))
+        {
+            return true;
+        }
+
+        foreach (var (_, frameworkVersions) in conditions)
+        {
+            foreach (var targetFramework in targetFrameworks)
+            {
+                foreach (var (frameworkGroup, currentVersion) in frameworkVersions)
+                {
+                    if (frameworkGroup.CanBeUsedWith(targetFramework.TargetFramework, out _))
+                    {
+                        if (requiredMinVersion > currentVersion)
+                        {
+                            conflictingVersion = currentVersion;
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
 
     /// <summary>
     /// Merges another collection of versions into this one, grouping by package name and condition.

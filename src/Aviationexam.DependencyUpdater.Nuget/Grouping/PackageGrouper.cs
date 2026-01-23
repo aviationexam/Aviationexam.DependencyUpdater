@@ -23,7 +23,7 @@ public sealed class PackageGrouper(
             .Select(x => new
             {
                 NugetUpdateCandidate = x,
-                GroupEntry = groupResolver.ResolveGroup(x.NugetDependency.NugetPackage.GetPackageName()),
+                GroupEntry = groupResolver.ResolveGroup(x.NugetDependency.NugetDependency.NugetPackage.GetPackageName()),
             })
             .GroupBy(x => x.GroupEntry, x => x.NugetUpdateCandidate);
 
@@ -38,7 +38,7 @@ public sealed class PackageGrouper(
                 {
                     groupedPackagesToUpdateQueue.Enqueue((
                         [nugetUpdateCandidate],
-                        new GroupEntry($"{nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName()}/{nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion()}", [])
+                        new GroupEntry($"{nugetUpdateCandidate.NugetDependency.NugetDependency.NugetPackage.GetPackageName()}/{nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion()}", [])
                     ));
                 }
             }
