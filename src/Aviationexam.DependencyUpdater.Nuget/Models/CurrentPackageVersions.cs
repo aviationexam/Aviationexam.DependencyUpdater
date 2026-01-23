@@ -90,71 +90,6 @@ public sealed class CurrentPackageVersions
     }
 
     /// <summary>
-    /// Tries to get the version for a specific package and condition, returning the first compatible framework version found.
-    /// </summary>
-    public bool TryGetVersionForAnyFramework(
-        string packageName,
-        NugetPackageCondition condition,
-        [MaybeNullWhen(false)] out PackageVersion version,
-        [MaybeNullWhen(false)] out NugetTargetFrameworkGroup frameworkGroup
-    )
-    {
-        version = null;
-        frameworkGroup = null;
-
-        if (!_versions.TryGetValue(packageName, out var conditions))
-        {
-            return false;
-        }
-
-        if (!conditions.TryGetValue(condition, out var frameworkVersions))
-        {
-            return false;
-        }
-
-        foreach (var (group, packageVersion) in frameworkVersions)
-        {
-            version = packageVersion;
-            frameworkGroup = group;
-            return true;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Gets the version for a package across all conditions for a compatible target framework.
-    /// Used by writers that don't operate on specific conditions.
-    /// </summary>
-    public bool TryGetVersionAcrossConditions(
-        string packageName,
-        NugetTargetFramework targetFramework,
-        [MaybeNullWhen(false)] out PackageVersion version
-    )
-    {
-        version = null;
-
-        if (!_versions.TryGetValue(packageName, out var conditions))
-        {
-            return false;
-        }
-
-        foreach (var (_, frameworkVersions) in conditions)
-        {
-            foreach (var (frameworkGroup, packageVersion) in frameworkVersions)
-            {
-                if (frameworkGroup.CanBeUsedWith(targetFramework.TargetFramework, out _))
-                {
-                    version = packageVersion;
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /// <summary>
     /// Sets the version for a specific package, condition, and target framework group.
     /// </summary>
     public void SetVersion(
@@ -208,11 +143,6 @@ public sealed class CurrentPackageVersions
             }
         }
     }
-
-    /// <summary>
-    /// Checks if a package with the given name exists.
-    /// </summary>
-    public bool ContainsPackage(string packageName) => _versions.ContainsKey(packageName);
 
     /// <summary>
     /// Checks if the package is at the expected version for the specified condition and target framework.
@@ -301,19 +231,6 @@ public sealed class CurrentPackageVersions
                 }
             }
         }
-    }
-
-    /// <summary>
-    /// Adds a single package version entry.
-    /// </summary>
-    public void Add(
-        string packageName,
-        NugetPackageCondition condition,
-        NugetTargetFrameworkGroup targetFrameworkGroup,
-        PackageVersion version
-    )
-    {
-        SetVersion(packageName, condition, targetFrameworkGroup, version);
     }
 
     /// <summary>
