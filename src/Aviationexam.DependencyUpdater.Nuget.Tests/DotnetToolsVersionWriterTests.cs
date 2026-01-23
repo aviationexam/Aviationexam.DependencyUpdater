@@ -22,7 +22,7 @@ public class DotnetToolsVersionWriterTests
         var fileSystem = Substitute.For<IFileSystem>();
         var logger = Substitute.For<ILogger<DotnetToolsVersionWriter>>();
 
-        await using var fileStream = new MemoryStream(
+        var content =
             // language=json
             """
                 {
@@ -37,8 +37,11 @@ public class DotnetToolsVersionWriterTests
                     }
                   }
                 }
-                """u8.ToArray()
-        );
+                """u8.ToArray();
+
+        await using var fileStream = new MemoryStream();
+        await fileStream.WriteAsync(content, TestContext.Current.CancellationToken);
+        fileStream.Position = 0;
 
         await using var proxyFileStream = new StreamProxy(fileStream);
 
@@ -109,7 +112,7 @@ public class DotnetToolsVersionWriterTests
         var fileSystem = Substitute.For<IFileSystem>();
         var logger = Substitute.For<ILogger<DotnetToolsVersionWriter>>();
 
-        await using var fileStream = new MemoryStream(
+        var content =
             // language=json
             """
                 {
@@ -124,8 +127,11 @@ public class DotnetToolsVersionWriterTests
                     }
                   }
                 }
-                """u8.ToArray()
-        );
+                """u8.ToArray();
+
+        await using var fileStream = new MemoryStream();
+        await fileStream.WriteAsync(content, TestContext.Current.CancellationToken);
+        fileStream.Position = 0;
 
         await using var proxyFileStream = new StreamProxy(fileStream);
 
@@ -174,10 +180,13 @@ public class DotnetToolsVersionWriterTests
         var fileSystem = Substitute.For<IFileSystem>();
         var logger = Substitute.For<ILogger<DotnetToolsVersionWriter>>();
 
-        await using var fileStream = new MemoryStream(
+        var content =
             // language=json
-            "invalid json"u8.ToArray()
-        );
+            "invalid json"u8.ToArray();
+
+        await using var fileStream = new MemoryStream();
+        await fileStream.WriteAsync(content, TestContext.Current.CancellationToken);
+        fileStream.Position = 0;
 
         await using var proxyFileStream = new StreamProxy(fileStream);
 

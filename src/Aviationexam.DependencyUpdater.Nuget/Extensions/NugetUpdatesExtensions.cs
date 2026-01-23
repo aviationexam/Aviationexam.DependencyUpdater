@@ -57,7 +57,7 @@ public static class NugetUpdatesExtensions
 
         if (condition != NugetPackageCondition.WithoutCondition)
         {
-            yield return $"Update {packageName} from {fromVersion} to {toVersion} for {condition}";
+            yield return $"Update {packageName} from {fromVersion} to {toVersion} for {condition.Condition}";
         }
         else
         {

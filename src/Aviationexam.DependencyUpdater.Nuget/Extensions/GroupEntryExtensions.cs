@@ -46,7 +46,7 @@ public static class GroupEntryExtensions
 
             if (conditions is [var condition] && condition != NugetPackageCondition.WithoutCondition)
             {
-                return $"Bump {packageName} from {fromVersionRange} to {toVersionRange} for {condition}";
+                return $"Bump {packageName} from {fromVersionRange} to {toVersionRange} for {condition.Condition}";
             }
 
             return $"Bump {packageName} from {fromVersionRange} to {toVersionRange}";
