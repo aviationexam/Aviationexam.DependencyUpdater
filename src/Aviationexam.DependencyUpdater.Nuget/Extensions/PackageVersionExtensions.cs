@@ -24,12 +24,11 @@ public static class PackageVersionExtensions
             .AsValueEnumerable()
             .ToDictionary(
                 kvp => new UpdateCandidate(
-                    kvp.Key, new PackageVersionWithDependencySets(
+                    kvp.Key,
+                    new PackageVersion(
                         kvp.Key.NugetPackage.GetVersion()!
-                    )
-                    {
-                        DependencySets = new Dictionary<EPackageSource, IReadOnlyCollection<DependencySet>>()
-                    }
+                    ),
+                    new NugetTargetFrameworkGroup([])
                 ),
                 IReadOnlyCollection<PossiblePackageVersion> (kvp) =>
                 [

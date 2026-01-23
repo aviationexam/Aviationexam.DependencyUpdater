@@ -8,5 +8,5 @@ namespace Aviationexam.DependencyUpdater.Nuget.Models;
 /// </summary>
 public sealed record DependencyProcessingResult(
     IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> PackageFlags,
-    Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> DependenciesToCheck
+    Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> DependenciesToCheck
 );

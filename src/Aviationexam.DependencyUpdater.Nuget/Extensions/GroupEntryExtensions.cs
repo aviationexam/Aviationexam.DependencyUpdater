@@ -14,13 +14,13 @@ public static class GroupEntryExtensions
     {
         var distinctPackages = updateResults
             .AsValueEnumerable()
-            .Select(x => x.NugetDependency.NugetPackage.GetPackageName())
+            .Select(x => x.NugetDependency.NugetDependency.NugetPackage.GetPackageName())
             .Distinct()
             .ToList();
 
         var allFromVersions = updateResults
             .AsValueEnumerable()
-            .Select(x => x.NugetDependency.NugetPackage.GetVersion())
+            .Select(x => x.NugetDependency.NugetDependency.NugetPackage.GetVersion())
             .Distinct()
             .ToList();
         var allToVersions = updateResults
@@ -40,13 +40,13 @@ public static class GroupEntryExtensions
                 : $"{allToVersions.AsValueEnumerable().Min()!.GetSerializedVersion()}-{allToVersions.AsValueEnumerable().Max()!.GetSerializedVersion()}";
 
             var conditions = updateResults.AsValueEnumerable()
-                .Select(x => x.NugetDependency.NugetPackage.GetCondition())
+                .Select(x => x.NugetDependency.NugetDependency.NugetPackage.GetCondition())
                 .Distinct()
                 .ToList();
 
-            if (conditions is [var framework] && !string.IsNullOrEmpty(framework))
+            if (conditions is [var condition] && condition != NugetPackageCondition.WithoutCondition)
             {
-                return $"Bump {packageName} from {fromVersionRange} to {toVersionRange} for {framework}";
+                return $"Bump {packageName} from {fromVersionRange} to {toVersionRange} for {condition}";
             }
 
             return $"Bump {packageName} from {fromVersionRange} to {toVersionRange}";

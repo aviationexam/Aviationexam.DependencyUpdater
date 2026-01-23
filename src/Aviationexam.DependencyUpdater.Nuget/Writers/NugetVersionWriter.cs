@@ -24,14 +24,14 @@ public sealed class NugetVersionWriter(
     public async Task<ESetVersion> TrySetVersion(
         NugetUpdateCandidate nugetUpdateCandidate,
         ISourceVersioningWorkspace gitWorkspace,
-        IDictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions,
+        IDictionary<string, IDictionary<NugetTargetFrameworkGroup, PackageVersion>> groupPackageVersions,
         CancellationToken cancellationToken
     )
     {
         if (
             !IsCompatibleWithCurrentVersions(
                 nugetUpdateCandidate.PossiblePackageVersion,
-                nugetUpdateCandidate.NugetDependency.TargetFrameworks,
+                nugetUpdateCandidate.NugetDependency,
                 groupPackageVersions,
                 out _
             )
@@ -42,7 +42,7 @@ public sealed class NugetVersionWriter(
 
         var workspaceDirectory = gitWorkspace.GetWorkspaceDirectory();
 
-        var targetFullPath = nugetUpdateCandidate.NugetDependency.NugetFile.GetFullPath(workspaceDirectory);
+        var targetFullPath = nugetUpdateCandidate.NugetDependency.NugetDependency.NugetFile.GetFullPath(workspaceDirectory);
 
         if (!gitWorkspace.IsPathInsideRepository(targetFullPath))
         {
@@ -52,26 +52,27 @@ public sealed class NugetVersionWriter(
         if (optionalPackageFeedClient.Value is { } packageFeedClient)
         {
             await packageFeedClient.EnsurePackageVersionIsAvailableAsync(
-                nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
+                nugetUpdateCandidate.NugetDependency.NugetDependency.NugetPackage.GetPackageName(),
                 nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion(),
                 cancellationToken
             );
         }
 
-        return nugetUpdateCandidate.NugetDependency.NugetFile.Type switch
+        return nugetUpdateCandidate.NugetDependency.NugetDependency.NugetFile.Type switch
         {
             ENugetFileType.DirectoryPackagesProps => await directoryPackagesPropsVersionWriter.TrySetVersionAsync(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
             ENugetFileType.Csproj or ENugetFileType.Targets => await csprojVersionWriter.TrySetVersionAsync(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
             ENugetFileType.DotnetTools => await dotnetToolsVersionWriter.TrySetVersionAsync(nugetUpdateCandidate, targetFullPath, groupPackageVersions, cancellationToken),
             // ENugetFileType.NugetConfig => false, // we should not update nuget.config
-            _ => throw new ArgumentOutOfRangeException(nameof(nugetUpdateCandidate.NugetDependency.NugetFile.Type), nugetUpdateCandidate.NugetDependency.NugetFile.Type, null),
+            _ => throw new ArgumentOutOfRangeException(nameof(nugetUpdateCandidate.NugetDependency.NugetDependency.NugetFile.Type), nugetUpdateCandidate.NugetDependency.NugetDependency.NugetFile.Type,
+                null),
         };
     }
 
     public bool IsCompatibleWithCurrentVersions(
         PossiblePackageVersion possiblePackageVersion,
-        IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
-        IDictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions,
+        UpdateCandidate updateCandidate,
+        IDictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> groupPackageVersions,
         [NotNullWhen(false)] out Package? conflictingPackageVersion
     )
     {
@@ -84,7 +85,11 @@ public sealed class NugetVersionWriter(
                     // Get all compatible target frameworks for version checking
                     var compatibleFrameworks = targetFrameworksResolver.GetCompatibleTargetFrameworks(
                         targetFrameworks,
-                        [.. frameworkVersions.Keys.AsValueEnumerable().Intersect(targetFrameworks.AsValueEnumerable().Select(x => x.TargetFramework))]
+                        [
+                            .. frameworkVersions.Keys.AsValueEnumerable().Intersect(
+                                targetFrameworks.AsValueEnumerable().Select(x => x.TargetFramework)
+                            ),
+                        ]
                     );
 
                     foreach (var tfm in compatibleFrameworks)

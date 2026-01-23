@@ -43,7 +43,7 @@ public sealed class PackageFilterer
                     .First();
 
                 yield return new NugetUpdateCandidate(
-                    dependency.NugetDependency,
+                    dependency,
                     possiblePackageVersion
                 );
             }
