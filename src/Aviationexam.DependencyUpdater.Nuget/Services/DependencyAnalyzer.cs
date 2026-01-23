@@ -48,7 +48,7 @@ public sealed class DependencyAnalyzer(
         );
 
         var packageFlags = processingResult.PackageFlags;
-        var dependenciesToRevisit = new Stack<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<Package> Dependencies)>();
+        var dependenciesToRevisit = new Stack<DependencyToRevisit>();
 
         // Process dependencies to check
         await ProcessDependenciesToCheckAsync(
@@ -83,7 +83,7 @@ public sealed class DependencyAnalyzer(
     {
         var dependencies = nugetUpdaterContext.MapSourceToDependency(logger);
         var results = new ConcurrentBag<KeyValuePair<UpdateCandidate, IReadOnlyCollection<PossiblePackageVersion>>>();
-        var currentVersions = new ConcurrentBag<KeyValuePair<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>>>();
+        var currentVersions = new ConcurrentBag<(string PackageName, NugetPackageCondition Condition, NugetTargetFrameworkGroup FrameworkGroup, PackageVersion Version)>();
 
         // Limit parallelism to avoid overwhelming system resources
         var parallelOptions = new ParallelOptions
@@ -137,16 +137,7 @@ public sealed class DependencyAnalyzer(
                         .ToList()
                     );
 
-                    currentVersions.Add(KeyValuePair.Create<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>>(
-                        dependencyName,
-                        new Dictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>
-                        {
-                            [dependencyCondition] = new Dictionary<NugetTargetFrameworkGroup, PackageVersion>
-                            {
-                                [nugetTargetFrameworkGroup] = dependencyVersion!,
-                            },
-                        }
-                    ));
+                    currentVersions.Add((dependencyName, dependencyCondition, nugetTargetFrameworkGroup, dependencyVersion!));
                 }
 
                 if (futureVersions.Count == 0)
@@ -183,11 +174,17 @@ public sealed class DependencyAnalyzer(
             }
         });
 
+        var packageVersions = new CurrentPackageVersions();
+        foreach (var (packageName, condition, frameworkGroup, version) in currentVersions)
+        {
+            packageVersions.SetVersion(packageName, condition, frameworkGroup, version);
+        }
+
         return new ResolvePossiblePackageVersionsResult(
             results.AsValueEnumerable()
                 .OrderBy(r => r.Key.NugetDependency.NugetPackage.GetPackageName())
                 .ToDictionary(),
-            CurrentPackageVersions.FromConcurrentBag(currentVersions)
+            packageVersions
         );
     }
 
@@ -213,10 +210,10 @@ public sealed class DependencyAnalyzer(
         IgnoreResolver ignoreResolver,
         CurrentPackageVersions currentPackageVersions,
         IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags,
-        Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
+        Queue<DependencyToCheck> dependenciesToCheck,
         IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
         NugetUpdaterContext context,
-        Stack<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit,
+        Stack<DependencyToRevisit> dependenciesToRevisit,
         CachingConfiguration cachingConfiguration,
         CancellationToken cancellationToken
     )
@@ -258,15 +255,15 @@ public sealed class DependencyAnalyzer(
         IReadOnlyCollection<NugetTargetFramework> targetFrameworks,
         PackageVersionWithDependencySets packageVersion,
         IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags,
-        Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck,
-        Stack<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit
+        Queue<DependencyToCheck> dependenciesToCheck,
+        Stack<DependencyToRevisit> dependenciesToRevisit
     )
     {
         var compatiblePackageDependencyGroups = GetPreferredDependencySets(
             packageVersion.DependencySets, targetFrameworks
         );
 
-        dependenciesToRevisit.Push((package, condition, [
+        dependenciesToRevisit.Push(new DependencyToRevisit(package, condition, [
             .. compatiblePackageDependencyGroups
                 .AsValueEnumerable()
                 .SelectMany(compatiblePackageDependencyGroup => dependencyUpdateProcessor.ProcessDependencySet(
@@ -281,7 +278,7 @@ public sealed class DependencyAnalyzer(
     }
 
     private void ProcessDependenciesToRevisit(
-        Stack<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<Package> Dependencies)> dependenciesToRevisit,
+        Stack<DependencyToRevisit> dependenciesToRevisit,
         IDictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>> packageFlags
     )
     {

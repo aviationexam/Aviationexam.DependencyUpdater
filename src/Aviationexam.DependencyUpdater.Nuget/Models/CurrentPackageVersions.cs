@@ -201,47 +201,4 @@ public sealed class CurrentPackageVersions
 
         return true;
     }
-
-    /// <summary>
-    /// Merges another collection of versions into this one, grouping by package name and condition.
-    /// </summary>
-    public void Merge(
-        IEnumerable<KeyValuePair<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>>> other
-    )
-    {
-        foreach (var (packageName, conditions) in other)
-        {
-            if (!_versions.TryGetValue(packageName, out var existingConditions))
-            {
-                existingConditions = new Dictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>();
-                _versions[packageName] = existingConditions;
-            }
-
-            foreach (var (condition, frameworkVersions) in conditions)
-            {
-                if (!existingConditions.TryGetValue(condition, out var existingFrameworkVersions))
-                {
-                    existingFrameworkVersions = new Dictionary<NugetTargetFrameworkGroup, PackageVersion>();
-                    existingConditions[condition] = existingFrameworkVersions;
-                }
-
-                foreach (var (frameworkGroup, version) in frameworkVersions)
-                {
-                    existingFrameworkVersions[frameworkGroup] = version;
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Creates from a concurrent bag of key-value pairs, grouping and deduplicating as needed.
-    /// </summary>
-    public static CurrentPackageVersions FromConcurrentBag(
-        IEnumerable<KeyValuePair<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>>> items
-    )
-    {
-        var result = new CurrentPackageVersions();
-        result.Merge(items);
-        return result;
-    }
 }
