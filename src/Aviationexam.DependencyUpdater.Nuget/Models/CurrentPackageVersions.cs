@@ -164,6 +164,33 @@ public sealed class CurrentPackageVersions
     ) => _versions.TryGetValue(packageName, out conditions);
 
     /// <summary>
+    /// Gets framework versions for a specific package and condition.
+    /// Falls back to WithoutCondition if the specific condition is not found or has no framework versions.
+    /// </summary>
+    public bool TryGetFrameworkVersions(
+        string packageName,
+        NugetPackageCondition condition,
+        [MaybeNullWhen(false)] out IDictionary<NugetTargetFrameworkGroup, PackageVersion> frameworkVersions
+    )
+    {
+        frameworkVersions = null;
+
+        if (!_versions.TryGetValue(packageName, out var conditions))
+        {
+            return false;
+        }
+
+        if (conditions.TryGetValue(condition, out frameworkVersions) && frameworkVersions.Count > 0)
+        {
+            return true;
+        }
+
+        // Fallback to WithoutCondition if specific condition not found or has no versions
+        return conditions.TryGetValue(NugetPackageCondition.WithoutCondition, out frameworkVersions)
+               && frameworkVersions.Count > 0;
+    }
+
+    /// <summary>
     /// Checks version compatibility for a dependency across all conditions.
     /// Returns false if any condition has a version conflict.
     /// </summary>

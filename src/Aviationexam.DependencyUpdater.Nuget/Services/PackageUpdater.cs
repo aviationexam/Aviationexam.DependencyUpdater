@@ -183,12 +183,12 @@ public sealed class PackageUpdater(
             )
         )
         {
-            var conflictingVersionStr = groupPackageVersions.TryGetConditions(conflictingPackageVersion.Name, out var conditions)
+            var condition = nugetUpdateCandidate.NugetDependency.NugetDependency.NugetPackage.GetCondition();
+            var conflictingVersionStr = groupPackageVersions.TryGetFrameworkVersions(conflictingPackageVersion.Name, condition, out var frameworkVersions)
                 ? nugetUpdateCandidate.NugetDependency.NugetDependency.TargetFrameworks
                     .AsValueEnumerable()
-                    .SelectMany(tf => conditions
+                    .SelectMany(tf => frameworkVersions
                         .AsValueEnumerable()
-                        .SelectMany(c => c.Value)
                         .Where(f => f.Key.CanBeUsedWith(tf.TargetFramework, out _))
                         .Select(f => f.Value.GetSerializedVersion())
                     )
