@@ -53,12 +53,13 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
 
         var writer = new NugetDirectoryPackagesPropsVersionWriter(fileSystem);
 
+        var nugetDependency = new NugetDependency(
+            new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
+            new NugetPackageReference("Microsoft.Extensions.Hosting", new VersionRange(new NuGetVersion("9.0.0"))),
+            [new NugetTargetFramework("net9.0")]
+        );
         var nugetUpdateCandidate = new NugetUpdateCandidate(
-            new NugetDependency(
-                new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
-                new NugetPackageReference("Microsoft.Extensions.Hosting", new VersionRange(new NuGetVersion("9.0.0"))),
-                [new NugetTargetFramework("net9.0")]
-            ),
+            new UpdateCandidate(nugetDependency, null, null),
             new PossiblePackageVersion(
                 new PackageVersionWithDependencySets(
                     new PackageVersion(new Version("9.0.1"), false, [], NugetReleaseLabelComparer.Instance)
@@ -73,7 +74,7 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
         var result = await writer.TrySetVersionAsync(
             nugetUpdateCandidate,
             filePath,
-            new Dictionary<string, IDictionary<string, PackageVersion>>(),
+            new CurrentPackageVersions(),
             TestContext.Current.CancellationToken
         );
 
@@ -123,12 +124,13 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
 
         var writer = new NugetDirectoryPackagesPropsVersionWriter(fileSystem);
 
+        var nugetDependency = new NugetDependency(
+            new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
+            new NugetPackageReference("Microsoft.Extensions.Hosting", new VersionRange(new NuGetVersion("8.0.0"))),
+            [new NugetTargetFramework("net8.0")]
+        );
         var nugetUpdateCandidate = new NugetUpdateCandidate(
-            new NugetDependency(
-                new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
-                new NugetPackageReference("Microsoft.Extensions.Hosting", new VersionRange(new NuGetVersion("8.0.0"))),
-                [new NugetTargetFramework("net8.0")]
-            ),
+            new UpdateCandidate(nugetDependency, null, null),
             new PossiblePackageVersion(
                 new PackageVersionWithDependencySets(
                     new PackageVersion(new Version("8.0.10"), false, [], NugetReleaseLabelComparer.Instance)
@@ -143,7 +145,7 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
         var result = await writer.TrySetVersionAsync(
             nugetUpdateCandidate,
             filePath,
-            new Dictionary<string, IDictionary<string, PackageVersion>>(),
+            new CurrentPackageVersions(),
             TestContext.Current.CancellationToken
         );
 
@@ -192,15 +194,16 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
 
         var writer = new NugetDirectoryPackagesPropsVersionWriter(fileSystem);
 
+        var nugetDependency = new NugetDependency(
+            new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
+            new NugetPackageReference("Meziantou.Analyzer", new VersionRange(new NuGetVersion("2.0.0"))),
+            [
+                new NugetTargetFramework("net8.0"),
+                new NugetTargetFramework("net9.0"),
+            ]
+        );
         var nugetUpdateCandidate = new NugetUpdateCandidate(
-            new NugetDependency(
-                new NugetFile("Directory.Packages.props", ENugetFileType.DirectoryPackagesProps),
-                new NugetPackageReference("Meziantou.Analyzer", new VersionRange(new NuGetVersion("2.0.0"))),
-                [
-                    new NugetTargetFramework("net8.0"),
-                    new NugetTargetFramework("net9.0"),
-                ]
-            ),
+            new UpdateCandidate(nugetDependency, null, null),
             new PossiblePackageVersion(
                 new PackageVersionWithDependencySets(
                     new PackageVersion(new Version("2.0.177"), false, [], NugetReleaseLabelComparer.Instance)
@@ -215,7 +218,7 @@ public class NugetDirectoryPackagesPropsVersionWriterTests
         var result = await writer.TrySetVersionAsync(
             nugetUpdateCandidate,
             filePath,
-            new Dictionary<string, IDictionary<string, PackageVersion>>(),
+            new CurrentPackageVersions(),
             TestContext.Current.CancellationToken
         );
 

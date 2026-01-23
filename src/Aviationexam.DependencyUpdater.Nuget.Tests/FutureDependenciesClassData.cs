@@ -161,7 +161,7 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
                 (new Package("System.Security.Cryptography.Cng", CreatePackageVersion("5.0.0")),
                     TfF((NetStandard20, EDependencyFlag.Unknown)))
             ),
-            new Queue<(Package, IReadOnlyCollection<NugetTargetFramework>)>([
+            CreateDependenciesToCheck(
                 (new Package("Aviationexam.Core.Common.SharedDTOs", CreatePackageVersion("0.1.2562")), [Net80]),
                 (new Package("System.ComponentModel.Annotations", CreatePackageVersion("5.0.0")), [Net80]),
                 (new Package("System.Text.Json", CreatePackageVersion("8.0.6")), [Net80]),
@@ -198,8 +198,8 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
                 (new Package("Microsoft.IdentityModel.Logging", CreatePackageVersion("8.15.0")), [NetStandard20]),
                 (new Package("Microsoft.IdentityModel.Tokens", CreatePackageVersion("8.15.0")), [NetStandard20]),
                 (new Package("System.Diagnostics.DiagnosticSource", CreatePackageVersion("8.0.1")), [NetStandard20]),
-                (new Package("System.Security.Cryptography.Cng", CreatePackageVersion("5.0.0")), [NetStandard20]),
-            ])
+                (new Package("System.Security.Cryptography.Cng", CreatePackageVersion("5.0.0")), [NetStandard20])
+            )
         ),
         new Dictionary<string, PackageVersionWithDependencySets?>
         {
@@ -1252,7 +1252,7 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
                     TfF((Net100, EDependencyFlag.Valid))),
                 (new Package("zeroql.cli", CreatePackageVersion("8.0.0-preview.7")),
                     TfF((Net100, EDependencyFlag.Valid)))),
-            new Queue<(Package, IReadOnlyCollection<NugetTargetFramework>)>([
+            CreateDependenciesToCheck(
                 (new Package("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1")), [Net80]),
                 (new Package("xunit.v3.extensibility.core", CreatePackageVersion("3.2.1")), [Net80]),
                 (new Package("Microsoft.Extensions.Logging.Abstractions", CreatePackageVersion("10.0.1")), [Net90]),
@@ -1829,7 +1829,8 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
                 (new Package("System.IO.Pipelines", CreatePackageVersion("10.0.1")), [Net90]),
                 (new Package("System.Text.Encodings.Web", CreatePackageVersion("10.0.1")), [Net90]),
                 (new Package("System.IO.Pipelines", CreatePackageVersion("10.0.1")), [new NugetTargetFramework("netstandard2.0")]),
-                (new Package("System.Text.Encodings.Web", CreatePackageVersion("10.0.1")), [new NugetTargetFramework("netstandard2.0")])            ])
+                (new Package("System.Text.Encodings.Web", CreatePackageVersion("10.0.1")), [new NugetTargetFramework("netstandard2.0")])
+            )
         ),
         new Dictionary<string, PackageVersionWithDependencySets?>
         {
@@ -1881,4 +1882,12 @@ public sealed partial class FutureDependenciesClassData() : TheoryData<
         x => x.Item1,
         x => x.Item2
     );
+
+    /// <summary>
+    /// Creates a queue of dependencies to check from simple tuple format.
+    /// All entries use WithoutCondition since the test data doesn't have condition-specific entries.
+    /// </summary>
+    private static Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> CreateDependenciesToCheck(
+        params IReadOnlyCollection<(Package Package, IReadOnlyCollection<NugetTargetFramework> TargetFrameworks)> entries
+    ) => new(entries.AsValueEnumerable().Select(e => (e.Package, NugetPackageCondition.WithoutCondition, e.TargetFrameworks)).ToList());
 }

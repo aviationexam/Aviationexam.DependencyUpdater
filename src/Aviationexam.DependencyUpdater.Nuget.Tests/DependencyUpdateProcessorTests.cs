@@ -2,6 +2,7 @@ using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Services;
+using Aviationexam.DependencyUpdater.Nuget.Tests.Extensions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using System;
@@ -32,9 +33,9 @@ public sealed class DependencyUpdateProcessorTests
         // Arrange
         var logger = Substitute.For<ILogger>();
         var ignoreResolver = new IgnoreResolver([], logger);
-        var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
+        var currentVersions = new CurrentPackageVersions();
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
-        var dependenciesToCheck = new Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
+        var dependenciesToCheck = new Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
 
         var packageDependency = new PackageDependencyInfo(
             Id: "TestPackage",
@@ -49,6 +50,7 @@ public sealed class DependencyUpdateProcessorTests
         // Act
         var result = _processor.ProcessDependencySet(
             ignoreResolver,
+            NugetPackageCondition.WithoutCondition,
             currentVersions,
             packageFlags,
             dependenciesToCheck,
@@ -67,9 +69,9 @@ public sealed class DependencyUpdateProcessorTests
         // Arrange
         var logger = Substitute.For<ILogger>();
         var ignoreResolver = new IgnoreResolver([], logger);
-        var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
+        var currentVersions = new CurrentPackageVersions();
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
-        var dependenciesToCheck = new Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
+        var dependenciesToCheck = new Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
         var targetFramework = new NugetTargetFramework("net8.0");
 
         var packageVersion = new PackageVersion(
@@ -92,6 +94,7 @@ public sealed class DependencyUpdateProcessorTests
         // Act
         var result = _processor.ProcessDependencySet(
             ignoreResolver,
+            NugetPackageCondition.WithoutCondition,
             currentVersions,
             packageFlags,
             dependenciesToCheck,
@@ -109,7 +112,7 @@ public sealed class DependencyUpdateProcessorTests
 
         // Verify dependency was queued for checking
         Assert.Single(dependenciesToCheck);
-        var (queuedPackage, queuedFrameworks) = dependenciesToCheck.Dequeue();
+        var (queuedPackage, _, queuedFrameworks) = dependenciesToCheck.Dequeue();
         Assert.Equal(expectedPackage, queuedPackage);
         Assert.Contains(targetFramework, queuedFrameworks);
     }
@@ -121,6 +124,7 @@ public sealed class DependencyUpdateProcessorTests
         var logger = Substitute.For<ILogger>();
         var ignoreResolver = new IgnoreResolver([], logger);
         var targetFramework = new NugetTargetFramework("net8.0");
+        var targetFrameworkGroup = new NugetTargetFrameworkGroup([targetFramework]);
         var packageVersion = new PackageVersion(
             Version: new Version(1, 0, 0),
             IsPrerelease: false,
@@ -129,16 +133,11 @@ public sealed class DependencyUpdateProcessorTests
         );
 
         // Package is already installed at this version
-        var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>
-        {
-            ["TestPackage"] = new Dictionary<string, PackageVersion>
-            {
-                ["net8.0"] = packageVersion
-            }
-        };
+        var currentVersions = new CurrentPackageVersions();
+        currentVersions.SetVersion("TestPackage", NugetPackageCondition.WithoutCondition, targetFrameworkGroup, packageVersion);
 
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
-        var dependenciesToCheck = new Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
+        var dependenciesToCheck = new Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
 
         var packageDependency = new PackageDependencyInfo(
             Id: "TestPackage",
@@ -153,6 +152,7 @@ public sealed class DependencyUpdateProcessorTests
         // Act
         var result = _processor.ProcessDependencySet(
             ignoreResolver,
+            NugetPackageCondition.WithoutCondition,
             currentVersions,
             packageFlags,
             dependenciesToCheck,
@@ -176,6 +176,7 @@ public sealed class DependencyUpdateProcessorTests
     {
         // Arrange
         var targetFramework = new NugetTargetFramework("net8.0");
+        var targetFrameworkGroup = new NugetTargetFrameworkGroup([targetFramework]);
         var currentVersion = new PackageVersion(
             Version: new Version(1, 0, 0),
             IsPrerelease: false,
@@ -190,13 +191,8 @@ public sealed class DependencyUpdateProcessorTests
             ReleaseLabelsComparer: NugetReleaseLabelComparer.Instance
         );
 
-        var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>
-        {
-            ["TestPackage"] = new Dictionary<string, PackageVersion>
-            {
-                ["net8.0"] = currentVersion
-            }
-        };
+        var currentVersions = new CurrentPackageVersions();
+        currentVersions.SetVersion("TestPackage", NugetPackageCondition.WithoutCondition, targetFrameworkGroup, currentVersion);
 
         // Setup ignore resolver to ignore this upgrade
         // The version change 1.0.0 -> 2.0.0 is a major version change
@@ -211,7 +207,7 @@ public sealed class DependencyUpdateProcessorTests
         var ignoreResolver = new IgnoreResolver(ignoreRules, logger);
 
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
-        var dependenciesToCheck = new Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
+        var dependenciesToCheck = new Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
 
         var packageDependency = new PackageDependencyInfo(
             Id: "TestPackage",
@@ -226,6 +222,7 @@ public sealed class DependencyUpdateProcessorTests
         // Act
         var result = _processor.ProcessDependencySet(
             ignoreResolver,
+            NugetPackageCondition.WithoutCondition,
             currentVersions,
             packageFlags,
             dependenciesToCheck,
@@ -250,9 +247,9 @@ public sealed class DependencyUpdateProcessorTests
         // Arrange
         var logger = Substitute.For<ILogger>();
         var ignoreResolver = new IgnoreResolver([], logger);
-        var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
+        var currentVersions = new CurrentPackageVersions();
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
-        var dependenciesToCheck = new Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
+        var dependenciesToCheck = new Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
         var targetFramework = new NugetTargetFramework("net8.0");
 
         var version1 = new PackageVersion(
@@ -281,6 +278,7 @@ public sealed class DependencyUpdateProcessorTests
         // Act
         var result = _processor.ProcessDependencySet(
             ignoreResolver,
+            NugetPackageCondition.WithoutCondition,
             currentVersions,
             packageFlags,
             dependenciesToCheck,
@@ -302,9 +300,9 @@ public sealed class DependencyUpdateProcessorTests
         // Arrange
         var logger = Substitute.For<ILogger>();
         var ignoreResolver = new IgnoreResolver([], logger);
-        var currentVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
+        var currentVersions = new CurrentPackageVersions();
         var packageFlags = new Dictionary<Package, IDictionary<NugetTargetFramework, EDependencyFlag>>();
-        var dependenciesToCheck = new Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
+        var dependenciesToCheck = new Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)>();
 
         var packageVersion = new PackageVersion(
             Version: new Version(1, 0, 0),
@@ -326,6 +324,7 @@ public sealed class DependencyUpdateProcessorTests
         // Act - Process the same dependency set twice
         _processor.ProcessDependencySet(
             ignoreResolver,
+            NugetPackageCondition.WithoutCondition,
             currentVersions,
             packageFlags,
             dependenciesToCheck,
@@ -336,6 +335,7 @@ public sealed class DependencyUpdateProcessorTests
 
         _processor.ProcessDependencySet(
             ignoreResolver,
+            NugetPackageCondition.WithoutCondition,
             currentVersions,
             packageFlags,
             dependenciesToCheck,
@@ -359,10 +359,10 @@ public sealed class DependencyUpdateProcessorTests
         var ignoreResolver = new IgnoreResolver([], logger);
 
         // Populate current versions from the NugetDependency keys
-        var currentVersions = dependencies.ToCurrentVersionsPerTargetFramework();
+        var currentVersions = dependencies.ToCurrentPackageVersions();
 
         // Convert ALL dependencies to the format expected by ProcessDependenciesToUpdate
-        var dependenciesToUpdate = dependencies.ToPossiblePackageVersions();
+        var dependenciesToUpdate = dependencies.ToDependenciesToUpdate();
 
         // Act
         var result = _processor.ProcessDependenciesToUpdate(
@@ -419,7 +419,7 @@ public sealed class DependencyUpdateProcessorTests
         .JoinToString(",\n");
 
     private static string SerializeDependenciesToCheck(
-        Queue<(Package Package, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck
+        Queue<(Package Package, NugetPackageCondition Condition, IReadOnlyCollection<NugetTargetFramework> NugetTargetFrameworks)> dependenciesToCheck
     ) => dependenciesToCheck
         .AsValueEnumerable()
         .Select(x =>
