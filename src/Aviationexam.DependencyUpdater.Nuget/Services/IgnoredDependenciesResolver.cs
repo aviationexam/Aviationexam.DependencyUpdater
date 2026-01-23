@@ -1,7 +1,5 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.Models;
-using System.Collections.Generic;
-using ZLinq;
 using PackageDependencyInfo = Aviationexam.DependencyUpdater.Common.PackageDependencyInfo;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
@@ -12,7 +10,7 @@ public sealed class IgnoredDependenciesResolver
         PackageDependencyInfo packageDependency,
         IgnoreResolver ignoreResolver,
         NugetPackageCondition condition,
-        IReadOnlyDictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> currentPackageVersionsPerTargetFramework,
+        CurrentPackageVersions currentPackageVersions,
         NugetTargetFramework targetFramework
     )
     {
@@ -23,14 +21,8 @@ public sealed class IgnoredDependenciesResolver
             return false;
         }
 
-        // Get the current version for this specific target framework
-        var currentVersion = currentPackageVersionsPerTargetFramework.TryGetValue(packageDependency.Id, out var packageVersions)
-                             && packageVersions.TryGetValue(condition, out var targetFrameworkVersions)
-            ? targetFrameworkVersions
-                .AsValueEnumerable()
-                .Where(v => v.Key.CanBeUsedWith(targetFramework.TargetFramework, out _))
-                .Select(kvp => kvp.Value)
-                .FirstOrDefault() ?? proposedVersion
+        var currentVersion = currentPackageVersions.TryGetVersion(packageDependency.Id, condition, targetFramework, out var version)
+            ? version
             : proposedVersion;
 
         if (currentVersion > proposedVersion)

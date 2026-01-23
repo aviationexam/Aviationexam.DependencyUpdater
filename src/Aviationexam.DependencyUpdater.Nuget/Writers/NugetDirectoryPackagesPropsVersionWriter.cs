@@ -21,21 +21,20 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
     public async Task<ESetVersion> TrySetVersionAsync(
         NugetUpdateCandidate nugetUpdateCandidate,
         string fullPath,
-        IDictionary<string, IDictionary<NugetTargetFrameworkGroup, PackageVersion>> groupPackageVersions,
+        CurrentPackageVersions groupPackageVersions,
         CancellationToken cancellationToken
     )
     {
-        var packageName = nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName();
+        var packageName = nugetUpdateCandidate.NugetDependency.NugetDependency.NugetPackage.GetPackageName();
 
         await using var fileStream = fileSystem.FileOpen(fullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 
         var doc = await XDocument.LoadAsync(fileStream, LoadOptions.PreserveWhitespace, cancellationToken);
 
-        // Find the matching PackageVersion element, considering target frameworks
         var versionAttribute = FindMatchingPackageVersionAttribute(
             doc,
             packageName,
-            nugetUpdateCandidate.NugetDependency.TargetFrameworks
+            nugetUpdateCandidate.NugetDependency.NugetDependency.TargetFrameworks
         );
 
         if (versionAttribute is null)
@@ -64,14 +63,11 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
         await doc.SaveAsync(xmlWriter, cancellationToken);
         fileStream.SetLength(fileStream.Position);
 
-        if (groupPackageVersions.TryGetValue(packageName, out var frameworkVersions))
-        {
-            // Update version for each target framework this dependency applies to
-            foreach (var targetFramework in nugetUpdateCandidate.NugetDependency.TargetFrameworks)
-            {
-                frameworkVersions[targetFramework.TargetFramework] = nugetUpdateCandidate.PossiblePackageVersion.PackageVersion;
-            }
-        }
+        groupPackageVersions.UpdateVersionForTargetFrameworks(
+            packageName,
+            nugetUpdateCandidate.NugetDependency.NugetDependency.TargetFrameworks,
+            nugetUpdateCandidate.PossiblePackageVersion.PackageVersion
+        );
 
         return ESetVersion.VersionSet;
     }
@@ -93,12 +89,6 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
         {
             return null;
         }
-
-        // Multiple matches - need to find the one matching the target framework
-        // Priority:
-        // 1. PackageVersion element with matching Condition
-        // 2. PackageVersion in ItemGroup with matching Condition
-        // 3. PackageVersion without Condition (unconditional)
 
         var targetFrameworkNames = targetFrameworks.AsValueEnumerable().Select(tf => tf.TargetFramework).ToHashSet();
 
@@ -126,7 +116,6 @@ public sealed class NugetDirectoryPackagesPropsVersionWriter(
             }
         }
 
-        // Fallback: return the first match (shouldn't happen, but better than null)
         return packageVersionElements[0].Attribute("Version");
     }
 }

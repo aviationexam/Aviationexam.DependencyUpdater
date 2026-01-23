@@ -3,7 +3,6 @@ using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -21,7 +20,7 @@ public sealed class DotnetToolsVersionWriter(
     public async Task<ESetVersion> TrySetVersionAsync(
         NugetUpdateCandidate nugetUpdateCandidate,
         string fullPath,
-        IDictionary<string, IDictionary<NugetTargetFrameworkGroup, PackageVersion>> groupPackageVersions,
+        CurrentPackageVersions groupPackageVersions,
         CancellationToken cancellationToken
     )
     {
@@ -82,14 +81,11 @@ public sealed class DotnetToolsVersionWriter(
         {
             toolEntryObject["version"] = nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
 
-            if (groupPackageVersions.TryGetValue(packageName, out var frameworkVersions))
-            {
-                // Update version for each target framework this dependency applies to
-                foreach (var targetFramework in nugetUpdateCandidate.NugetDependency.TargetFrameworks)
-                {
-                    frameworkVersions[targetFramework.TargetFramework] = nugetUpdateCandidate.PossiblePackageVersion.PackageVersion;
-                }
-            }
+            groupPackageVersions.UpdateVersionForTargetFrameworks(
+                packageName,
+                nugetUpdateCandidate.NugetDependency.NugetDependency.TargetFrameworks,
+                nugetUpdateCandidate.PossiblePackageVersion.PackageVersion
+            );
 
             fileStream.SetLength(0);
             fileStream.Seek(0, SeekOrigin.Begin);
