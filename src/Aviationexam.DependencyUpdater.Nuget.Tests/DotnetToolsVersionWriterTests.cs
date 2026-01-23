@@ -53,10 +53,14 @@ public class DotnetToolsVersionWriterTests
 
         var versionWriter = new DotnetToolsVersionWriter(fileSystem, logger);
         var updateCandidate = new NugetUpdateCandidate(
-            new NugetDependency(
-                new NugetFile(".config/dotnet-tools.json", ENugetFileType.DotnetTools),
-                new NugetPackageVersion("dotnet-ef", "9.0.0"),
-                [new NugetTargetFramework("net9.0")]
+            new UpdateCandidate(
+                new NugetDependency(
+                    new NugetFile(".config/dotnet-tools.json", ENugetFileType.DotnetTools),
+                    new NugetPackageVersion("dotnet-ef", "9.0.0"),
+                    [new NugetTargetFramework("net9.0")]
+                ),
+                null,
+                null
             ),
             new PossiblePackageVersion(new PackageVersionWithDependencySets(
                 new PackageVersion(new Version("10.0.0"), false, [], NugetReleaseLabelComparer.Instance)
@@ -66,17 +70,15 @@ public class DotnetToolsVersionWriterTests
             }, [])
         );
 
-        // Act
         var result = await versionWriter.TrySetVersionAsync(
             updateCandidate,
             ".config/dotnet-tools.json",
-            new Dictionary<string, IDictionary<string, PackageVersion>>(),
+            new CurrentPackageVersions(),
             TestContext.Current.CancellationToken
         );
 
         Assert.True(proxyFileStream.WasDisposed);
 
-        // Assert
         Assert.Equal(ESetVersion.VersionSet, result);
         fileStream.Position = 0;
         using var reader = new StreamReader(fileStream);
@@ -138,10 +140,14 @@ public class DotnetToolsVersionWriterTests
 
         var versionWriter = new DotnetToolsVersionWriter(fileSystem, logger);
         var updateCandidate = new NugetUpdateCandidate(
-            new NugetDependency(
-                new NugetFile(".config/dotnet-tools.json", ENugetFileType.DotnetTools),
-                new NugetPackageVersion("dotnet-ef", "9.0.0"),
-                [new NugetTargetFramework("net9.0")]
+            new UpdateCandidate(
+                new NugetDependency(
+                    new NugetFile(".config/dotnet-tools.json", ENugetFileType.DotnetTools),
+                    new NugetPackageVersion("dotnet-ef", "9.0.0"),
+                    [new NugetTargetFramework("net9.0")]
+                ),
+                null,
+                null
             ),
             new PossiblePackageVersion(new PackageVersionWithDependencySets(
                 new PackageVersion(new Version("10.0.0"), false, [], NugetReleaseLabelComparer.Instance)
@@ -151,11 +157,10 @@ public class DotnetToolsVersionWriterTests
             }, [])
         );
 
-        // Act
         var result = await versionWriter.TrySetVersionAsync(
             updateCandidate,
             ".config/dotnet-tools.json",
-            new Dictionary<string, IDictionary<string, PackageVersion>>(),
+            new CurrentPackageVersions(),
             TestContext.Current.CancellationToken
         );
 
@@ -187,10 +192,14 @@ public class DotnetToolsVersionWriterTests
 
         var versionWriter = new DotnetToolsVersionWriter(fileSystem, logger);
         var updateCandidate = new NugetUpdateCandidate(
-            new NugetDependency(
-                new NugetFile(".config/dotnet-tools.json", ENugetFileType.DotnetTools),
-                new NugetPackageVersion("dotnet-ef", "9.0.0"),
-                [new NugetTargetFramework("net9.0")]
+            new UpdateCandidate(
+                new NugetDependency(
+                    new NugetFile(".config/dotnet-tools.json", ENugetFileType.DotnetTools),
+                    new NugetPackageVersion("dotnet-ef", "9.0.0"),
+                    [new NugetTargetFramework("net9.0")]
+                ),
+                null,
+                null
             ),
             new PossiblePackageVersion(new PackageVersionWithDependencySets(
                 new PackageVersion(new Version("10.0.0"), false, [], NugetReleaseLabelComparer.Instance)
@@ -200,11 +209,10 @@ public class DotnetToolsVersionWriterTests
             }, [])
         );
 
-        // Act
         var result = await versionWriter.TrySetVersionAsync(
             updateCandidate,
             ".config/dotnet-tools.json",
-            new Dictionary<string, IDictionary<string, PackageVersion>>(),
+            new CurrentPackageVersions(),
             TestContext.Current.CancellationToken
         );
 

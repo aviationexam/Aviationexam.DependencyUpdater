@@ -174,12 +174,13 @@ public class GroupEntryExtensionsTests
             versionRange = new VersionRange(new NuGetVersion(fromVersion));
         }
 
+        var nugetDependency = new NugetDependency(
+            new NugetFile("Test.csproj", ENugetFileType.Csproj),
+            new NugetPackageReference(packageName, versionRange, condition),
+            [new NugetTargetFramework(condition ?? "net10.0")]
+        );
         return new NugetUpdateCandidate(
-            new NugetDependency(
-                new NugetFile("Test.csproj", ENugetFileType.Csproj),
-                new NugetPackageReference(packageName, versionRange, condition),
-                [new NugetTargetFramework(condition ?? "net10.0")]
-            ),
+            new UpdateCandidate(nugetDependency, null, null),
             new PossiblePackageVersion(
                 new PackageVersionWithDependencySets(
                     new NuGetVersion(toVersion).MapToPackageVersion()
