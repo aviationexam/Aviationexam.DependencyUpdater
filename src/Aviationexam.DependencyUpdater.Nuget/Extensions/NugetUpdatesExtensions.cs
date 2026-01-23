@@ -15,14 +15,14 @@ public static class NugetUpdatesExtensions
 
         var distinctPackageCount = updatedPackages
             .AsValueEnumerable()
-            .Select(x => x.NugetDependency.NugetPackage.GetPackageName())
+            .Select(x => x.NugetDependency.NugetDependency.NugetPackage.GetPackageName())
             .Distinct()
             .Count();
 
         stringBuilder.AppendLine($"Updates {distinctPackageCount} packages:");
         stringBuilder.AppendLine();
 
-        foreach (var grouping in updatedPackages.AsValueEnumerable().GroupBy(x => x.NugetDependency.NugetPackage.GetPackageName()))
+        foreach (var grouping in updatedPackages.AsValueEnumerable().GroupBy(x => x.NugetDependency.NugetDependency.NugetPackage.GetPackageName()))
         {
             var packageName = grouping.Key;
 
@@ -50,12 +50,12 @@ public static class NugetUpdatesExtensions
         NugetUpdateCandidate updateResult
     )
     {
-        var fromVersion = updateResult.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
+        var fromVersion = updateResult.NugetDependency.NugetDependency.NugetPackage.GetVersion()?.GetSerializedVersion() ?? "unknown";
         var toVersion = updateResult.PossiblePackageVersion.PackageVersion.GetSerializedVersion();
 
-        var condition = updateResult.NugetDependency.NugetPackage.GetCondition();
+        var condition = updateResult.NugetDependency.NugetDependency.NugetPackage.GetCondition();
 
-        if (!string.IsNullOrWhiteSpace(condition))
+        if (condition != NugetPackageCondition.WithoutCondition)
         {
             yield return $"Update {packageName} from {fromVersion} to {toVersion} for {condition}";
         }

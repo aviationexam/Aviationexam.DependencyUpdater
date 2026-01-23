@@ -11,7 +11,8 @@ public sealed class IgnoredDependenciesResolver
     public bool IsDependencyIgnored(
         PackageDependencyInfo packageDependency,
         IgnoreResolver ignoreResolver,
-        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersionsPerTargetFramework,
+        NugetPackageCondition condition,
+        IReadOnlyDictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> currentPackageVersionsPerTargetFramework,
         NugetTargetFramework targetFramework
     )
     {
@@ -24,9 +25,10 @@ public sealed class IgnoredDependenciesResolver
 
         // Get the current version for this specific target framework
         var currentVersion = currentPackageVersionsPerTargetFramework.TryGetValue(packageDependency.Id, out var packageVersions)
-            ? packageVersions
+                             && packageVersions.TryGetValue(condition, out var targetFrameworkVersions)
+            ? targetFrameworkVersions
                 .AsValueEnumerable()
-                .Where(v => v.Key == targetFramework.TargetFramework)
+                .Where(v => v.Key.CanBeUsedWith(targetFramework.TargetFramework, out _))
                 .Select(kvp => kvp.Value)
                 .FirstOrDefault() ?? proposedVersion
             : proposedVersion;

@@ -34,7 +34,7 @@ public sealed class PackageUpdater(
         bool executeRestore,
         string? restoreDirectory,
         Queue<(IReadOnlyCollection<NugetUpdateCandidate> NugetUpdateCandidates, GroupEntry GroupEntry)> groupedPackagesToUpdateQueue,
-        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersions,
+        IReadOnlyDictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> currentPackageVersions,
         string updater,
         CancellationToken cancellationToken
     )
@@ -75,7 +75,7 @@ public sealed class PackageUpdater(
         string? restoreDirectory,
         GroupEntry groupEntry,
         IReadOnlyCollection<NugetUpdateCandidate> nugetUpdateCandidates,
-        IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersions,
+        IReadOnlyDictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> currentPackageVersions,
         ISourceVersioning sourceVersioning,
         string updater,
         CancellationToken cancellationToken
@@ -97,10 +97,15 @@ public sealed class PackageUpdater(
         );
 
         // Create a mutable copy of the current package versions for tracking updates
-        var mutablePackageVersions = new Dictionary<string, IDictionary<string, PackageVersion>>();
+        var mutablePackageVersions = new Dictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>>();
         foreach (var kvp in currentPackageVersions)
         {
-            mutablePackageVersions[kvp.Key] = new Dictionary<string, PackageVersion>(kvp.Value);
+            mutablePackageVersions[kvp.Key] = new Dictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>(
+                kvp.Value.AsValueEnumerable().ToDictionary(
+                    x => x.Key,
+                    x => x.Value
+                )
+            );
         }
 
         var updatedPackages = await UpdatePackageVersionsAsync(
@@ -135,7 +140,7 @@ public sealed class PackageUpdater(
     private async IAsyncEnumerable<NugetUpdateCandidate> UpdatePackageVersionsAsync(
         ISourceVersioningWorkspace gitWorkspace,
         IReadOnlyCollection<NugetUpdateCandidate> packagesToUpdate,
-        Dictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions,
+        Dictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> groupPackageVersions,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
@@ -178,13 +183,13 @@ public sealed class PackageUpdater(
 
     private void LogVersionConflict(
         NugetUpdateCandidate nugetUpdateCandidate,
-        Dictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions
+        Dictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> groupPackageVersions
     )
     {
         if (
             !nugetVersionWriter.IsCompatibleWithCurrentVersions(
                 nugetUpdateCandidate.PossiblePackageVersion,
-                nugetUpdateCandidate.NugetDependency.TargetFrameworks,
+                nugetUpdateCandidate.NugetDependency,
                 groupPackageVersions,
                 out var conflictingPackageVersion
             )
@@ -192,10 +197,13 @@ public sealed class PackageUpdater(
         {
             // Get the conflicting versions for all target frameworks
             var conflictingVersionStr = groupPackageVersions.TryGetValue(conflictingPackageVersion.Name, out var frameworkVersions)
-                ? nugetUpdateCandidate.NugetDependency.TargetFrameworks
+                ? nugetUpdateCandidate.NugetDependency.NugetDependency.TargetFrameworks
                     .AsValueEnumerable()
-                    .Where(tf => frameworkVersions.ContainsKey(tf.TargetFramework))
-                    .Select(tf => frameworkVersions[tf.TargetFramework].GetSerializedVersion())
+                    .SelectMany(tf => frameworkVersions
+                        .AsValueEnumerable()
+                        .Where(f => f.Key.CanBeUsedWith(tf.TargetFramework, out _))
+                        .Select(f => f.Value.GetSerializedVersion())
+                    )
                     .JoinToString(", ")
                 : "unknown";
 
@@ -203,7 +211,7 @@ public sealed class PackageUpdater(
             {
                 logger.LogError(
                     "Cannot update '{PackageName}' to version '{Version}': it depends on '{ConflictingPackageName}' version '{ConflictingPackageVersionRequired}', but the current solution uses version '{ConflictingPackageVersionCurrent}'",
-                    nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName(),
+                    nugetUpdateCandidate.NugetDependency.NugetDependency.NugetPackage.GetPackageName(),
                     nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion(),
                     conflictingPackageVersion.Name,
                     conflictingPackageVersion.Version.GetSerializedVersion(),
@@ -218,7 +226,7 @@ public sealed class PackageUpdater(
                 logger.LogError(
                     "Cannot set version '{Version}' for package '{PackageName}' due to conflicting version constraints from other packages",
                     nugetUpdateCandidate.PossiblePackageVersion.PackageVersion.GetSerializedVersion(),
-                    nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName()
+                    nugetUpdateCandidate.NugetDependency.NugetDependency.NugetPackage.GetPackageName()
                 );
             }
         }

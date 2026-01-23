@@ -24,12 +24,12 @@ public static class NugetPackageExtensions
         _ => throw new ArgumentOutOfRangeException(nameof(nugetPackage), nugetPackage, null),
     };
 
-    public static string? GetCondition(
+    public static NugetPackageCondition GetCondition(
         this INugetPackage nugetPackage
     ) => nugetPackage switch
     {
-        NugetPackageReference nugetPackageReference => nugetPackageReference.Condition,
-        NugetPackageVersion nugetPackageVersion => nugetPackageVersion.Condition,
+        NugetPackageReference nugetPackageReference => nugetPackageReference.Condition is { } condition ? new NugetPackageCondition(condition) : NugetPackageCondition.WithoutCondition,
+        NugetPackageVersion nugetPackageVersion => nugetPackageVersion.Condition is { } condition ? new NugetPackageCondition(condition) : NugetPackageCondition.WithoutCondition,
         _ => throw new ArgumentOutOfRangeException(nameof(nugetPackage), nugetPackage, null),
     };
 

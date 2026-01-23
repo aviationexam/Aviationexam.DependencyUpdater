@@ -21,11 +21,11 @@ public sealed class DotnetToolsVersionWriter(
     public async Task<ESetVersion> TrySetVersionAsync(
         NugetUpdateCandidate nugetUpdateCandidate,
         string fullPath,
-        IDictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions,
+        IDictionary<string, IDictionary<NugetTargetFrameworkGroup, PackageVersion>> groupPackageVersions,
         CancellationToken cancellationToken
     )
     {
-        var packageName = nugetUpdateCandidate.NugetDependency.NugetPackage.GetPackageName();
+        var packageName = nugetUpdateCandidate.NugetDependency.NugetDependency.NugetPackage.GetPackageName();
 
         await using var fileStream = fileSystem.FileOpen(fullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 

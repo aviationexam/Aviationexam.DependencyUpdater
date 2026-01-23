@@ -48,4 +48,15 @@ public static class FrameworkFlagsExtensions
 
         return false;
     }
+
+    public static bool TryGetCompatibleFramework<T>(
+        this IDictionary<NugetTargetFrameworkGroup, T> targetFrameworkDict,
+        NugetTargetFramework targetFramework,
+        [MaybeNullWhen(false)] out T dependencyFlag
+    )
+    {
+        dependencyFlag = default;
+
+        return false;
+    }
 }

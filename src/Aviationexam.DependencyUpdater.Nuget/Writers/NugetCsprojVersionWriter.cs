@@ -21,7 +21,7 @@ public sealed class NugetCsprojVersionWriter(
     public async Task<ESetVersion> TrySetVersionAsync(
         NugetUpdateCandidate nugetUpdateCandidate,
         string fullPath,
-        IDictionary<string, IDictionary<string, PackageVersion>> groupPackageVersions,
+        IDictionary<string, IDictionary<NugetTargetFrameworkGroup, PackageVersion>> groupPackageVersions,
         CancellationToken cancellationToken
     )
     {
