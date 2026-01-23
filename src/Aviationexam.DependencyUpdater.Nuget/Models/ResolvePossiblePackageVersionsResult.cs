@@ -5,5 +5,5 @@ namespace Aviationexam.DependencyUpdater.Nuget.Models;
 
 public sealed record ResolvePossiblePackageVersionsResult(
     IReadOnlyDictionary<UpdateCandidate, IReadOnlyCollection<PossiblePackageVersion>> DependencyToUpdate,
-    IReadOnlyDictionary<string, IDictionary<NugetPackageCondition, IDictionary<NugetTargetFrameworkGroup, PackageVersion>>> CurrentPackageVersions
+    CurrentPackageVersions CurrentPackageVersions
 );
