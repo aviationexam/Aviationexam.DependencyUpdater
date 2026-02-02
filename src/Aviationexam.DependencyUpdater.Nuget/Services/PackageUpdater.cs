@@ -295,7 +295,9 @@ public sealed class PackageUpdater(
             );
         }
 
-        return null;
+        // Return existing PR ID even if nothing was pushed, to preserve PR tracking
+        // and prevent cleanup from closing valid PRs on subsequent runs
+        return pullRequestId;
     }
 
     private async Task RestoreNugetPackagesAsync(
