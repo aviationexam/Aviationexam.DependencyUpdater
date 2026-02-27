@@ -28,20 +28,28 @@
   <PropertyGroup>
     <DependabotSchemaUrl>https://www.schemastore.org/dependabot-2.0.json</DependabotSchemaUrl>
     <DependabotSchemaFile>$(MSBuildProjectDirectory)/dependabot-2.0.json</DependabotSchemaFile>
+    <BaseSchemaUrl>https://json.schemastore.org/base.json</BaseSchemaUrl>
+    <BaseSchemaFile>$(MSBuildProjectDirectory)/base.json</BaseSchemaFile>
   </PropertyGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="$(DependabotSchemaFile)" />
+    <AdditionalFiles Include="$(BaseSchemaFile)" />
   </ItemGroup>
 
   <Target Name="DownloadDependabotSchema" BeforeTargets="Restore;_GenerateRestoreProjectSpec" Condition=" !Exists('$(DependabotSchemaFile)') AND '$(DependencyUpdaterMinimalRestore)' != 'true' ">
     <Message Importance="High" Text="Downloading $(DependabotSchemaUrl) to the $(DependabotSchemaFile)" />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sSL $(DependabotSchemaUrl) --output $(DependabotSchemaFile)" />
+  </Target>
 
-    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sS $(DependabotSchemaUrl) --output $(DependabotSchemaFile)" />
+  <Target Name="DownloadBaseSchema" BeforeTargets="Restore;_GenerateRestoreProjectSpec" Condition=" !Exists('$(BaseSchemaFile)') AND '$(DependencyUpdaterMinimalRestore)' != 'true' ">
+    <Message Importance="High" Text="Downloading $(BaseSchemaUrl) to the $(BaseSchemaFile)" />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="curl -sSL $(BaseSchemaUrl) --output $(BaseSchemaFile)" />
   </Target>
 
   <Target Name="CleanDependabotSchema" AfterTargets="Clean">
     <Delete Files="$(DependabotSchemaFile)" TreatErrorsAsWarnings="true" />
+    <Delete Files="$(BaseSchemaFile)" TreatErrorsAsWarnings="true" />
   </Target>
 
 </Project>
