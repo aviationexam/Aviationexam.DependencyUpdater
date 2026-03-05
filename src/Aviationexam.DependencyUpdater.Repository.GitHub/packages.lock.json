@@ -79,19 +79,19 @@
       },
       "Polly.Core": {
         "type": "Direct",
-        "requested": "[8.6.5, )",
-        "resolved": "8.6.5",
-        "contentHash": "t+sUVrIwvo7UmsgHGgOG9F0GDZSRIm47u2ylH17Gvcv1q5hNEwgD5GoBlFyc0kh/pebmPyrAgvGsR/65ZBaXlg=="
+        "requested": "[8.6.6, )",
+        "resolved": "8.6.6",
+        "contentHash": "lCBL9mmhF9TZxHG3beVRkyjlLohkIC464xIAq7J7Y59C+z42hmsdUaeCKl2SIAYertOUU5TeBXyQDLDQGIKePQ=="
       },
       "Polly.Extensions": {
         "type": "Direct",
-        "requested": "[8.6.5, )",
-        "resolved": "8.6.5",
-        "contentHash": "Ui+qN9zCgcy0/YEthA0wVm1mrDQe7+ud82Vz5wedbk22t17t6G+6nm/Q3GYxyCyTl5UFVoO2MbfmDv7a0K6Zww==",
+        "requested": "[8.6.6, )",
+        "resolved": "8.6.6",
+        "contentHash": "hUhiTVtJud5PhVmt6bnns164wn5BPLzdzXIu09aZOHf/1NiHYgL+wzpQpvj00Fhcp0OYnFaVMcolMYQjxtVKrg==",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
           "Microsoft.Extensions.Options": "8.0.0",
-          "Polly.Core": "8.6.5"
+          "Polly.Core": "8.6.6"
         }
       },
       "Microsoft.Extensions.Configuration": {
