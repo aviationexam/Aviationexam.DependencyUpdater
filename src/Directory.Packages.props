@@ -32,8 +32,8 @@
     <PackageVersion Include="NodaTime" Version="3.3.1" />
     <PackageVersion Include="NuGet.ProjectModel" Version="7.3.0" />
     <PackageVersion Include="Octokit" Version="14.0.0" />
-    <PackageVersion Include="Polly.Core" Version="8.6.5" />
-    <PackageVersion Include="Polly.Extensions" Version="8.6.5" />
+    <PackageVersion Include="Polly.Core" Version="8.6.6" />
+    <PackageVersion Include="Polly.Extensions" Version="8.6.6" />
     <PackageVersion Include="Yaml2JsonNode" Version="3.0.0" />
     <PackageVersion Include="YamlDotNet" Version="16.3.0" />
     <PackageVersion Include="System.Buffers" Version="4.6.1" />
