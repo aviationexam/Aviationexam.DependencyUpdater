@@ -18,3 +18,9 @@
 - DependencyGraphConstructor pattern mirrors DependencyAnalyzer: map sources via NugetUpdaterContextExtensions, seed queue from direct dependencies, then BFS transitive package dependencies
 - For package dependency traversal, use PackageVersionWithDependencySets.DependencySets with source preference order Default -> Fallback and create edge target TFM from DependencySet.TargetFramework
 - When FetchDependencyVersionsAsync has no matching current version metadata, keep node in graph marked as metadata unavailable and log warning
+
+## 2026-04-01 Pipeline Integration Tests
+- DependencyGraphPipeline end-to-end tests should mock INugetVersionFetcher and keep real NugetCsprojParser + DependencyGraphConstructor + DependencyGraphColorizer to validate orchestration
+- IFileSystem mock must return fresh stream instances for csproj reads because pipeline parses each file twice (PackageReference and ProjectReference passes)
+- NugetFinder.GetAllNugetFiles calls EnumerateFiles for four patterns (*.csproj, Directory.Packages.props, Nuget.Config, dotnet-tools.json), so integration tests must setup all of them
+- Package metadata returned by mocks must be PackageSearchMetadataRegistration (not arbitrary IPackageSearchMetadata) because mapper enforces registration type
