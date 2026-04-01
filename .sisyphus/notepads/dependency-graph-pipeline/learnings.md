@@ -13,3 +13,5 @@
 - ProjectReference Include attribute contains relative path; use Path.GetFileNameWithoutExtension() for project name
 - ConditionalTargetFrameworkResolver.Resolve() works for both PackageReference and ProjectReference conditions (accepts any identifier string for logging)
 - xUnit v3 with Microsoft.Testing.Platform uses --filter-class/--filter-method instead of --filter
+- DependencyGraphColorizer should accumulate links in three phases: direct project refs, transitive project-reference inheritance (with full project chain), then transitive package-edge traversal from each inherited/direct seed
+- Rebuilding colored graphs should preserve original node metadata + edges via DependencyGraphBuilder and only add ProjectDependencyLink entries
