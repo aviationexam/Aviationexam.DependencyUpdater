@@ -15,3 +15,6 @@
 - xUnit v3 with Microsoft.Testing.Platform uses --filter-class/--filter-method instead of --filter
 - DependencyGraphColorizer should accumulate links in three phases: direct project refs, transitive project-reference inheritance (with full project chain), then transitive package-edge traversal from each inherited/direct seed
 - Rebuilding colored graphs should preserve original node metadata + edges via DependencyGraphBuilder and only add ProjectDependencyLink entries
+- DependencyGraphConstructor pattern mirrors DependencyAnalyzer: map sources via NugetUpdaterContextExtensions, seed queue from direct dependencies, then BFS transitive package dependencies
+- For package dependency traversal, use PackageVersionWithDependencySets.DependencySets with source preference order Default -> Fallback and create edge target TFM from DependencySet.TargetFramework
+- When FetchDependencyVersionsAsync has no matching current version metadata, keep node in graph marked as metadata unavailable and log warning
