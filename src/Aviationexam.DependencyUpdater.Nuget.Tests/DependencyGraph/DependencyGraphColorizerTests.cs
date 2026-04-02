@@ -18,23 +18,31 @@ public sealed class DependencyGraphColorizerTests
         Substitute.For<ILogger<DependencyGraphColorizer>>()
     );
 
-    private static NugetDependency MakePackageRef(string csprojPath, string packageName, int major, int minor, int patch = 0)
-        => new(
-            new NugetFile(csprojPath, ENugetFileType.Csproj),
-            new NugetPackageReference(packageName, new VersionRange(new NuGetVersion(major, minor, patch)), null),
-            [Tfm]
-        );
+    private static NugetDependency MakePackageRef(
+        string projectName,
+        string packageName,
+        int major,
+        int minor,
+        int patch = 0
+    ) => new(
+        MakeCsprojFile(projectName),
+        new NugetPackageReference(packageName, new VersionRange(new NuGetVersion(major, minor, patch)), null),
+        [Tfm]
+    );
 
-    private static NugetFile MakeCsprojFile(string projectName)
-        => new($"{projectName}/{projectName}.csproj", ENugetFileType.Csproj);
+    private static NugetFile MakeCsprojFile(
+        string projectName
+    ) => new($"{projectName}/{projectName}.csproj", ENugetFileType.Csproj);
 
-    private static ProjectReference MakeProjectRef(string definingProjectName, string referencedProjectName)
-        => new(
-            MakeCsprojFile(definingProjectName),
-            referencedProjectName,
-            $"../{referencedProjectName}/{referencedProjectName}.csproj",
-            [Tfm]
-        );
+    private static ProjectReference MakeProjectRef(
+        string definingProjectName,
+        string referencedProjectName
+    ) => new(
+        MakeCsprojFile(definingProjectName),
+        referencedProjectName,
+        $"../{referencedProjectName}/{referencedProjectName}.csproj",
+        [Tfm]
+    );
 
     [Fact]
     public void ColorizeGraph_ExampleScenario_ProducesExpectedLinks()
@@ -50,8 +58,8 @@ public sealed class DependencyGraphColorizerTests
 
         IReadOnlyCollection<NugetDependency> packageDependencies =
         [
-            MakePackageRef("A/A.csproj", "D", 1, 0, 0),
-            MakePackageRef("B/B.csproj", "E", 1, 0, 0),
+            MakePackageRef("A", "D", 1, 0, 0),
+            MakePackageRef("B", "E", 1, 0, 0),
         ];
 
         IReadOnlyCollection<ProjectReference> projectReferences =
@@ -103,8 +111,8 @@ public sealed class DependencyGraphColorizerTests
 
         IReadOnlyCollection<NugetDependency> packageDependencies =
         [
-            MakePackageRef("A/A.csproj", "D", 1, 0, 0),
-            MakePackageRef("B/B.csproj", "E", 1, 0, 0),
+            MakePackageRef("A", "D", 1, 0, 0),
+            MakePackageRef("B", "E", 1, 0, 0),
         ];
 
         IReadOnlyCollection<ProjectReference> projectReferences =
@@ -139,7 +147,7 @@ public sealed class DependencyGraphColorizerTests
 
         IReadOnlyCollection<NugetDependency> packageDependencies =
         [
-            MakePackageRef("C/C.csproj", "E", 1, 0, 0),
+            MakePackageRef("C", "E", 1, 0, 0),
         ];
 
         IReadOnlyCollection<ProjectReference> projectReferences =
@@ -178,8 +186,8 @@ public sealed class DependencyGraphColorizerTests
 
         IReadOnlyCollection<NugetDependency> packageDependencies =
         [
-            MakePackageRef("A/A.csproj", "E", 1, 0, 0),
-            MakePackageRef("B/B.csproj", "E", 1, 0, 0),
+            MakePackageRef("A", "E", 1, 0, 0),
+            MakePackageRef("B", "E", 1, 0, 0),
         ];
 
         IReadOnlyCollection<ProjectReference> projectReferences =
@@ -233,7 +241,7 @@ public sealed class DependencyGraphColorizerTests
 
         IReadOnlyCollection<NugetDependency> packageDependencies =
         [
-            MakePackageRef("A/A.csproj", "D", 1, 0, 0),
+            MakePackageRef("A", "D", 1, 0, 0),
         ];
 
         // Act
