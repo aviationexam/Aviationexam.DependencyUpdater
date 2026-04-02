@@ -72,7 +72,11 @@ public sealed class DependencyGraphConstructor(
                 cancellationToken
             );
 
-            var currentVersion = fetchedVersions.FirstOrDefault(x => x == sourcePackageVersion);
+            var currentVersion = fetchedVersions.FirstOrDefault(x =>
+                x.Version == sourcePackageVersion.Version
+                && x.IsPrerelease == sourcePackageVersion.IsPrerelease
+                && x.ReleaseLabels.SequenceEqual(sourcePackageVersion.ReleaseLabels)
+            );
 
             if (currentVersion is null)
             {

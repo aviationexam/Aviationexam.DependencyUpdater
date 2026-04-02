@@ -17,6 +17,14 @@ public sealed class DependencyGraphBuilder
 
         if (_nodes.TryGetValue(key, out var existing))
         {
+            if (!isMetadataAvailable && existing.IsMetadataAvailable)
+            {
+                var updated = existing with { IsMetadataAvailable = false };
+                _nodes[key] = updated;
+
+                return updated;
+            }
+
             return existing;
         }
 

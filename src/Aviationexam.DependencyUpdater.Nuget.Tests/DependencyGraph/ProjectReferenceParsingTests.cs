@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Aviationexam.DependencyUpdater.Nuget.Tests.DependencyGraph;
 
-public class ProjectReferenceParsingTests(
+public sealed class ProjectReferenceParsingTests(
     ITestOutputHelper outputHelper
 )
 {

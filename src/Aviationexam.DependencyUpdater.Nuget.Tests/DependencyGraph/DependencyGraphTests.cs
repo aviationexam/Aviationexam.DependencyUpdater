@@ -106,7 +106,7 @@ public sealed class DependencyGraphTests
     }
 
     [Fact]
-    public void AddOrGetNode_DifferentIsMetadataAvailable_ReturnsSameNode()
+    public void AddOrGetNode_DifferentIsMetadataAvailable_UpdatesNodeToMetadataUnavailable()
     {
         // Arrange
         var builder = new DependencyGraphBuilder();
@@ -116,8 +116,7 @@ public sealed class DependencyGraphTests
         var first = builder.AddOrGetNode("A", version, isMetadataAvailable: true);
         var second = builder.AddOrGetNode("A", version, isMetadataAvailable: false);
 
-        // Assert - builder deduplicates by (name, version), ignoring IsMetadataAvailable
-        Assert.Same(first, second);
-        Assert.True(second.IsMetadataAvailable);
+        Assert.Equal(first, second);
+        Assert.False(second.IsMetadataAvailable);
     }
 }

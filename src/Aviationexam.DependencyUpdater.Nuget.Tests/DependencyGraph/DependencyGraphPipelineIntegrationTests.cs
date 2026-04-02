@@ -79,9 +79,9 @@ public sealed class DependencyGraphPipelineIntegrationTests
 
         var versionFetcher = CreateVersionFetcherMock(new Dictionary<string, IReadOnlyCollection<IPackageSearchMetadata>>(StringComparer.OrdinalIgnoreCase)
         {
-            ["D"] = [CreateMetadata("D", "1.0.0", ("net9.0", [("E", "1.0.0"), ("F", "1.0.0")]))],
-            ["E"] = [CreateMetadata("E", "1.0.0")],
-            ["F"] = [CreateMetadata("F", "1.0.0")],
+            ["D"] = [CreateMetadata("D", "1.0.0.0", ("net9.0", [("E", "1.0.0.0"), ("F", "1.0.0.0")]))],
+            ["E"] = [CreateMetadata("E", "1.0.0.0")],
+            ["F"] = [CreateMetadata("F", "1.0.0.0")],
         });
 
         var pipeline = CreatePipeline(fileSystem, versionFetcher);
@@ -140,9 +140,10 @@ public sealed class DependencyGraphPipelineIntegrationTests
             && l.Nature == EDependencyLinkNature.Transitive
         );
 
-        Assert.DoesNotContain(graph.ProjectLinks, l =>
+        Assert.Contains(graph.ProjectLinks, l =>
             l.ProjectName == "ProjectA"
             && l.Node.PackageName == "F"
+            && l.Nature == EDependencyLinkNature.Transitive
         );
     }
 
@@ -176,9 +177,9 @@ public sealed class DependencyGraphPipelineIntegrationTests
 
         var versionFetcher = CreateVersionFetcherMock(new Dictionary<string, IReadOnlyCollection<IPackageSearchMetadata>>(StringComparer.OrdinalIgnoreCase)
         {
-            ["X"] = [CreateMetadata("X", "1.0.0", ("net9.0", [("Y", "1.0.0")]), ("net10.0", [("Z", "1.0.0")]))],
-            ["Y"] = [CreateMetadata("Y", "1.0.0")],
-            ["Z"] = [CreateMetadata("Z", "1.0.0")],
+            ["X"] = [CreateMetadata("X", "1.0.0.0", ("net9.0", [("Y", "1.0.0.0")]), ("net10.0", [("Z", "1.0.0.0")]))],
+            ["Y"] = [CreateMetadata("Y", "1.0.0.0")],
+            ["Z"] = [CreateMetadata("Z", "1.0.0.0")],
         });
 
         var pipeline = CreatePipeline(fileSystem, versionFetcher);
@@ -211,7 +212,20 @@ public sealed class DependencyGraphPipelineIntegrationTests
 
         // Assert
         Assert.Contains(graph.Nodes.Values, n => n.PackageName == "X");
-        Assert.Empty(graph.Edges);
+        Assert.Contains(graph.Nodes.Values, n => n.PackageName == "Y");
+        Assert.Contains(graph.Nodes.Values, n => n.PackageName == "Z");
+
+        Assert.Contains(graph.Edges, e =>
+            e.From.PackageName == "X"
+            && e.To.PackageName == "Y"
+            && e.TargetFrameworks.Contains(tfmNet90)
+        );
+
+        Assert.Contains(graph.Edges, e =>
+            e.From.PackageName == "X"
+            && e.To.PackageName == "Z"
+            && e.TargetFrameworks.Contains(tfmNet100)
+        );
     }
 
     [Fact]
@@ -269,7 +283,7 @@ public sealed class DependencyGraphPipelineIntegrationTests
         // Assert
         var qNode = graph.FindNode("Q", ParseVersion("1.0.0.0"));
         Assert.NotNull(qNode);
-        Assert.True(qNode.IsMetadataAvailable);
+        Assert.False(qNode.IsMetadataAvailable);
     }
 
     private static DependencyGraphPipeline CreatePipeline(
@@ -351,12 +365,30 @@ public sealed class DependencyGraphPipelineIntegrationTests
             {
                 var dependency = callInfo.ArgAt<NugetDependency>(1);
                 var packageName = dependency.NugetPackage.GetPackageName();
+                var requestedVersion = dependency.NugetPackage.GetVersion()?.MapToNuGetVersion();
 
-                return Task.FromResult<IEnumerable<IPackageSearchMetadata>>(
-                    versionsByPackage.TryGetValue(packageName, out var metadata)
-                        ? metadata
-                        : []
-                );
+                if (!versionsByPackage.TryGetValue(packageName, out var metadata))
+                {
+                    return Task.FromResult<IEnumerable<IPackageSearchMetadata>>([]);
+                }
+
+                if (requestedVersion is null)
+                {
+                    return Task.FromResult<IEnumerable<IPackageSearchMetadata>>(metadata);
+                }
+
+                return Task.FromResult<IEnumerable<IPackageSearchMetadata>>(metadata.Select(entry =>
+                {
+                    if (entry is not PackageSearchMetadataRegistration registration)
+                    {
+                        return entry;
+                    }
+
+                    return (IPackageSearchMetadata) new PackageSearchMetadataRegistration()
+                        .SetPackageId(registration.PackageId)
+                        .SetVersion(requestedVersion)
+                        .SetDependencySetsInternal(registration.DependencySets);
+                }).ToArray());
             });
 
         return versionFetcher;
@@ -411,11 +443,11 @@ public sealed class DependencyGraphPipelineIntegrationTests
         params (string TargetFramework, IReadOnlyCollection<(string Id, string Version)> Dependencies)[] dependencySets
     ) => new PackageSearchMetadataRegistration()
         .SetPackageId(packageName)
-        .SetVersion(NuGetVersion.Parse(version))
+        .SetVersion(new NuGetVersion(Version.Parse(version)))
         .SetDependencySetsInternal(dependencySets.Select(set =>
             new PackageDependencyGroup(
                 NuGetFramework.ParseFolder(set.TargetFramework),
-                set.Dependencies.Select(x => new PackageDependency(x.Id, new VersionRange(NuGetVersion.Parse(x.Version)))).ToList()
+                set.Dependencies.Select(x => new PackageDependency(x.Id, new VersionRange(new NuGetVersion(Version.Parse(x.Version))))).ToList()
             )
         ).ToList());
 }
