@@ -148,6 +148,7 @@ public class NugetCsprojParser(
                 );
 
                 yield return new ProjectReference(
+                    nugetFile,
                     projectName,
                     includePath,
                     effectiveTargetFrameworks,

@@ -44,7 +44,7 @@ public sealed class DependencyGraphConstructor(
                 continue;
             }
 
-            graphBuilder.AddOrGetNode(packageName, packageVersion);
+            graphBuilder.AddOrGetNode(dependency.NugetPackage);
             processingQueue.Enqueue((dependency, sources));
         }
 
@@ -80,7 +80,10 @@ public sealed class DependencyGraphConstructor(
 
             if (currentVersion is null)
             {
-                graphBuilder.AddOrGetNode(sourcePackageName, sourcePackageVersion, isMetadataAvailable: false);
+                graphBuilder.AddOrGetNode(
+                    new NugetPackageVersion(sourcePackageName, sourcePackageVersion.GetSerializedVersion()),
+                    isMetadataAvailable: false
+                );
 
                 if (logger.IsEnabled(LogLevel.Warning))
                 {
@@ -94,7 +97,9 @@ public sealed class DependencyGraphConstructor(
                 continue;
             }
 
-            var sourceNode = graphBuilder.AddOrGetNode(sourcePackageName, sourcePackageVersion);
+            var sourceNode = graphBuilder.AddOrGetNode(
+                new NugetPackageVersion(sourcePackageName, sourcePackageVersion.GetSerializedVersion())
+            );
             var dependencySets = GetPreferredDependencySets(currentVersion.DependencySets);
 
             foreach (var dependencySet in dependencySets)
@@ -108,7 +113,9 @@ public sealed class DependencyGraphConstructor(
                         continue;
                     }
 
-                    var targetNode = graphBuilder.AddOrGetNode(packageDependency.Id, minVersion);
+                    var targetNode = graphBuilder.AddOrGetNode(
+                        new NugetPackageVersion(packageDependency.Id, minVersion.GetSerializedVersion())
+                    );
                     graphBuilder.AddEdge(sourceNode, targetNode, [targetFramework]);
 
                     var transitiveDependency = new NugetDependency(

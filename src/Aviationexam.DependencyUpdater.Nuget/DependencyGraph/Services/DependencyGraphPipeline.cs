@@ -5,7 +5,6 @@ using Aviationexam.DependencyUpdater.Nuget.Parsers;
 using Aviationexam.DependencyUpdater.Nuget.Services;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,12 +35,11 @@ public sealed class DependencyGraphPipeline(
             logger.LogDebug("Found {CsprojCount} csproj files for dependency graph", csprojFiles.Count);
         }
 
-        var projects = new List<ProjectInfo>(csprojFiles.Count);
+        var allPackageDependencies = new List<NugetDependency>();
+        var allProjectReferences = new List<ProjectReference>();
 
         foreach (var nugetFile in csprojFiles)
         {
-            var projectName = Path.GetFileNameWithoutExtension(nugetFile.RelativePath);
-
             var packageReferences = csprojParser.Parse(
                 repositoryConfig.TargetDirectoryPath, nugetFile
             ).ToList();
@@ -50,17 +48,17 @@ public sealed class DependencyGraphPipeline(
                 repositoryConfig.TargetDirectoryPath, nugetFile
             ).ToList();
 
-            projects.Add(new ProjectInfo(
-                projectName,
-                nugetFile.RelativePath,
-                packageReferences,
-                projectReferences
-            ));
+            allPackageDependencies.AddRange(packageReferences);
+            allProjectReferences.AddRange(projectReferences);
         }
 
         if (logger.IsEnabled(LogLevel.Debug))
         {
-            logger.LogDebug("Parsed {ProjectCount} projects for dependency graph construction", projects.Count);
+            logger.LogDebug(
+                "Parsed {PackageReferenceCount} package references and {ProjectReferenceCount} project references for dependency graph construction",
+                allPackageDependencies.Count,
+                allProjectReferences.Count
+            );
         }
 
         var graph = await graphConstructor.ConstructGraphAsync(
@@ -70,7 +68,7 @@ public sealed class DependencyGraphPipeline(
             cancellationToken
         );
 
-        var coloredGraph = colorizer.ColorizeGraph(graph, projects);
+        var coloredGraph = colorizer.ColorizeGraph(graph, allPackageDependencies, allProjectReferences);
 
         return coloredGraph;
     }

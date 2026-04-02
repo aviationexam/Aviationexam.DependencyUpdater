@@ -1,11 +1,10 @@
-using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.DependencyGraph.Models;
 using Aviationexam.DependencyUpdater.Nuget.DependencyGraph.Services;
-using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NuGet.Versioning;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -19,13 +18,21 @@ public sealed class DependencyGraphColorizerTests
         Substitute.For<ILogger<DependencyGraphColorizer>>()
     );
 
-    private static PackageVersion V(int major, int minor, int patch = 0)
-        => new NuGetVersion(major, minor, patch).MapToPackageVersion();
-
     private static NugetDependency MakePackageRef(string csprojPath, string packageName, int major, int minor, int patch = 0)
         => new(
             new NugetFile(csprojPath, ENugetFileType.Csproj),
             new NugetPackageReference(packageName, new VersionRange(new NuGetVersion(major, minor, patch)), null),
+            [Tfm]
+        );
+
+    private static NugetFile MakeCsprojFile(string projectName)
+        => new($"{projectName}/{projectName}.csproj", ENugetFileType.Csproj);
+
+    private static ProjectReference MakeProjectRef(string definingProjectName, string referencedProjectName)
+        => new(
+            MakeCsprojFile(definingProjectName),
+            referencedProjectName,
+            $"../{referencedProjectName}/{referencedProjectName}.csproj",
             [Tfm]
         );
 
@@ -34,24 +41,26 @@ public sealed class DependencyGraphColorizerTests
     {
         // Arrange
         var builder = new DependencyGraphBuilder();
-        var v1 = V(1, 0, 0);
-        var nodeD = builder.AddOrGetNode("D", v1);
-        var nodeE = builder.AddOrGetNode("E", v1);
-        var nodeF = builder.AddOrGetNode("F", v1);
+        var nodeD = builder.AddOrGetNode(new NugetPackageVersion("D", "1.0.0"));
+        var nodeE = builder.AddOrGetNode(new NugetPackageVersion("E", "1.0.0"));
+        var nodeF = builder.AddOrGetNode(new NugetPackageVersion("F", "1.0.0"));
         builder.AddEdge(nodeD, nodeE, [Tfm]);
         builder.AddEdge(nodeD, nodeF, [Tfm]);
         var graph = builder.Build();
 
-        var projectB = new ProjectInfo("B", "B/B.csproj",
-            [MakePackageRef("B/B.csproj", "E", 1, 0, 0)],
-            []);
+        IReadOnlyCollection<NugetDependency> packageDependencies =
+        [
+            MakePackageRef("A/A.csproj", "D", 1, 0, 0),
+            MakePackageRef("B/B.csproj", "E", 1, 0, 0),
+        ];
 
-        var projectA = new ProjectInfo("A", "A/A.csproj",
-            [MakePackageRef("A/A.csproj", "D", 1, 0, 0)],
-            [new ProjectReference("B", "../B/B.csproj", [Tfm])]);
+        IReadOnlyCollection<ProjectReference> projectReferences =
+        [
+            MakeProjectRef("A", "B"),
+        ];
 
         // Act
-        var result = _colorizer.ColorizeGraph(graph, [projectA, projectB]);
+        var result = _colorizer.ColorizeGraph(graph, packageDependencies, projectReferences);
 
         // Assert
         Assert.Equal(5, result.ProjectLinks.Count);
@@ -87,22 +96,24 @@ public sealed class DependencyGraphColorizerTests
     {
         // Arrange
         var builder = new DependencyGraphBuilder();
-        var v1 = V(1, 0, 0);
-        var nodeD = builder.AddOrGetNode("D", v1);
-        var nodeE = builder.AddOrGetNode("E", v1);
+        var nodeD = builder.AddOrGetNode(new NugetPackageVersion("D", "1.0.0"));
+        var nodeE = builder.AddOrGetNode(new NugetPackageVersion("E", "1.0.0"));
         builder.AddEdge(nodeD, nodeE, [Tfm]);
         var graph = builder.Build();
 
-        var projectB = new ProjectInfo("B", "B/B.csproj",
-            [MakePackageRef("B/B.csproj", "E", 1, 0, 0)],
-            []);
+        IReadOnlyCollection<NugetDependency> packageDependencies =
+        [
+            MakePackageRef("A/A.csproj", "D", 1, 0, 0),
+            MakePackageRef("B/B.csproj", "E", 1, 0, 0),
+        ];
 
-        var projectA = new ProjectInfo("A", "A/A.csproj",
-            [MakePackageRef("A/A.csproj", "D", 1, 0, 0)],
-            [new ProjectReference("B", "../B/B.csproj", [Tfm])]);
+        IReadOnlyCollection<ProjectReference> projectReferences =
+        [
+            MakeProjectRef("A", "B"),
+        ];
 
         // Act
-        var result = _colorizer.ColorizeGraph(graph, [projectA, projectB]);
+        var result = _colorizer.ColorizeGraph(graph, packageDependencies, projectReferences);
 
         // Assert
         var transitiveLinksAtoE = result.ProjectLinks
@@ -123,24 +134,22 @@ public sealed class DependencyGraphColorizerTests
     {
         // Arrange
         var builder = new DependencyGraphBuilder();
-        var v1 = V(1, 0, 0);
-        builder.AddOrGetNode("E", v1);
+        builder.AddOrGetNode(new NugetPackageVersion("E", "1.0.0"));
         var graph = builder.Build();
 
-        var projectC = new ProjectInfo("C", "C/C.csproj",
-            [MakePackageRef("C/C.csproj", "E", 1, 0, 0)],
-            []);
+        IReadOnlyCollection<NugetDependency> packageDependencies =
+        [
+            MakePackageRef("C/C.csproj", "E", 1, 0, 0),
+        ];
 
-        var projectB = new ProjectInfo("B", "B/B.csproj",
-            [],
-            [new ProjectReference("C", "../C/C.csproj", [Tfm])]);
-
-        var projectA = new ProjectInfo("A", "A/A.csproj",
-            [],
-            [new ProjectReference("B", "../B/B.csproj", [Tfm])]);
+        IReadOnlyCollection<ProjectReference> projectReferences =
+        [
+            MakeProjectRef("B", "C"),
+            MakeProjectRef("A", "B"),
+        ];
 
         // Act
-        var result = _colorizer.ColorizeGraph(graph, [projectA, projectB, projectC]);
+        var result = _colorizer.ColorizeGraph(graph, packageDependencies, projectReferences);
 
         // Assert
         Assert.Contains(result.ProjectLinks, l =>
@@ -164,20 +173,22 @@ public sealed class DependencyGraphColorizerTests
     {
         // Arrange
         var builder = new DependencyGraphBuilder();
-        var v1 = V(1, 0, 0);
-        builder.AddOrGetNode("E", v1);
+        builder.AddOrGetNode(new NugetPackageVersion("E", "1.0.0"));
         var graph = builder.Build();
 
-        var projectB = new ProjectInfo("B", "B/B.csproj",
-            [MakePackageRef("B/B.csproj", "E", 1, 0, 0)],
-            []);
+        IReadOnlyCollection<NugetDependency> packageDependencies =
+        [
+            MakePackageRef("A/A.csproj", "E", 1, 0, 0),
+            MakePackageRef("B/B.csproj", "E", 1, 0, 0),
+        ];
 
-        var projectA = new ProjectInfo("A", "A/A.csproj",
-            [MakePackageRef("A/A.csproj", "E", 1, 0, 0)],
-            [new ProjectReference("B", "../B/B.csproj", [Tfm])]);
+        IReadOnlyCollection<ProjectReference> projectReferences =
+        [
+            MakeProjectRef("A", "B"),
+        ];
 
         // Act
-        var result = _colorizer.ColorizeGraph(graph, [projectA, projectB]);
+        var result = _colorizer.ColorizeGraph(graph, packageDependencies, projectReferences);
 
         // Assert
         var linksAtoE = result.ProjectLinks
@@ -198,13 +209,11 @@ public sealed class DependencyGraphColorizerTests
     {
         // Arrange
         var builder = new DependencyGraphBuilder();
-        builder.AddOrGetNode("E", V(1, 0, 0));
+        builder.AddOrGetNode(new NugetPackageVersion("E", "1.0.0"));
         var graph = builder.Build();
 
-        var emptyProject = new ProjectInfo("Empty", "Empty/Empty.csproj", [], []);
-
         // Act
-        var result = _colorizer.ColorizeGraph(graph, [emptyProject]);
+        var result = _colorizer.ColorizeGraph(graph, [], []);
 
         // Assert
         Assert.Empty(result.ProjectLinks);
@@ -215,20 +224,20 @@ public sealed class DependencyGraphColorizerTests
     {
         // Arrange
         var builder = new DependencyGraphBuilder();
-        var v1 = V(1, 0, 0);
-        var nodeD = builder.AddOrGetNode("D", v1);
-        var nodeE = builder.AddOrGetNode("E", v1);
-        var nodeF = builder.AddOrGetNode("F", v1);
+        var nodeD = builder.AddOrGetNode(new NugetPackageVersion("D", "1.0.0"));
+        var nodeE = builder.AddOrGetNode(new NugetPackageVersion("E", "1.0.0"));
+        var nodeF = builder.AddOrGetNode(new NugetPackageVersion("F", "1.0.0"));
         builder.AddEdge(nodeD, nodeE, [new NugetTargetFramework("net9.0")]);
         builder.AddEdge(nodeD, nodeF, [new NugetTargetFramework("net10.0")]);
         var graph = builder.Build();
 
-        var projectA = new ProjectInfo("A", "A/A.csproj",
-            [MakePackageRef("A/A.csproj", "D", 1, 0, 0)],
-            []);
+        IReadOnlyCollection<NugetDependency> packageDependencies =
+        [
+            MakePackageRef("A/A.csproj", "D", 1, 0, 0),
+        ];
 
         // Act
-        var result = _colorizer.ColorizeGraph(graph, [projectA]);
+        var result = _colorizer.ColorizeGraph(graph, packageDependencies, []);
 
         // Assert
         Assert.Contains(result.ProjectLinks, l =>

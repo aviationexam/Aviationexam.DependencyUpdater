@@ -13,6 +13,9 @@ public sealed class DependencyGraphTests
     private static PackageVersion CreateVersion(int major, int minor, int patch = 0)
         => new(new Version(major, minor, patch, 0), false, [], NugetReleaseLabelComparer.Instance);
 
+    private static NugetPackageVersion CreatePackage(string name, PackageVersion version)
+        => new(name, version.GetSerializedVersion());
+
     [Fact]
     public void AddOrGetNode_SameKey_ReturnsSameInstance()
     {
@@ -21,8 +24,8 @@ public sealed class DependencyGraphTests
         var version = CreateVersion(1, 0);
 
         // Act
-        var first = builder.AddOrGetNode("A", version);
-        var second = builder.AddOrGetNode("A", version);
+        var first = builder.AddOrGetNode(CreatePackage("A", version));
+        var second = builder.AddOrGetNode(CreatePackage("A", version));
 
         // Assert
         Assert.Same(first, second);
@@ -33,8 +36,8 @@ public sealed class DependencyGraphTests
     {
         // Arrange
         var builder = new DependencyGraphBuilder();
-        var nodeA = builder.AddOrGetNode("A", CreateVersion(1, 0));
-        var nodeB = builder.AddOrGetNode("B", CreateVersion(2, 0));
+        var nodeA = builder.AddOrGetNode(CreatePackage("A", CreateVersion(1, 0)));
+        var nodeB = builder.AddOrGetNode(CreatePackage("B", CreateVersion(2, 0)));
         var tfms = new[] { new NugetTargetFramework("net9.0") };
 
         builder.AddEdge(nodeA, nodeB, tfms);
@@ -59,13 +62,13 @@ public sealed class DependencyGraphTests
     {
         // Arrange
         var builder = new DependencyGraphBuilder();
-        builder.AddOrGetNode("A", CreateVersion(1, 0));
+        builder.AddOrGetNode(CreatePackage("A", CreateVersion(1, 0)));
 
         var graph = builder.Build();
 
         // Act - add more to builder after Build()
         var newVersion = CreateVersion(2, 0);
-        builder.AddOrGetNode("NewNode", newVersion);
+        builder.AddOrGetNode(CreatePackage("NewNode", newVersion));
 
         // Assert - original graph is unaffected
         Assert.Single(graph.Nodes);
@@ -95,7 +98,7 @@ public sealed class DependencyGraphTests
     {
         // Arrange
         var builder = new DependencyGraphBuilder();
-        builder.AddOrGetNode("A", CreateVersion(1, 0));
+        builder.AddOrGetNode(CreatePackage("A", CreateVersion(1, 0)));
         var graph = builder.Build();
 
         // Act
@@ -113,8 +116,8 @@ public sealed class DependencyGraphTests
         var version = CreateVersion(1, 0);
 
         // Act
-        var first = builder.AddOrGetNode("A", version, isMetadataAvailable: true);
-        var second = builder.AddOrGetNode("A", version, isMetadataAvailable: false);
+        var first = builder.AddOrGetNode(CreatePackage("A", version), isMetadataAvailable: true);
+        var second = builder.AddOrGetNode(CreatePackage("A", version), isMetadataAvailable: false);
 
         Assert.Equal(first, second);
         Assert.False(second.IsMetadataAvailable);

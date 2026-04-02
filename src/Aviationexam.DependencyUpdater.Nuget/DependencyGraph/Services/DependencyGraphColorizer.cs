@@ -1,7 +1,10 @@
 using Aviationexam.DependencyUpdater.Nuget.DependencyGraph.Models;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
+using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Aviationexam.DependencyUpdater.Nuget.DependencyGraph.Services;
 
@@ -11,22 +14,29 @@ public sealed class DependencyGraphColorizer(
 {
     public DependencyGraph ColorizeGraph(
         DependencyGraph graph,
-        IReadOnlyCollection<ProjectInfo> projects
+        IReadOnlyCollection<NugetDependency> packageDependencies,
+        IReadOnlyCollection<ProjectReference> projectReferences
     )
     {
-        var projectByName = BuildProjectMap(projects);
+        var packageDependenciesByProject = BuildPackageDependencyMap(packageDependencies);
+        var projectReferencesByProject = BuildProjectReferenceMap(projectReferences);
+        var allProjectNames = packageDependenciesByProject.Keys
+            .Concat(projectReferencesByProject.Keys)
+            .Distinct()
+            .ToList();
+
         var allLinks = new List<ProjectDependencyLink>();
         var seedLinks = new List<ProjectDependencyLink>();
 
-        AddDirectLinks(graph, projects, allLinks, seedLinks);
-        AddTransitiveProjectReferenceLinks(graph, projects, projectByName, allLinks, seedLinks);
+        AddDirectLinks(graph, packageDependenciesByProject, allLinks, seedLinks);
+        AddTransitiveProjectReferenceLinks(graph, allProjectNames, packageDependenciesByProject, projectReferencesByProject, allLinks, seedLinks);
         AddTransitivePackageGraphLinks(graph, seedLinks, allLinks);
 
         if (logger.IsEnabled(LogLevel.Debug))
         {
             logger.LogDebug(
                 "Colorized dependency graph with {ProjectCount} projects and {LinkCount} project links",
-                projects.Count,
+                allProjectNames.Count,
                 allLinks.Count
             );
         }
@@ -34,31 +44,29 @@ public sealed class DependencyGraphColorizer(
         return RebuildGraphWithProjectLinks(graph, allLinks);
     }
 
-    private static Dictionary<string, ProjectInfo> BuildProjectMap(IReadOnlyCollection<ProjectInfo> projects)
-    {
-        var result = new Dictionary<string, ProjectInfo>();
+    private static Dictionary<string, IReadOnlyCollection<NugetDependency>> BuildPackageDependencyMap(IReadOnlyCollection<NugetDependency> packageDependencies)
+        => packageDependencies
+            .GroupBy(dependency => GetProjectName(dependency.NugetFile))
+            .ToDictionary(group => group.Key, group => (IReadOnlyCollection<NugetDependency>) group.ToList());
 
-        foreach (var project in projects)
-        {
-            if (!result.ContainsKey(project.ProjectName))
-            {
-                result[project.ProjectName] = project;
-            }
-        }
+    private static Dictionary<string, IReadOnlyCollection<ProjectReference>> BuildProjectReferenceMap(IReadOnlyCollection<ProjectReference> projectReferences)
+        => projectReferences
+            .GroupBy(projectReference => GetProjectName(projectReference.NugetFile))
+            .ToDictionary(group => group.Key, group => (IReadOnlyCollection<ProjectReference>) group.ToList());
 
-        return result;
-    }
+    private static string GetProjectName(NugetFile nugetFile)
+        => Path.GetFileNameWithoutExtension(nugetFile.RelativePath);
 
     private static void AddDirectLinks(
         DependencyGraph graph,
-        IReadOnlyCollection<ProjectInfo> projects,
+        IReadOnlyDictionary<string, IReadOnlyCollection<NugetDependency>> packageDependenciesByProject,
         ICollection<ProjectDependencyLink> allLinks,
         ICollection<ProjectDependencyLink> seedLinks
     )
     {
-        foreach (var project in projects)
+        foreach (var (projectName, packageDependencies) in packageDependenciesByProject)
         {
-            foreach (var packageReference in project.PackageReferences)
+            foreach (var packageReference in packageDependencies)
             {
                 var packageName = packageReference.NugetPackage.GetPackageName();
                 var packageVersion = packageReference.NugetPackage.GetVersion();
@@ -76,10 +84,10 @@ public sealed class DependencyGraphColorizer(
                 }
 
                 var link = new ProjectDependencyLink(
-                    project.ProjectName,
+                    projectName,
                     node,
                     EDependencyLinkNature.Direct,
-                    [project.ProjectName]
+                    [projectName]
                 );
 
                 allLinks.Add(link);
@@ -90,63 +98,65 @@ public sealed class DependencyGraphColorizer(
 
     private static void AddTransitiveProjectReferenceLinks(
         DependencyGraph graph,
-        IReadOnlyCollection<ProjectInfo> projects,
-        IReadOnlyDictionary<string, ProjectInfo> projectByName,
+        IReadOnlyCollection<string> allProjectNames,
+        IReadOnlyDictionary<string, IReadOnlyCollection<NugetDependency>> packageDependenciesByProject,
+        IReadOnlyDictionary<string, IReadOnlyCollection<ProjectReference>> projectReferencesByProject,
         ICollection<ProjectDependencyLink> allLinks,
         ICollection<ProjectDependencyLink> seedLinks
     )
     {
-        foreach (var project in projects)
+        foreach (var projectName in allProjectNames)
         {
-            var stack = new Stack<(ProjectInfo Project, List<string> Chain)>();
-            var rootChain = new List<string> { project.ProjectName };
+            var stack = new Stack<(string ProjectName, List<string> Chain)>();
+            var rootChain = new List<string> { projectName };
 
-            foreach (var projectReference in project.ProjectReferences)
+            if (!projectReferencesByProject.TryGetValue(projectName, out var rootProjectReferences))
             {
-                if (!projectByName.TryGetValue(projectReference.ProjectName, out var referencedProject))
-                {
-                    continue;
-                }
+                continue;
+            }
 
+            foreach (var projectReference in rootProjectReferences)
+            {
                 var chain = new List<string>(rootChain)
                 {
-                    referencedProject.ProjectName,
+                    projectReference.ProjectName,
                 };
 
-                stack.Push((referencedProject, chain));
+                stack.Push((projectReference.ProjectName, chain));
             }
 
             while (stack.TryPop(out var item))
             {
-                var (currentProject, chain) = item;
+                var (currentProjectName, chain) = item;
 
                 AddLinksForProjectPackageReferences(
                     graph,
-                    project.ProjectName,
-                    currentProject,
+                    projectName,
+                    currentProjectName,
                     chain,
+                    packageDependenciesByProject,
                     allLinks,
                     seedLinks
                 );
 
-                foreach (var projectReference in currentProject.ProjectReferences)
+                if (!projectReferencesByProject.TryGetValue(currentProjectName, out var currentProjectReferences))
                 {
-                    if (!projectByName.TryGetValue(projectReference.ProjectName, out var nextProject))
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    if (chain.Contains(nextProject.ProjectName))
+                foreach (var projectReference in currentProjectReferences)
+                {
+                    if (chain.Contains(projectReference.ProjectName))
                     {
                         continue;
                     }
 
                     var nextChain = new List<string>(chain)
                     {
-                        nextProject.ProjectName,
+                        projectReference.ProjectName,
                     };
 
-                    stack.Push((nextProject, nextChain));
+                    stack.Push((projectReference.ProjectName, nextChain));
                 }
             }
         }
@@ -155,13 +165,19 @@ public sealed class DependencyGraphColorizer(
     private static void AddLinksForProjectPackageReferences(
         DependencyGraph graph,
         string rootProjectName,
-        ProjectInfo dependencyProject,
+        string dependencyProjectName,
         IReadOnlyList<string> chain,
+        IReadOnlyDictionary<string, IReadOnlyCollection<NugetDependency>> packageDependenciesByProject,
         ICollection<ProjectDependencyLink> allLinks,
         ICollection<ProjectDependencyLink> seedLinks
     )
     {
-        foreach (var packageReference in dependencyProject.PackageReferences)
+        if (!packageDependenciesByProject.TryGetValue(dependencyProjectName, out var packageDependencies))
+        {
+            return;
+        }
+
+        foreach (var packageReference in packageDependencies)
         {
             var packageName = packageReference.NugetPackage.GetPackageName();
             var packageVersion = packageReference.NugetPackage.GetVersion();
@@ -239,19 +255,19 @@ public sealed class DependencyGraphColorizer(
 
         foreach (var node in graph.Nodes.Values)
         {
-            builder.AddOrGetNode(node.PackageName, node.Version, node.IsMetadataAvailable);
+            builder.AddOrGetNode(node);
         }
 
         foreach (var edge in graph.Edges)
         {
-            var from = builder.AddOrGetNode(edge.From.PackageName, edge.From.Version, edge.From.IsMetadataAvailable);
-            var to = builder.AddOrGetNode(edge.To.PackageName, edge.To.Version, edge.To.IsMetadataAvailable);
+            var from = builder.AddOrGetNode(edge.From);
+            var to = builder.AddOrGetNode(edge.To);
             builder.AddEdge(from, to, edge.TargetFrameworks);
         }
 
         foreach (var link in links)
         {
-            var node = builder.AddOrGetNode(link.Node.PackageName, link.Node.Version, link.Node.IsMetadataAvailable);
+            var node = builder.AddOrGetNode(link.Node);
             builder.AddProjectLink(new ProjectDependencyLink(link.ProjectName, node, link.Nature, link.TransitiveChain));
         }
 

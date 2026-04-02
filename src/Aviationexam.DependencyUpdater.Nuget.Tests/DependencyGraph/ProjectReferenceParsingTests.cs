@@ -71,6 +71,7 @@ public sealed class ProjectReferenceParsingTests(
         Assert.Collection(response,
             r =>
             {
+                Assert.Equal(nugetFile, r.NugetFile);
                 Assert.Equal("B", r.ProjectName);
                 Assert.Equal("../B/B.csproj", r.RelativePath);
                 Assert.Null(r.Condition);
@@ -133,6 +134,7 @@ public sealed class ProjectReferenceParsingTests(
         Assert.Collection(response,
             r =>
             {
+                Assert.Equal(nugetFile, r.NugetFile);
                 Assert.Equal("B", r.ProjectName);
                 Assert.Equal("../B/B.csproj", r.RelativePath);
                 Assert.Null(r.Condition);
@@ -140,6 +142,7 @@ public sealed class ProjectReferenceParsingTests(
             },
             r =>
             {
+                Assert.Equal(nugetFile, r.NugetFile);
                 Assert.Equal("C", r.ProjectName);
                 Assert.Equal("../C/C.csproj", r.RelativePath);
                 Assert.Null(r.Condition);
@@ -147,6 +150,7 @@ public sealed class ProjectReferenceParsingTests(
             },
             r =>
             {
+                Assert.Equal(nugetFile, r.NugetFile);
                 Assert.Equal("D", r.ProjectName);
                 Assert.Equal("../D/D.csproj", r.RelativePath);
                 Assert.Null(r.Condition);
@@ -207,6 +211,7 @@ public sealed class ProjectReferenceParsingTests(
         Assert.Collection(response,
             r =>
             {
+                Assert.Equal(nugetFile, r.NugetFile);
                 Assert.Equal("C", r.ProjectName);
                 Assert.Equal("../C/C.csproj", r.RelativePath);
                 Assert.Equal("net9.0", r.Condition);
@@ -326,6 +331,7 @@ public sealed class ProjectReferenceParsingTests(
         Assert.Collection(response,
             r =>
             {
+                Assert.Equal(nugetFile, r.NugetFile);
                 Assert.Equal("B", r.ProjectName);
                 Assert.Equal("../B/B.csproj", r.RelativePath);
                 Assert.Null(r.Condition);
@@ -333,6 +339,7 @@ public sealed class ProjectReferenceParsingTests(
             },
             r =>
             {
+                Assert.Equal(nugetFile, r.NugetFile);
                 Assert.Equal("C", r.ProjectName);
                 Assert.Equal("../C/C.csproj", r.RelativePath);
                 Assert.Null(r.Condition);
@@ -395,6 +402,7 @@ public sealed class ProjectReferenceParsingTests(
         Assert.Collection(response,
             r =>
             {
+                Assert.Equal(nugetFile, r.NugetFile);
                 Assert.Equal("D", r.ProjectName);
                 Assert.Equal("../D/D.csproj", r.RelativePath);
                 Assert.Null(r.Condition);

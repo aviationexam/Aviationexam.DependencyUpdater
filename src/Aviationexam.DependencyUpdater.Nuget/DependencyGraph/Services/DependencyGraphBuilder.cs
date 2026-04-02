@@ -1,5 +1,6 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Nuget.DependencyGraph.Models;
+using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using System.Collections.Generic;
 
@@ -11,7 +12,23 @@ public sealed class DependencyGraphBuilder
     private readonly List<DependencyGraphEdge> _edges = [];
     private readonly List<ProjectDependencyLink> _projectLinks = [];
 
-    public DependencyGraphNode AddOrGetNode(string packageName, PackageVersion version, bool isMetadataAvailable = true)
+    public DependencyGraphNode AddOrGetNode(INugetPackage nugetPackage, bool isMetadataAvailable = true)
+    {
+        var packageName = nugetPackage.GetPackageName();
+        var version = nugetPackage.GetVersion();
+
+        if (version is null)
+        {
+            throw new System.ArgumentException($"Package {packageName} has no version", nameof(nugetPackage));
+        }
+
+        return AddOrGetNode(packageName, version, isMetadataAvailable);
+    }
+
+    public DependencyGraphNode AddOrGetNode(DependencyGraphNode existingNode)
+        => AddOrGetNode(existingNode.PackageName, existingNode.Version, existingNode.IsMetadataAvailable);
+
+    private DependencyGraphNode AddOrGetNode(string packageName, PackageVersion version, bool isMetadataAvailable = true)
     {
         var key = (packageName, version);
 
