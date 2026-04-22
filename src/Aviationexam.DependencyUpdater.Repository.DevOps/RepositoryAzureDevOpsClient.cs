@@ -217,6 +217,17 @@ public class RepositoryAzureDevOpsClient(
         }
     }
 
+    public Task ApprovePendingWorkflowRunsAsync(
+        string branchName,
+        CancellationToken cancellationToken
+    )
+    {
+        // Azure DevOps pipelines do not require maintainer approval in the same way
+        // GitHub Actions do for first-time contributors. Approvals are handled via
+        // environment/approval gates at pipeline stage level, not via this workflow.
+        return Task.CompletedTask;
+    }
+
     public async Task AbandonPullRequestAsync(
         PullRequest pullRequest,
         CancellationToken cancellationToken
