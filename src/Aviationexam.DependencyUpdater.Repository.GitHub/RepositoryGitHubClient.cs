@@ -272,6 +272,81 @@ public class RepositoryGitHubClient(
         }
     }
 
+    public async Task ApprovePendingWorkflowRunsAsync(
+        string branchName,
+        CancellationToken cancellationToken
+    )
+    {
+        var workflowRunsRequest = new WorkflowRunsRequest
+        {
+            Branch = branchName,
+            Status = CheckRunStatusFilter.ActionRequired,
+        };
+
+        WorkflowRunsResponse workflowRuns;
+        try
+        {
+            workflowRuns = await gitHubClient.Actions.Workflows.Runs.List(
+                gitHubConfiguration.Owner,
+                gitHubConfiguration.Repository,
+                workflowRunsRequest
+            );
+        }
+        catch (ApiException ex)
+        {
+            if (logger.IsEnabled(LogLevel.Warning))
+            {
+                logger.LogWarning(ex, "Failed to list pending workflow runs for branch {BranchName}", branchName);
+            }
+
+            return;
+        }
+
+        if (workflowRuns.TotalCount == 0)
+        {
+            if (logger.IsEnabled(LogLevel.Trace))
+            {
+                logger.LogTrace("No pending workflow runs for branch {BranchName}", branchName);
+            }
+
+            return;
+        }
+
+        foreach (var workflowRun in workflowRuns.WorkflowRuns)
+        {
+            try
+            {
+                await gitHubClient.Actions.Workflows.Runs.Approve(
+                    gitHubConfiguration.Owner,
+                    gitHubConfiguration.Repository,
+                    workflowRun.Id
+                );
+
+                if (logger.IsEnabled(LogLevel.Information))
+                {
+                    logger.LogInformation(
+                        "Approved pending workflow run {WorkflowRunId} ({WorkflowRunName}) for branch {BranchName}",
+                        workflowRun.Id,
+                        workflowRun.Name,
+                        branchName
+                    );
+                }
+            }
+            catch (ApiException ex)
+            {
+                if (logger.IsEnabled(LogLevel.Warning))
+                {
+                    logger.LogWarning(
+                        ex,
+                        "Failed to approve workflow run {WorkflowRunId} for branch {BranchName}",
+                        workflowRun.Id,
+                        branchName
+                    );
+                }
+            }
+        }
+    }
+
     public async Task AbandonPullRequestAsync(
         PullRequest pullRequest,
         CancellationToken cancellationToken
