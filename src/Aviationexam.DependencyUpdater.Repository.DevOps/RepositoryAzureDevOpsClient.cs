@@ -218,7 +218,7 @@ public class RepositoryAzureDevOpsClient(
     }
 
     public Task ApprovePendingWorkflowRunsAsync(
-        string branchName,
+        string headSha,
         CancellationToken cancellationToken
     )
     {

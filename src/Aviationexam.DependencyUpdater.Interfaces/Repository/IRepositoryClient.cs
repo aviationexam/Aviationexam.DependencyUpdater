@@ -38,15 +38,15 @@ public interface IRepositoryClient
     );
 
     /// <summary>
-    /// Approves any workflow runs that are pending maintainer approval for the given branch.
+    /// Approves any workflow runs that are pending maintainer approval for the given commit.
     /// This is typically required for workflow runs triggered by first-time contributors or
     /// when approval is otherwise required by repository policy.
     /// Platforms that do not implement this concept should treat this as a no-op.
     /// </summary>
-    /// <param name="branchName">The branch whose pending workflow runs should be approved.</param>
+    /// <param name="headSha">The commit SHA whose pending workflow runs should be approved.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     Task ApprovePendingWorkflowRunsAsync(
-        string branchName,
+        string headSha,
         CancellationToken cancellationToken
     );
 

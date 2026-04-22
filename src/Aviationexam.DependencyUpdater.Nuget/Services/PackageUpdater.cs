@@ -351,7 +351,7 @@ public sealed class PackageUpdater(
             );
 
             await repositoryClient.ApprovePendingWorkflowRunsAsync(
-                branchName: gitWorkspace.GetBranchName(),
+                headSha: gitWorkspace.GetBranchTipCommitId(),
                 cancellationToken
             );
 

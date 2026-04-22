@@ -273,13 +273,13 @@ public class RepositoryGitHubClient(
     }
 
     public async Task ApprovePendingWorkflowRunsAsync(
-        string branchName,
+        string headSha,
         CancellationToken cancellationToken
     )
     {
         var workflowRunsRequest = new WorkflowRunsRequest
         {
-            Branch = branchName,
+            HeadSha = headSha,
             Status = CheckRunStatusFilter.ActionRequired,
         };
 
@@ -296,7 +296,7 @@ public class RepositoryGitHubClient(
         {
             if (logger.IsEnabled(LogLevel.Warning))
             {
-                logger.LogWarning(ex, "Failed to list pending workflow runs for branch {BranchName}", branchName);
+                logger.LogWarning(ex, "Failed to list pending workflow runs for commit {HeadSha}", headSha);
             }
 
             return;
@@ -306,7 +306,7 @@ public class RepositoryGitHubClient(
         {
             if (logger.IsEnabled(LogLevel.Trace))
             {
-                logger.LogTrace("No pending workflow runs for branch {BranchName}", branchName);
+                logger.LogTrace("No pending workflow runs for commit {HeadSha}", headSha);
             }
 
             return;
@@ -325,10 +325,10 @@ public class RepositoryGitHubClient(
                 if (logger.IsEnabled(LogLevel.Information))
                 {
                     logger.LogInformation(
-                        "Approved pending workflow run {WorkflowRunId} ({WorkflowRunName}) for branch {BranchName}",
+                        "Approved pending workflow run {WorkflowRunId} ({WorkflowRunName}) for commit {HeadSha}",
                         workflowRun.Id,
                         workflowRun.Name,
-                        branchName
+                        headSha
                     );
                 }
             }
@@ -338,9 +338,9 @@ public class RepositoryGitHubClient(
                 {
                     logger.LogWarning(
                         ex,
-                        "Failed to approve workflow run {WorkflowRunId} for branch {BranchName}",
+                        "Failed to approve workflow run {WorkflowRunId} for commit {HeadSha}",
                         workflowRun.Id,
-                        branchName
+                        headSha
                     );
                 }
             }
