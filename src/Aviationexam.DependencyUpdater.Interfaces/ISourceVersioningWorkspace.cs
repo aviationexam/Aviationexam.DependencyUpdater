@@ -8,6 +8,8 @@ public interface ISourceVersioningWorkspace : IDisposable
 
     string GetBranchName();
 
+    string GetBranchTipCommitId();
+
     bool IsPathInsideRepository(
         string fullPath
     );

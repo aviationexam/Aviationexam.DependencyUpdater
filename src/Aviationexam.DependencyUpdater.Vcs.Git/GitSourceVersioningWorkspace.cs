@@ -66,6 +66,14 @@ public sealed class GitSourceVersioningWorkspace(
         }
     }
 
+    public string GetBranchTipCommitId()
+    {
+        lock (gitRepositoryLock)
+        {
+            return _worktreeRepository.Head.Tip.Sha;
+        }
+    }
+
     public bool IsPathInsideRepository(
         string fullPath
     )
