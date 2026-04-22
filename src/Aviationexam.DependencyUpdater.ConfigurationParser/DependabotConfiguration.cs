@@ -332,7 +332,7 @@ public readonly partial struct DependabotConfiguration
     {
         public static ReadOnlySpan<byte> NugetFeedVersionUtf8 => "nuget-feed-version"u8;
 
-        public readonly partial struct Entity
+        public readonly partial struct AdditionalPropertiesEntity
         {
             public JsonString NugetFeedVersion
             {

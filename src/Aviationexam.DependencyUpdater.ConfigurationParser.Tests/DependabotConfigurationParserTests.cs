@@ -1,6 +1,7 @@
 using Aviationexam.DependencyUpdater.Common;
 using Aviationexam.DependencyUpdater.Interfaces;
 using Aviationexam.DependencyUpdater.TestsInfrastructure;
+using Corvus.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -92,12 +93,12 @@ public class DependabotConfigurationParserTests
 
         var nugetUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("nuget"));
         var githubActionsUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("github-actions"));
-        Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), nugetUpdate.DirectoryValue);
+        Assert.Equal(new JsonString("/"), nugetUpdate.DirectoryValue);
         Assert.Equal(new TargetFrameworkEntity("net9.0"), nugetUpdate.TargetFramework);
         var updateSubmodule = Assert.Single(nugetUpdate.UpdateSubmodules);
         Assert.Equal("submodule", updateSubmodule.Path);
         Assert.Equal("main", updateSubmodule.Branch);
-        Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), githubActionsUpdate.DirectoryValue);
+        Assert.Equal(new JsonString("/"), githubActionsUpdate.DirectoryValue);
         var groups = nugetUpdate.Groups;
         var microsoftGroup = Assert.Single(groups, x => x.Key == "microsoft");
         var xunitGroup = Assert.Single(groups, x => x.Key == "xunit");
@@ -105,15 +106,15 @@ public class DependabotConfigurationParserTests
         Assert.Equal(["Microsoft.*", "System.*"], microsoftGroup.Value.Patterns);
         Assert.Equal(["xunit", "xunit.*"], xunitGroup.Value.Patterns);
 
-        var nugetRegistry = Assert.Contains("nuget-feed", response.Value.Registries).As<DependabotConfiguration.Registry.Entity>();
-        var nugetOrgRegistry = Assert.Contains("nuget.org", response.Value.Registries).As<DependabotConfiguration.Registry.Entity>();
+        var nugetRegistry = Assert.Contains("nuget-feed", response.Value.Registries).As<DependabotConfiguration.Registry.AdditionalPropertiesEntity>();
+        var nugetOrgRegistry = Assert.Contains("nuget.org", response.Value.Registries).As<DependabotConfiguration.Registry.AdditionalPropertiesEntity>();
         Assert.Equal(3, nugetRegistry.Count);
-        Assert.Equal(new DependabotConfiguration.Registry.Entity.TypeEntity("nuget-feed"), nugetRegistry.Type);
+        Assert.Equal(new DependabotConfiguration.Registry.AdditionalPropertiesEntity.TypeEntity("nuget-feed"), nugetRegistry.Type);
         Assert.Equal("https://pkgs.dev.azure.com/org/orgId/_packaging/nuget-feed/nuget/v3/index.json", nugetRegistry.Url);
         Assert.Equal("PAT:${{ DEVOPS_TOKEN }}", nugetRegistry.Token);
 
         Assert.Equal(3, nugetOrgRegistry.Count);
-        Assert.Equal(new DependabotConfiguration.Registry.Entity.TypeEntity("nuget-feed"), nugetOrgRegistry.Type);
+        Assert.Equal(new DependabotConfiguration.Registry.AdditionalPropertiesEntity.TypeEntity("nuget-feed"), nugetOrgRegistry.Type);
         Assert.Equal("https://api.nuget.org/v3/index.json", nugetOrgRegistry.Url);
         Assert.Equal("V3", nugetOrgRegistry.NugetFeedVersion.GetString());
 
@@ -193,7 +194,7 @@ public class DependabotConfigurationParserTests
 
         var nugetUpdate = Assert.Single(response.Value.Updates, x => x.PackageEcosystem == new DependabotConfiguration.Update.PackageEcosystemEntity("nuget"));
 
-        Assert.Equal(new DependabotConfiguration.Update.DirectoryEntity("/"), nugetUpdate.DirectoryValue);
+        Assert.Equal(new JsonString("/"), nugetUpdate.DirectoryValue);
 
         // ExtractFeeds should not throw when registries section is missing
         var feeds = response.Value.ExtractFeeds("nuget-feed");
