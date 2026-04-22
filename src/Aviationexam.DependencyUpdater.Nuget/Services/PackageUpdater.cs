@@ -349,6 +349,12 @@ public sealed class PackageUpdater(
                 description: commitMessage,
                 cancellationToken
             );
+
+            await repositoryClient.ApprovePendingWorkflowRunsAsync(
+                branchName: gitWorkspace.GetBranchName(),
+                cancellationToken
+            );
+
             return pullRequestId;
         }
 
