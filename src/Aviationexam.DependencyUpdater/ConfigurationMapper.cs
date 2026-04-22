@@ -13,7 +13,7 @@ namespace Aviationexam.DependencyUpdater;
 public static class ConfigurationMapper
 {
     public static NugetFeedAuthentication MapToNugetFeedAuthentication(
-        this DependabotConfiguration.Registry.Entity registry,
+        this DependabotConfiguration.Registry.AdditionalPropertiesEntity registry,
         string key,
         IEnvVariableProvider envVariableProvider
     ) => NugetFeedAuthenticationFactory.CreateNugetFeedAuthentication(
