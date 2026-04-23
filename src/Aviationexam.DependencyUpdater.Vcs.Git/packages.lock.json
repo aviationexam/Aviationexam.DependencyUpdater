@@ -13,9 +13,9 @@
       },
       "Meziantou.Analyzer": {
         "type": "Direct",
-        "requested": "[3.0.50, )",
-        "resolved": "3.0.50",
-        "contentHash": "AGTYgndeBya47VP6NjVkK0gxNuJpDAtId9iAGOxXw0P4P0kSlALd+bETKJdP1uayiJUI3RG3s5Vbm50GYYmAXA=="
+        "requested": "[3.0.52, )",
+        "resolved": "3.0.52",
+        "contentHash": "hgDgjAG6uXslUO/Q5X+leh5Oqzo9iQyr4C+4qJUFfeyNH03AN3USo9mWhJX8nFgSM+CNLV6DCkY17dxcNZZ3FA=="
       },
       "Microsoft.Extensions.Logging.Abstractions": {
         "type": "Direct",
@@ -28,9 +28,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[10.0.6, )",
-        "resolved": "10.0.6",
-        "contentHash": "QKuvS0LWX4fjFqeDkyM7Kqt8P3wYTiPD4nwU+9y59n0sCiG714fxDgbbN82vDnzq89AF/PiHl92TP2C4aFDUQA=="
+        "requested": "[10.0.7, )",
+        "resolved": "10.0.7",
+        "contentHash": "AA/yhzFHNtQZXLdqjzujPy25G8EWwGWsAnxOE2zYSBoT/8QHP6ketN3CToD3DFreO653ipUwnKHo22B8AlBMCw=="
       },
       "ZLinq": {
         "type": "Direct",
