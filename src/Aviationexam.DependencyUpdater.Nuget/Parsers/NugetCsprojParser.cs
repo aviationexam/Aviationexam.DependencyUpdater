@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Nuget.DependencyGraph.Models;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Helpers;
 using Aviationexam.DependencyUpdater.Nuget.Models;
@@ -103,6 +104,56 @@ public class NugetCsprojParser(
             foreach (var importedDependency in Parse(repositoryPath, new NugetFile(importedPath, ENugetFileType.Targets), targetFrameworks))
             {
                 yield return importedDependency;
+            }
+        }
+    }
+
+    public IEnumerable<ProjectReference> ParseProjectReferences(
+        string repositoryPath,
+        NugetFile nugetFile,
+        IReadOnlyCollection<NugetTargetFramework>? targetFrameworks = null
+    )
+    {
+        var csprojFilePath = nugetFile.GetFullPath(repositoryPath);
+
+        if (!fileSystem.Exists(csprojFilePath))
+        {
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError("File not found: {path}", csprojFilePath);
+            }
+
+            yield break;
+        }
+
+        using var stream = fileSystem.FileOpen(csprojFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var doc = XDocument.Load(stream);
+
+        targetFrameworks ??= ParseTargetFrameworks(doc).AsValueEnumerable().Distinct().ToList();
+
+        foreach (var projectReference in doc.Descendants().Where(e => e.Name.LocalName == "ProjectReference"))
+        {
+            var includePath = projectReference.Attribute("Include")?.Value;
+
+            if (!string.IsNullOrEmpty(includePath))
+            {
+                var projectName = Path.GetFileNameWithoutExtension(includePath);
+
+                var conditions = projectReference.GetConditionsIncludingParents();
+                var conditionalTargetFramework = conditionalTargetFrameworkResolver.Resolve(conditions, projectName);
+
+                var effectiveTargetFrameworks = GetEffectiveTargetFrameworks(
+                    conditionalTargetFramework,
+                    targetFrameworks
+                );
+
+                yield return new ProjectReference(
+                    nugetFile,
+                    projectName,
+                    includePath,
+                    effectiveTargetFrameworks,
+                    conditionalTargetFramework
+                );
             }
         }
     }
