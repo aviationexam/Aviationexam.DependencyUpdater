@@ -4,23 +4,20 @@
     "net10.0": {
       "Corvus.Json.ExtendedTypes": {
         "type": "Direct",
-        "requested": "[4.6.7, )",
-        "resolved": "4.6.7",
-        "contentHash": "1DWWtGOGP9erMn1pZiMtVV7wDwgvKknMt90dZJ/93M9cig1ihQDdLjLnjAtLC0j02Ta4DxsjBGSltzV1T8hsvw==",
+        "requested": "[5.0.0, )",
+        "resolved": "5.0.0",
+        "contentHash": "dB6MSR9xNuY/+tcg5uYraV0ay8ZRdoixfKL/Zs6vt3CwD0wjTvLitu4F3jfXSCcIsU8rS1ev4fKrRwKKubXcQg==",
         "dependencies": {
-          "Corvus.Json.JsonReference": "4.6.7",
+          "Corvus.Json.JsonReference": "5.0.0",
           "Corvus.UriTemplates": "2.3.2",
           "NodaTime": "3.3.1"
         }
       },
       "Corvus.Json.SourceGenerator": {
         "type": "Direct",
-        "requested": "[4.6.7, )",
-        "resolved": "4.6.7",
-        "contentHash": "qWKLwga04hAkRVPzO1GEEHLLprJzstY03ds0E2v/Lz9LAZ+s/NfQHQ24GbEYFe84TRhOsujCeAeiw5Dt/wSD6A==",
-        "dependencies": {
-          "Microsoft.Bcl.Memory": "9.0.14"
-        }
+        "requested": "[5.0.0, )",
+        "resolved": "5.0.0",
+        "contentHash": "xTDyQz5638Ar8uxsRs9f8RYim1H3Vqz1wLiHZVUjDL0l7gYT+ntHuP6Dak26bWfl0Z/3yIe1I9mfXA0/z+4pnQ=="
       },
       "Meziantou.Analyzer": {
         "type": "Direct",
@@ -65,21 +62,16 @@
       },
       "Corvus.HighPerformance": {
         "type": "Transitive",
-        "resolved": "1.0.2",
-        "contentHash": "af2GSUUXftfyYSB2goYDFTxoemmp9KUo9aKuO8Efvragy8fs2HHwuUcEEQpM6ygtZI5pOQFVNe6V4+4JsxRVEw=="
+        "resolved": "1.0.4",
+        "contentHash": "ZSGaQQA3TosSth7bJd/pqMr+LipUiqT1/c0gxli1tI9Rn3JyxHvobnkaBLT42Mwmc49J5HEIogCn+B0+ee4k2w=="
       },
       "Corvus.Json.JsonReference": {
         "type": "Transitive",
-        "resolved": "4.6.7",
-        "contentHash": "KbMg+4n45lsLUMGLgihDz7+zvqAJ6VHiFkgoBzPb/KaYVVn5fBYrab5fjcIYVSjU363aCVVV5y6YY9XiXwFrwg==",
+        "resolved": "5.0.0",
+        "contentHash": "ZRLAFh7BoV6FL8ANmI9lkSbDDjHcxROM4tq/SNu/2oghfPP7yBfvbpVDMaul4i80kkn3SA7v0ZuXVyn9EupGQA==",
         "dependencies": {
-          "Corvus.HighPerformance": "1.0.2"
+          "Corvus.HighPerformance": "1.0.4"
         }
-      },
-      "Microsoft.Bcl.Memory": {
-        "type": "Transitive",
-        "resolved": "9.0.14",
-        "contentHash": "laQCcjTM2FnbyznkAu9hwBuQh3z2/OtJKwjGkJOUevylFpFXZIUVq/+MU2jM0HQm1n5wsjjwtLIDOiWJ6Nai3A=="
       },
       "aviationexam.dependencyupdater.interfaces": {
         "type": "Project"
