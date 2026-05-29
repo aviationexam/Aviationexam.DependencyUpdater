@@ -4,20 +4,20 @@
     "net10.0": {
       "Corvus.Json.ExtendedTypes": {
         "type": "Direct",
-        "requested": "[5.0.0, )",
-        "resolved": "5.0.0",
-        "contentHash": "dB6MSR9xNuY/+tcg5uYraV0ay8ZRdoixfKL/Zs6vt3CwD0wjTvLitu4F3jfXSCcIsU8rS1ev4fKrRwKKubXcQg==",
+        "requested": "[5.1.0, )",
+        "resolved": "5.1.0",
+        "contentHash": "fr3nW6JbnVdXAXEwPde1MtU946Z98TUL8eUVcwy2fsHJelhfLTr5T9cDI0vhjpXf4x5FvjcuUkjR8WhVK8XXRw==",
         "dependencies": {
-          "Corvus.Json.JsonReference": "5.0.0",
+          "Corvus.Json.JsonReference": "5.1.0",
           "Corvus.UriTemplates": "2.3.2",
           "NodaTime": "3.3.1"
         }
       },
       "Corvus.Json.SourceGenerator": {
         "type": "Direct",
-        "requested": "[5.0.0, )",
-        "resolved": "5.0.0",
-        "contentHash": "xTDyQz5638Ar8uxsRs9f8RYim1H3Vqz1wLiHZVUjDL0l7gYT+ntHuP6Dak26bWfl0Z/3yIe1I9mfXA0/z+4pnQ=="
+        "requested": "[5.1.0, )",
+        "resolved": "5.1.0",
+        "contentHash": "0YFh7RryAboQmk4uBqIRzzV5BloSj5VEdynAn8GhnvimZrhDYJI+N6LizabJ4kcOzZRmAg8NmevEZ7rzexMFIw=="
       },
       "Meziantou.Analyzer": {
         "type": "Direct",
@@ -67,8 +67,8 @@
       },
       "Corvus.Json.JsonReference": {
         "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "ZRLAFh7BoV6FL8ANmI9lkSbDDjHcxROM4tq/SNu/2oghfPP7yBfvbpVDMaul4i80kkn3SA7v0ZuXVyn9EupGQA==",
+        "resolved": "5.1.0",
+        "contentHash": "bQgSMl21mrfr880BKw3V8LVo9el7otVHqigP9GkhuzjVxrVViSpt1A4eObo7wSS2HL9IPeskGSkQRxSavx+1kw==",
         "dependencies": {
           "Corvus.HighPerformance": "1.0.4"
         }
