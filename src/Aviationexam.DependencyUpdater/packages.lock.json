@@ -97,8 +97,8 @@
       },
       "Corvus.Json.JsonReference": {
         "type": "Transitive",
-        "resolved": "5.1.16",
-        "contentHash": "V8HsNpYy7Jzvj2e42UcGSuBBznbEX1sU91xckNQqy1azn7lvL6Fhe8pf7senCHOCyHtQOZQqMhMmjyFi00QNMQ==",
+        "resolved": "5.1.18",
+        "contentHash": "O2A86iNNCwr2sCYI4i/mob4Blr3mWSDZwGtvv5OJWR8VxB7aQXFLMYtP4veJshjpujcsEUYcNNwHB3ROr6CSrg==",
         "dependencies": {
           "Corvus.HighPerformance": "1.0.4"
         }
@@ -543,8 +543,8 @@
         "type": "Project",
         "dependencies": {
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
-          "Corvus.Json.ExtendedTypes": "[5.1.16, )",
-          "Corvus.Json.SourceGenerator": "[5.1.16, )",
+          "Corvus.Json.ExtendedTypes": "[5.1.18, )",
+          "Corvus.Json.SourceGenerator": "[5.1.18, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.9, )",
           "Yaml2JsonNode": "[3.0.1, )",
           "YamlDotNet": "[18.0.0, )"
@@ -641,20 +641,20 @@
       },
       "Corvus.Json.ExtendedTypes": {
         "type": "CentralTransitive",
-        "requested": "[5.1.16, )",
-        "resolved": "5.1.16",
-        "contentHash": "4Bb7+MjRTgAbkMlS9e5wQy6AtYlEsewolWmdi9EMuke11eXy6oaoUDVbHWQN3aisjolwY5SfxtS/yOZWiegoxg==",
+        "requested": "[5.1.18, )",
+        "resolved": "5.1.18",
+        "contentHash": "9Hl8dHotZKwwcgb3IKl0gZgmFq0/aXicvXQyBxHz2TIY64pzv5eyK/jqTKawH32zBgwPzA42pL8J8PFYfhf6xA==",
         "dependencies": {
-          "Corvus.Json.JsonReference": "5.1.16",
+          "Corvus.Json.JsonReference": "5.1.18",
           "Corvus.UriTemplates": "2.3.2",
           "NodaTime": "3.3.1"
         }
       },
       "Corvus.Json.SourceGenerator": {
         "type": "CentralTransitive",
-        "requested": "[5.1.16, )",
-        "resolved": "5.1.16",
-        "contentHash": "++nVm62FiBoSyfCbBOagunc+jkqXGMmzERDSfZ9ohUHQT2ZDnFgoq9TYIWvLL0ZWUaXLXJzOcvIO6XgO8nw5Bg=="
+        "requested": "[5.1.18, )",
+        "resolved": "5.1.18",
+        "contentHash": "XeuW525NcsroNFn/czxFGp6fQFS9hfziVNTD12WIGduJI2nS6poltq/dncRIAY0E1HaE3hApgRb4Do89EiKkTQ=="
       },
       "Corvus.UriTemplates": {
         "type": "CentralTransitive",
