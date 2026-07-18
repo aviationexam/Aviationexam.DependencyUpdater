@@ -4,20 +4,20 @@
     "net10.0": {
       "Corvus.Json.ExtendedTypes": {
         "type": "Direct",
-        "requested": "[5.2.3, )",
-        "resolved": "5.2.3",
-        "contentHash": "zQS26Mbt44JEks59CwXAgC7+w2vzWgAXXQzNmnsgiCkJNTLJPe3pjh8ObSNJuFzll0Y3BqAmwcflNbFvsJBbkw==",
+        "requested": "[5.2.7, )",
+        "resolved": "5.2.7",
+        "contentHash": "WK61REslsMk5+r5TpXJEdnJulxG18/y0f5eYL+u6ewcMTb88vfK/5slUdCVJLx4n7+shtMJcxICctlcgn/Yuaw==",
         "dependencies": {
-          "Corvus.Json.JsonReference": "5.2.3",
+          "Corvus.Json.JsonReference": "5.2.7",
           "Corvus.UriTemplates": "2.3.2",
           "NodaTime": "3.3.1"
         }
       },
       "Corvus.Json.SourceGenerator": {
         "type": "Direct",
-        "requested": "[5.2.3, )",
-        "resolved": "5.2.3",
-        "contentHash": "0JljypauAYvs7rdwP+9BFv3Mf+6OlGf+OVxMuzBjmv7y5vK3TRJwNDf1T4f8NEiQNbLWFuimqnBE00HfaFwkkA=="
+        "requested": "[5.2.7, )",
+        "resolved": "5.2.7",
+        "contentHash": "zMfk1Zd6BLWX1J21FHhudFP2I+rAkYeLBEx8NANA1ftkGJMxoYY+aPDqVCsDHVOb2h4hMbm99+VmtEWubVs9qg=="
       },
       "Meziantou.Analyzer": {
         "type": "Direct",
@@ -36,9 +36,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[10.0.9, )",
-        "resolved": "10.0.9",
-        "contentHash": "4Iw41e2h7I4t70SJcX2GCmbyKJIlA273Cfm9RJMM050/3VBejGAG1KcthP5Z2L6SQcbfbf6BhNWO26+ZG+GzMg=="
+        "requested": "[10.0.10, )",
+        "resolved": "10.0.10",
+        "contentHash": "f5VCIE7AJpd5YvzNTeMGVzQIgyE9tX+AreTYwQF+REbu+DZo/2Ae+jNSwhPEYrVz6RRkd7y8ubXjk6Nn6Ka+Cg=="
       },
       "Yaml2JsonNode": {
         "type": "Direct",
@@ -67,8 +67,8 @@
       },
       "Corvus.Json.JsonReference": {
         "type": "Transitive",
-        "resolved": "5.2.3",
-        "contentHash": "AEcnO+3MNH03YEYQxq8o66gRZL8MDsY36RzVgbrdSuUBsZkWGgXlxZAQDJVzfCU6Mt4fJ4XBeWZYbr21jdeZ/w==",
+        "resolved": "5.2.7",
+        "contentHash": "fG7NBVsqTet1A8R1gxlOHtyIElJNmPY8uj6Xn298hX5oz3XUSE+ZY+cvTT89fLnTNF56Ne5aDJb3zaVOrjY43A==",
         "dependencies": {
           "Corvus.HighPerformance": "1.0.4"
         }
