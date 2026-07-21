@@ -86,7 +86,7 @@ public partial class DependencyAnalyzerTests
         mockVersionFetcher
             .FetchPackageVersionsAsync(
                 Arg.Any<SourceRepository>(),
-                Arg.Is<NugetDependency>(d => d.NugetPackage.GetPackageName() == "Microsoft.AspNetCore.WebUtilities"),
+                Arg.Is<NugetDependency>(d => d != null && d.NugetPackage.GetPackageName() == "Microsoft.AspNetCore.WebUtilities"),
                 Arg.Any<SourceCacheContext>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(LoadPackageMetadataFromResource("Microsoft.AspNetCore.WebUtilities")));
@@ -94,7 +94,7 @@ public partial class DependencyAnalyzerTests
         mockVersionFetcher
             .FetchPackageVersionsAsync(
                 Arg.Any<SourceRepository>(),
-                Arg.Is<NugetDependency>(d => d.NugetPackage.GetPackageName() == "Microsoft.Extensions.DependencyInjection"),
+                Arg.Is<NugetDependency>(d => d != null && d.NugetPackage.GetPackageName() == "Microsoft.Extensions.DependencyInjection"),
                 Arg.Any<SourceCacheContext>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(LoadPackageMetadataFromResource("Microsoft.Extensions.DependencyInjection")));
@@ -102,7 +102,7 @@ public partial class DependencyAnalyzerTests
         mockVersionFetcher
             .FetchPackageVersionsAsync(
                 Arg.Any<SourceRepository>(),
-                Arg.Is<NugetDependency>(d => d.NugetPackage.GetPackageName() == "System.Text.Json"),
+                Arg.Is<NugetDependency>(d => d != null && d.NugetPackage.GetPackageName() == "System.Text.Json"),
                 Arg.Any<SourceCacheContext>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(LoadPackageMetadataFromResource("System.Text.Json")));
@@ -110,7 +110,7 @@ public partial class DependencyAnalyzerTests
         mockVersionFetcher
             .FetchPackageVersionsAsync(
                 Arg.Any<SourceRepository>(),
-                Arg.Is<NugetDependency>(d => d.NugetPackage.GetPackageName() == "Meziantou.Analyzer"),
+                Arg.Is<NugetDependency>(d => d != null && d.NugetPackage.GetPackageName() == "Meziantou.Analyzer"),
                 Arg.Any<SourceCacheContext>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(LoadPackageMetadataFromResource("Meziantou.Analyzer")));
