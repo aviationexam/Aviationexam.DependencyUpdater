@@ -21,7 +21,10 @@ public sealed class NugetVersionFetcher(
         CancellationToken cancellationToken
     )
     {
-        var resource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
+        if (await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken) is not { } resource)
+        {
+            return [];
+        }
 
         return await resource.GetMetadataAsync(
             nugetDependency.NugetPackage.GetPackageName(),
@@ -40,7 +43,10 @@ public sealed class NugetVersionFetcher(
         CancellationToken cancellationToken
     )
     {
-        var resource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
+        if (await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken) is not { } resource)
+        {
+            return null;
+        }
 
         var identity = new PackageIdentity(package.Name, package.Version.MapToNuGetVersion());
 

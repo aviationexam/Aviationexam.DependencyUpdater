@@ -121,6 +121,11 @@ public partial class DependencyAnalyzerTests
         var repository = Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
         var resource = await repository.GetResourceAsync<PackageMetadataResource>();
 
+        if (resource == null)
+        {
+            throw new InvalidOperationException($"Failed to resolve {nameof(PackageMetadataResource)} from {repository.PackageSource.Source}");
+        }
+
         using var cacheContext = new SourceCacheContext();
         var metadata = await resource.GetMetadataAsync(
             packageName,
