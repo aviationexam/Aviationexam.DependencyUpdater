@@ -366,3 +366,6 @@ ASALocalRun/
 
 /assets/private/
 .env.local
+
+# OpenCode / Sisyphus orchestration state
+.sisyphus/
