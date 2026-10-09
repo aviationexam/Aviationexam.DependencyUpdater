@@ -1,3 +1,4 @@
+using Aviationexam.DependencyUpdater.Nuget.DependencyGraph.Services;
 using Aviationexam.DependencyUpdater.Nuget.Factories;
 using Aviationexam.DependencyUpdater.Nuget.Filtering;
 using Aviationexam.DependencyUpdater.Nuget.Grouping;
@@ -47,5 +48,8 @@ public static class ServiceCollectionExtensions
         .AddScoped<NugetCsprojVersionWriter>()
         .AddScoped<NugetDirectoryPackagesPropsVersionWriter>()
         .AddScoped<DotnetToolsVersionWriter>()
-        .AddScoped<NugetCli>();
+        .AddScoped<NugetCli>()
+        .AddScoped<DependencyGraphConstructor>()
+        .AddScoped<DependencyGraphColorizer>()
+        .AddScoped<DependencyGraphPipeline>();
 }
