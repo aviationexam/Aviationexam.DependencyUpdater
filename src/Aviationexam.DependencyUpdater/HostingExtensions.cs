@@ -38,7 +38,7 @@ public static class HostingExtensions
 
         if (host.Services.GetService<Optional<AzCliSideCarConfiguration>>()?.Value is not null)
         {
-            await host.Services.GetRequiredService<AzureDevOpsUndocumentedClient>().EnsureAccessTokenAsync(cancellationToken);
+            await host.Services.GetRequiredService<AzureDevOpsUndocumentedClient>().CheckAccessTokenAsync(cancellationToken);
         }
 
         var service = host.Services.GetRequiredService<TService>();
