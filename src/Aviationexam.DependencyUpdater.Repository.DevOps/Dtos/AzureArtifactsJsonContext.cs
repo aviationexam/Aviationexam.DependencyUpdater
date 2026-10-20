@@ -8,6 +8,7 @@ namespace Aviationexam.DependencyUpdater.Repository.DevOps.Dtos;
 )]
 [JsonSerializable(typeof(AzSideCarRequest))]
 [JsonSerializable(typeof(AzSideCarResponse))]
+[JsonSerializable(typeof(AzSideCarErrorResponse))]
 [JsonSerializable(typeof(HierarchyQueryRequest))]
 [JsonSerializable(typeof(HierarchyQueryResponse))]
 [JsonSerializable(typeof(ManualUpstreamIngestionRequest))]
