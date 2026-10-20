@@ -1,3 +1,5 @@
+using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Repository.DevOps;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,6 +35,11 @@ public static class HostingExtensions
         using var host = hostBuilder.Build();
 
         await host.StartAsync(cancellationToken);
+
+        if (host.Services.GetService<Optional<AzCliSideCarConfiguration>>()?.Value is not null)
+        {
+            await host.Services.GetRequiredService<AzureDevOpsUndocumentedClient>().EnsureAccessTokenAsync(cancellationToken);
+        }
 
         var service = host.Services.GetRequiredService<TService>();
         var exitCode = await service.ExecuteAsync(cancellationToken);
