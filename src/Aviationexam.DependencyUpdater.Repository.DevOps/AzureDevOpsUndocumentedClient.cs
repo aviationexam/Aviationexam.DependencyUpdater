@@ -28,6 +28,24 @@ public class AzureDevOpsUndocumentedClient(
     private readonly TokenCredential _credential = new DefaultAzureCredential();
     private readonly ConcurrentDictionary<string, AzureDevOpsToken> _tokenCache = new();
 
+    private bool _sideCarUnavailable;
+
+    /// <summary>
+    /// Requests the access token once so that an expired or revoked side-car login is reported at the start of the run.
+    /// Upstream ingestion is skipped for the rest of the run when the side-car cannot provide a token.
+    /// </summary>
+    public async Task<bool> CheckAccessTokenAsync(CancellationToken cancellationToken)
+    {
+        if (azCliSideCarConfiguration.Value is null)
+        {
+            return true;
+        }
+
+        var accessToken = await GetAccessTokenAsync(azureDevOpsUndocumentedConfiguration.AccessTokenResourceId, cancellationToken);
+
+        return accessToken is not null;
+    }
+
     private async Task<string?> GetAccessTokenAsync(
         string azureDevopsResourceId,
         CancellationToken cancellationToken
@@ -41,16 +59,36 @@ public class AzureDevOpsUndocumentedClient(
             return cached.Token;
         }
 
-        var accessToken = azCliSideCarConfiguration.Value is null
-            ? await GetAccessTokenLocalAsync(
-                azureDevopsResourceId,
-                cancellationToken
-            )
-            : await GetAccessTokenFromSideCarAsync(
-                azCliSideCarConfiguration.Value,
-                azureDevopsResourceId,
-                cancellationToken
-            );
+        if (_sideCarUnavailable)
+        {
+            return null;
+        }
+
+        AzureDevOpsToken? accessToken;
+        try
+        {
+            accessToken = azCliSideCarConfiguration.Value is null
+                ? await GetAccessTokenLocalAsync(
+                    azureDevopsResourceId,
+                    cancellationToken
+                )
+                : await GetAccessTokenFromSideCarAsync(
+                    azCliSideCarConfiguration.Value,
+                    azureDevopsResourceId,
+                    cancellationToken
+                );
+        }
+        catch (AzSideCarUnavailableException e)
+        {
+            _sideCarUnavailable = true;
+
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError(e, "Upstream ingestion is disabled for this run: {Message}", e.Message);
+            }
+
+            return null;
+        }
 
         if (accessToken is null)
         {
@@ -67,7 +105,7 @@ public class AzureDevOpsUndocumentedClient(
         return accessToken.Token;
     }
 
-    private async Task<AzureDevOpsToken?> GetAccessTokenFromSideCarAsync(
+    private async Task<AzureDevOpsToken> GetAccessTokenFromSideCarAsync(
         AzCliSideCarConfiguration azCliSideCar,
         string azureDevopsResourceId,
         CancellationToken cancellationToken
@@ -103,6 +141,7 @@ public class AzureDevOpsUndocumentedClient(
 
             if (azSideCarResponse.StatusCode is not HttpStatusCode.OK)
             {
+                var errorBody = await azSideCarResponse.Content.ReadAsStringAsync(cancellationToken);
                 if (logger.IsEnabled(LogLevel.Error))
                 {
                     logger.LogError(
@@ -110,19 +149,24 @@ public class AzureDevOpsUndocumentedClient(
                         azureDevopsResourceId,
                         azSideCarResponse.StatusCode,
                         (int) azSideCarResponse.StatusCode,
-                        await azSideCarResponse.Content.ReadAsStringAsync(cancellationToken)
+                        errorBody
                     );
                 }
 
-                return null;
+                throw new AzSideCarUnavailableException(
+                    azCliSideCar.Address,
+                    azureDevopsResourceId,
+                    GetSideCarErrorDetail(azSideCarResponse, errorBody)
+                );
             }
 
-            await using var hierarchyResponseStream = await azSideCarResponse.Content.ReadAsStreamAsync(cancellationToken);
-            var response = await JsonSerializer.DeserializeAsync<AzSideCarResponse>(
-                hierarchyResponseStream,
-                AzureArtifactsJsonContext.Default.AzSideCarResponse,
-                cancellationToken
-            );
+            var responseBody = await azSideCarResponse.Content.ReadAsStringAsync(cancellationToken);
+            if (string.IsNullOrWhiteSpace(responseBody))
+            {
+                throw new AzSideCarUnavailableException(azCliSideCar.Address, azureDevopsResourceId, "empty response");
+            }
+
+            var response = JsonSerializer.Deserialize(responseBody, AzureArtifactsJsonContext.Default.AzSideCarResponse);
 
             if (response is null)
             {
@@ -131,19 +175,48 @@ public class AzureDevOpsUndocumentedClient(
                     logger.LogError("Failed to deserialize AZ side car response for {ResourceId}.", azureDevopsResourceId);
                 }
 
-                return null;
+                throw new AzSideCarUnavailableException(azCliSideCar.Address, azureDevopsResourceId, "empty response");
+            }
+
+            if (string.IsNullOrWhiteSpace(response.AccessToken))
+            {
+                throw new AzSideCarUnavailableException(azCliSideCar.Address, azureDevopsResourceId, "empty access token");
             }
 
             return new AzureDevOpsToken(response.AccessToken, response.ExpiresOn);
         }
-        catch (HttpRequestException e)
+        catch (JsonException e)
+        {
+            throw new AzSideCarUnavailableException(azCliSideCar.Address, azureDevopsResourceId, $"invalid JSON response: {e.Message}", e);
+        }
+        catch (Exception e) when (e is HttpRequestException || e is TaskCanceledException && !cancellationToken.IsCancellationRequested)
         {
             if (logger.IsEnabled(LogLevel.Error))
             {
                 logger.LogError(e, "Failed to connect to the AZ side car: {RequestUri}.", requestUri);
             }
 
-            return null;
+            throw new AzSideCarUnavailableException(azCliSideCar.Address, azureDevopsResourceId, $"connection failed: {e.Message}", e);
+        }
+    }
+
+    private static string GetSideCarErrorDetail(HttpResponseMessage response, string body)
+    {
+        var trimmedBody = body.Trim();
+        var fallback = $"HTTP {(int) response.StatusCode} {response.ReasonPhrase}";
+        if (trimmedBody.Length > 0)
+        {
+            fallback += $": {trimmedBody[..Math.Min(trimmedBody.Length, 500)]}";
+        }
+
+        try
+        {
+            var errorResponse = JsonSerializer.Deserialize(body, AzureArtifactsJsonContext.Default.AzSideCarErrorResponse);
+            return string.IsNullOrWhiteSpace(errorResponse?.Error) ? fallback : errorResponse.Error;
+        }
+        catch (JsonException)
+        {
+            return fallback;
         }
     }
 
@@ -180,6 +253,11 @@ public class AzureDevOpsUndocumentedClient(
             azureDevOpsUndocumentedConfiguration.AccessTokenResourceId,
             cancellationToken
         );
+
+        if (accessToken is null)
+        {
+            return null;
+        }
 
         const string dataProvider = "ms.azure-artifacts.upstream-versions-data-provider";
 
@@ -268,6 +346,11 @@ public class AzureDevOpsUndocumentedClient(
             azureDevOpsUndocumentedConfiguration.AccessTokenResourceId,
             cancellationToken
         );
+
+        if (accessToken is null)
+        {
+            return;
+        }
 
         var requestUri = new Uri(
             $"https://pkgs.dev.azure.com/{azureDevOpsConfiguration.Organization}/{azureDevOpsUndocumentedConfiguration.NugetFeedProject}/_apis/packaging/feeds/{azureDevOpsUndocumentedConfiguration.NugetFeedId}/NuGet/packages/{packageName}/versions/{packageVersion}/ManualUpstreamIngestion",
