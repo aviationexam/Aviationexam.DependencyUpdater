@@ -67,7 +67,10 @@ internal sealed class DefaultCommandHandler(
 
                 var gitMetadataConfig = new GitMetadataConfig
                 {
-                    Milestone = nugetUpdate.Milestone.ValueKind is JsonValueKind.String or JsonValueKind.Number ? nugetUpdate.Milestone.AsAny.AsString.GetString() : null,
+                    Milestone = nugetUpdate.Milestone.ValueKind is JsonValueKind.String or JsonValueKind.Number
+                        && nugetUpdate.Milestone.AsAny.AsString.GetString() is { } milestone
+                        ? envVariableProvider.PopulateEnvironmentVariables(milestone)
+                        : null,
                     Reviewers = nugetUpdate.Reviewers ?? [],
                     Labels = [.. nugetUpdate.Labels.AsValueEnumerable().Select(x => x.GetString()!)],
                     CommitAuthor = nugetUpdate.CommitAuthor ?? GitAuthorConstants.DefaultCommitAuthor,

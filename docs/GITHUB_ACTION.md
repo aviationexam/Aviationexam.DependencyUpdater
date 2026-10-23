@@ -361,6 +361,14 @@ reviewers:
   - "team-member"
 ```
 
+#### `milestone` (optional)
+
+Milestone (GitHub) or work item ID (Azure DevOps) to link to created pull requests. Supports `${{ ENV_VAR_NAME }}` placeholders resolved from the environment at runtime (the run fails if the variable is unset):
+
+```yaml
+milestone: "${{ DEPENDENCY_UPDATES_PBI }}"
+```
+
 #### `execute-restore` (optional)
 
 Control whether `dotnet restore` is executed before analyzing dependencies:
