@@ -174,6 +174,22 @@ public class ReleaseNotesFormatterTests
     }
 
     [Fact]
+    public void BuildSection_LongNote_IsCappedToMaxLines()
+    {
+        // Arrange
+        var notes = string.Join('\n', Enumerable.Range(1, ReleaseNotesFormatter.MaxNoteLines + 10).Select(i => $"- change {i}"));
+
+        // Act
+        var result = ReleaseNotesFormatter.BuildSection([new PackageReleaseNote("PackageA", "1.0.1", notes)]);
+
+        // Assert
+        var noteLines = result!.ReplaceLineEndings("\n").Split('\n').Where(x => x.StartsWith('>')).ToList();
+        Assert.Equal(ReleaseNotesFormatter.MaxNoteLines + 1, noteLines.Count);
+        Assert.Equal($"> - change {ReleaseNotesFormatter.MaxNoteLines}", noteLines[^2]);
+        Assert.Equal($"> {ReleaseNotesFormatter.NoteTruncationMarker}", noteLines[^1]);
+    }
+
+    [Fact]
     public void BuildSection_WithoutUsableNotes_ReturnsNull()
     {
         // Arrange
