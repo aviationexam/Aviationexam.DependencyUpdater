@@ -24,7 +24,8 @@ public class RepositoryAzureDevOpsClient(
     ILogger<RepositoryAzureDevOpsClient> logger
 ) : IRepositoryClient
 {
-    // Azure Repos rejects longer descriptions: "A description for a pull request must not be longer than 4000 characters."
+    // Azure Repos limits PR descriptions to 4000 UTF-16 characters, the same bound dependabot-core uses:
+    // https://github.com/dependabot/dependabot-core/blob/main/common/lib/dependabot/pull_request_creator/azure.rb
     public int MaxPullRequestDescriptionLength => 4000;
 
     public async Task<IEnumerable<PullRequest>> ListActivePullRequestsAsync(
