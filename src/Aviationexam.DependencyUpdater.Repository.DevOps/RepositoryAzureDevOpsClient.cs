@@ -24,6 +24,10 @@ public class RepositoryAzureDevOpsClient(
     ILogger<RepositoryAzureDevOpsClient> logger
 ) : IRepositoryClient
 {
+    // Azure Repos limits PR descriptions to 4000 UTF-16 characters, the same bound dependabot-core uses:
+    // https://github.com/dependabot/dependabot-core/blob/main/common/lib/dependabot/pull_request_creator/azure.rb
+    public int MaxPullRequestDescriptionLength => 4000;
+
     public async Task<IEnumerable<PullRequest>> ListActivePullRequestsAsync(
         string sourceDirectory,
         string updater,
@@ -129,7 +133,7 @@ public class RepositoryAzureDevOpsClient(
                 MergeStrategy = GitPullRequestMergeStrategy.Squash,
                 AutoCompleteIgnoreConfigIds = [],
                 TransitionWorkItems = true,
-                MergeCommitMessage = $"{title}\n\n{description}",
+                MergeCommitMessage = GetMergeCommitMessage(title, description),
             },
             AutoCompleteSetBy = new IdentityRef { Id = devOpsConfiguration.AccountId },
             Labels =
@@ -162,7 +166,7 @@ public class RepositoryAzureDevOpsClient(
                 MergeStrategy = GitPullRequestMergeStrategy.Squash,
                 AutoCompleteIgnoreConfigIds = [],
                 TransitionWorkItems = true,
-                MergeCommitMessage = $"{title}\n\n{description}",
+                MergeCommitMessage = GetMergeCommitMessage(title, description),
             },
         };
 
@@ -199,7 +203,7 @@ public class RepositoryAzureDevOpsClient(
                 MergeStrategy = GitPullRequestMergeStrategy.Squash,
                 AutoCompleteIgnoreConfigIds = [],
                 TransitionWorkItems = true,
-                MergeCommitMessage = $"{title}\n\n{description}",
+                MergeCommitMessage = GetMergeCommitMessage(title, description),
             },
         };
 
@@ -215,6 +219,18 @@ public class RepositoryAzureDevOpsClient(
         {
             logger.LogTrace("Update pull request {pullRequestId}", pullRequestId);
         }
+    }
+
+    private string GetMergeCommitMessage(
+        string title,
+        string description
+    )
+    {
+        var mergeCommitMessage = $"{title}\n\n{description}";
+
+        return mergeCommitMessage.Length <= MaxPullRequestDescriptionLength
+            ? mergeCommitMessage
+            : mergeCommitMessage[..MaxPullRequestDescriptionLength];
     }
 
     public async Task AbandonPullRequestAsync(

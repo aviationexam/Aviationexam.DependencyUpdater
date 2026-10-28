@@ -22,6 +22,7 @@ public sealed class PackageUpdater(
     NugetVersionWriter nugetVersionWriter,
     NugetCli nugetCli,
     IRepositoryClient repositoryClient,
+    ReleaseNotesCollector releaseNotesCollector,
     ILogger<PackageUpdater> logger
 )
 {
@@ -35,6 +36,9 @@ public sealed class PackageUpdater(
         string? restoreDirectory,
         Queue<(IReadOnlyCollection<NugetUpdateCandidate> NugetUpdateCandidates, GroupEntry GroupEntry)> groupedPackagesToUpdateQueue,
         IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersions,
+        NugetUpdaterContext nugetUpdaterContext,
+        IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
+        CachingConfiguration cachingConfiguration,
         string updater,
         CancellationToken cancellationToken
     )
@@ -52,6 +56,9 @@ public sealed class PackageUpdater(
                 groupedPackagesToUpdate.GroupEntry,
                 groupedPackagesToUpdate.NugetUpdateCandidates,
                 currentPackageVersions,
+                nugetUpdaterContext,
+                sourceRepositories,
+                cachingConfiguration,
                 sourceVersioning,
                 updater,
                 cancellationToken
@@ -76,6 +83,9 @@ public sealed class PackageUpdater(
         GroupEntry groupEntry,
         IReadOnlyCollection<NugetUpdateCandidate> nugetUpdateCandidates,
         IReadOnlyDictionary<string, IDictionary<string, PackageVersion>> currentPackageVersions,
+        NugetUpdaterContext nugetUpdaterContext,
+        IReadOnlyDictionary<NugetSource, NugetSourceRepository> sourceRepositories,
+        CachingConfiguration cachingConfiguration,
         ISourceVersioning sourceVersioning,
         string updater,
         CancellationToken cancellationToken
@@ -116,10 +126,31 @@ public sealed class PackageUpdater(
             cancellationToken
         );
 
+        var commitMessage = updatedPackages.GetCommitMessage();
+        var description = commitMessage;
+
+        if (commitMessage is not null)
+        {
+            var releaseNotes = await releaseNotesCollector.CollectReleaseNotesAsync(
+                updatedPackages,
+                nugetUpdaterContext,
+                sourceRepositories,
+                cachingConfiguration,
+                cancellationToken
+            );
+
+            description = ReleaseNotesFormatter.AppendToDescription(
+                commitMessage,
+                ReleaseNotesFormatter.BuildSection(releaseNotes),
+                repositoryClient.MaxPullRequestDescriptionLength
+            );
+        }
+
         // Process pull request based on update status
         return await HandlePullRequestAsync(
             gitWorkspace,
-            updatedPackages.GetCommitMessage(),
+            commitMessage,
+            description,
             pullRequestId,
             repositoryConfig,
             authConfig,
@@ -227,6 +258,7 @@ public sealed class PackageUpdater(
     public async Task<string?> HandlePullRequestAsync(
         ISourceVersioningWorkspace gitWorkspace,
         string? commitMessage,
+        string? description,
         string? pullRequestId,
         RepositoryConfig repositoryConfig,
         NugetAuthConfig authConfig,
@@ -238,8 +270,10 @@ public sealed class PackageUpdater(
         CancellationToken cancellationToken
     )
     {
+        description ??= commitMessage;
+
         if (
-            commitMessage is not null
+            description is not null
             && pullRequestId is not null
         )
         {
@@ -247,7 +281,7 @@ public sealed class PackageUpdater(
             await repositoryClient.UpdatePullRequestAsync(
                 pullRequestId: pullRequestId,
                 title: title,
-                description: commitMessage,
+                description: description,
                 cancellationToken
             );
         }
@@ -280,7 +314,7 @@ public sealed class PackageUpdater(
 
         if (
             pushed
-            && commitMessage is not null
+            && description is not null
         )
         {
             return await CreateOrUpdatePullRequestAsync(
@@ -289,7 +323,7 @@ public sealed class PackageUpdater(
                 repositoryConfig,
                 gitMetadataConfig,
                 title,
-                commitMessage,
+                description,
                 updater,
                 cancellationToken
             );
@@ -336,7 +370,7 @@ public sealed class PackageUpdater(
         RepositoryConfig repositoryConfig,
         GitMetadataConfig gitMetadataConfig,
         string title,
-        string commitMessage,
+        string description,
         string updater,
         CancellationToken cancellationToken
     )
@@ -346,7 +380,7 @@ public sealed class PackageUpdater(
             await repositoryClient.UpdatePullRequestAsync(
                 pullRequestId: pullRequestId,
                 title: title,
-                description: commitMessage,
+                description: description,
                 cancellationToken
             );
             return pullRequestId;
@@ -356,7 +390,7 @@ public sealed class PackageUpdater(
             branchName: gitWorkspace.GetBranchName(),
             targetBranchName: repositoryConfig.SourceBranchName,
             title: title,
-            description: commitMessage,
+            description: description,
             gitMetadataConfig.Milestone,
             gitMetadataConfig.Reviewers,
             gitMetadataConfig.Labels,

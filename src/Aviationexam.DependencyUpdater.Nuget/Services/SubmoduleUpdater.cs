@@ -77,6 +77,7 @@ public sealed class SubmoduleUpdater(
             pullRequestId = await packageUpdater.HandlePullRequestAsync(
                 gitWorkspace,
                 $"Bump submodule {submodule}",
+                description: null,
                 pullRequestId,
                 repositoryConfig,
                 authConfig,

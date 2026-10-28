@@ -30,6 +30,10 @@ public class RepositoryGitHubClient(
 
     private ISet<string>? _labelCache;
 
+    // GitHub limits PR bodies to 65536 characters, the same bound dependabot-core uses:
+    // https://github.com/dependabot/dependabot-core/blob/main/common/lib/dependabot/pull_request_creator/github.rb
+    public int MaxPullRequestDescriptionLength => 65536;
+
     public async Task<IEnumerable<PullRequest>> ListActivePullRequestsAsync(
         string sourceDirectory,
         string updater,

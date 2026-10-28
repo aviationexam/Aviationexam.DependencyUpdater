@@ -84,6 +84,9 @@ public sealed class NugetUpdater(
             packageConfig.RestoreDirectory,
             groupedPackagesToUpdate,
             dependencyAnalysisResult.CurrentPackageVersions,
+            nugetUpdaterContext,
+            sourceRepositories,
+            cachingConfiguration,
             updater,
             cancellationToken
         );
