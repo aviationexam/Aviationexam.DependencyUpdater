@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Common;
+using Aviationexam.DependencyUpdater.Interfaces.ReleaseNotes;
 using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Parsers;
@@ -19,6 +20,7 @@ using ILogger = NuGet.Common.ILogger;
 namespace Aviationexam.DependencyUpdater.Nuget.Services;
 
 public sealed class NugetReleaseNotesFetcher(
+    IEnumerable<IProjectReleasesProvider> projectReleasesProviders,
     ILogger nugetLogger,
     ILogger<NugetReleaseNotesFetcher> logger
 ) : INugetReleaseNotesFetcher
@@ -66,24 +68,108 @@ public sealed class NugetReleaseNotesFetcher(
             versions = versions.AsValueEnumerable().TakeLast(MaxVersionsPerPackage).ToList();
         }
 
-        var releaseNotes = new List<PackageReleaseNote>();
+        if (versions.Count == 0)
+        {
+            return [];
+        }
+
+        var packageNotes = new Dictionary<NuGetVersion, string>();
+        var nuspecs = new Dictionary<NuGetVersion, NugetNuspecMetadata?>();
 
         foreach (var leaf in versions)
         {
             var notes = leaf.ReleaseNotes;
 
-            if (notes is null && packageBaseAddress is not null)
+            // The newest version's nuspec is always read: it carries the source repository the project releases come from
+            if ((notes is null || leaf == versions[^1]) && packageBaseAddress is not null)
             {
-                notes = await FetchNuspecReleaseNotesAsync(httpSource, packageBaseAddress, lowerId, leaf.Version, cacheContext, cancellationToken);
+                var nuspec = await FetchNuspecMetadataAsync(httpSource, packageBaseAddress, lowerId, leaf.Version, cacheContext, cancellationToken);
+                nuspecs[leaf.Version] = nuspec;
+                notes ??= nuspec?.ReleaseNotes;
             }
 
             if (notes is not null)
             {
-                releaseNotes.Add(new PackageReleaseNote(packageName, leaf.Version.ToNormalizedString(), notes));
+                packageNotes[leaf.Version] = notes;
             }
         }
 
-        return releaseNotes;
+        var repositoryUrl = ResolveRepositoryUrl(versions, nuspecs);
+
+        var projectReleases = await FetchProjectReleasesAsync(packageName, repositoryUrl, cancellationToken);
+
+        return versions
+            .AsValueEnumerable()
+            .Select(leaf => SelectNotes(packageName, leaf.Version, packageNotes, projectReleases))
+            .Where(x => x is not null)
+            .Select(x => x!)
+            .ToList();
+    }
+
+    // The source repository of the newest version wins; project URLs are often documentation sites, so they are only a fallback
+    internal static string? ResolveRepositoryUrl(
+        IReadOnlyList<NugetRegistrationLeaf> versions,
+        IReadOnlyDictionary<NuGetVersion, NugetNuspecMetadata?> nuspecs
+    )
+    {
+        var newestToOldest = versions.AsValueEnumerable().Reverse().ToList();
+
+        return newestToOldest.AsValueEnumerable().Select(x => nuspecs.GetValueOrDefault(x.Version)?.RepositoryUrl).FirstOrDefault(x => x is not null)
+               ?? newestToOldest.AsValueEnumerable().Select(x => nuspecs.GetValueOrDefault(x.Version)?.ProjectUrl ?? x.ProjectUrl).FirstOrDefault(x => x is not null);
+    }
+
+    // A project release describes the version in full, the nuspec usually carries only a link, so the release wins when both exist
+    private static PackageReleaseNote? SelectNotes(
+        string packageName,
+        NuGetVersion version,
+        IReadOnlyDictionary<NuGetVersion, string> packageNotes,
+        IReadOnlyDictionary<NuGetVersion, ProjectRelease> projectReleases
+    )
+    {
+        if (projectReleases.TryGetValue(version, out var release) && !string.IsNullOrWhiteSpace(release.Body))
+        {
+            return new PackageReleaseNote(packageName, version.ToNormalizedString(), release.Body);
+        }
+
+        return packageNotes.TryGetValue(version, out var notes)
+            ? new PackageReleaseNote(packageName, version.ToNormalizedString(), notes)
+            : null;
+    }
+
+    private async Task<IReadOnlyDictionary<NuGetVersion, ProjectRelease>> FetchProjectReleasesAsync(
+        string packageName,
+        string? repositoryUrl,
+        CancellationToken cancellationToken
+    )
+    {
+        if (repositoryUrl is null || !Uri.TryCreate(repositoryUrl, UriKind.Absolute, out var repositoryUri))
+        {
+            return new Dictionary<NuGetVersion, ProjectRelease>();
+        }
+
+        foreach (var provider in projectReleasesProviders)
+        {
+            if (!provider.CanProvide(repositoryUri))
+            {
+                continue;
+            }
+
+            try
+            {
+                var releases = await provider.GetReleasesAsync(repositoryUri, cancellationToken);
+
+                return ProjectReleaseVersionMatcher.MatchReleases(releases, packageName);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                if (logger.IsEnabled(LogLevel.Warning))
+                {
+                    logger.LogWarning(ex, "Failed to fetch project releases of {PackageName} from {RepositoryUrl}", packageName, repositoryUrl);
+                }
+            }
+        }
+
+        return new Dictionary<NuGetVersion, ProjectRelease>();
     }
 
     public static IReadOnlyList<NugetRegistrationLeaf> SelectVersions(
@@ -152,7 +238,7 @@ public sealed class NugetReleaseNotesFetcher(
         return leaves;
     }
 
-    private async Task<string?> FetchNuspecReleaseNotesAsync(
+    private async Task<NugetNuspecMetadata?> FetchNuspecMetadataAsync(
         HttpSource httpSource,
         Uri packageBaseAddress,
         string lowerId,
@@ -169,7 +255,7 @@ public sealed class NugetReleaseNotesFetcher(
             nuspecUrl,
             $"release_notes_nuspec_{lowerId}_{lowerVersion}",
             cacheContext,
-            NugetReleaseNotesParser.ParseNuspecReleaseNotes,
+            NugetReleaseNotesParser.ParseNuspecMetadata,
             cancellationToken
         );
     }

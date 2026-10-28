@@ -10,6 +10,8 @@ public static partial class ReleaseNotesFormatter
 {
     public const string SectionHeader = "## Release notes";
     public const string TruncationNotice = "_Release notes were truncated to fit the pull request description limit._";
+    public const string NoteTruncationMarker = "… (truncated)";
+    public const int MaxNoteLines = 50;
 
     [GeneratedRegex(@"[ \t\f\v]+", RegexOptions.None, matchTimeoutMilliseconds: 100)]
     private static partial Regex HorizontalWhitespaceRegexFactory();
@@ -49,10 +51,16 @@ public static partial class ReleaseNotesFormatter
     {
         var lines = notes
             .ReplaceLineEndings("\n")
+            .Trim('\n')
             .Split('\n')
             .AsValueEnumerable()
             .Select(line => line.TrimEnd())
             .ToList();
+
+        if (lines.Count > MaxNoteLines)
+        {
+            lines = [.. lines.AsValueEnumerable().Take(MaxNoteLines), NoteTruncationMarker];
+        }
 
         return ScrubMentionsAndIssueReferences(string.Join('\n', lines).Trim('\n'));
     }

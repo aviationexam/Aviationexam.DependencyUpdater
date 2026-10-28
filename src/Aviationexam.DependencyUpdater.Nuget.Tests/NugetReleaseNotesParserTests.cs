@@ -1,3 +1,4 @@
+using Aviationexam.DependencyUpdater.Nuget.Models;
 using Aviationexam.DependencyUpdater.Nuget.Parsers;
 using System.IO;
 using System.Text;
@@ -17,7 +18,7 @@ public class NugetReleaseNotesParserTests
                 {
                   "@id": "https://feed/registrations2/pkg/index.json#page/1.0.0/1.0.2",
                   "items": [
-                    { "catalogEntry": { "id": "Pkg", "version": "1.0.0", "listed": true } },
+                    { "catalogEntry": { "id": "Pkg", "version": "1.0.0", "listed": true, "projectUrl": "https://github.com/owner/pkg" } },
                     { "catalogEntry": { "id": "Pkg", "version": "1.0.1", "listed": false, "releaseNotes": "Fixed a bug" } },
                     { "catalogEntry": { "id": "Pkg", "version": "1.0.2", "releaseNotes": "" } },
                     { "catalogEntry": "https://feed/catalog/not-inlined.json" }
@@ -39,6 +40,7 @@ public class NugetReleaseNotesParserTests
                 Assert.Equal("1.0.0", leaf.Version.ToNormalizedString());
                 Assert.True(leaf.Listed);
                 Assert.Null(leaf.ReleaseNotes);
+                Assert.Equal("https://github.com/owner/pkg", leaf.ProjectUrl);
             },
             leaf =>
             {
@@ -104,7 +106,7 @@ public class NugetReleaseNotesParserTests
     }
 
     [Fact]
-    public void ParseNuspecReleaseNotes_ReturnsReleaseNotes()
+    public void ParseNuspecMetadata_ReturnsReleaseNotesAndRepository()
     {
         // Arrange
         const string nuspec = """
@@ -113,16 +115,18 @@ public class NugetReleaseNotesParserTests
               <metadata>
                 <id>Aviationexam.Core.Common.Contracts</id>
                 <version>0.1.3215</version>
+                <projectUrl>https://github.com/aviationexam/project</projectUrl>
                 <releaseNotes>SharedCore Common 0.1.3215
             Changes since 0.1.3211:
             - !22542 Generate SharedCore release notes from merged PRs
             Compare: https://dev.azure.com/aviationexam/x/_git/y/branchCompare?baseVersion=GC1&amp;targetVersion=GC2</releaseNotes>
+                <repository type="git" url="https://github.com/aviationexam/repository.git" commit="247ad4577743af2aca29cb260d00726de777caf9" />
               </metadata>
             </package>
             """;
 
         // Act
-        var result = NugetReleaseNotesParser.ParseNuspecReleaseNotes(ToStream(nuspec));
+        var result = NugetReleaseNotesParser.ParseNuspecMetadata(ToStream(nuspec));
 
         // Assert
         Assert.Equal(
@@ -132,20 +136,22 @@ public class NugetReleaseNotesParserTests
             - !22542 Generate SharedCore release notes from merged PRs
             Compare: https://dev.azure.com/aviationexam/x/_git/y/branchCompare?baseVersion=GC1&targetVersion=GC2
             """.ReplaceLineEndings("\n"),
-            result?.ReplaceLineEndings("\n")
+            result.ReleaseNotes?.ReplaceLineEndings("\n")
         );
+        Assert.Equal("https://github.com/aviationexam/repository.git", result.RepositoryUrl);
+        Assert.Equal("https://github.com/aviationexam/project", result.ProjectUrl);
     }
 
     [Theory]
     [InlineData("<package><metadata><id>Pkg</id></metadata></package>")]
-    [InlineData("<package><metadata><releaseNotes>   </releaseNotes></metadata></package>")]
-    public void ParseNuspecReleaseNotes_WithoutNotes_ReturnsNull(string nuspec)
+    [InlineData("<package><metadata><releaseNotes>   </releaseNotes><repository type=\"git\" /></metadata></package>")]
+    public void ParseNuspecMetadata_WithoutValues_ReturnsNulls(string nuspec)
     {
         // Act
-        var result = NugetReleaseNotesParser.ParseNuspecReleaseNotes(ToStream(nuspec));
+        var result = NugetReleaseNotesParser.ParseNuspecMetadata(ToStream(nuspec));
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(new NugetNuspecMetadata(null, null, null), result);
     }
 
     private static MemoryStream ToStream(string content) => new(Encoding.UTF8.GetBytes(content));
