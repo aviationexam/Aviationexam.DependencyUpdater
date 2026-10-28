@@ -48,19 +48,30 @@ public static class NugetReleaseNotesParser
             : [];
     }
 
-    public static string? ParseNuspecReleaseNotes(
+    public static NugetNuspecMetadata ParseNuspecMetadata(
         Stream stream
     )
     {
         var document = XDocument.Load(stream);
 
-        var releaseNotes = document.Root
-            ?.Elements().AsValueEnumerable().FirstOrDefault(x => x.Name.LocalName == "metadata")
-            ?.Elements().AsValueEnumerable().FirstOrDefault(x => x.Name.LocalName == "releaseNotes")
-            ?.Value;
+        var metadata = document.Root
+            ?.Elements().AsValueEnumerable().FirstOrDefault(x => x.Name.LocalName == "metadata");
 
-        return string.IsNullOrWhiteSpace(releaseNotes) ? null : releaseNotes;
+        return new NugetNuspecMetadata(
+            NullIfBlank(GetElement(metadata, "releaseNotes")?.Value),
+            NullIfBlank(GetElement(metadata, "repository")?.Attribute("url")?.Value),
+            NullIfBlank(GetElement(metadata, "projectUrl")?.Value)
+        );
     }
+
+    private static XElement? GetElement(
+        XElement? parent,
+        string localName
+    ) => parent?.Elements().AsValueEnumerable().FirstOrDefault(x => x.Name.LocalName == localName);
+
+    private static string? NullIfBlank(
+        string? value
+    ) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
     private static List<NugetRegistrationLeaf> ParseLeaves(
         JsonElement items
@@ -84,17 +95,21 @@ public static class NugetReleaseNotesParser
             var listed = !catalogEntry.TryGetProperty("listed", out var listedElement)
                          || listedElement.ValueKind is not JsonValueKind.False;
 
-            var releaseNotes = catalogEntry.TryGetProperty("releaseNotes", out var releaseNotesElement) && releaseNotesElement.ValueKind is JsonValueKind.String
-                ? releaseNotesElement.GetString()
-                : null;
-
             leaves.Add(new NugetRegistrationLeaf(
                 version,
                 listed,
-                string.IsNullOrWhiteSpace(releaseNotes) ? null : releaseNotes
+                GetString(catalogEntry, "releaseNotes"),
+                GetString(catalogEntry, "projectUrl")
             ));
         }
 
         return leaves;
     }
+
+    private static string? GetString(
+        JsonElement element,
+        string propertyName
+    ) => element.TryGetProperty(propertyName, out var property) && property.ValueKind is JsonValueKind.String
+        ? NullIfBlank(property.GetString())
+        : null;
 }
