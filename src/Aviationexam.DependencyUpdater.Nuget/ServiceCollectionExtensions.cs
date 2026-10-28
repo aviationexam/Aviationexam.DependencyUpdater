@@ -35,6 +35,8 @@ public static class ServiceCollectionExtensions
         .AddScoped<ILogger, NuGetLoggerAdapter>()
         .AddScoped<NugetVersionFetcherFactory>()
         .AddScoped<INugetVersionFetcher, NugetVersionFetcher>()
+        .AddScoped<INugetReleaseNotesFetcher, NugetReleaseNotesFetcher>()
+        .AddScoped<ReleaseNotesCollector>()
 #if DEBUG
         .AddScoped<IDependencyVersionsFetcher, LoggingDependencyVersionsFetcher>()
 #else
