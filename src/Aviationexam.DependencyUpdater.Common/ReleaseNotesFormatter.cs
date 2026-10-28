@@ -1,0 +1,130 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
+using ZLinq;
+
+namespace Aviationexam.DependencyUpdater.Common;
+
+public static partial class ReleaseNotesFormatter
+{
+    public const string SectionHeader = "## Release notes";
+    public const string TruncationNotice = "_Release notes were truncated to fit the pull request description limit._";
+
+    [GeneratedRegex(@"[ \t\f\v]+", RegexOptions.None, matchTimeoutMilliseconds: 100)]
+    private static partial Regex HorizontalWhitespaceRegexFactory();
+
+    private static readonly Regex HorizontalWhitespace = HorizontalWhitespaceRegexFactory();
+
+    public static string NormalizeNotes(
+        string notes
+    )
+    {
+        var lines = notes
+            .ReplaceLineEndings("\n")
+            .Split('\n')
+            .AsValueEnumerable()
+            .Select(line => HorizontalWhitespace.Replace(line, " ").Trim())
+            .ToList();
+
+        return string.Join('\n', lines).Trim('\n');
+    }
+
+    public static string? BuildSection(
+        IReadOnlyCollection<PackageReleaseNote> releaseNotes
+    )
+    {
+        var groups = new Dictionary<string, List<PackageReleaseNote>>(StringComparer.Ordinal);
+        var order = new List<string>();
+
+        foreach (var releaseNote in releaseNotes)
+        {
+            var normalized = NormalizeNotes(releaseNote.Notes);
+            if (normalized.Length == 0)
+            {
+                continue;
+            }
+
+            if (!groups.TryGetValue(normalized, out var group))
+            {
+                group = [];
+                groups.Add(normalized, group);
+                order.Add(normalized);
+            }
+
+            if (!group.AsValueEnumerable().Any(x => x.PackageName == releaseNote.PackageName && x.Version == releaseNote.Version))
+            {
+                group.Add(releaseNote);
+            }
+        }
+
+        if (order.Count == 0)
+        {
+            return null;
+        }
+
+        var stringBuilder = new StringBuilder();
+        stringBuilder.AppendLine(SectionHeader);
+
+        foreach (var normalized in order)
+        {
+            stringBuilder.AppendLine();
+            stringBuilder.Append("**").Append(FormatAppliesTo(groups[normalized])).AppendLine("**");
+            stringBuilder.AppendLine();
+
+            foreach (var line in normalized.Split('\n'))
+            {
+                stringBuilder.Append('>');
+                if (line.Length > 0)
+                {
+                    stringBuilder.Append(' ').Append(line);
+                }
+
+                stringBuilder.AppendLine();
+            }
+        }
+
+        return stringBuilder.ToString().TrimEnd();
+    }
+
+    public static string AppendToDescription(
+        string description,
+        string? releaseNotesSection,
+        int maxLength
+    )
+    {
+        if (string.IsNullOrEmpty(releaseNotesSection))
+        {
+            return description;
+        }
+
+        var separator = Environment.NewLine + Environment.NewLine;
+        var full = description + separator + releaseNotesSection;
+        if (full.Length <= maxLength)
+        {
+            return full;
+        }
+
+        var suffix = separator + TruncationNotice;
+        var available = maxLength - description.Length - separator.Length - suffix.Length;
+        if (available < SectionHeader.Length)
+        {
+            return description;
+        }
+
+        var cut = releaseNotesSection.LastIndexOf('\n', available - 1);
+        var truncated = cut > 0
+            ? releaseNotesSection[..cut]
+            : releaseNotesSection[..available];
+
+        return description + separator + truncated.TrimEnd() + suffix;
+    }
+
+    private static string FormatAppliesTo(
+        IReadOnlyCollection<PackageReleaseNote> group
+    ) => group
+        .AsValueEnumerable()
+        .GroupBy(x => x.Version)
+        .Select(x => $"{x.AsValueEnumerable().Select(n => n.PackageName).JoinToString(", ")} {x.Key}")
+        .JoinToString("; ");
+}
