@@ -74,7 +74,7 @@ public sealed class NugetReleaseNotesFetcher(
         }
 
         var packageNotes = new Dictionary<NuGetVersion, string>();
-        string? repositoryUrl = null;
+        var nuspecs = new Dictionary<NuGetVersion, NugetNuspecMetadata?>();
 
         foreach (var leaf in versions)
         {
@@ -84,17 +84,17 @@ public sealed class NugetReleaseNotesFetcher(
             if ((notes is null || leaf == versions[^1]) && packageBaseAddress is not null)
             {
                 var nuspec = await FetchNuspecMetadataAsync(httpSource, packageBaseAddress, lowerId, leaf.Version, cacheContext, cancellationToken);
+                nuspecs[leaf.Version] = nuspec;
                 notes ??= nuspec?.ReleaseNotes;
-                repositoryUrl ??= nuspec?.RepositoryUrl ?? nuspec?.ProjectUrl;
             }
-
-            repositoryUrl ??= leaf.ProjectUrl;
 
             if (notes is not null)
             {
                 packageNotes[leaf.Version] = notes;
             }
         }
+
+        var repositoryUrl = ResolveRepositoryUrl(versions, nuspecs);
 
         var projectReleases = await FetchProjectReleasesAsync(packageName, repositoryUrl, cancellationToken);
 
@@ -104,6 +104,18 @@ public sealed class NugetReleaseNotesFetcher(
             .Where(x => x is not null)
             .Select(x => x!)
             .ToList();
+    }
+
+    // The source repository of the newest version wins; project URLs are often documentation sites, so they are only a fallback
+    internal static string? ResolveRepositoryUrl(
+        IReadOnlyList<NugetRegistrationLeaf> versions,
+        IReadOnlyDictionary<NuGetVersion, NugetNuspecMetadata?> nuspecs
+    )
+    {
+        var newestToOldest = versions.AsValueEnumerable().Reverse().ToList();
+
+        return newestToOldest.AsValueEnumerable().Select(x => nuspecs.GetValueOrDefault(x.Version)?.RepositoryUrl).FirstOrDefault(x => x is not null)
+               ?? newestToOldest.AsValueEnumerable().Select(x => nuspecs.GetValueOrDefault(x.Version)?.ProjectUrl ?? x.ProjectUrl).FirstOrDefault(x => x is not null);
     }
 
     // A project release describes the version in full, the nuspec usually carries only a link, so the release wins when both exist
