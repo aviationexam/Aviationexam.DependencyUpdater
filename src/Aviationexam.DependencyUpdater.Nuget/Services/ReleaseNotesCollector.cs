@@ -3,6 +3,7 @@ using Aviationexam.DependencyUpdater.Nuget.Extensions;
 using Aviationexam.DependencyUpdater.Nuget.Models;
 using Microsoft.Extensions.Logging;
 using NuGet.Protocol.Core.Types;
+using NuGet.Versioning;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -87,42 +88,42 @@ public sealed class ReleaseNotesCollector(
         CancellationToken cancellationToken
     )
     {
+        // Versions of one update range can be spread across the primary and fallback repositories,
+        // so notes are merged from every applicable repository and de-duplicated per version.
+        var releaseNotes = new Dictionary<string, PackageReleaseNote>(StringComparer.OrdinalIgnoreCase);
+
         try
         {
             using var nugetCache = new SourceCacheContext();
             nugetCache.MaxAge = cachingConfiguration.MaxCacheAge;
 
-            foreach (var nugetSource in nugetUpdaterContext.GetSourcesForPackage(packageName, logger))
+            var repositories = nugetUpdaterContext.GetSourcesForPackage(packageName, logger)
+                .AsValueEnumerable()
+                .Select(x => sourceRepositories.GetValueOrDefault(x))
+                .Where(x => x is not null)
+                .SelectMany(x => new[] { x!.SourceRepository, x.FallbackSourceRepository })
+                .Where(x => x is not null)
+                .Distinct()
+                .ToList();
+
+            foreach (var repository in repositories)
             {
-                if (!sourceRepositories.TryGetValue(nugetSource, out var sourceRepository))
+                var repositoryReleaseNotes = await releaseNotesFetcher.FetchReleaseNotesAsync(
+                    repository!,
+                    packageName,
+                    fromVersion,
+                    toVersion,
+                    nugetCache,
+                    cancellationToken
+                );
+
+                foreach (var releaseNote in repositoryReleaseNotes)
                 {
-                    continue;
-                }
-
-                foreach (var repository in new[] { sourceRepository.SourceRepository, sourceRepository.FallbackSourceRepository })
-                {
-                    if (repository is null)
-                    {
-                        continue;
-                    }
-
-                    var releaseNotes = await releaseNotesFetcher.FetchReleaseNotesAsync(
-                        repository,
-                        packageName,
-                        fromVersion,
-                        toVersion,
-                        nugetCache,
-                        cancellationToken
-                    );
-
-                    if (releaseNotes.Count > 0)
-                    {
-                        return releaseNotes;
-                    }
+                    releaseNotes.TryAdd(releaseNote.Version, releaseNote);
                 }
             }
 
-            if (logger.IsEnabled(LogLevel.Debug))
+            if (releaseNotes.Count == 0 && logger.IsEnabled(LogLevel.Debug))
             {
                 logger.LogDebug("No release notes found for {PackageName} {From} -> {To}", packageName, fromVersion?.GetSerializedVersion(), toVersion.GetSerializedVersion());
             }
@@ -135,6 +136,9 @@ public sealed class ReleaseNotesCollector(
             }
         }
 
-        return [];
+        return releaseNotes.Values
+            .AsValueEnumerable()
+            .OrderBy(x => NuGetVersion.Parse(x.Version))
+            .ToList();
     }
 }

@@ -100,6 +100,37 @@ public class ReleaseNotesFormatterTests
     }
 
     [Fact]
+    public void BuildSection_RendersOriginalIndentationOfFirstEntry()
+    {
+        // Arrange
+        const string notes = "- Parent  \r\n  - Nested child\r\n\r\n    var x = 1;   \r\n";
+        var releaseNotes = new[]
+        {
+            new PackageReleaseNote("PackageA", "1.0.1", notes),
+            new PackageReleaseNote("PackageB", "1.0.1", ReleaseNotesFormatter.NormalizeNotes(notes)),
+        };
+
+        // Act
+        var result = ReleaseNotesFormatter.BuildSection(releaseNotes);
+
+        // Assert
+        var lines = result!.ReplaceLineEndings("\n").Split('\n');
+        Assert.Equal(
+            [
+                "## Release notes",
+                "",
+                "**PackageA, PackageB 1.0.1**",
+                "",
+                "> - Parent",
+                ">   - Nested child",
+                ">",
+                ">     var x = 1;",
+            ],
+            lines
+        );
+    }
+
+    [Fact]
     public void BuildSection_WithoutUsableNotes_ReturnsNull()
     {
         // Arrange

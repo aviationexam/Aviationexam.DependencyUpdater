@@ -61,14 +61,17 @@ public class ReleaseNotesCollectorTests
     }
 
     [Fact]
-    public async Task CollectReleaseNotesAsync_UsesFallbackRepositoryWhenPrimaryHasNoNotes()
+    public async Task CollectReleaseNotesAsync_MergesVersionsAcrossPrimaryAndFallbackRepositories()
     {
         // Arrange
         var fetcher = Substitute.For<INugetReleaseNotesFetcher>();
         fetcher.FetchReleaseNotesAsync(Repository, "PackageA", Arg.Any<PackageVersion?>(), Arg.Any<PackageVersion>(), Arg.Any<SourceCacheContext>(), Arg.Any<CancellationToken>())
-            .Returns([]);
+            .Returns([new PackageReleaseNote("PackageA", "1.1.0", "Notes 1.1 primary")]);
         fetcher.FetchReleaseNotesAsync(FallbackRepository, "PackageA", Arg.Any<PackageVersion?>(), Arg.Any<PackageVersion>(), Arg.Any<SourceCacheContext>(), Arg.Any<CancellationToken>())
-            .Returns([new PackageReleaseNote("PackageA", "2.0.0", "Notes A")]);
+            .Returns([
+                new PackageReleaseNote("PackageA", "1.1.0", "Notes 1.1 fallback"),
+                new PackageReleaseNote("PackageA", "2.0.0", "Notes 2.0"),
+            ]);
 
         var collector = new ReleaseNotesCollector(fetcher, NullLogger<ReleaseNotesCollector>.Instance);
 
@@ -82,7 +85,13 @@ public class ReleaseNotesCollectorTests
         );
 
         // Assert
-        Assert.Equal([new PackageReleaseNote("PackageA", "2.0.0", "Notes A")], result);
+        Assert.Equal(
+            [
+                new PackageReleaseNote("PackageA", "1.1.0", "Notes 1.1 primary"),
+                new PackageReleaseNote("PackageA", "2.0.0", "Notes 2.0"),
+            ],
+            result
+        );
     }
 
     [Fact]

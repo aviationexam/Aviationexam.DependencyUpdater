@@ -30,12 +30,28 @@ public static partial class ReleaseNotesFormatter
         return string.Join('\n', lines).Trim('\n');
     }
 
+    // Keeps indentation so nested lists and code blocks survive, only line endings and trailing whitespace are unified
+    private static string CleanNotes(
+        string notes
+    )
+    {
+        var lines = notes
+            .ReplaceLineEndings("\n")
+            .Split('\n')
+            .AsValueEnumerable()
+            .Select(line => line.TrimEnd())
+            .ToList();
+
+        return string.Join('\n', lines).Trim('\n');
+    }
+
     public static string? BuildSection(
         IReadOnlyCollection<PackageReleaseNote> releaseNotes
     )
     {
         var groups = new Dictionary<string, List<PackageReleaseNote>>(StringComparer.Ordinal);
         var order = new List<string>();
+        var representatives = new Dictionary<string, string>(StringComparer.Ordinal);
 
         foreach (var releaseNote in releaseNotes)
         {
@@ -50,6 +66,7 @@ public static partial class ReleaseNotesFormatter
                 group = [];
                 groups.Add(normalized, group);
                 order.Add(normalized);
+                representatives.Add(normalized, CleanNotes(releaseNote.Notes));
             }
 
             if (!group.AsValueEnumerable().Any(x => x.PackageName == releaseNote.PackageName && x.Version == releaseNote.Version))
@@ -72,7 +89,7 @@ public static partial class ReleaseNotesFormatter
             stringBuilder.Append("**").Append(FormatAppliesTo(groups[normalized])).AppendLine("**");
             stringBuilder.AppendLine();
 
-            foreach (var line in normalized.Split('\n'))
+            foreach (var line in representatives[normalized].Split('\n'))
             {
                 stringBuilder.Append('>');
                 if (line.Length > 0)
