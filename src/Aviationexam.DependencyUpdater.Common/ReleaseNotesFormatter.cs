@@ -16,6 +16,18 @@ public static partial class ReleaseNotesFormatter
 
     private static readonly Regex HorizontalWhitespace = HorizontalWhitespaceRegexFactory();
 
+    [GeneratedRegex(@"(?<![\w/.-])@(?=[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)", RegexOptions.None, matchTimeoutMilliseconds: 100)]
+    private static partial Regex MentionRegexFactory();
+
+    private static readonly Regex Mention = MentionRegexFactory();
+
+    [GeneratedRegex(@"(?<![\w/&=?.-])#(?=\d+)", RegexOptions.None, matchTimeoutMilliseconds: 100)]
+    private static partial Regex IssueReferenceRegexFactory();
+
+    private static readonly Regex IssueReference = IssueReferenceRegexFactory();
+
+    private const string ZeroWidthSpace = "\u200B";
+
     public static string NormalizeNotes(
         string notes
     )
@@ -42,7 +54,17 @@ public static partial class ReleaseNotesFormatter
             .Select(line => line.TrimEnd())
             .ToList();
 
-        return string.Join('\n', lines).Trim('\n');
+        return ScrubMentionsAndIssueReferences(string.Join('\n', lines).Trim('\n'));
+    }
+
+    // Release notes come from other repositories; "@user" and "#123" must not notify people or link issues in the target repository
+    public static string ScrubMentionsAndIssueReferences(
+        string text
+    )
+    {
+        var scrubbed = Mention.Replace(text, "@" + ZeroWidthSpace);
+
+        return IssueReference.Replace(scrubbed, "#" + ZeroWidthSpace);
     }
 
     public static string? BuildSection(

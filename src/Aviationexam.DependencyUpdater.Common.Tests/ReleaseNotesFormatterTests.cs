@@ -130,6 +130,49 @@ public class ReleaseNotesFormatterTests
         );
     }
 
+    [Theory]
+    [InlineData("Thanks @octocat and @my-user!", "Thanks @\u200Boctocat and @\u200Bmy-user!")]
+    [InlineData("Fixes #123, see #4567.", "Fixes #\u200B123, see #\u200B4567.")]
+    [InlineData("- !22542 Generate release notes", "- !22542 Generate release notes")]
+    [InlineData("mail@example.com", "mail@example.com")]
+    [InlineData("https://dev.azure.com/x/_git/y/branchCompare?baseVersion=GC1&targetVersion=GC2&_a=commits#1", "https://dev.azure.com/x/_git/y/branchCompare?baseVersion=GC1&targetVersion=GC2&_a=commits#1")]
+    [InlineData("Heading #1 and C# 14 and #tag", "Heading #\u200B1 and C# 14 and #tag")]
+    public void ScrubMentionsAndIssueReferences_Works(string input, string expected)
+    {
+        // Act
+        var result = ReleaseNotesFormatter.ScrubMentionsAndIssueReferences(input);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void BuildSection_ScrubsRenderedNotesButKeepsDeduplication()
+    {
+        // Arrange
+        var releaseNotes = new[]
+        {
+            new PackageReleaseNote("PackageA", "1.0.1", "Fixes #12 by @octocat"),
+            new PackageReleaseNote("PackageB", "1.0.1", "Fixes #12 by @octocat"),
+        };
+
+        // Act
+        var result = ReleaseNotesFormatter.BuildSection(releaseNotes);
+
+        // Assert
+        var lines = result!.ReplaceLineEndings("\n").Split('\n');
+        Assert.Equal(
+            [
+                "## Release notes",
+                "",
+                "**PackageA, PackageB 1.0.1**",
+                "",
+                "> Fixes #\u200B12 by @\u200Boctocat",
+            ],
+            lines
+        );
+    }
+
     [Fact]
     public void BuildSection_WithoutUsableNotes_ReturnsNull()
     {
