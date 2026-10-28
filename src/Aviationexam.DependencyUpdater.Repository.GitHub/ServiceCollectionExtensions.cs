@@ -1,4 +1,5 @@
 using Aviationexam.DependencyUpdater.Interfaces;
+using Aviationexam.DependencyUpdater.Interfaces.ReleaseNotes;
 using Aviationexam.DependencyUpdater.Interfaces.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http;
@@ -14,6 +15,7 @@ namespace Aviationexam.DependencyUpdater.Repository.GitHub;
 public static class ServiceCollectionExtensions
 {
     public const string AuthenticationProxy = "AuthenticationProxy";
+    public const string ProjectReleases = "ProjectReleases";
 
     public static IServiceCollection AddRepositoryGitHub(
         this IServiceCollection serviceCollection,
@@ -48,6 +50,15 @@ public static class ServiceCollectionExtensions
                     )
                     : serviceProvider.GetRequiredService<IGitHubClient>()
             )
+            // Release notes of third-party packages are read from public GitHub repositories;
+            // the platform token is used when the tool runs against GitHub, otherwise anonymous access applies.
+            .AddKeyedScoped<IGitHubClient>(ProjectReleases, static (
+                    serviceProvider, _
+                ) => serviceProvider.GetService<GitHubConfiguration>() is not null
+                    ? serviceProvider.GetRequiredService<IGitHubClient>()
+                    : new GitHubClient(new ProductHeaderValue("Aviationexam.DependencyUpdater"))
+            )
+            .AddScoped<IProjectReleasesProvider, GitHubProjectReleasesProvider>()
             .AddResiliencePipeline<string, Octokit.PullRequest>(
                 $"{nameof(IGitHubClient.PullRequest.Create)}-pipeline",
                 static (builder, context) => builder.AddRetry(new RetryStrategyOptions<Octokit.PullRequest>
