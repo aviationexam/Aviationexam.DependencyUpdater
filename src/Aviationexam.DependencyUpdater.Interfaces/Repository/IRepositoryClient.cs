@@ -6,6 +6,8 @@ namespace Aviationexam.DependencyUpdater.Interfaces.Repository;
 
 public interface IRepositoryClient
 {
+    int MaxPullRequestDescriptionLength { get; }
+
     Task<IEnumerable<PullRequest>> ListActivePullRequestsAsync(
         string sourceDirectory,
         string updater,

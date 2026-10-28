@@ -30,6 +30,9 @@ public class RepositoryGitHubClient(
 
     private ISet<string>? _labelCache;
 
+    // GitHub rejects longer bodies with "body is too long (maximum is 65536 characters)"
+    public int MaxPullRequestDescriptionLength => 65536;
+
     public async Task<IEnumerable<PullRequest>> ListActivePullRequestsAsync(
         string sourceDirectory,
         string updater,

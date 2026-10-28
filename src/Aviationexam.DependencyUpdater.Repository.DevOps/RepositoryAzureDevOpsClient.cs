@@ -24,6 +24,9 @@ public class RepositoryAzureDevOpsClient(
     ILogger<RepositoryAzureDevOpsClient> logger
 ) : IRepositoryClient
 {
+    // Azure Repos rejects longer descriptions: "A description for a pull request must not be longer than 4000 characters."
+    public int MaxPullRequestDescriptionLength => 4000;
+
     public async Task<IEnumerable<PullRequest>> ListActivePullRequestsAsync(
         string sourceDirectory,
         string updater,
@@ -129,7 +132,7 @@ public class RepositoryAzureDevOpsClient(
                 MergeStrategy = GitPullRequestMergeStrategy.Squash,
                 AutoCompleteIgnoreConfigIds = [],
                 TransitionWorkItems = true,
-                MergeCommitMessage = $"{title}\n\n{description}",
+                MergeCommitMessage = GetMergeCommitMessage(title, description),
             },
             AutoCompleteSetBy = new IdentityRef { Id = devOpsConfiguration.AccountId },
             Labels =
@@ -162,7 +165,7 @@ public class RepositoryAzureDevOpsClient(
                 MergeStrategy = GitPullRequestMergeStrategy.Squash,
                 AutoCompleteIgnoreConfigIds = [],
                 TransitionWorkItems = true,
-                MergeCommitMessage = $"{title}\n\n{description}",
+                MergeCommitMessage = GetMergeCommitMessage(title, description),
             },
         };
 
@@ -199,7 +202,7 @@ public class RepositoryAzureDevOpsClient(
                 MergeStrategy = GitPullRequestMergeStrategy.Squash,
                 AutoCompleteIgnoreConfigIds = [],
                 TransitionWorkItems = true,
-                MergeCommitMessage = $"{title}\n\n{description}",
+                MergeCommitMessage = GetMergeCommitMessage(title, description),
             },
         };
 
@@ -215,6 +218,18 @@ public class RepositoryAzureDevOpsClient(
         {
             logger.LogTrace("Update pull request {pullRequestId}", pullRequestId);
         }
+    }
+
+    private string GetMergeCommitMessage(
+        string title,
+        string description
+    )
+    {
+        var mergeCommitMessage = $"{title}\n\n{description}";
+
+        return mergeCommitMessage.Length <= MaxPullRequestDescriptionLength
+            ? mergeCommitMessage
+            : mergeCommitMessage[..MaxPullRequestDescriptionLength];
     }
 
     public async Task AbandonPullRequestAsync(
