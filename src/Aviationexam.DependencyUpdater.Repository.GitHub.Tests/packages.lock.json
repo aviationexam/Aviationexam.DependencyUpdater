@@ -273,8 +273,8 @@
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.14, )",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "[10.0.14, )",
           "Octokit": "[14.0.0, )",
-          "Polly.Core": "[8.8.1, )",
-          "Polly.Extensions": "[8.8.1, )"
+          "Polly.Core": "[8.9.0, )",
+          "Polly.Extensions": "[8.9.0, )"
         }
       },
       "Castle.Core": {
@@ -351,19 +351,19 @@
       },
       "Polly.Core": {
         "type": "CentralTransitive",
-        "requested": "[8.8.1, )",
-        "resolved": "8.8.1",
-        "contentHash": "yyzOT3XJRR7sEOxZH1Xpb6Oi5cDiGVuTOSVfIlcC23wFUdoyCPOujjKfIX5WdIX8l5TkRneOTyyW1Y1zNQKnUA=="
+        "requested": "[8.9.0, )",
+        "resolved": "8.9.0",
+        "contentHash": "Imm3q+XvH+8fiOdCkp+GggDQuxN3e4VznbRxODjjJxCurmAIfUEO4dKcPx8RCwocTkvP6Udw2DyXtC+45tu3jA=="
       },
       "Polly.Extensions": {
         "type": "CentralTransitive",
-        "requested": "[8.8.1, )",
-        "resolved": "8.8.1",
-        "contentHash": "nHtossjXxh5Jg6wSZe1hCFRT8Q8w1m+/WTTl0CxaYRxrPbIMfJOBYyxJ4/aAFjfqL5Gsa3/C9ivTqAZhp+Aqtw==",
+        "requested": "[8.9.0, )",
+        "resolved": "8.9.0",
+        "contentHash": "//V0hbyhoO+iGtmKk3Lr03xQPWvq+w+mK9Hb4baZa36l25LO9z9H1lefI0XS6oidAICwZtmm1le9D4AYp103Vw==",
         "dependencies": {
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
-          "Microsoft.Extensions.Options": "8.0.0",
-          "Polly.Core": "8.8.1"
+          "Microsoft.Extensions.Logging.Abstractions": "10.0.0",
+          "Microsoft.Extensions.Options": "10.0.0",
+          "Polly.Core": "8.9.0"
         }
       },
       "System.Diagnostics.EventLog": {
