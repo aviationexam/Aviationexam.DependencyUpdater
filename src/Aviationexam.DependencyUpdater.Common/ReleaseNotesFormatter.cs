@@ -137,7 +137,8 @@ public static partial class ReleaseNotesFormatter
     public static string AppendToDescription(
         string description,
         string? releaseNotesSection,
-        int maxLength
+        int maxLength,
+        string truncationNotice = TruncationNotice
     )
     {
         if (string.IsNullOrEmpty(releaseNotesSection))
@@ -152,7 +153,7 @@ public static partial class ReleaseNotesFormatter
             return full;
         }
 
-        var suffix = separator + TruncationNotice;
+        var suffix = separator + truncationNotice;
         var available = maxLength - description.Length - separator.Length - suffix.Length;
         if (available < SectionHeader.Length)
         {

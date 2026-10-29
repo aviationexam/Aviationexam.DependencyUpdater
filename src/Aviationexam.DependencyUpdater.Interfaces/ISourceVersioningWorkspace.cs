@@ -12,9 +12,10 @@ public interface ISourceVersioningWorkspace : IDisposable
         string fullPath
     );
 
-    void UpdateSubmodule(
+    SubmoduleUpdate? UpdateSubmodule(
         string submodule,
-        string branch
+        string branch,
+        string? sourceBranchName
     );
 
     bool HasUncommitedChanges();

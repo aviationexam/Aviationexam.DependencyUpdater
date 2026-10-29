@@ -65,7 +65,10 @@ public sealed class SubmoduleUpdater(
                 authorEmail: gitMetadataConfig.CommitAuthorEmail
             );
 
-            gitWorkspace.UpdateSubmodule(submodule, submoduleEntry.Branch);
+            var submoduleUpdate = gitWorkspace.UpdateSubmodule(submodule, submoduleEntry.Branch, repositoryConfig.SourceBranchName);
+
+            var commitMessage = GetCommitMessage(submodule, submoduleUpdate);
+            var description = GetDescription(commitMessage, submoduleUpdate);
 
             // Get existing pull request if it exists
             var pullRequestId = await repositoryClient.GetPullRequestForBranchAsync(
@@ -76,15 +79,15 @@ public sealed class SubmoduleUpdater(
             // Process pull request based on update status
             pullRequestId = await packageUpdater.HandlePullRequestAsync(
                 gitWorkspace,
-                $"Bump submodule {submodule}",
-                description: null,
+                commitMessage,
+                description,
                 pullRequestId,
                 repositoryConfig,
                 authConfig,
                 gitMetadataConfig,
                 executeRestore,
                 restoreDirectory,
-                $"Bump submodule {submodule}",
+                commitMessage,
                 updater,
                 token
             );
@@ -96,5 +99,42 @@ public sealed class SubmoduleUpdater(
         });
 
         return results;
+    }
+
+    public static string GetCommitMessage(
+        string submodule,
+        SubmoduleUpdate? submoduleUpdate
+    ) => submoduleUpdate is { FromCommit: { } fromCommit, ToCommit: var toCommit } && fromCommit != toCommit
+        ? $"Bump submodule {submodule} from {fromCommit[..7]} to {toCommit[..7]}"
+        : $"Bump submodule {submodule}";
+
+    private string GetDescription(
+        string commitMessage,
+        SubmoduleUpdate? submoduleUpdate
+    )
+    {
+        if (submoduleUpdate is null)
+        {
+            return commitMessage;
+        }
+
+        try
+        {
+            return ReleaseNotesFormatter.AppendToDescription(
+                commitMessage,
+                SubmoduleCommitsFormatter.BuildSection(submoduleUpdate),
+                repositoryClient.MaxPullRequestDescriptionLength,
+                SubmoduleCommitsFormatter.TruncationNotice
+            );
+        }
+        catch (Exception ex)
+        {
+            if (logger.IsEnabled(LogLevel.Warning))
+            {
+                logger.LogWarning(ex, "Failed to describe commits of submodule {Submodule}", submoduleUpdate.Path);
+            }
+
+            return commitMessage;
+        }
     }
 }
