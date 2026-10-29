@@ -16,13 +16,31 @@ public class SubmoduleCommitsFormatterTests
     [InlineData("https://aviationexam@dev.azure.com/aviationexam/project/_git/repo", "https://dev.azure.com/aviationexam/project/_git/repo")]
     [InlineData("git@ssh.dev.azure.com:v3/aviationexam/project/repo", "https://dev.azure.com/aviationexam/project/_git/repo")]
     [InlineData("https://gitlab.com/group/sub/repo.git/", "https://gitlab.com/group/sub/repo")]
+    [InlineData("https://git.example.com:8443/owner/repo.git", "https://git.example.com:8443/owner/repo")]
+    [InlineData("http://git.example.com/owner/repo.git", "http://git.example.com/owner/repo")]
+    [InlineData("https://dev.azure.com/org/My%20Project/_git/My%20Repo", "https://dev.azure.com/org/My%20Project/_git/My%20Repo")]
     public void GetRepositoryWebUrl_MapsRemoteUrls(string remoteUrl, string expected)
     {
         // Act
         var result = SubmoduleCommitsFormatter.GetRepositoryWebUrl(remoteUrl);
 
         // Assert
-        Assert.Equal(expected, result?.ToString());
+        Assert.Equal(expected, result?.AbsoluteUri);
+    }
+
+    [Fact]
+    public void GetCommitAndCompareUrl_KeepEscapedPath()
+    {
+        // Arrange
+        var repositoryUrl = SubmoduleCommitsFormatter.GetRepositoryWebUrl("https://dev.azure.com/org/My%20Project/_git/repo");
+
+        // Act
+        var commitUrl = SubmoduleCommitsFormatter.GetCommitUrl(repositoryUrl, ToSha);
+        var compareUrl = SubmoduleCommitsFormatter.GetCompareUrl(repositoryUrl, FromSha, ToSha);
+
+        // Assert
+        Assert.Equal($"https://dev.azure.com/org/My%20Project/_git/repo/commit/{ToSha}", commitUrl);
+        Assert.Equal($"https://dev.azure.com/org/My%20Project/_git/repo/branchCompare?baseVersion=GC{FromSha}&targetVersion=GC{ToSha}&_a=commits", compareUrl);
     }
 
     [Theory]

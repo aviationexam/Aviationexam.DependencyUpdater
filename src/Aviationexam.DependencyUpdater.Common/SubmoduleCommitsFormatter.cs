@@ -110,7 +110,10 @@ public static partial class SubmoduleCommitsFormatter
             }
         }
 
-        return new UriBuilder(Uri.UriSchemeHttps, host) { Path = path }.Uri;
+        // HTTP(S) remotes keep their scheme and port, SSH and git remotes map to the HTTPS web endpoint
+        var isHttp = uri.Scheme is "https" or "http";
+
+        return new UriBuilder(isHttp ? uri.Scheme : Uri.UriSchemeHttps, host, isHttp ? uri.Port : -1) { Path = path }.Uri;
     }
 
     [GeneratedRegex(@"^(?:[\w.-]+@)?(?<host>[\w.-]+):(?!//)(?<path>[^:]+)$", RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 100)]
@@ -122,7 +125,12 @@ public static partial class SubmoduleCommitsFormatter
     public static string? GetCommitUrl(
         Uri? repositoryUrl,
         string sha
-    ) => repositoryUrl is null ? null : $"{repositoryUrl}/commit/{sha}";
+    ) => repositoryUrl is null ? null : $"{Escaped(repositoryUrl)}/commit/{sha}";
+
+    // Uri.ToString() unescapes "%20" and alike, which breaks Markdown link destinations
+    private static string Escaped(
+        Uri repositoryUrl
+    ) => repositoryUrl.AbsoluteUri.TrimEnd('/');
 
     public static string? GetCompareUrl(
         Uri? repositoryUrl,
@@ -135,16 +143,18 @@ public static partial class SubmoduleCommitsFormatter
             return null;
         }
 
+        var url = Escaped(repositoryUrl);
+
         if (IsAzureDevOps(repositoryUrl))
         {
             return fromCommit is null
-                ? $"{repositoryUrl}/commits?itemVersion=GC{toCommit}"
-                : $"{repositoryUrl}/branchCompare?baseVersion=GC{fromCommit}&targetVersion=GC{toCommit}&_a=commits";
+                ? $"{url}/commits?itemVersion=GC{toCommit}"
+                : $"{url}/branchCompare?baseVersion=GC{fromCommit}&targetVersion=GC{toCommit}&_a=commits";
         }
 
         return fromCommit is null
-            ? $"{repositoryUrl}/commits/{toCommit}"
-            : $"{repositoryUrl}/compare/{fromCommit}...{toCommit}";
+            ? $"{url}/commits/{toCommit}"
+            : $"{url}/compare/{fromCommit}...{toCommit}";
     }
 
     private static bool IsAzureDevOps(
