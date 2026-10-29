@@ -93,14 +93,16 @@ public class SubmoduleCommitsFormatterTests
     }
 
     [Fact]
-    public void GetTitle_LongTitle_IsTruncated()
+    public void GetTitle_LongTitle_IsKeptWhole()
     {
+        // Arrange
+        const string title = "Merge pull request 22894 from dependency-updater/nuget/src/group-avi-core-dependencies/avi-core-dependencies";
+
         // Act
-        var result = SubmoduleCommitsFormatter.GetTitle(new string('a', 100));
+        var result = SubmoduleCommitsFormatter.GetTitle(title + "\n\nBump avi-core-dependencies group");
 
         // Assert
-        Assert.Equal(SubmoduleCommitsFormatter.MaxTitleLength, result.Length);
-        Assert.EndsWith("...", result);
+        Assert.Equal(title, result);
     }
 
     [Fact]
