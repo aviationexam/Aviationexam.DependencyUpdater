@@ -11,7 +11,6 @@ public static partial class SubmoduleCommitsFormatter
     public const string SectionHeader = "## Commits";
     public const string TruncationNotice = "_The commit list was truncated to fit the pull request description limit._";
     public const int MaxCommits = 10;
-    public const int MaxTitleLength = 80;
 
     [GeneratedRegex(@"(?<=[^\w.-])(?<char>[_*`~\[\]<>])", RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 100)]
     private static partial Regex MarkdownCharactersRegexFactory();
@@ -63,10 +62,6 @@ public static partial class SubmoduleCommitsFormatter
     )
     {
         var title = message.ReplaceLineEndings("\n").Split('\n')[0].Trim();
-        if (title.Length > MaxTitleLength)
-        {
-            title = title[..(MaxTitleLength - 3)].TrimEnd() + "...";
-        }
 
         return ReleaseNotesFormatter.ScrubMentionsAndIssueReferences(MarkdownCharacters.Replace(title, "\\${char}"));
     }
