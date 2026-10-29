@@ -4,10 +4,12 @@ using Aviationexam.DependencyUpdater.Vcs.Git.Extensions;
 using LibGit2Sharp;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using ZLinq;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
+using SubmoduleUpdate = Aviationexam.DependencyUpdater.Interfaces.SubmoduleUpdate;
 
 namespace Aviationexam.DependencyUpdater.Vcs.Git;
 
@@ -93,9 +95,10 @@ public sealed class GitSourceVersioningWorkspace(
         return true;
     }
 
-    public void UpdateSubmodule(
+    public SubmoduleUpdate? UpdateSubmodule(
         string submodule,
-        string branch
+        string branch,
+        string? sourceBranchName
     )
     {
         lock (gitRepositoryLock)
@@ -115,11 +118,66 @@ public sealed class GitSourceVersioningWorkspace(
 
             var upstreamBranch = submoduleRepository.Branches[$"{GitConstants.DefaultRemote}/{branch}"];
 
-            if (upstreamBranch is not null)
+            if (upstreamBranch is null)
             {
-                submoduleRepository.Reset(ResetMode.Hard, upstreamBranch.Tip);
+                return null;
             }
+
+            submoduleRepository.Reset(ResetMode.Hard, upstreamBranch.Tip);
+
+            // The pull request branch may already carry an earlier bump, so the commits are listed since the source branch
+            var fromCommit = GetSubmoduleCommitOnSourceBranch(submoduleInstance.Path, sourceBranchName) ?? submoduleInstance.HeadCommitId;
+
+            return new SubmoduleUpdate(
+                submoduleInstance.Path,
+                submoduleInstance.Url,
+                fromCommit?.Sha,
+                upstreamBranch.Tip.Sha,
+                GetSubmoduleCommits(submoduleRepository, fromCommit, upstreamBranch.Tip)
+            );
         }
+    }
+
+    private ObjectId? GetSubmoduleCommitOnSourceBranch(
+        string submodulePath,
+        string? sourceBranchName
+    )
+    {
+        if (sourceBranchName is null)
+        {
+            return null;
+        }
+
+        var sourceBranch = _worktreeRepository.Branches[$"{GitConstants.DefaultRemote}/{sourceBranchName}"];
+
+        return sourceBranch?.Tip[submodulePath] is { TargetType: TreeEntryTargetType.GitLink } entry
+            ? entry.Target.Id
+            : null;
+    }
+
+    private static IReadOnlyList<SubmoduleCommit> GetSubmoduleCommits(
+        Repository submoduleRepository,
+        ObjectId? fromCommit,
+        Commit toCommit
+    )
+    {
+        if (fromCommit is null || submoduleRepository.Lookup<Commit>(fromCommit) is null)
+        {
+            return [];
+        }
+
+        var filter = new CommitFilter
+        {
+            IncludeReachableFrom = toCommit,
+            ExcludeReachableFrom = fromCommit,
+            SortBy = CommitSortStrategies.Topological | CommitSortStrategies.Time,
+        };
+
+        return submoduleRepository.Commits
+            .QueryBy(filter)
+            .AsValueEnumerable()
+            .Select(x => new SubmoduleCommit(x.Sha, x.Message))
+            .ToList();
     }
 
     public bool HasUncommitedChanges()

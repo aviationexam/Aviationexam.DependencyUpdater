@@ -36,6 +36,7 @@
   <Project Path="src\Aviationexam.DependencyUpdater.Repository.GitHub.Tests\Aviationexam.DependencyUpdater.Repository.GitHub.Tests.csproj" />
   <Project Path="src\Aviationexam.DependencyUpdater.Repository.GitHub\Aviationexam.DependencyUpdater.Repository.GitHub.csproj" />
   <Project Path="src\Aviationexam.DependencyUpdater.TestsInfrastructure\Aviationexam.DependencyUpdater.TestsInfrastructure.csproj" />
+  <Project Path="src\Aviationexam.DependencyUpdater.Vcs.Git.Tests\Aviationexam.DependencyUpdater.Vcs.Git.Tests.csproj" />
   <Project Path="src\Aviationexam.DependencyUpdater.Vcs.Git\Aviationexam.DependencyUpdater.Vcs.Git.csproj" />
   <Project Path="src\Aviationexam.DependencyUpdater\Aviationexam.DependencyUpdater.csproj" />
 </Solution>
