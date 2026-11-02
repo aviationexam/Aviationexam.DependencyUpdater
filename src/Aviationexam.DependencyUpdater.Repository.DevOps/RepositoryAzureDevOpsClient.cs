@@ -221,17 +221,10 @@ public class RepositoryAzureDevOpsClient(
         }
     }
 
-    private string GetMergeCommitMessage(
+    private static string GetMergeCommitMessage(
         string title,
         string description
-    )
-    {
-        var mergeCommitMessage = $"{title}\n\n{description}";
-
-        return mergeCommitMessage.Length <= MaxPullRequestDescriptionLength
-            ? mergeCommitMessage
-            : mergeCommitMessage[..MaxPullRequestDescriptionLength];
-    }
+    ) => MergeCommitMessageBuilder.Build(title, description);
 
     public async Task AbandonPullRequestAsync(
         PullRequest pullRequest,
