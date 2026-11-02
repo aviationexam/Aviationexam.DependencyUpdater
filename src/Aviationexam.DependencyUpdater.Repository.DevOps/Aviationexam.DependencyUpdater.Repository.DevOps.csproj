@@ -14,6 +14,10 @@
   <Import Project="..\WarningConfiguration.targets" />
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Aviationexam.DependencyUpdater.Repository.DevOps.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Identity" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
