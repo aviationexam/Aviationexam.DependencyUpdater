@@ -97,16 +97,16 @@
       },
       "Corvus.Json.JsonReference": {
         "type": "Transitive",
-        "resolved": "5.8.7",
-        "contentHash": "/unRx4YjQrLZil5Ii/NuYenGDNneFFi+qa6cCGkRRnzrKlwvPul8z41dVwq+Ho3iXD9S7QoRKD7g+5UYkNoAUg==",
+        "resolved": "5.8.8",
+        "contentHash": "WPs+ekC0dLbZzxQLWGSRhXBmTATtak6n+mqy6LbpbF4N4FU/vnkQkITrCMMVf5x+ErFp79ChiPR4EuAF8dWIvw==",
         "dependencies": {
           "Corvus.HighPerformance": "1.0.4"
         }
       },
       "Corvus.Regex.Ecma262": {
         "type": "Transitive",
-        "resolved": "1.0.12",
-        "contentHash": "0ErVXFzGlUEgEVvk//BZqf0hbsM+zGo0utwyEqc9hc5eub886A6Qudn3M29BoLsFEdOVHo3HSEbJkA4zuvIhVQ=="
+        "resolved": "1.0.15",
+        "contentHash": "wDC21MqsPI9L8PBs3dst8kebfY0rxE9KFiacCuk2Zwju6q3+DO49JFnQ61SwBBJgVUh2xSx2L6NQ4C6LXL6Vrg=="
       },
       "LibGit2Sharp.NativeBinaries": {
         "type": "Transitive",
@@ -548,8 +548,8 @@
         "type": "Project",
         "dependencies": {
           "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
-          "Corvus.Json.ExtendedTypes": "[5.8.7, )",
-          "Corvus.Json.SourceGenerator": "[5.8.7, )",
+          "Corvus.Json.ExtendedTypes": "[5.8.8, )",
+          "Corvus.Json.SourceGenerator": "[5.8.8, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.14, )",
           "Yaml2JsonNode": "[3.0.2, )",
           "YamlDotNet": "[18.1.0, )"
@@ -646,21 +646,21 @@
       },
       "Corvus.Json.ExtendedTypes": {
         "type": "CentralTransitive",
-        "requested": "[5.8.7, )",
-        "resolved": "5.8.7",
-        "contentHash": "lME6VOSsrf81ZaHMG0w3ceI/cqRd4sNR8TbNmog/j2WoPbBCa7ukmbNIsupznktPjs4hRGSvFql8/7KI9EXF5Q==",
+        "requested": "[5.8.8, )",
+        "resolved": "5.8.8",
+        "contentHash": "WLZVC3qMrO70iVAszY92JoyGL8FxK+iZNrVl02/5mREKPRK0TVY5bDKNFofXRimglFfz1lFjjASACAB0z05+wg==",
         "dependencies": {
-          "Corvus.Json.JsonReference": "5.8.7",
-          "Corvus.Regex.Ecma262": "1.0.12",
+          "Corvus.Json.JsonReference": "5.8.8",
+          "Corvus.Regex.Ecma262": "1.0.15",
           "Corvus.UriTemplates": "2.3.2",
           "NodaTime": "3.3.1"
         }
       },
       "Corvus.Json.SourceGenerator": {
         "type": "CentralTransitive",
-        "requested": "[5.8.7, )",
-        "resolved": "5.8.7",
-        "contentHash": "Xhz3sfLkNYnDDn+WDxzT3zYMH4bIa90co/jW2ElGM3n9ovT0y7JjaYZpfCfndExQjoYMOjghfHOzgz5WzVFCQg=="
+        "requested": "[5.8.8, )",
+        "resolved": "5.8.8",
+        "contentHash": "CUPcAlDYFpYUqIUVGN1LC0A9ulVD4ywonPLAySkEwGhFFy8sxIfEGbfZHMfOD8UYIkxEGmJP+3xN1W0zMa3LzA=="
       },
       "Corvus.UriTemplates": {
         "type": "CentralTransitive",
