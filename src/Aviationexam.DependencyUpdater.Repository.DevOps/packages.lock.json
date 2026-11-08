@@ -95,19 +95,19 @@
       },
       "Polly.Core": {
         "type": "Direct",
-        "requested": "[8.9.0, )",
-        "resolved": "8.9.0",
-        "contentHash": "Imm3q+XvH+8fiOdCkp+GggDQuxN3e4VznbRxODjjJxCurmAIfUEO4dKcPx8RCwocTkvP6Udw2DyXtC+45tu3jA=="
+        "requested": "[8.9.1, )",
+        "resolved": "8.9.1",
+        "contentHash": "L0vfggkkI2nDAW9lCFYSqX9g/+3TkVXhAq+sh6owBq656X9XW0kE2NG+dPYGNQGeK66HS1rKHRPWMm1bMv91kw=="
       },
       "Polly.Extensions": {
         "type": "Direct",
-        "requested": "[8.9.0, )",
-        "resolved": "8.9.0",
-        "contentHash": "//V0hbyhoO+iGtmKk3Lr03xQPWvq+w+mK9Hb4baZa36l25LO9z9H1lefI0XS6oidAICwZtmm1le9D4AYp103Vw==",
+        "requested": "[8.9.1, )",
+        "resolved": "8.9.1",
+        "contentHash": "nOYbFNl+2h34AW9WGkaO2USpgmywD5F+bFHLY//SeJjU1mwtrOOL5V55wMlv9SHbkezt03J9QZsVgyK39DmU0Q==",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "10.0.0",
           "Microsoft.Extensions.Options": "10.0.0",
-          "Polly.Core": "8.9.0"
+          "Polly.Core": "8.9.1"
         }
       },
       "Microsoft.AspNet.WebApi.Client": {
