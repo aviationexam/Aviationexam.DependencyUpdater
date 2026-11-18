@@ -113,6 +113,110 @@
       }
     },
     "net10.0/linux-x64": {},
-    "net10.0/win-x64": {}
+    "net10.0/win-x64": {},
+    "net11.0": {
+      "Corvus.Json.ExtendedTypes": {
+        "type": "Direct",
+        "requested": "[5.8.11, )",
+        "resolved": "5.8.11",
+        "contentHash": "yMYu+wrZXa67/v1csDGTzDY0Y+TjFu94NanElorNohh4Wv5ERMQmz2sExA1dkipUuvKRs9/80F1bOQti0LqQmQ==",
+        "dependencies": {
+          "Corvus.Json.JsonReference": "5.8.11",
+          "Corvus.Regex.Ecma262": "1.0.15",
+          "Corvus.UriTemplates": "2.3.2",
+          "NodaTime": "3.3.1"
+        }
+      },
+      "Corvus.Json.SourceGenerator": {
+        "type": "Direct",
+        "requested": "[5.8.11, )",
+        "resolved": "5.8.11",
+        "contentHash": "83V42duBPg4FbOpxwP+IfRWJ/49QE4U7e9uRhm7BNaxj3Gcu3ugSVqz6reiI5W5/Hc9+6DjKqxFjDyVlDgisqw=="
+      },
+      "Meziantou.Analyzer": {
+        "type": "Direct",
+        "requested": "[3.0.341, )",
+        "resolved": "3.0.341",
+        "contentHash": "zpogT6IwYBgNRa9+oETzs7aTU6Te3M/Osdkk/HN1TlJTDjz9dZwoUgh/yWqovT3jTofQGGLB1JqEK8I4uA6+yA=="
+      },
+      "Microsoft.Extensions.Logging.Abstractions": {
+        "type": "Direct",
+        "requested": "[10.0.15, )",
+        "resolved": "10.0.15",
+        "contentHash": "s5xzXGWqqlmmThMnQ1rnmL7QLwbluB2JqX9NaK8C9HPuHzN7kfmiddTRbwts5rQssATkh2B18RrofjeUD8g14A=="
+      },
+      "Microsoft.NET.ILLink.Tasks": {
+        "type": "Direct",
+        "requested": "[11.0.0, )",
+        "resolved": "11.0.0",
+        "contentHash": "gK2aq4XvChj5kvozpPHrkfKkr7zc5Z4xoTrJb4GPZzDEPMlCk0TX632bwY3LsWcX2UVcVRQBBGzsBGC2lq6YhA=="
+      },
+      "Yaml2JsonNode": {
+        "type": "Direct",
+        "requested": "[3.1.0, )",
+        "resolved": "3.1.0",
+        "contentHash": "ciGA2pZZ5MUNggariqI+0TCKHS2tPS0EXidR7J1nUv59BaS8lEsQgyyOvPWG5i31EUq64s138tMbKNjJTJtnOg==",
+        "dependencies": {
+          "YamlDotNet": "18.1.0"
+        }
+      },
+      "YamlDotNet": {
+        "type": "Direct",
+        "requested": "[18.1.0, )",
+        "resolved": "18.1.0",
+        "contentHash": "5K+9KFg2TdTl7VXv88Qzi/0lqK6JFoNP3lRuImPYGRV7K/QYklDyTrj4+A+KAki1JsQi6qKY+hDyY7d6WRqjrw=="
+      },
+      "CommunityToolkit.HighPerformance": {
+        "type": "Transitive",
+        "resolved": "8.3.0",
+        "contentHash": "2zc0Wfr9OtEbLqm6J1Jycim/nKmYv+v12CytJ3tZGNzw7n3yjh1vNCMX0kIBaFBk3sw8g0pMR86QJGXGlArC+A=="
+      },
+      "Corvus.HighPerformance": {
+        "type": "Transitive",
+        "resolved": "1.0.4",
+        "contentHash": "ZSGaQQA3TosSth7bJd/pqMr+LipUiqT1/c0gxli1tI9Rn3JyxHvobnkaBLT42Mwmc49J5HEIogCn+B0+ee4k2w=="
+      },
+      "Corvus.Json.JsonReference": {
+        "type": "Transitive",
+        "resolved": "5.8.11",
+        "contentHash": "UJ32rzr5aHdRkakxO+Eo+tCVptG8LQ7Uu6khnRuoQ1cfnknmw51OJTRSOWvcOtW28OZgdqLg+JhDi6AngDCy8Q==",
+        "dependencies": {
+          "Corvus.HighPerformance": "1.0.4"
+        }
+      },
+      "Corvus.Regex.Ecma262": {
+        "type": "Transitive",
+        "resolved": "1.0.15",
+        "contentHash": "wDC21MqsPI9L8PBs3dst8kebfY0rxE9KFiacCuk2Zwju6q3+DO49JFnQ61SwBBJgVUh2xSx2L6NQ4C6LXL6Vrg=="
+      },
+      "aviationexam.dependencyupdater.interfaces": {
+        "type": "Project"
+      },
+      "Corvus.UriTemplates": {
+        "type": "CentralTransitive",
+        "requested": "[2.3.2, )",
+        "resolved": "2.3.2",
+        "contentHash": "XAhHr0F6IOhunpIHFzG0HQSj+/X8L1lSJAExYQl9OEIZGAUZ81pbqWtxuIHL080y1u2dEmw796D7XmM44Je2gw==",
+        "dependencies": {
+          "CommunityToolkit.HighPerformance": "8.3.0",
+          "Corvus.HighPerformance": "1.0.0",
+          "Microsoft.Extensions.ObjectPool": "8.0.8"
+        }
+      },
+      "Microsoft.Extensions.ObjectPool": {
+        "type": "CentralTransitive",
+        "requested": "[10.0.15, )",
+        "resolved": "10.0.15",
+        "contentHash": "kvd9eyRRQ+OEu9wik7GKgTS+7XnJ5XoOtSXJqmkJtVYV/S4gsBUrobYRSdNeBcb0ymef4L5Q9pZGiTxJ8jJfyQ=="
+      },
+      "NodaTime": {
+        "type": "CentralTransitive",
+        "requested": "[3.3.7, )",
+        "resolved": "3.3.7",
+        "contentHash": "4Rc3zup1sZqtlcgkWZOsjoVbhm+RkDvxrFDJfIxi7nr32ZgzVW+zCTBr827+KG/4r5owpchUjqx8tO4K2ZtpOw=="
+      }
+    },
+    "net11.0/linux-x64": {},
+    "net11.0/win-x64": {}
   }
 }
