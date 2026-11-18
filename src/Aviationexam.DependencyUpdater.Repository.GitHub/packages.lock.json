@@ -219,6 +219,172 @@
         "resolved": "10.0.15",
         "contentHash": "WEtOJ41ItA7fJ+pqQFYgCmZxiX5d6AByfLWbifqEjyjkfFXmD9/T9V7xTwrvh5OxkJkBhnZsygcdU0Al9MNcVw=="
       }
+    },
+    "net11.0": {
+      "Meziantou.Analyzer": {
+        "type": "Direct",
+        "requested": "[3.0.341, )",
+        "resolved": "3.0.341",
+        "contentHash": "zpogT6IwYBgNRa9+oETzs7aTU6Te3M/Osdkk/HN1TlJTDjz9dZwoUgh/yWqovT3jTofQGGLB1JqEK8I4uA6+yA=="
+      },
+      "Microsoft.DotNet.ILCompiler": {
+        "type": "Direct",
+        "requested": "[11.0.0, )",
+        "resolved": "11.0.0",
+        "contentHash": "lw6gUL92db6XPwYsQwaGwrJxgRM0X0qQKl0QkwuZIACMtgH0eFu6jmq6W+/L8qTxQZwggfV/dGjICyMqVHdehg=="
+      },
+      "Microsoft.Extensions.Configuration.Abstractions": {
+        "type": "Direct",
+        "requested": "[10.0.15, )",
+        "resolved": "10.0.15",
+        "contentHash": "0vztB/x4zuR/KT82cgTiiw9DqigfT1FjBgq9FjEFvJUgeacjTG4e7hWD2PCRXzL2kWWl/vBAwtXddIRV3AIU6Q=="
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions": {
+        "type": "Direct",
+        "requested": "[10.0.15, )",
+        "resolved": "10.0.15",
+        "contentHash": "KczR2nV7ooeimtZxAawPht/FJUHnX+uoWy7y4pba+iaRQBwUM2NwtiqZg+/FpZDHUf2RkkzveGkhMTWDNzmDUA=="
+      },
+      "Microsoft.Extensions.Http": {
+        "type": "Direct",
+        "requested": "[10.0.15, )",
+        "resolved": "10.0.15",
+        "contentHash": "ha8VdL1mvHkRUbRyXBfhMwCfbl02YQvCzZe72jQRFrvrRCbW2riFha52Vb84j8YpAcn/ld/B/2oQAsDj9gvbyg==",
+        "dependencies": {
+          "Microsoft.Extensions.Diagnostics": "10.0.15",
+          "Microsoft.Extensions.Logging": "10.0.15"
+        }
+      },
+      "Microsoft.Extensions.Logging.Abstractions": {
+        "type": "Direct",
+        "requested": "[10.0.15, )",
+        "resolved": "10.0.15",
+        "contentHash": "s5xzXGWqqlmmThMnQ1rnmL7QLwbluB2JqX9NaK8C9HPuHzN7kfmiddTRbwts5rQssATkh2B18RrofjeUD8g14A=="
+      },
+      "Microsoft.Extensions.Options.ConfigurationExtensions": {
+        "type": "Direct",
+        "requested": "[10.0.15, )",
+        "resolved": "10.0.15",
+        "contentHash": "yQX7dFAHm9xKBh2TLiA3aTrmOkgEeMRoS7UM/XuVy3CpddaluUXDIMiM8na5q6JMesH8zt3bKIDu/3hkEhVo7Q==",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Binder": "10.0.15"
+        }
+      },
+      "Microsoft.NET.ILLink.Tasks": {
+        "type": "Direct",
+        "requested": "[11.0.0, )",
+        "resolved": "11.0.0",
+        "contentHash": "gK2aq4XvChj5kvozpPHrkfKkr7zc5Z4xoTrJb4GPZzDEPMlCk0TX632bwY3LsWcX2UVcVRQBBGzsBGC2lq6YhA=="
+      },
+      "Octokit": {
+        "type": "Direct",
+        "requested": "[14.0.0, )",
+        "resolved": "14.0.0",
+        "contentHash": "jGOuTH1l+TCpJH+fwYOp7USzHDuGfN1jKbLz3J2COwyn+wL08eynvpnM6rY2qkzIEXum3PN2p2QkP3BW/p9Qcw=="
+      },
+      "Polly.Core": {
+        "type": "Direct",
+        "requested": "[8.9.1, )",
+        "resolved": "8.9.1",
+        "contentHash": "L0vfggkkI2nDAW9lCFYSqX9g/+3TkVXhAq+sh6owBq656X9XW0kE2NG+dPYGNQGeK66HS1rKHRPWMm1bMv91kw=="
+      },
+      "Polly.Extensions": {
+        "type": "Direct",
+        "requested": "[8.9.1, )",
+        "resolved": "8.9.1",
+        "contentHash": "nOYbFNl+2h34AW9WGkaO2USpgmywD5F+bFHLY//SeJjU1mwtrOOL5V55wMlv9SHbkezt03J9QZsVgyK39DmU0Q==",
+        "dependencies": {
+          "Polly.Core": "8.9.1"
+        }
+      },
+      "Microsoft.Extensions.Configuration": {
+        "type": "Transitive",
+        "resolved": "10.0.15",
+        "contentHash": "XwGgzRlryUvICZbY/oNlR1MbFDYg6gePDoW38RyUis8vEAVKIHvMy9di5dujK6dObbUOQJpHtrjUZ2rU0V7RvQ=="
+      },
+      "Microsoft.Extensions.Configuration.Binder": {
+        "type": "Transitive",
+        "resolved": "10.0.15",
+        "contentHash": "VOjlZlv9b3woS1TcI8Ts1r2IsmsT7hqkx7o2sMSNzE5fPBGKfhJszlEIhtQVzUz4H8Uw/7Jtuj9x7wGlCUsi2A==",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "10.0.15"
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection": {
+        "type": "Transitive",
+        "resolved": "10.0.15",
+        "contentHash": "7DUIgHeJpBs1RG0hYwWDOImXP03+uPrV5KtyUPxrZsiWadlg95aYijNKCZ2j2UmufQAmN6XEQfx4B/J6TuE7lg=="
+      },
+      "Microsoft.Extensions.Diagnostics": {
+        "type": "Transitive",
+        "resolved": "10.0.15",
+        "contentHash": "+FK6gPJDZ+8abQ7WAXUSxK7jgwhATzHlt3TCiO/paVwx9I8VsdHHoapugUUZNHr0Re2UFDoxpPpCp5kp6TX5iQ==",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "10.0.15",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "10.0.15"
+        }
+      },
+      "Microsoft.Extensions.Logging": {
+        "type": "Transitive",
+        "resolved": "10.0.15",
+        "contentHash": "Vya6t+hqCLeoZsbsJo5FzrEoOTK7syIeuaxLl3F8QagD3sXVxAQgmVEq5+jaA4gQ4yreg27fZ8gJH96bWtxoBQ==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection": "10.0.15"
+        }
+      },
+      "aviationexam.dependencyupdater.common": {
+        "type": "Project",
+        "dependencies": {
+          "Aviationexam.DependencyUpdater.Constants": "[1.0.0, )",
+          "Aviationexam.DependencyUpdater.Interfaces": "[1.0.0, )",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "[10.0.15, )",
+          "ZLinq": "[1.6.1, )"
+        }
+      },
+      "aviationexam.dependencyupdater.constants": {
+        "type": "Project"
+      },
+      "aviationexam.dependencyupdater.interfaces": {
+        "type": "Project"
+      },
+      "ZLinq": {
+        "type": "CentralTransitive",
+        "requested": "[1.6.1, )",
+        "resolved": "1.6.1",
+        "contentHash": "5x/IG9xtXbzUQ7iB2qkXvOuuBy1sydA2OLC4YrNHRsRiXsKaGP8noYYQ1ihpf6mB4nVINzgquLmvPI69h9gQ/g=="
+      }
+    },
+    "net11.0/linux-x64": {
+      "Microsoft.DotNet.ILCompiler": {
+        "type": "Direct",
+        "requested": "[11.0.0, )",
+        "resolved": "11.0.0",
+        "contentHash": "lw6gUL92db6XPwYsQwaGwrJxgRM0X0qQKl0QkwuZIACMtgH0eFu6jmq6W+/L8qTxQZwggfV/dGjICyMqVHdehg==",
+        "dependencies": {
+          "runtime.linux-x64.Microsoft.DotNet.ILCompiler": "11.0.0"
+        }
+      },
+      "runtime.linux-x64.Microsoft.DotNet.ILCompiler": {
+        "type": "Transitive",
+        "resolved": "11.0.0",
+        "contentHash": "HMCCGxJ1Q41NF31M+yWB7h0OAWr0XpiS8ZYMOi/V5IU/864Yi00rLq3M1K3AhE2+q86YJA4V9KZ28NXE+Q/uxA=="
+      }
+    },
+    "net11.0/win-x64": {
+      "Microsoft.DotNet.ILCompiler": {
+        "type": "Direct",
+        "requested": "[11.0.0, )",
+        "resolved": "11.0.0",
+        "contentHash": "lw6gUL92db6XPwYsQwaGwrJxgRM0X0qQKl0QkwuZIACMtgH0eFu6jmq6W+/L8qTxQZwggfV/dGjICyMqVHdehg==",
+        "dependencies": {
+          "runtime.win-x64.Microsoft.DotNet.ILCompiler": "11.0.0"
+        }
+      },
+      "runtime.win-x64.Microsoft.DotNet.ILCompiler": {
+        "type": "Transitive",
+        "resolved": "11.0.0",
+        "contentHash": "GhYzDaU4IbNnTgyFgxT2URnUogx+xuphFHscUx8v1H8ZRKiIlYa/8Lkpd0SXJZ+pEWHJFJXLvEPpWLEcwyNkmQ=="
+      }
     }
   }
 }
