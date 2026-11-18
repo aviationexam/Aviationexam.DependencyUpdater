@@ -30,3 +30,6 @@ jobs:
         uses: ./  # Use the action from the current repository
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          dotnet-version: |
+            10.0.x
+            11.0.x
