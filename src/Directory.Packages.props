@@ -68,8 +68,8 @@
     <PackageVersion Include="System.Text.Json" Version="11.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Corvus.Json.ExtendedTypes" Version="5.8.11" />
-    <PackageVersion Include="Corvus.Json.SourceGenerator" Version="5.8.11" />
+    <PackageVersion Include="Corvus.Json.ExtendedTypes" Version="5.8.12" />
+    <PackageVersion Include="Corvus.Json.SourceGenerator" Version="5.8.12" />
     <PackageVersion Include="Corvus.UriTemplates" Version="2.3.2" />
   </ItemGroup>
   <ItemGroup>
