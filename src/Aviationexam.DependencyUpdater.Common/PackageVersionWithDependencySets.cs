@@ -20,6 +20,15 @@ public record PackageVersionWithDependencySets : PackageVersion
         PackageVersionWithDependencySets? other
     ) => base.Equals(other);
 
+
+    public static bool operator ==(PackageVersionWithDependencySets? left, PackageVersion? right)
+        => left is null
+            ? right is null
+            : left.Equals(right);
+
+    public static bool operator !=(PackageVersionWithDependencySets? left, PackageVersion? right)
+        => !(left == right);
+
     public override int GetHashCode() => base.GetHashCode();
 
     protected override bool PrintMembers(
